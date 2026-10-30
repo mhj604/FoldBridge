@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import WatchKit
 import UserNotifications
 import CoreLocation
@@ -220,7 +221,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button(language.text("휴대폰 등록 해제"),role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.4.4").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.4.5").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle(language.text("설정"))
             .confirmationDialog(language.text("연결 유지를 시작할까요?"),isPresented:$startingLocation,titleVisibility:.visible) {
@@ -295,45 +296,65 @@ final class CompactNotificationController: WKUserNotificationHostingController<C
 struct CompactNotificationView: View {
     let content: UNNotificationContent?
     private let iconSize: CGFloat = 24
-    // Keep a finite intrinsic width, with a shared 16pt screen inset for text.
-    // Do not add scene padding: the system owns the sash and scrolling host.
-    private var contentWidth: CGFloat { max(100,WKInterfaceDevice.current().screenBounds.width-32) }
+    @ScaledMetric(relativeTo:.body) private var textSize: CGFloat = 16
+    private var layoutWidth: CGFloat { max(100,WKInterfaceDevice.current().screenBounds.width-32) }
+    private var textWidth: CGFloat { layoutWidth }
+    private var iconTop: CGFloat { (UIFont.systemFont(ofSize:textSize,weight:.semibold).lineHeight-iconSize)/2 }
+
+    private var topAdjustment: CGFloat {
+        if #available(watchOS 27.0,*) { return -16 }
+        return 0
+    }
+
+    @ViewBuilder private func bodyText(_ value: String) -> some View {
+        if #available(watchOS 26.0,*) {
+            Text(value).lineHeight(.exact(points:textSize * 1.15625))
+        } else {
+            Text(value)
+        }
+    }
 
     var body: some View {
         if let content {
             let icon = AppIconStore.image(for:content.userInfo["fb_icon"] as? String)
-            VStack(alignment:.leading,spacing:2) {
-                HStack(alignment:.top,spacing:8) {
+            VStack(alignment:.leading,spacing:0) {
+                if !content.title.isEmpty {
                     Text(content.title)
-                        .font(.headline)
+                        .font(.system(size:textSize,weight:.semibold))
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal:false,vertical:true)
-                        .frame(width:icon == nil ? contentWidth:contentWidth-iconSize-8,alignment:.leading)
-                    if let icon {
-                        Image(uiImage:icon)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width:iconSize,height:iconSize)
-                            .clipShape(RoundedRectangle(cornerRadius:5))
-                            .accessibilityHidden(true)
-                    }
-                }.frame(width:contentWidth,alignment:.leading)
+                        .frame(width:icon == nil ? textWidth:layoutWidth-iconSize-8,alignment:.leading)
+                }
                 if !content.subtitle.isEmpty {
                     Text(content.subtitle)
-                        .font(.headline)
+                        .font(.system(size:textSize,weight:.semibold))
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal:false,vertical:true)
-                        .frame(width:contentWidth,alignment:.leading)
+                        .frame(width:textWidth,alignment:.leading)
                 }
                 if !content.body.isEmpty {
-                    Text(content.body)
-                        .font(.body)
+                    bodyText(content.body)
+                        .font(.system(size:textSize))
+                        .padding(.top,-textSize/16)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal:false,vertical:true)
-                        .frame(width:contentWidth,alignment:.leading)
+                        .frame(width:textWidth,alignment:.leading)
                 }
             }
-            .frame(width:contentWidth,alignment:.leading)
+            .frame(width:layoutWidth,alignment:.leading)
+            .frame(minHeight:icon == nil ? 0:iconSize,alignment:.topLeading)
+            .overlay(alignment:.topTrailing) {
+                if let icon {
+                    Image(uiImage:icon)
+                        .resizable().scaledToFit()
+                        .frame(width:iconSize,height:iconSize)
+                        .clipShape(RoundedRectangle(cornerRadius:5))
+                        .offset(y:iconTop)
+                        .accessibilityHidden(true)
+                }
+            }
+            // Keep the icon outside text measurement; preserve its full rounded outline.
+            .padding(.top,topAdjustment)
         }
     }
 }

@@ -81,3 +81,8 @@ notification host의 intrinsic size를 제한하기 위해 화면 폭에서 40pt
 ## 상세 본문의 기본 간격에 맞춘 조정 (Watch 0.4.4)
 
 원본 아이콘은 오른쪽 24pt로 유지한다. 유한 본문 폭을 screenBounds.width-32로 넓혀 좌우 기준 여백을 16pt로 맞추고, VStack 문단 간격은 2pt로 줄인다. 추가 vertical padding 4pt를 제거해 제목·본문의 시작 위치를 위로 옮긴다. 제목·발신자·본문의 왼쪽 기준선과 시스템 글꼴은 유지한다. 이 값은 FoldBridge가 선택한 배치이며 Apple 시스템 알림의 비공개 치수와 동일하다고 주장하지 않는다.
+
+
+## 상세 알림의 실측 조정
+
+동일 예문으로 시스템 기본 알림과 상세 본문을 비교해 16pt 글꼴, 0pt 추가 문단 간격, 18.5pt 본문 줄 높이(watchOS 26 이상), 아이콘 overlay를 조정했다. 본문 폭은 유지하며, 문장별 줄바꿈 차이는 남는다. watchOS 27에서 상단을 16pt 보정했다. 작은 원본 아이콘은 24pt로 유지한다. [화면·측정값·남은 차이](NOTIFICATION_LAYOUT_COMPARISON_KO.md)에 기록했다.
