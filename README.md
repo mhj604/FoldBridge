@@ -4,8 +4,8 @@
 
 ## 이번 배포
 
-- Android: `FoldBridge-Local-0.3.0.apk`, 앱 ID `dev.foldbridge.local`, 버전 코드 6.
-- watchOS: `dev.foldbridge.watch`, 버전 0.2.1, 빌드 6.
+- Android: `FoldBridge-Local-0.3.1.apk`, 앱 ID `dev.foldbridge.local`, 버전 코드 7.
+- watchOS: `dev.foldbridge.watch`, 버전 0.2.2, 빌드 7.
 - 기존 갤럭시 FoldBridge와 별도로 설치합니다. 기존 앱의 데이터와 서명은 건드리지 않습니다.
 - 워치는 기존 앱과 Local 앱의 휴대폰 ID·페어링 키를 별도로 보관합니다. 앱 전환으로 페어링을 삭제하지 않습니다.
 
@@ -28,11 +28,12 @@
 - GATT indication으로 패킷 전송 확인을 받고, 워치의 메시지 수신 확인 후 다음 알림을 보냅니다. 미확인 메시지를 조용히 버리지 않고 재시도·재연결 대상으로 남깁니다.
 - 미전달 알림은 암호화해 최대 24시간·1024개 보관합니다. 같은 알림 ID의 갱신은 최신 내용으로 대체합니다. 한도 초과 시 가장 오래된 항목부터 비웁니다.
 - 서비스·알림 접근 재연결 때 현재 남아 있는 알림을 다시 가져옵니다. 워치가 기억하는 수신 기록으로 중복을 줄입니다.
-- 사용자가 연결을 시작해 둔 경우 휴대폰 재부팅·Bluetooth 복구 시 자동 시작을 요청합니다. Android의 강제 종료·백그라운드 제한까지 무시하는 기능은 아닙니다.
+- 연결 시작 설정과 등록한 보안 키를 유지합니다. 갤럭시는 재부팅 후 첫 잠금 해제, APK 업데이트, Bluetooth 복구 시 연결 서비스 자동 시작을 요청하고, BLE 준비 실패는 지연을 늘리며 재시도합니다. 워치는 앱 실행/OS 복원/백그라운드 갱신 기회에 저장된 휴대폰으로 재연결합니다. 기존 기기 조회 실패나 오래된 연결 주소에도 다시 검색하고, 저장된 공개 키로 확인한 뒤 새 세션을 만듭니다. 등록 해제를 누르지 않는 한 코드를 다시 비교할 필요는 없습니다.
+- 워치의 30분 뒤 백그라운드 갱신 요청은 재연결 보조 수단입니다. 실행 시각과 재부팅 직후 앱 실행은 watchOS가 결정합니다. 워치 앱이 실행되지 않으면 잠금 해제 후 FoldBridge를 한 번 열어야 할 수 있습니다. 강제 종료·OS 백그라운드 제한까지 무시하지 않습니다.
 
 ## 갤럭시에서 설정
 
-1. `FoldBridge-Local-0.3.0.apk`를 설치하고 **FoldBridge Local**을 엽니다. 기존 FoldBridge는 삭제할 필요가 없습니다. Local 이전 버전에서 업데이트할 때는 동일 서명 키를 사용합니다. 연결 시작 설정을 켜 둔 경우 업데이트 뒤 앱을 열면 서비스를 재개합니다.
+1. `FoldBridge-Local-0.3.1.apk`를 설치하고 **FoldBridge Local**을 엽니다. 기존 FoldBridge는 삭제할 필요가 없습니다. Local 이전 버전에서 업데이트할 때는 동일 서명 키를 사용합니다. 연결 시작 설정을 켜 둔 경우 업데이트 뒤 앱을 열면 서비스를 재개합니다.
 2. 근처 기기와 알림 권한을 허용합니다.
 3. 메인의 `알림 접근 허용` 또는 `설정 → 알림 접근 설정`에서 **FoldBridge Local 알림 전달**을 허용합니다. APK 설치 정책에 따라 앱 정보에서 제한된 설정 허용이 먼저 필요할 수 있습니다.
 4. 기존 FoldBridge에서 `연결 중지`를 누릅니다. 두 BLE 서비스를 함께 켜면 간섭할 수 있으므로 기존 앱은 보관하되 연결은 중지합니다. Local 앱의 `모든 앱 알림`을 켜 두고 `설정 → 새 워치 등록`을 누릅니다.
@@ -85,6 +86,6 @@ python3 android/build_android.py --sdk /path/to/sdk --java-home /path/to/jdk --k
 - [현재 BLE 프로토콜](docs/PROTOCOL.md)
 - [빌드와 설치](docs/BUILD_AND_SETUP.md)
 - [구축 이력과 문제 해결](docs/DEVELOPMENT_HISTORY.md)
-- [Android APK](artifacts/android/FoldBridge-Local-0.3.0.apk)
+- [Android APK](artifacts/android/FoldBridge-Local-0.3.1.apk)
 
 `relay/`, `windows/`, `legacy/`는 초기 구성의 소스와 문서를 보존한 것입니다. 현재 Local 앱은 이 구성에 의존하지 않습니다. 원본 ZIP이나 기기 로그, 페어링 키, Android 서명 키, Apple 프로비저닝 프로파일은 포함하지 않습니다. Xcode Team은 각자 선택합니다.

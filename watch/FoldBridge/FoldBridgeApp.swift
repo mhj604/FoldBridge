@@ -85,7 +85,7 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
     func applicationDidFinishLaunching() {
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().setNotificationCategories([UNNotificationCategory(identifier:"FOLDBRIDGE_ALERT",actions:[],intentIdentifiers:[],options:[])])
-        _ = WatchLink.shared
+        WatchLink.shared.resumeSavedConnection()
         if ProcessInfo.processInfo.environment["FOLDBRIDGE_RESUME_LOCATION"] == "1" {
             LocationKeepAlive.shared.preserveEnabledIntentForUpdate()
         }
@@ -217,7 +217,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button("휴대폰 등록 해제",role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.2.1").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.2.2").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle("설정")
             .confirmationDialog("연결 유지를 시작할까요?",isPresented:$startingLocation,titleVisibility:.visible) {

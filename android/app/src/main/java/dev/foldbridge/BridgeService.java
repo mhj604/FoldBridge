@@ -25,7 +25,7 @@ public final class BridgeService extends Service {
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",6,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",7,"bridgeRunning",s!=null,"status",status,"error",error,
             "authenticated",s!=null&&s.authenticated,"watchActive",s!=null&&s.watchActive,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
             "received",NotificationRelay.received,"forwarded",NotificationRelay.forwarded,
@@ -48,6 +48,8 @@ public final class BridgeService extends Service {
     private final Set<String> acknowledgedIcons=new HashSet<>();
     private BluetoothGattServer server; private BluetoothGattCharacteristic tx;
     private BluetoothLeAdvertiser advertiser; private BluetoothDevice central;
+    private int bluetoothRetries=0;
+    private final Runnable bluetoothRetry=()->{if(server==null)startBluetooth();};
     private Vault vault; private KeyPair identity; private Crypto.Session session;
     private Outbox outbox;
     private Delivery activeDelivery;
@@ -76,6 +78,7 @@ public final class BridgeService extends Service {
     }
     @Override public int onStartCommand(Intent intent,int flags,int startId) {
         if(vault==null) return START_NOT_STICKY;
+        if(!getSharedPreferences("settings",MODE_PRIVATE).getBoolean("connection_enabled",false)) {stopSelf();return START_NOT_STICKY;}
         if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE)!=PackageManager.PERMISSION_GRANTED) { fail("근처 기기 권한이 필요합니다."); stopSelf(); return START_NOT_STICKY; }
         NotificationManager manager=getSystemService(NotificationManager.class);
         manager.createNotificationChannel(new NotificationChannel("connection","워치 연결 상태",NotificationManager.IMPORTANCE_LOW));
@@ -89,28 +92,44 @@ public final class BridgeService extends Service {
         handler.post(()->recordState(this));
         return START_STICKY;
     }
+    void resumeBluetooth() {handler.post(()->{if(server==null)startBluetooth();});}
+    private void retryBluetooth(String reason) {
+        if(advertiser!=null)try{advertiser.stopAdvertising(advertisements);}catch(RuntimeException ignored){}
+        if(server!=null){server.close();server=null;}
+        tx=null;clearSession();fail(reason);
+        handler.removeCallbacks(bluetoothRetry);
+        long delay=Math.min(30000L,1000L << Math.min(bluetoothRetries++,5));
+        handler.postDelayed(bluetoothRetry,delay);
+    }
     private void startBluetooth() {
+        if(instance!=this || server!=null)return;
+        handler.removeCallbacks(bluetoothRetry);
+        try {startBluetoothReady();}
+        catch(SecurityException error){fail("근처 기기 권한을 다시 허용해 주세요.");}
+        catch(RuntimeException error){retryBluetooth("Bluetooth 준비를 다시 시도합니다.");}
+    }
+    private void startBluetoothReady() {
         BluetoothManager manager=getSystemService(BluetoothManager.class); BluetoothAdapter adapter=manager.getAdapter();
-        if(adapter==null || !adapter.isEnabled()) { fail("휴대폰 블루투스를 켠 뒤 다시 시작하세요."); return; }
+        if(adapter==null || !adapter.isEnabled()) {status="Bluetooth가 켜지면 다시 연결합니다";error="";recordState(this);return;}
         advertiser=adapter.getBluetoothLeAdvertiser();
-        if(advertiser==null) { fail("이 휴대폰은 BLE 광고를 사용할 수 없습니다."); return; }
+        if(advertiser==null) {retryBluetooth("Bluetooth 광고 준비를 기다립니다.");return;}
         server=manager.openGattServer(this,callbacks);
-        if(server==null) { fail("BLE 서버를 열지 못했습니다."); return; }
+        if(server==null) {retryBluetooth("Bluetooth 서버 준비를 다시 시도합니다.");return;}
         BluetoothGattService service=new BluetoothGattService(SERVICE,BluetoothGattService.SERVICE_TYPE_PRIMARY);
         tx=new BluetoothGattCharacteristic(TX,BluetoothGattCharacteristic.PROPERTY_INDICATE,0);
         tx.addDescriptor(new BluetoothGattDescriptor(CCC,BluetoothGattDescriptor.PERMISSION_READ|BluetoothGattDescriptor.PERMISSION_WRITE));
         service.addCharacteristic(tx);
         service.addCharacteristic(new BluetoothGattCharacteristic(RX,BluetoothGattCharacteristic.PROPERTY_WRITE,BluetoothGattCharacteristic.PERMISSION_WRITE));
-        if(!server.addService(service)) fail("BLE 서비스 등록 실패");
+        if(!server.addService(service))retryBluetooth("BLE 서비스 등록을 다시 시도합니다.");
     }
     private final AdvertiseCallback advertisements=new AdvertiseCallback() {
-        @Override public void onStartSuccess(AdvertiseSettings settings) { handler.post(()->{if(instance==BridgeService.this){status="워치 연결 대기 중"; error="";}}); }
-        @Override public void onStartFailure(int code) { handler.post(()->{if(instance==BridgeService.this)fail("BLE 광고 실패: "+code);}); }
+        @Override public void onStartSuccess(AdvertiseSettings settings) { handler.post(()->{if(instance==BridgeService.this){bluetoothRetries=0;status="워치 연결 대기 중"; error="";recordState(BridgeService.this);}}); }
+        @Override public void onStartFailure(int code) { handler.post(()->{if(instance==BridgeService.this)retryBluetooth("BLE 광고를 다시 시도합니다: "+code);}); }
     };
     private final BluetoothGattServerCallback callbacks=new BluetoothGattServerCallback() {
         @Override public void onServiceAdded(int result,BluetoothGattService service) { handler.post(()->{
             if(server==null||instance!=BridgeService.this)return;
-            if(result!=BluetoothGatt.GATT_SUCCESS) { fail("BLE 서비스 등록 실패: "+result); return; }
+            if(result!=BluetoothGatt.GATT_SUCCESS) {retryBluetooth("BLE 서비스 등록을 다시 시도합니다: "+result);return;}
             advertiser.startAdvertising(new AdvertiseSettings.Builder().setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY).setConnectable(true).setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM).build(),new AdvertiseData.Builder().addServiceUuid(new ParcelUuid(SERVICE)).build(),advertisements);
         }); }
         @Override public void onConnectionStateChange(BluetoothDevice device,int result,int state) { handler.post(()->{
@@ -285,7 +304,7 @@ public final class BridgeService extends Service {
     static void bluetoothOff() {
         BridgeService s=instance;if(s==null)return;
         s.handler.post(()->{
-            s.clearSession();
+            s.handler.removeCallbacks(s.bluetoothRetry);s.bluetoothRetries=0;s.clearSession();
             if(s.advertiser!=null)try{s.advertiser.stopAdvertising(s.advertisements);}catch(RuntimeException ignored){}
             if(s.server!=null){s.server.close();s.server=null;}
             status="Bluetooth가 켜지면 다시 연결합니다";

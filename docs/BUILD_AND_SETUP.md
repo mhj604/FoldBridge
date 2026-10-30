@@ -11,7 +11,7 @@ python3 android/build_android.py \
   --sdk /absolute/path/to/android-sdk \
   --java-home /absolute/path/to/jdk \
   --keystore /absolute/path/to/foldbridge-local.keystore \
-  --output /absolute/path/to/FoldBridge-Local-0.3.0.apk \
+  --output /absolute/path/to/FoldBridge-Local-0.3.1.apk \
   --skip-signature-check
 ```
 
@@ -81,3 +81,9 @@ adb shell cmd notification allow_listener dev.foldbridge.local/dev.foldbridge.No
 원래 차단 상태로 되돌리려면 AppOp를 `ignore`로 바꾸고 같은 수집 서비스 재연결을 실행한다. 다른 앱에서 본문을 제공하지 않거나 자체적으로 숨긴 내용은 복원할 수 없다. [Android 구현의 앱별 허용 처리](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-release/services/core/java/com/android/server/notification/NotificationManagerService.java#13603)
 
 워치 자체의 펼치기 전 미리보기 설정은 별도다. 자동으로 자세히 보려면 워치 설정 → 알림 → 전체 알림을 보려면 탭하기를 끈다. 앱은 이 시스템 설정을 직접 바꿀 수 없다. [Apple 알림 설정](https://support.apple.com/108369)
+
+## 재시작 후 사용
+
+한 번 양쪽 코드로 등록하고 Galaxy의 연결 시작을 켜 두면 등록 키와 연결 의도는 계속 저장된다. 재부팅 뒤 양쪽 잠금을 한 번 해제하고 Bluetooth가 켜져 있어야 한다. Galaxy는 연결 서비스를 자동 재개하며, 워치는 OS 실행/복원 기회에 저장된 휴대폰으로 연결한다. 워치가 바로 연결되지 않으면 FoldBridge를 한 번 연다. 새 워치 등록이나 기존 등록 해제는 필요하지 않다. 사용자가 연결 중지/등록 해제를 선택한 상태는 자동 시작으로 덮어쓰지 않는다.
+
+watchOS는 일반 앱에 부팅 즉시 실행을 보장하는 공개 API를 제공하지 않는다. 30분 뒤 백그라운드 갱신 요청과 Core Bluetooth 복원은 실행 기회를 요청하는 수단이며 완전한 무인 재부팅 복구를 보장하지 않는다. [Apple 백그라운드 재연결](https://developer.apple.com/documentation/watchkit/using-background-tasks), [Android 부팅/업데이트 후 서비스 시작](https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start)

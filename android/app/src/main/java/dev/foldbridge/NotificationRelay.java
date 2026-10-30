@@ -20,7 +20,7 @@ public final class NotificationRelay extends NotificationListenerService {
         if(instance!=null||!hasAccess(context)||SystemClock.elapsedRealtime()-lastRebind<15000)return;
         lastRebind=SystemClock.elapsedRealtime();requestRebind(new ComponentName(context,NotificationRelay.class));
     }
-    @Override public void onListenerConnected() {instance=this;android.util.Log.i("FoldBridge","notification_listener_connected");replayActive();BridgeService.recordState(this);}
+    @Override public void onListenerConnected() {instance=this;android.util.Log.i("FoldBridge","notification_listener_connected");ConnectionReceiver.resumeIfEnabled(this);replayActive();BridgeService.recordState(this);}
     @Override public void onListenerDisconnected() {
         instance=null;
         android.util.Log.i("FoldBridge","notification_listener_disconnected");
