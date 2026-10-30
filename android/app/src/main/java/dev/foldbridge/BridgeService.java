@@ -25,7 +25,7 @@ public final class BridgeService extends Service {
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",7,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",8,"bridgeRunning",s!=null,"status",status,"error",error,
             "authenticated",s!=null&&s.authenticated,"watchActive",s!=null&&s.watchActive,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
             "received",NotificationRelay.received,"forwarded",NotificationRelay.forwarded,

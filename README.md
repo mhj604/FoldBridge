@@ -4,8 +4,8 @@
 
 ## 이번 배포
 
-- Android: `FoldBridge-Local-0.3.1.apk`, 앱 ID `dev.foldbridge.local`, 버전 코드 7.
-- watchOS: `dev.foldbridge.watch`, 버전 0.2.3, 빌드 8.
+- Android: `FoldBridge-Local-0.3.2.apk`, 앱 ID `dev.foldbridge.local`, 버전 코드 8.
+- watchOS: `dev.foldbridge.watch`, 버전 0.2.4, 빌드 9.
 - 기존 갤럭시 FoldBridge와 별도로 설치합니다. 기존 앱의 데이터와 서명은 건드리지 않습니다.
 - 워치는 기존 앱과 Local 앱의 휴대폰 ID·페어링 키를 별도로 보관합니다. 앱 전환으로 페어링을 삭제하지 않습니다.
 
@@ -34,7 +34,7 @@
 
 ## 갤럭시에서 설정
 
-1. `FoldBridge-Local-0.3.1.apk`를 설치하고 **FoldBridge Local**을 엽니다. 기존 FoldBridge는 삭제할 필요가 없습니다. Local 이전 버전에서 업데이트할 때는 동일 서명 키를 사용합니다. 연결 시작 설정을 켜 둔 경우 업데이트 뒤 앱을 열면 서비스를 재개합니다.
+1. `FoldBridge-Local-0.3.2.apk`를 설치하고 **FoldBridge Local**을 엽니다. 기존 FoldBridge는 삭제할 필요가 없습니다. Local 이전 버전에서 업데이트할 때는 동일 서명 키를 사용합니다. 연결 시작 설정을 켜 둔 경우 업데이트 뒤 앱을 열면 서비스를 재개합니다.
 2. 근처 기기와 알림 권한을 허용합니다.
 3. 메인의 `알림 접근 허용` 또는 `설정 → 알림 접근 설정`에서 **FoldBridge Local 알림 전달**을 허용합니다. APK 설치 정책에 따라 앱 정보에서 제한된 설정 허용이 먼저 필요할 수 있습니다.
 4. 기존 FoldBridge에서 `연결 중지`를 누릅니다. 두 BLE 서비스를 함께 켜면 간섭할 수 있으므로 기존 앱은 보관하되 연결은 중지합니다. Local 앱의 `모든 앱 알림`을 켜 두고 `설정 → 새 워치 등록`을 누릅니다.
@@ -87,6 +87,6 @@ python3 android/build_android.py --sdk /path/to/sdk --java-home /path/to/jdk --k
 - [현재 BLE 프로토콜](docs/PROTOCOL.md)
 - [빌드와 설치](docs/BUILD_AND_SETUP.md)
 - [구축 이력과 문제 해결](docs/DEVELOPMENT_HISTORY.md)
-- [Android APK](artifacts/android/FoldBridge-Local-0.3.1.apk)
+- [Android APK](artifacts/android/FoldBridge-Local-0.3.2.apk)
 
 `relay/`, `windows/`, `legacy/`는 초기 구성의 소스와 문서를 보존한 것입니다. 현재 Local 앱은 이 구성에 의존하지 않습니다. 원본 ZIP이나 기기 로그, 페어링 키, Android 서명 키, Apple 프로비저닝 프로파일은 포함하지 않습니다. Xcode Team은 각자 선택합니다.

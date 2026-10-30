@@ -11,7 +11,7 @@ python3 android/build_android.py \
   --sdk /absolute/path/to/android-sdk \
   --java-home /absolute/path/to/jdk \
   --keystore /absolute/path/to/foldbridge-local.keystore \
-  --output /absolute/path/to/FoldBridge-Local-0.3.1.apk \
+  --output /absolute/path/to/FoldBridge-Local-0.3.2.apk \
   --skip-signature-check
 ```
 

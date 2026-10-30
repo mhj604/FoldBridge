@@ -108,7 +108,7 @@ public final class MainActivity extends Activity {
     }
     private void showDiagnostics(){
         String timing=BridgeService.lastRtt<0?"아직 없음":BridgeService.lastRtt+" ms";
-        new AlertDialog.Builder(this).setTitle("연결 진단").setMessage("연결: "+BridgeService.status+"\n알림 접근: "+(NotificationRelay.hasAccess(this)?"허용됨":"꺼짐")+"\n알림 수집: "+(NotificationRelay.instance!=null?"연결됨":"대기 중")+"\n수집 "+NotificationRelay.received+" · 전달 요청 "+NotificationRelay.forwarded+"\n최근 전달 확인: "+timing+"\n\nFoldBridge Local 0.3.1").setPositiveButton("닫기",null).show();
+        new AlertDialog.Builder(this).setTitle("연결 진단").setMessage("연결: "+BridgeService.status+"\n알림 접근: "+(NotificationRelay.hasAccess(this)?"허용됨":"꺼짐")+"\n알림 수집: "+(NotificationRelay.instance!=null?"연결됨":"대기 중")+"\n수집 "+NotificationRelay.received+" · 전달 요청 "+NotificationRelay.forwarded+"\n최근 전달 확인: "+timing+"\n\nFoldBridge Local 0.3.2").setPositiveButton("닫기",null).show();
     }
     private void start(boolean pair) {
         if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED||checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE)!=PackageManager.PERMISSION_GRANTED) {requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_ADVERTISE,Manifest.permission.POST_NOTIFICATIONS},7);toast("권한을 허용한 뒤 연결 버튼을 다시 누르세요.");return;}
