@@ -48,6 +48,8 @@ open watch/FoldBridge.xcodeproj
 
 ## 알림 모양과 개인정보 표시
 
+**미해결 요청:** 첫 요약 팝업과 펼친 화면의 전체 레이아웃 통일, 모든 단계의 원본 앱 아이콘 표시는 구현되지 않았습니다. 현재 가능한 영역과 추가 조사 결과는 [알림 표시의 미해결 범위](docs/NOTIFICATION_DISPLAY_LIMITS_KO.md)에 구분했습니다.
+
 처음 뜨는 팝업과 알림 센터 카드의 시스템 아이콘은 **FoldBridge**입니다. 원본 앱 아이콘이 있으면 **눌러 펼친 본문에만 24pt**로 표시합니다. 원본 아이콘이 없는 알림은 기본 텍스트 화면을 사용합니다.
 
 원본 아이콘은 사진 첨부로 보내지 않습니다. 따라서 큰 미디어 미리보기나 카드 썸네일로 재사용되지 않습니다. 아이콘이 있는 상세 본문은 워치 화면 폭에서 좌우 20pt를 뺀 고정 폭으로 배치하며, 확장 프레임·중첩 스크롤·고정 본문 높이를 사용하지 않습니다. 제목과 본문은 시스템 글꼴로 줄바꿈하고, 스크롤과 닫기 버튼은 watchOS가 처리합니다. [Apple 알림 표시 구조](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
