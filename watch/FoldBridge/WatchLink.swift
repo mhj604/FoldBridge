@@ -380,11 +380,15 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func scheduleReceipt(_ receipt: (alert: WatchAlert, revision: String)) {
         let alert = receipt.alert, revision = receipt.revision
         let content = UNMutableNotificationContent(); content.title = alert.app; content.subtitle = alert.title; content.body = alert.body; content.sound = .default
-        content.categoryIdentifier = "FOLDBRIDGE_ALERT"
+        // Use the system renderer for both collapsed and expanded notifications.
+        // No WKNotificationScene may intercept this category.
+        content.categoryIdentifier = "FOLDBRIDGE_NATIVE_ALERT"
         content.threadIdentifier = alert.appID ?? alert.app
         content.userInfo = ["fb_id":alert.id,"fb_rev":revision]
         if let iconKey = alert.iconKey { content.userInfo["fb_icon"] = iconKey }
-        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier:alert.id,content:content,trigger:nil)) { error in
+        let icon = AppIconStore.notificationAttachment(for:alert.iconKey)
+        if let icon { content.attachments = [icon.attachment] }
+        submitNativeNotification(id:alert.id,content:content,staging:icon?.staging) { error in
             DispatchQueue.main.async {
                 self.presentingReceipt = false
                 guard self.pendingReceipts.first?.alert.id == alert.id,
@@ -398,6 +402,26 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
                 } else { self.lastError = "알림 표시를 요청하지 못했습니다. 다음 동기화 때 다시 요청합니다." }
                 self.writeDiagnostics()
                 self.presentNextReceipt(); self.finishBackgroundWhenIdle()
+            }
+        }
+    }
+    private func submitNativeNotification(id: String,content: UNMutableNotificationContent,staging: URL?,completion: @escaping (Error?)->Void) {
+        let center = UNUserNotificationCenter.current()
+        center.add(UNNotificationRequest(identifier:id,content:content,trigger:nil)) { error in
+            if let error, !content.attachments.isEmpty {
+                // An image failure must never prevent the message itself from arriving.
+                guard let textOnly = content.mutableCopy() as? UNMutableNotificationContent else {
+                    if let staging { try? FileManager.default.removeItem(at:staging) }
+                    completion(error);return
+                }
+                textOnly.attachments = []
+                center.add(UNNotificationRequest(identifier:id,content:textOnly,trigger:nil)) { retryError in
+                    if let staging { try? FileManager.default.removeItem(at:staging) }
+                    completion(retryError)
+                }
+            } else {
+                if let staging { try? FileManager.default.removeItem(at:staging) }
+                completion(error)
             }
         }
     }

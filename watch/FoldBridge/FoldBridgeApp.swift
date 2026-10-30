@@ -84,7 +84,7 @@ final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDele
 final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDelegate {
     func applicationDidFinishLaunching() {
         UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().setNotificationCategories([UNNotificationCategory(identifier:"FOLDBRIDGE_ALERT",actions:[],intentIdentifiers:[],options:[])])
+        UNUserNotificationCenter.current().setNotificationCategories([UNNotificationCategory(identifier:"FOLDBRIDGE_NATIVE_ALERT",actions:[],intentIdentifiers:[],options:[])])
         WatchLink.shared.resumeSavedConnection()
         if ProcessInfo.processInfo.environment["FOLDBRIDGE_RESUME_LOCATION"] == "1" {
             LocationKeepAlive.shared.preserveEnabledIntentForUpdate()
@@ -121,28 +121,12 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
             link.setActive(phase == .active)
             if phase == .active { LocationKeepAlive.shared.resumeIfRequested() }
         } }
-        WKNotificationScene(controller:RelayNotificationController.self,category:"FOLDBRIDGE_ALERT")
     }
 }
 
 private enum BridgeStyle {
     static let accent = Color(red:0.51,green:0.90,blue:0.82)
     static let surface = Color(red:0.08,green:0.12,blue:0.16)
-}
-
-struct SourceAppIcon: View {
-    let key: String?
-    var size: CGFloat = 32
-    var body: some View {
-        Group {
-            if let image = AppIconStore.image(for:key) {
-                Image(uiImage:image).resizable().interpolation(.high).scaledToFit()
-            } else {
-                Image(systemName:"app.fill").resizable().scaledToFit().foregroundStyle(BridgeStyle.accent).padding(size*0.17)
-            }
-        }.frame(width:size,height:size).background(.white.opacity(0.05),in:RoundedRectangle(cornerRadius:size*0.23))
-            .clipShape(RoundedRectangle(cornerRadius:size*0.23))
-    }
 }
 
 struct ContentView: View {
@@ -232,7 +216,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button(language.text("휴대폰 등록 해제"),role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.4.0").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.4.1").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle(language.text("설정"))
             .confirmationDialog(language.text("연결 유지를 시작할까요?"),isPresented:$startingLocation,titleVisibility:.visible) {
@@ -290,48 +274,3 @@ struct BridgeDiagnosticsView: View {
     }
 }
 
-final class RelayNotificationController: WKUserNotificationHostingController<RelayNotificationView> {
-    private var content: UNNotificationContent?
-    override var body: RelayNotificationView { RelayNotificationView(content:content) }
-    override func didReceive(_ notification: UNNotification) { content = notification.request.content }
-}
-
-struct RelayNotificationView: View {
-    let content: UNNotificationContent?
-    @ScaledMetric(relativeTo:.headline) private var iconSize: CGFloat = 24
-
-    var body: some View {
-        if let content {
-            // The system supplies the sash, scrolling, and dismiss control. Keep this
-            // content intrinsic-height and use one leading edge for all text below it.
-            VStack(alignment:.leading,spacing:4) {
-                HStack(alignment:.firstTextBaseline,spacing:6) {
-                    Text(content.title)
-                        .font(.headline)
-                        .fixedSize(horizontal:false,vertical:true)
-                        .frame(maxWidth:.infinity,alignment:.leading)
-                    SourceAppIcon(key:content.userInfo["fb_icon"] as? String,size:iconSize)
-                        .alignmentGuide(.firstTextBaseline) { dimensions in dimensions.height*0.8 }
-                }
-                .padding(.bottom,2)
-
-                if !content.subtitle.isEmpty {
-                    Text(content.subtitle)
-                        .font(.headline)
-                        .fixedSize(horizontal:false,vertical:true)
-                        .frame(maxWidth:.infinity,alignment:.leading)
-                }
-                if !content.body.isEmpty {
-                    Text(content.body)
-                        .font(.body)
-                        .fixedSize(horizontal:false,vertical:true)
-                        .frame(maxWidth:.infinity,alignment:.leading)
-                }
-            }
-            .multilineTextAlignment(.leading)
-            .frame(maxWidth:.infinity,alignment:.topLeading)
-            .scenePadding(.horizontal)
-            .padding(.bottom,8)
-        }
-    }
-}

@@ -44,7 +44,7 @@ Android 개인 키는 Android Keystore, 워치 개인 키는 기기 전용 Keych
 
 Android `AppIcons`는 PackageManager의 원본 앱 아이콘을 읽고 BLE 메시지 크기에 맞춰 48px부터 단계적으로 축소한 PNG로 만든다. PNG는 최대 3,072바이트이며 SHA-256 키로 식별한다. 같은 연결에서 해당 아이콘을 포함한 알림의 ACK를 받으면 이후에는 아이콘 키만 보낸다. 아이콘과 알림 본문은 함께 암호화된다.
 
-워치는 아이콘을 Application Support 폴더에 저장하고 메모리 캐시를 사용한다. `FOLDBRIDGE_ALERT` 카테고리의 SwiftUI long-look 본문에 원본 아이콘을 표시한다. 발신 앱 ID로 알림을 묶는다. 새 아이콘이 기존 수신 알림에 추가돼도 같은 내용 리비전을 다시 알리지 않는다.
+워치는 아이콘을 Application Support 폴더에 저장하고 메모리 캐시를 사용한다. 원본 아이콘을 watchOS 표준 이미지 첨부로 전달한다. 카드와 펼친 상세 화면은 모두 시스템 기본 알림 표시를 사용한다. 사용자 정의 WKNotificationScene/SwiftUI 알림 본문을 등록하지 않는다. 발신 앱 ID로 알림을 묶는다. 새 아이콘이 기존 수신 알림에 추가돼도 같은 내용 리비전을 다시 알리지 않는다.
 
 watchOS의 short-look과 상단 sash는 시스템이 FoldBridge 앱 이름/아이콘으로 생성한다. 이는 원본 Android 앱의 알림으로 바꿀 수 없으며 원본 아이콘은 사용자 정의 콘텐츠 영역에 표시한다. [Apple 문서](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
 
@@ -61,3 +61,9 @@ watchOS의 short-look과 상단 sash는 시스템이 FoldBridge 앱 이름/아�
 갤럭시 메인의 연결 새로고침은 기존 GATT 서버·광고·인증 세션을 닫고, 0.5초 뒤 새 서버와 광고를 준비한다. 서버 세대를 증가시켜 이전 서버에서 늦게 온 콜백을 무시한다. 등록 키와 미전달 대기열은 삭제하지 않는다. 동일 연결 콜백은 중복 처리하지 않고, DISCONNECTED에서만 세션을 정리하며 인증이 성공하면 이전 오류를 지운다.
 
 워치 새로고침은 기존 연결 취소 후 다시 검색한다. 취소 완료 콜백 또는 대기 후 검색으로 진행하고, 이전 연결의 콜백과 인증 시작 메시지가 새 세션을 중복 시작하지 않도록 한다. 상대 키 확인은 그대로 수행한다. 동기화 버튼은 정상 인증된 세션의 미전달 알림을 요청하는 기능이므로 새로고침과 구분한다.
+
+## 기본 알림 상세 화면 복원 (Watch 0.4.1)
+
+초기 버전은 UNNotificationContent의 title/subtitle/body를 시스템이 배치했다. 원본 아이콘 추가 이후 WKNotificationScene의 사용자 정의 SwiftUI 화면을 사용하면서 펼친 알림에서 크기/배치 문제가 반복됐다. 간격 조정으로 해결하지 않고 해당 scene과 hosting controller/view 자체를 제거했다. 새 알림 카테고리는 FOLDBRIDGE_NATIVE_ALERT이며 UI는 watchOS가 그린다.
+
+원본 아이콘은 UNNotificationAttachment를 이용한다. 캐시 PNG를 고유한 임시 폴더로 복사하고 첨부하므로 시스템의 첨부 파일 이동으로 캐시가 사라지지 않는다. 첨부 등록 실패 시 텍스트만 다시 등록한다. 이전 알림을 삭제하거나 다시 울리게 하지 않으며, 등록·언어 선택·BLE 통신은 유지한다.

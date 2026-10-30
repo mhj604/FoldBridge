@@ -2,6 +2,7 @@ import Foundation
 import Security
 import CryptoKit
 import UIKit
+import UserNotifications
 
 enum AppIconStore {
     private static let images: NSCache<NSString,UIImage> = { let value = NSCache<NSString,UIImage>(); value.countLimit = 64; return value }()
@@ -21,6 +22,22 @@ enum AppIconStore {
             } catch { return nil }
         }
         return FileManager.default.fileExists(atPath:target.path) ? key:nil
+    }
+    static func notificationAttachment(for key: String?) -> (attachment: UNNotificationAttachment, staging: URL)? {
+        guard let key, let source = url(key), FileManager.default.fileExists(atPath:source.path) else { return nil }
+        // UserNotifications moves attachment files into system storage. Give it a
+        // disposable copy so the shared app-icon cache survives subsequent alerts.
+        let staging = FileManager.default.temporaryDirectory.appendingPathComponent("FoldBridgeIcon-"+UUID().uuidString,isDirectory:true)
+        do {
+            try FileManager.default.createDirectory(at:staging,withIntermediateDirectories:true)
+            let copy = staging.appendingPathComponent("app-icon.png")
+            try FileManager.default.copyItem(at:source,to:copy)
+            let attachment = try UNNotificationAttachment(identifier:"source-app-icon",url:copy,options:[UNNotificationAttachmentOptionsTypeHintKey:"public.png"])
+            return (attachment,staging)
+        } catch {
+            try? FileManager.default.removeItem(at:staging)
+            return nil
+        }
     }
     static func image(for key: String?) -> UIImage? {
         guard let key else { return nil }
