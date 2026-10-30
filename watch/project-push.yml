@@ -1,0 +1,10 @@
+include: [project.yml]
+targets:
+  FoldBridge:
+    info:
+      properties:
+        FoldBridgePushEnabled: true
+    entitlements:
+      path: FoldBridge/Push.entitlements
+      properties:
+        aps-environment: development

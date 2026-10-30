@@ -1,0 +1,34 @@
+name: FoldBridge
+options:
+  bundleIdPrefix: dev.foldbridge
+  deploymentTarget:
+    watchOS: "10.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    CODE_SIGN_STYLE: Automatic
+    CURRENT_PROJECT_VERSION: 3
+    MARKETING_VERSION: 0.1.0
+targets:
+  FoldBridge:
+    type: application
+    platform: watchOS
+    sources: [FoldBridge]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.foldbridge.watch
+        TARGETED_DEVICE_FAMILY: 4
+        GENERATE_INFOPLIST_FILE: NO
+    info:
+      path: FoldBridge/Info.plist
+      properties:
+        CFBundleDisplayName: FoldBridge
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "4"
+        WKApplication: true
+        WKWatchOnly: true
+        NSBluetoothAlwaysUsageDescription: 갤럭시 휴대폰의 알림을 받기 위해 블루투스를 사용합니다.
+        NSLocationWhenInUseUsageDescription: 선택한 위치 기반 연결 유지 모드에서 백그라운드 실행을 시도하기 위해 위치 업데이트를 사용합니다. 위치 좌표는 저장하거나 전송하지 않습니다.
+        UIBackgroundModes: [bluetooth-central, location]
+        FoldBridgePushEnabled: false
+    scheme: {}
