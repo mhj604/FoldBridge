@@ -58,3 +58,14 @@ Apple의 watchOS 지원표에서 Communication Notifications는 유료 프로그
 - REA 분석 결과는 기본 아이콘과 사용자 정의 본문의 경로를 뒷받침한다. 시스템 화면의 변경 가능 범위와 계정 권한의 근거는 위 Apple 문서이며, 이 분석으로 운영체제 권한이 추가되지는 않는다.
 
 현재 남은 문제는 두 요구를 만족할 실제 시스템 표시 경로의 확보다. REA 사용 자체나 문서 업데이트를 앱 문제 해결로 완료 처리하지 않는다.
+
+## 시스템 미러링을 직접 사용하는 대안 조사
+
+- **Accessory Notifications:** Apple 문서는 iPhone 전용이며 iOS 알림을 외부 액세서리로 전달하는 API라고 명시한다. Android 알림을 watchOS 알림 센터에 등록하는 API가 아니다. [Apple 문서](https://developer.apple.com/documentation/accessorynotifications)
+- **ANCS:** 공개 규격은 iOS 기기를 알림 제공자, Bluetooth 액세서리를 소비자로 정의한다. 이 규격만으로 Android GATT 서버가 Apple Watch의 기본 미러링 발신 기기가 된다고 판단할 근거는 없다. [ANCS 규격](https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Introduction/Introduction.html)
+- **네이티브 프로토콜 재현 프로젝트:** `apple_watch_connector`는 시스템 bulletin 전달 경로를 구현하고 있다. 그러나 Android 설치 경로는 root가 있는 OnePlus CPH2653으로 제한된다. `RootBluetoothHalHost.validateInvocation()`도 UID 0과 해당 제조사·모델을 요구한다. 현재 Galaxy Z Fold7에서 사용할 수 있는 구현이 아니다. [프로젝트 설치 조건](https://github.com/LordixDemon/apple_watch_connector#en-android-install), [실제 조건 코드](https://github.com/LordixDemon/apple_watch_connector/blob/main/apple-watch-bridge/hal/src/main/java/dev/applewatchandroid/bridge/RootBluetoothHalHost.java)
+- **Android 36 공개 소켓 API:** `BluetoothSocketSettings`가 추가됐지만 새 생성 API가 지원하는 소켓은 RFCOMM과 LE이며 LE PSM 범위는 128–255다. Bluetooth classic ERTM과 컨트롤러 접근을 사용하는 위 연구 프로젝트의 전송 계층을 이 API로 그대로 대체할 수 있다는 근거는 없다. [Android API](https://developer.android.com/reference/android/bluetooth/BluetoothSocketSettings.Builder)
+
+위 연구 프로젝트에 `TYPE_SET_SECTION_SUBTYPE_ICON = 14` 상수는 있지만, 해당 상수가 있다는 사실만으로 원본 아이콘을 모든 알림 단계에 표시하는 완성된 기능을 입증하지는 않는다. 현재 조회한 Java 소스에서는 상수 선언과 상수 값 테스트 외의 참조를 찾지 못했다. 이 프로젝트의 소스 조사는 REA의 바이너리 분석과 별도로 수행했다.
+
+따라서 현재 지원되는 기기·계정·서버 없는 사용 조건을 유지하면서 시스템 알림의 발신 앱 아이콘과 전체 레이아웃을 변경할 구현 경로는 아직 확보하지 못했다. 프로토콜 재현을 일반 앱 UI 수정처럼 설명하거나, 지원하지 않는 갤럭시에 해당 실험 구현을 설치하지 않는다.
