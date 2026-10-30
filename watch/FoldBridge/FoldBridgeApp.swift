@@ -221,7 +221,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button(language.text("휴대폰 등록 해제"),role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.4.6").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.4.7").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle(language.text("설정"))
             .confirmationDialog(language.text("연결 유지를 시작할까요?"),isPresented:$startingLocation,titleVisibility:.visible) {
@@ -306,6 +306,11 @@ struct CompactNotificationView: View {
         return 0
     }
 
+    private var bottomAdjustment: CGFloat {
+        if #available(watchOS 27.0,*) { return -4 }
+        return 0
+    }
+
     @ViewBuilder private func bodyText(_ value: String) -> some View {
         if #available(watchOS 26.0,*) {
             Text(value).lineHeight(.exact(points:textSize * 1.15625))
@@ -355,6 +360,7 @@ struct CompactNotificationView: View {
             }
             // Keep the icon outside text measurement; preserve its full rounded outline.
             .padding(.top,topAdjustment)
+            .padding(.bottom,bottomAdjustment)
         }
     }
 }

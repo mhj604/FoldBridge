@@ -1,6 +1,6 @@
 # 빌드와 설치
 
-현재 배포는 Android `0.5.1-local` / versionCode 11, 워치 `0.4.6` / build 17이다. 처음 사용하는 경우 [빠른 시작](QUICK_START_KO.md)을 먼저 읽는다.
+현재 배포는 Android `0.5.2-local` / versionCode 13, 워치 `0.4.7` / build 21이다. 처음 사용하는 경우 [빠른 시작](QUICK_START_KO.md)을 먼저 읽는다.
 
 ## Android
 
@@ -11,7 +11,7 @@ python3 android/build_android.py \
   --sdk /absolute/path/to/android-sdk \
   --java-home /absolute/path/to/jdk \
   --keystore /absolute/path/to/foldbridge-local.keystore \
-  --output /absolute/path/to/FoldBridge-Local-0.5.1.apk \
+  --output /absolute/path/to/FoldBridge-Local-0.5.2.apk \
   --skip-signature-check
 ```
 

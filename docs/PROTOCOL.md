@@ -28,13 +28,13 @@ CCC는 `0x2902`이고 Local 구독 값은 indication 활성화다. 기존 FoldBr
 
 AES-256-GCM의 AAD는 `FoldBridge/v1`이다. 휴대폰 nonce prefix는 `FBP1`, 워치는 `FBW1`이며 뒤에 64비트 순번을 붙인다. 같은 방향의 반복/감소 순번을 거부한다. 연결마다 새로운 양쪽 nonce로 세션 키를 다시 파생한다.
 
-암호화 envelope는 `{type:"sealed", seq:1, data:"base64(ciphertext || tag)"}`다. Local 실행 경로의 메시지는 `confirm`, `ready`, `state`, `sync`, `notification`, `ack`, `reconnect`, `ping`, `pong`다. 기존 Push 지원 소스는 남아 있으나 Local은 APNs 토큰을 보내거나 서버를 사용하지 않는다.
+암호화 envelope는 `{type:"sealed", seq:1, data:"base64(ciphertext || tag)"}`다. Local 실행 경로의 메시지는 `confirm`, `ready`, `state`, `sync`, `notification`, `ack`, `refresh`, `refreshed` (이전 버전 호환: `reconnect`, `ping`, `pong`)다. 기존 Push 지원 소스는 남아 있으나 Local은 APNs 토큰을 보내거나 서버를 사용하지 않는다.
 
 ## 알림과 수신 확인
 
 `notification`에는 Android 알림 키의 해시 ID, 제목/본문의 해시 리비전, 앱 표시명, 제목, 본문, 게시 시각을 넣는다. 최초 양쪽 확인 전에는 전달하지 않는다.
 
-미전달 목록은 암호화해 최대 24시간/1,024개를 보관하고 ID별 최신 리비전으로 대체한다. 한 메시지씩 보내며 앱 ACK를 기다린다. 90초 내 확인이 없으면 최대 3회 시도 후 연결을 다시 맺고 미확인 항목을 재전송한다. Android 서비스 시작/알림 접근 재연결 때 현재 알림을 다시 가져온다.
+미전달 목록은 암호화해 최대 24시간/1,024개를 보관하고 ID별 최신 리비전으로 대체한다. 한 메시지씩 보내며 앱 ACK를 기다린다. 90초 내 확인이 없으면 최대 3회 시도 후 해당 항목을 다음 깨움/동기화까지 대기시키고 다음 항목을 처리한다. 앱 ACK 지연만으로 BLE 연결을 취소하지 않는다. Android 서비스 시작/알림 접근 재연결 때 현재 알림을 다시 가져온다.
 
 워치는 표시 권한을 확인한 뒤 로컬 알림을 등록하고 성공 시 ACK한다. 이미 기억하는 동일 리비전은 다시 표시하지 않고 ACK한다. ACK는 표시 요청 수락/기존 수신 기록 확인이며 화면 표시·진동·열람을 보장하지 않는다. 워치는 제목·본문이 담긴 별도 수신함을 저장하지 않는다. 중복 판별용 ID/리비전 해시 512개만 Keychain에 보관한다. 알림 내용은 watchOS 알림 센터에서 관리한다.
 
@@ -55,7 +55,9 @@ watchOS 0.4.3은 캐시된 원본 아이콘이 있는 알림에 `FOLDBRIDGE_COMP
 이미지 첨부를 생성하지 않으므로 아이콘을 시스템 미디어 미리보기나 카드 썸네일로 사용하지 않는다. 팝업/카드/상단 sash의 시스템 발송 앱 표시는 FoldBridge다. 이전 버전 알림의 카테고리와 시스템에 저장된 첨부를 강제로 변경하거나 재등록하지 않는다.
 
 
-## 한쪽에서 요청하는 재연결 (Android 0.5.1 / Watch 0.4.6)
+## 과거 동작: Android 0.5.1 / Watch 0.4.6
+
+아래 방식은 0.4.7/0.5.2에서 대체했다. 특히 주기적 ping과 짧은 시간 초과 취소는 현재 사용하지 않는다.
 
 - 폰에서 새로고침을 누르면 인증된 세션에 `reconnect`를 보낸다. 워치는 저장된 상대 키를 유지하고 연결 취소 → 검색 → 새 nonce로 인증을 진행한다. 폰은 GATT 서비스와 특성 객체를 유지해 워치 캐시의 무효화를 줄인다. 요청 후 1.5초간 같은 세션이 남으면 폰도 해당 연결을 취소한다. 이전 세션용 예약 작업은 generation이 바뀌면 무시한다.
 - 워치에서 새로고침을 누르면 기존 연결을 취소하고, 폰의 실행 중인 peripheral 서비스로 재접속한다. 폰 버튼을 누를 필요는 없다.
@@ -65,3 +67,17 @@ watchOS 0.4.3은 캐시된 원본 아이콘이 있는 알림에 `FOLDBRIDGE_COMP
 - 제어 메시지는 watchOS 알림을 생성하지 않는다. 강제 종료·Bluetooth 꺼짐·범위 이탈·OS의 실행 중단을 해제하는 프로토콜은 아니다.
 
 서비스 무효화 처리는 [Apple CBPeripheralDelegate](https://developer.apple.com/documentation/corebluetooth/cbperipheraldelegate/peripheral(_:didmodifyservices:))를 따른다. 연결 취소는 [Android BluetoothGattServer](https://developer.android.com/reference/android/bluetooth/BluetoothGattServer#cancelConnection(android.bluetooth.BluetoothDevice)) API를 사용한다.
+
+
+## 현재 갱신·복원 (Android 0.5.2 / Watch 0.4.7)
+
+- 정상 연결에서 한쪽 새로고침은 암호화된 `refresh`를 보낸다. 폰은 `refreshed`로 응답하고 워치는 `state`/`sync`로 응답한다. 연결·세션·등록 키를 보존한다.
+- 자동 ping을 생성하지 않으며 `ready.liveness`는 0이다. 워치가 백그라운드에서 실행되지 않은 시간을 통신 오류로 간주해 연결을 취소하지 않는다. 전면 유지보수는 15초 주기이고 전면 복구 시간 여유를 따로 둔다.
+- Core Bluetooth가 보존한 연결은 서비스/특성을 복원하고 CCC를 명시적으로 다시 설정한다. 프로세스가 사라졌다면 새 nonce와 저장된 상대 공개 키로 같은 BLE 연결에서 다시 인증한다. 인증된 상태에서 서비스 무효화가 오면 다른 Android 시스템 서비스의 변경일 수 있으므로 세션을 보존한 채 특성/구독만 다시 구성한다. 실제 프로세스 복원은 새 nonce 인증을 수행한다.
+- 저장된 상대의 pending connect는 백그라운드에서 유지한다. 연속 물리 끊김에는 앱 재시도 간격을 최대 30초로 늘려 반복 접속을 줄이고 인증 성공 시 초기화한다. 재검색은 캐시가 없거나 전면에서 연결 대기가 길어진 경우에 사용한다.
+- 폰의 암호화 상태가 사라졌지만 구독이 남은 경우 평문 `wake`/v1은 새 인증만 요청한다. 어떤 알림도 이 메시지만으로 허용하지 않는다. 등록된 워치의 인증 대기만으로 물리 연결을 120초 뒤 취소하지 않는다. 미등록 상대의 코드 등록 시간 제한은 유지한다.
+- 같은 링크의 재인증 때 이전 ATT indication/write 응답은 기존 전송 슬롯만 해제하며 새 세션 첫 조각을 제거하지 않는다. 폰은 실제 수신된 정상 ATT write 길이로 MTU 하한도 복구한다.
+- 앱 ACK 지연은 미전달 대기로 남긴다. Bluetooth 전송 실패와 앱 표시 확인 지연을 구분한다. 수동 갱신/동기화 때 대기 항목을 재시도한다.
+- 진단에는 프로세스 식별용 임의 값, 연결 단계·카운터·오류 코드만 기록한다. 알림 본문·개인 키·위치 좌표는 기록하지 않는다.
+
+BLE 특성 변경으로 백그라운드 실행 기회를 받는 것은 watchOS가 제어한다. 이 프로토콜은 강제 실행 API나 실행 예산 우회가 아니다. [Apple 백그라운드 작업](https://developer.apple.com/documentation/watchkit/using-background-tasks)

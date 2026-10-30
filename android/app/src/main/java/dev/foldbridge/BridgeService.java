@@ -25,7 +25,10 @@ public final class BridgeService extends Service {
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",11,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",13,"bridgeRunning",s!=null,"status",status,"error",error,
+            "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
+            "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
+            "softRefreshCount",s==null?0:s.softRefreshCount,"disconnectCount",s==null?0:s.disconnectCount,"lastDisconnectReason",s==null?"":s.lastDisconnectReason,
             "sessionGeneration",s==null?0:s.generation,"refreshCount",s==null?0:s.refreshCount,"stage",s==null?"idle":s.stage,
             "authenticated",s!=null&&s.authenticated,"watchActive",s!=null&&s.watchActive,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
@@ -49,6 +52,12 @@ public final class BridgeService extends Service {
     private final Set<String> acknowledgedIcons=new HashSet<>();
     private BluetoothGattServer server; private BluetoothGattCharacteristic tx;
     private BluetoothLeAdvertiser advertiser; private BluetoothDevice central;
+    private volatile long indicationTicket=0;
+    private int indicationGeneration;
+    private byte[] indicationPacket;
+    private int softRefreshCount=0;
+    private String lastDisconnectReason="";
+    private int disconnectCount=0;
     private int bluetoothRetries=0, bluetoothEpoch=0, refreshCount=0;
     private AdvertiseCallback advertisements;
     private final Runnable bluetoothRetry=()->{if(server==null)startBluetooth();};
@@ -62,7 +71,7 @@ public final class BridgeService extends Service {
     private static final class Delivery {
         final JSONObject message; final long queuedAt;
         int bleAttempts=0;
-        boolean iconSent=false;
+        boolean iconSent=false, waitingForWake=false;
         Delivery(JSONObject message){this.message=message;this.queuedAt=SystemClock.elapsedRealtime()-Math.max(0,System.currentTimeMillis()-message.optLong("posted_at",System.currentTimeMillis()));}
     }
     private static String b64(byte[] b) { return Base64.getEncoder().encodeToString(b); }
@@ -117,21 +126,19 @@ public final class BridgeService extends Service {
     }
     private void refreshBluetooth() {
         refreshCount++;bluetoothRetries=0;blockedUntil=0;failures=0;pairUntil=0;
-        error="";status="연결 새로고침 중";recordState(this);
-        if(server==null){startBluetooth();return;}
+        error="";
+        if(server==null){status="연결 새로고침 중";startBluetooth();return;}
         if(authenticated&&subscribed) {
-            // Ask the authenticated watch to cancel/reconnect before dropping the link.
-            // Keep the GATT service instance so its cached characteristics remain valid.
-            int epoch=generation;
-            sendSecure(object("type","reconnect"));
-            handler.postDelayed(()->{if(epoch==generation)refreshLink();},1500);
-        } else refreshLink();
-    }
-    private void refreshLink() {
-        BluetoothDevice previous=central;
-        clearSession();
-        if(server!=null&&previous!=null)try{server.cancelConnection(previous);}catch(RuntimeException ignored){}
-        status="워치 연결 대기 중";error="";recordState(this);
+            softRefreshCount++;
+            sendSecure(object("type","refresh"));
+            status="워치 연결됨";
+        } else if(central!=null&&subscribed) {
+            // This only requests a fresh pinned-key handshake; no data is trusted
+            // until the existing peer-key check succeeds.
+            sendPlain(object("type","wake","v",1));
+            status="워치 인증 중";
+        } else status=central==null?"워치 연결 대기 중":"워치 인증 중";
+        recordState(this);
     }
     private void retryBluetooth(String reason) {
         stopBluetooth();fail(reason);
@@ -177,7 +184,7 @@ public final class BridgeService extends Service {
                 if(central!=null&&device.getAddress().equals(central.getAddress()))return;
                 if(central!=null || SystemClock.elapsedRealtime()<blockedUntil) { server.cancelConnection(device); return; }
                 clearSession();central=device;error="";status="워치 인증 중";recordState(BridgeService.this);
-                int epoch=generation; handler.postDelayed(()->{if(epoch==generation&&!authenticated) disconnect("인증 시간이 만료됐습니다.");},120000);
+                schedulePairingDeadline();
             } else if(state==BluetoothProfile.STATE_DISCONNECTED&&central!=null&&device.getAddress().equals(central.getAddress())) { clearSession(); status="연결 끊김, 워치 재연결 대기"; }
         }); }
         @Override public void onMtuChanged(BluetoothDevice device,int value) { handler.post(()->{if(token!=bluetoothEpoch)return;if(matches(device))mtu=Math.max(23,value);}); }
@@ -187,8 +194,10 @@ public final class BridgeService extends Service {
         @Override public void onDescriptorWriteRequest(BluetoothDevice device,int requestId,BluetoothGattDescriptor descriptor,boolean prepared,boolean response,int offset,byte[] value) {
             handler.post(()->{if(token!=bluetoothEpoch)return;
                 if(server==null)return;
-                boolean valid=matches(device)&&CCC.equals(descriptor.getUuid())&&!prepared&&offset==0&&Arrays.equals(value,BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
-                if(valid)subscribed=true;
+                boolean enable=Arrays.equals(value,BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+                boolean disable=Arrays.equals(value,BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+                boolean valid=matches(device)&&CCC.equals(descriptor.getUuid())&&!prepared&&offset==0&&(enable||disable);
+                if(valid)subscribed=enable;
                 if(response)server.sendResponse(device,requestId,valid?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,0,null);
             });
         }
@@ -198,23 +207,37 @@ public final class BridgeService extends Service {
                 boolean valid=matches(device)&&RX.equals(characteristic.getUuid())&&!prepared&&offset==0&&subscribed;
                 if(response)server.sendResponse(device,requestId,valid?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,0,null);
                 if(!valid)return;
+                // A normal accepted ATT write proves this payload fits the link MTU,
+                // even if Android delivered onMtuChanged before STATE_CONNECTED.
+                mtu=Math.max(mtu,value.length+3);
                 try { byte[] message=assembler.accept(value,SystemClock.elapsedRealtime()); if(message!=null)receive(new JSONObject(new String(message,StandardCharsets.UTF_8))); }
                 catch(Exception e) { disconnect("인증 또는 데이터 검증 실패"); }
             });
         }
-        @Override public void onNotificationSent(BluetoothDevice device,int result) { handler.post(()->{if(token!=bluetoothEpoch)return;
-            if(!matches(device))return; inFlight=false;
-            if(result!=BluetoothGatt.GATT_SUCCESS) { disconnect("BLE 전송 실패: "+result); return; }
-            outgoing.pollFirst(); drain();
-        }); }
+        @Override public void onNotificationSent(BluetoothDevice device,int result) {
+            long ticket=indicationTicket;
+            handler.post(()->{if(token!=bluetoothEpoch||ticket!=indicationTicket||!matches(device)||!inFlight)return;
+                boolean current=indicationGeneration==generation;
+                byte[] completed=indicationPacket;
+                inFlight=false;indicationPacket=null;
+                if(result!=BluetoothGatt.GATT_SUCCESS&&current) { disconnect("BLE 전송 실패: "+result); return; }
+                if(current&&outgoing.peekFirst()==completed)outgoing.pollFirst();
+                drain();
+            });
+        }
     };}
     private boolean matches(BluetoothDevice d) { return central!=null&&d.getAddress().equals(central.getAddress()); }
     private void receive(JSONObject message) throws Exception {
         String type=message.optString("type");
         if("commit".equals(type)) {
-            if(!stage.equals("idle") || message.optInt("v")!=1)throw new GeneralSecurityException("Handshake state");
+            if(message.optInt("v")!=1)throw new GeneralSecurityException("Handshake state");
             if(vault.get("peer").isEmpty()&&SystemClock.elapsedRealtime()>pairUntil) { disconnect("휴대폰에서 새 워치 등록을 먼저 누르세요."); return; }
-            peerCommit=unb64(message.getString("commit")); if(peerCommit.length!=32)throw new GeneralSecurityException("Commit length");
+            byte[] commit=unb64(message.getString("commit")); if(commit.length!=32)throw new GeneralSecurityException("Commit length");
+            if(!stage.equals("idle")||session!=null) {
+                clearProtocol();
+                schedulePairingDeadline();
+            }
+            peerCommit=commit;
             ownNonce=Crypto.random(32); stage="reveal";
             sendPlain(object("type","commit","v",1,"commit",b64(Crypto.digest(Crypto.join(identity.getPublic().getEncoded(),ownNonce))))); return;
         }
@@ -248,6 +271,7 @@ public final class BridgeService extends Service {
         } else if("state".equals(eventType)) watchActive=event.optBoolean("active");
         else if("push_token".equals(eventType)) { String token=event.getString("token"); if(!token.matches("[0-9a-f]{64,256}"))throw new GeneralSecurityException("Push token"); vault.put("push_token",token); }
         else if("sync".equals(eventType)) flush();
+        else if("refresh".equals(eventType)) {softRefreshCount++;sendSecure(object("type","refreshed"));flush();recordState(this);}
         else if("ping".equals(eventType)) {
             String nonce=event.getString("nonce");
             if(nonce.length()>64)throw new GeneralSecurityException("Ping length");
@@ -258,7 +282,7 @@ public final class BridgeService extends Service {
     private void finishAuthentication() {
         if(authenticated||!localConfirmed||!remoteConfirmed)return;
         vault.put("peer",b64(peerPublic)); authenticated=true;pairingCode="";failures=0;blockedUntil=0;error="";status="워치 연결됨";
-        sendSecure(object("type","ready","liveness",1));
+        sendSecure(object("type","ready","liveness",0));
         recordState(this);
     }
     private void sendPlain(JSONObject object) {
@@ -276,10 +300,11 @@ public final class BridgeService extends Service {
         if(server==null||central==null||inFlight)return;
         if(outgoing.isEmpty()&&!messages.isEmpty())outgoing.addAll(frames.split(messages.removeFirst(),Math.max(20,mtu-3)));
         if(outgoing.isEmpty())return;
-        inFlight=true; int result=server.notifyCharacteristicChanged(central,tx,true,outgoing.peekFirst());
+        inFlight=true;indicationGeneration=generation;indicationPacket=outgoing.peekFirst();
+        long ticket=++indicationTicket;
+        int result=server.notifyCharacteristicChanged(central,tx,true,indicationPacket);
         if(result!=BluetoothStatusCodes.SUCCESS) { inFlight=false; disconnect("BLE 전송을 시작하지 못했습니다: "+result); return; }
-        int epoch=generation; byte[] packet=outgoing.peekFirst();
-        handler.postDelayed(()->{if(epoch==generation&&inFlight&&outgoing.peekFirst()==packet)disconnect("BLE 전송 확인 시간 초과");},5000);
+        handler.postDelayed(()->{if(ticket==indicationTicket&&inFlight)disconnect("BLE 전송 확인 시간 초과");},30000);
     }
     static void enqueue(JSONObject notification) {
         BridgeService s=instance; if(s==null)return;
@@ -309,7 +334,7 @@ public final class BridgeService extends Service {
     private void drainPending() {
         if(instance!=this||!authenticated||activeDelivery!=null)return;
         flushExpired();
-        if(!pending.isEmpty())deliver(pending.values().iterator().next());
+        for(Delivery d:pending.values())if(!d.waitingForWake){deliver(d);break;}
     }
     private void deliver(Delivery d) {
         if(instance!=this||!authenticated||pending.get(d.message.optString("id"))!=d)return;
@@ -328,7 +353,7 @@ public final class BridgeService extends Service {
             activeDelivery=null;
             if(pending.get(d.message.optString("id"))!=d){drainPending();return;}
             if(d.bleAttempts<3)deliver(d);
-            else disconnect("워치 수신 확인이 없어 다시 연결합니다. 알림은 보관합니다.");
+            else {d.waitingForWake=true;recordState(this);drainPending();}
         },90000);
     }
     private void flushExpired() {
@@ -337,14 +362,33 @@ public final class BridgeService extends Service {
         if(activeDelivery!=null&&pending.get(activeDelivery.message.optString("id"))!=activeDelivery)activeDelivery=null;
         waiting=pending.size();
     }
-    private void flush() {flushExpired();persist();drainPending();}
-    private void persist(){if(outbox!=null){JSONArray list=new JSONArray();for(Delivery d:pending.values())list.put(d.message);outbox.save(list);}}
-    private void clearSession() {
-        generation++; acknowledgedIcons.clear(); central=null; session=null; peerPublic=null; ownNonce=null; peerCommit=null; stage="idle";
-        activeDelivery=null;for(Delivery d:pending.values())d.bleAttempts=0;
-        authenticated=false; localConfirmed=false; remoteConfirmed=false; subscribed=false; inFlight=false; watchActive=false; mtu=23; pairingCode=""; outgoing.clear(); messages.clear(); assembler.reset();
+    private void flush() {
+        flushExpired();
+        for(Delivery d:pending.values())if(d.waitingForWake){d.waitingForWake=false;d.bleAttempts=0;}
+        persist();drainPending();
     }
-    private void disconnect(String why) { BluetoothDevice d=central; clearSession(); if(server!=null&&d!=null)server.cancelConnection(d); if(++failures>=5){blockedUntil=SystemClock.elapsedRealtime()+60000;failures=0;}fail(why); }
+    private void persist(){if(outbox!=null){JSONArray list=new JSONArray();for(Delivery d:pending.values())list.put(d.message);outbox.save(list);}}
+    private void clearProtocol() {
+        generation++; acknowledgedIcons.clear(); session=null; peerPublic=null; ownNonce=null; peerCommit=null; stage="idle";
+        activeDelivery=null;for(Delivery d:pending.values())d.bleAttempts=0;
+        authenticated=false;localConfirmed=false;remoteConfirmed=false;watchActive=false;pairingCode="";
+        outgoing.clear();messages.clear();assembler.reset();
+        // Keep the old ATT indication slot until its callback. Its old-generation
+        // callback must not remove the first packet of the replacement session.
+    }
+    private void schedulePairingDeadline() {
+        int epoch=generation;
+        handler.postDelayed(()->{
+            // A saved watch may be suspended during restoration. Keep its GATT
+            // link pending; every payload still requires a fresh pinned handshake.
+            if(epoch==generation&&!authenticated&&vault.get("peer").isEmpty())disconnect("인증 시간이 만료됐습니다.");
+        },120000);
+    }
+    private void clearSession() {
+        clearProtocol();central=null;subscribed=false;mtu=23;
+        inFlight=false;indicationPacket=null;indicationTicket++;
+    }
+    private void disconnect(String why) { lastDisconnectReason=why;disconnectCount++;android.util.Log.i("FoldBridgeConnection",why); BluetoothDevice d=central; clearSession(); if(server!=null&&d!=null)server.cancelConnection(d); if(++failures>=5){blockedUntil=SystemClock.elapsedRealtime()+60000;failures=0;}fail(why); }
     private void fail(String why) { error=why; status="확인 필요";recordState(this); }
     static void bluetoothOff() {
         BridgeService s=instance;if(s==null)return;
