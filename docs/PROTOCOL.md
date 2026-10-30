@@ -28,7 +28,7 @@ CCC는 `0x2902`이고 Local 구독 값은 indication 활성화다. 기존 FoldBr
 
 AES-256-GCM의 AAD는 `FoldBridge/v1`이다. 휴대폰 nonce prefix는 `FBP1`, 워치는 `FBW1`이며 뒤에 64비트 순번을 붙인다. 같은 방향의 반복/감소 순번을 거부한다. 연결마다 새로운 양쪽 nonce로 세션 키를 다시 파생한다.
 
-암호화 envelope는 `{type:"sealed", seq:1, data:"base64(ciphertext || tag)"}`다. Local 실행 경로의 메시지는 `confirm`, `ready`, `state`, `sync`, `notification`, `ack`다. 기존 Push 지원 소스는 남아 있으나 Local은 APNs 토큰을 보내거나 서버를 사용하지 않는다.
+암호화 envelope는 `{type:"sealed", seq:1, data:"base64(ciphertext || tag)"}`다. Local 실행 경로의 메시지는 `confirm`, `ready`, `state`, `sync`, `notification`, `ack`, `reconnect`, `ping`, `pong`다. 기존 Push 지원 소스는 남아 있으나 Local은 APNs 토큰을 보내거나 서버를 사용하지 않는다.
 
 ## 알림과 수신 확인
 
@@ -53,3 +53,15 @@ AES-256-GCM의 AAD는 `FoldBridge/v1`이다. 휴대폰 nonce prefix는 `FBP1`, �
 watchOS 0.4.3은 캐시된 원본 아이콘이 있는 알림에 `FOLDBRIDGE_COMPACT_ICON_ALERT` 카테고리를 사용한다. 이 카테고리의 long-look 본문만 고정 폭 SwiftUI 화면으로 표시하며 원본 아이콘은 24pt다. 아이콘이 없으면 `FOLDBRIDGE_NATIVE_ALERT` 카테고리의 시스템 텍스트 화면을 사용한다. 두 경로 모두 원본 앱 thread ID와 기존 ACK/중복 판별을 유지한다.
 
 이미지 첨부를 생성하지 않으므로 아이콘을 시스템 미디어 미리보기나 카드 썸네일로 사용하지 않는다. 팝업/카드/상단 sash의 시스템 발송 앱 표시는 FoldBridge다. 이전 버전 알림의 카테고리와 시스템에 저장된 첨부를 강제로 변경하거나 재등록하지 않는다.
+
+
+## 한쪽에서 요청하는 재연결 (Android 0.5.1 / Watch 0.4.6)
+
+- 폰에서 새로고침을 누르면 인증된 세션에 `reconnect`를 보낸다. 워치는 저장된 상대 키를 유지하고 연결 취소 → 검색 → 새 nonce로 인증을 진행한다. 폰은 GATT 서비스와 특성 객체를 유지해 워치 캐시의 무효화를 줄인다. 요청 후 1.5초간 같은 세션이 남으면 폰도 해당 연결을 취소한다. 이전 세션용 예약 작업은 generation이 바뀌면 무시한다.
+- 워치에서 새로고침을 누르면 기존 연결을 취소하고, 폰의 실행 중인 peripheral 서비스로 재접속한다. 폰 버튼을 누를 필요는 없다.
+- 폰의 `ready`에 `liveness:1`을 넣어 응답 확인을 지원함을 알린다. 이를 받은 워치만 암호화된 `ping`을 보내며, 폰은 같은 `nonce`의 `pong`으로 응답한다. 이전 폰 버전에는 이 기능을 적용하지 않는다.
+- 워치가 실행 중이거나 연결 유지 실행 기회를 받는 동안 5초 주기로 상태를 살핀다. 인증된 메시지가 15초 이상 없으면 ping을 보내고, ping 이후 수신 조각도 없이 20초 이상 멈추면 재연결한다. 조각이 계속 들어오는 큰 알림은 중간에 끊지 않는다. 등록된 기기의 연결·서비스 검색·인증이 20초 이상 멈춘 경우도 재시도한다. 최초 코드 등록의 120초 대기는 유지한다.
+- 서비스 변경은 Core Bluetooth의 `didModifyServices`로 처리한다. 모든 새 연결은 기존 고정 공개 키 확인과 새 세션 키 파생을 그대로 수행한다.
+- 제어 메시지는 watchOS 알림을 생성하지 않는다. 강제 종료·Bluetooth 꺼짐·범위 이탈·OS의 실행 중단을 해제하는 프로토콜은 아니다.
+
+서비스 무효화 처리는 [Apple CBPeripheralDelegate](https://developer.apple.com/documentation/corebluetooth/cbperipheraldelegate/peripheral(_:didmodifyservices:))를 따른다. 연결 취소는 [Android BluetoothGattServer](https://developer.android.com/reference/android/bluetooth/BluetoothGattServer#cancelConnection(android.bluetooth.BluetoothDevice)) API를 사용한다.

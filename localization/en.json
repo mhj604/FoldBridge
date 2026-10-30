@@ -177,5 +177,6 @@
   "휴대폰이 가까워지면 다시 연결합니다": "Will reconnect when your phone is nearby",
   "언어 / Language": "Language / 언어",
   "시스템 설정": "System default",
-  "FoldBridge Local 알림 전달": "FoldBridge Local notifications"
+  "FoldBridge Local 알림 전달": "FoldBridge Local notifications",
+  "기존 등록을 유지한 채 양쪽 연결을 다시 준비합니다. 상대 기기의 새로고침은 누르지 않아도 됩니다.": "Refreshing both sides while keeping your pairing. You do not need to refresh the other device."
 }

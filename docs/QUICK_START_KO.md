@@ -1,6 +1,6 @@
 # 처음부터 설치하고 연결하기
 
-이 문서는 `local-ble` 브랜치의 Android 0.5.0 / watchOS 0.4.5를 기준으로 합니다. 사용 중 알림은 갤럭시와 워치 사이 BLE로 직접 전달됩니다. 서버 주소·아이폰 중계·유료 Push 설정은 필요하지 않습니다.
+이 문서는 `local-ble` 브랜치의 Android 0.5.1 / watchOS 0.4.6를 기준으로 합니다. 사용 중 알림은 갤럭시와 워치 사이 BLE로 직접 전달됩니다. 서버 주소·아이폰 중계·유료 Push 설정은 필요하지 않습니다.
 
 ## 1. 준비하기
 
@@ -22,7 +22,7 @@ cd FoldBridge
 
 ## 3. 갤럭시 앱 설치
 
-1. [배포 APK](../artifacts/android/FoldBridge-Local-0.5.0.apk) 또는 [Releases](https://github.com/mhj604/FoldBridge/releases)에서 APK를 받습니다. GitHub 파일 화면에서는 Download raw file로 받습니다.
+1. [배포 APK](../artifacts/android/FoldBridge-Local-0.5.1.apk) 또는 [Releases](https://github.com/mhj604/FoldBridge/releases)에서 APK를 받습니다. GitHub 파일 화면에서는 Download raw file로 받습니다.
 2. APK를 연 앱의 ‘이 출처 허용’이 필요하면 기기 안내에 따라 설치를 진행합니다.
 3. **FoldBridge Local**을 열고 근처 기기와 일반 알림 권한을 허용합니다.
 4. 앱의 **알림 접근 허용**을 누르고 **FoldBridge Local 알림 전달**을 켭니다. 이 권한이 실제 다른 앱의 알림 수집에 필요합니다.
@@ -63,7 +63,7 @@ python3 watch/build_watch.py --team YOUR_TEAM_ID --bundle-id com.yourname.foldbr
 - 갤럭시 연결 서비스를 켜 두고 두 기기를 Bluetooth 범위 안에 둡니다.
 - 원하는 경우 워치 **설정 → 연결 유지**를 켜고 위치 권한을 허용합니다. 위치 좌표를 수집·저장·전송하지 않지만 배터리 사용이 늘 수 있습니다. 상시 수신 성공을 보장하지 않는 실험 기능입니다.
 - 알림은 워치 알림 센터에서 봅니다. 앱 안에는 이전 메시지 목록이 없습니다.
-- 연결이 끊기면 먼저 갤럭시 **연결 새로고침**, 이어서 워치 **연결 새로고침**을 누릅니다. 워치 잠금을 풀고 앱을 열어 두면 새 인증을 진행할 수 있습니다.
+- 연결이 끊기면 갤럭시 또는 워치 **한쪽에서만 연결 새로고침**을 누릅니다. 상대 기기에서는 누르지 않아도 됩니다. 워치 잠금을 풀고 앱을 열어 두면 새 인증을 진행할 수 있습니다.
 - **지금 동기화**는 연결된 상태에서 대기 알림을 가져오는 버튼입니다. 인증이 멈췄을 때는 새로고침을 사용합니다.
 - 재부팅 후 양쪽 잠금을 한 번 해제합니다. 워치가 자동 복원되지 않으면 FoldBridge를 한 번 엽니다.
 

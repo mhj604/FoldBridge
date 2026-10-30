@@ -36,6 +36,7 @@ final class I18n {
         Map.entry("근처 기기 권한을 다시 허용해 주세요.","text_8e60890e9abe0505"),
         Map.entry("근처 기기 권한이 필요합니다.","text_f827e01ee33be15f"),
         Map.entry("기존 FoldBridge","text_a95d33f5a937594b"),
+        Map.entry("기존 등록을 유지한 채 양쪽 연결을 다시 준비합니다. 상대 기기의 새로고침은 누르지 않아도 됩니다.","text_4b38d0f49669d662"),
         Map.entry("기존 등록을 유지한 채 연결을 다시 준비합니다. 필요하면 워치에서도 ‘연결 새로고침’을 눌러 주세요.","text_3bdd8d4850572271"),
         Map.entry("꺼짐","text_6609ccb10fbda19f"),
         Map.entry("내 알림","text_147bc1c4b5346d71"),

@@ -11,8 +11,8 @@
 | 항목 | 현재 버전 / 링크 |
 | --- | --- |
 | 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) — 서버 없는 BLE 구성 |
-| Android | **0.5.0-local · 코드 10** / [APK 다운로드](artifacts/android/FoldBridge-Local-0.5.0.apk) |
-| Apple Watch | **0.4.5 · 빌드 16** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
+| Android | **0.5.1-local · 코드 11** / [APK 다운로드](artifacts/android/FoldBridge-Local-0.5.1.apk) |
+| Apple Watch | **0.4.6 · 빌드 17** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
 | 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) |
 | 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
 | 연결이 끊긴 경우 | **[새로고침·문제 해결](docs/TROUBLESHOOTING_KO.md)** |
@@ -21,7 +21,7 @@
 2. Mac에서 소스를 받아 `watch/FoldBridge.xcodeproj`를 Xcode로 엽니다. 자신의 Team과 고유한 Bundle ID를 선택해 실제 워치에 설치합니다. 다른 사람의 워치 서명 파일을 그대로 설치하는 방식은 아닙니다.
 3. 갤럭시 **설정 → 새 워치 등록**, 워치 **휴대폰 연결 → 휴대폰 찾기**에서 서로 선택합니다. 코드가 같으면 양쪽에서 확인합니다.
 4. 워치에서 알림 표시를 허용합니다. 원하는 경우 **설정 → 연결 유지**를 켜고 위치 권한을 허용합니다.
-5. 연결이 풀리면 **갤럭시와 워치의 ‘연결 새로고침’**을 누릅니다. 기존 등록과 대기 알림은 보존됩니다.
+5. 연결이 풀리면 **갤럭시 또는 워치 한쪽의 ‘연결 새로고침’**을 누릅니다. 기존 등록과 대기 알림은 보존됩니다.
 
 ```sh
 git clone --branch local-ble https://github.com/mhj604/FoldBridge.git
@@ -48,11 +48,11 @@ open watch/FoldBridge.xcodeproj
 
 ## 알림 모양과 개인정보 표시
 
-0.4.5는 작은 원본 아이콘을 유지하면서 펼친 본문의 글씨 위치와 간격을 기본 알림에 가깝게 조정합니다. 첫 요약 팝업과 상세 화면의 전체 디자인을 동일하게 만들거나 시스템 아이콘을 알림별로 교체하는 기능은 제공하지 않습니다. 이전 요청의 조사 결과는 [알림 표시 범위](docs/NOTIFICATION_DISPLAY_LIMITS_KO.md)에 기록했습니다.
+0.4.6은 작은 원본 아이콘을 유지하면서 펼친 본문의 글씨 위치와 간격을 기본 알림에 가깝게 조정합니다. 첫 요약 팝업과 상세 화면의 전체 디자인을 동일하게 만들거나 시스템 아이콘을 알림별로 교체하는 기능은 제공하지 않습니다. 이전 요청의 조사 결과는 [알림 표시 범위](docs/NOTIFICATION_DISPLAY_LIMITS_KO.md)에 기록했습니다.
 
 처음 뜨는 팝업과 알림 센터 카드의 시스템 아이콘은 **FoldBridge**입니다. 원본 앱 아이콘이 있으면 **눌러 펼친 본문에만 24pt**로 표시합니다. 원본 아이콘이 없는 알림은 기본 텍스트 화면을 사용합니다.
 
-원본 아이콘은 사진 첨부로 보내지 않습니다. 따라서 큰 미디어 미리보기나 카드 썸네일로 재사용되지 않습니다. 아이콘이 있는 상세 본문은 왼쪽 16pt 기준선을 유지하고, 기본 16pt 글자·0pt 추가 문단 간격·18.5pt 본문 줄 높이로 조정했습니다. 원본 아이콘은 텍스트 행 높이에 영향을 주지 않습니다. watchOS 27의 본문 시작점을 위로 보정했습니다. [기본 알림과 비교한 화면·측정 결과](docs/NOTIFICATION_LAYOUT_COMPARISON_KO.md)를 참고하세요. 확장 프레임·중첩 스크롤·고정 본문 높이를 사용하지 않습니다. 제목과 본문은 시스템 글꼴로 줄바꿈하고, 스크롤과 닫기 버튼은 watchOS가 처리합니다. [Apple 알림 표시 구조](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
+원본 아이콘은 사진 첨부로 보내지 않습니다. 따라서 큰 미디어 미리보기나 카드 썸네일로 재사용되지 않습니다. 아이콘이 있는 상세 본문은 왼쪽 16pt 기준선을 유지하고, 기본 16pt 글자·0pt 추가 문단 간격·18.5pt 본문 줄 높이로 조정했습니다. 원본 아이콘은 텍스트 행 높이에 영향을 주지 않습니다. watchOS 27의 본문 시작점을 보정했습니다. 0.4.6에서는 아이콘과 글씨를 0.4.5보다 함께 3pt 아래로 옮겼습니다. [기본 알림과 비교한 화면·측정 결과](docs/NOTIFICATION_LAYOUT_COMPARISON_KO.md)를 참고하세요. 확장 프레임·중첩 스크롤·고정 본문 높이를 사용하지 않습니다. 제목과 본문은 시스템 글꼴로 줄바꿈하고, 스크롤과 닫기 버튼은 watchOS가 처리합니다. [Apple 알림 표시 구조](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
 
 Android가 민감한 본문을 가리면 워치에도 가림 문구가 전달됩니다. 본문 전체 전달을 원하는 사용자는 자신의 기기에서 앱별 수신 설정을 할 수 있습니다. **[민감한 알림 본문 허용](docs/BUILD_AND_SETUP.md#민감한-알림-본문-허용)**을 참고하세요. APK가 이 설정을 스스로 부여하지 않습니다.
 

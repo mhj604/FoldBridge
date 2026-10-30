@@ -32,6 +32,7 @@
   <string name="text_8e60890e9abe0505" formatted="false">"근처 기기 권한을 다시 허용해 주세요."</string>
   <string name="text_f827e01ee33be15f" formatted="false">"근처 기기 권한이 필요합니다."</string>
   <string name="text_a95d33f5a937594b" formatted="false">"기존 FoldBridge"</string>
+  <string name="text_4b38d0f49669d662" formatted="false">"기존 등록을 유지한 채 양쪽 연결을 다시 준비합니다. 상대 기기의 새로고침은 누르지 않아도 됩니다."</string>
   <string name="text_3bdd8d4850572271" formatted="false">"기존 등록을 유지한 채 연결을 다시 준비합니다. 필요하면 워치에서도 ‘연결 새로고침’을 눌러 주세요."</string>
   <string name="text_6609ccb10fbda19f" formatted="false">"꺼짐"</string>
   <string name="text_147bc1c4b5346d71" formatted="false">"내 알림"</string>

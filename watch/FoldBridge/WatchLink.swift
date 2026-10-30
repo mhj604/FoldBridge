@@ -48,6 +48,15 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var lastManualRefresh = Date.distantPast
     private var maintenanceTimer: Timer?
     private var lastMaintenance = Date.distantPast
+    private var connectionAttemptAt = Date.distantPast
+    private var lastPeerActivity = Date.distantPast
+    private var lastIncomingActivity = Date.distantPast
+    private var pongCount = 0
+    private var remoteRefreshCount = 0
+    private var pendingPing: String?
+    private var pingSentAt = Date.distantPast
+    private var peerSupportsLiveness = false
+    private var refreshCount = 0
     private var manager: CBCentralManager!
     private var peripheral: CBPeripheral?, tx: CBCharacteristic?, rx: CBCharacteristic?
     private let framer = Wire.Framer(), assembler = Wire.Assembler()
@@ -91,6 +100,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             CBCentralManagerOptionRestoreIdentifierKey:"dev.foldbridge.watch.central"
         ])
         refreshNotificationSettings()
+        updateMaintenanceTimer()
     }
     func refreshNotificationSettings() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
@@ -129,6 +139,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         resetSession()
         if let old { manager.cancelPeripheralConnection(old) }
         recoveryScanning = false
+        connectionAttemptAt = Date()
         peripheral = phone.peripheral; phone.peripheral.delegate = self; manager.stopScan(); manager.connect(phone.peripheral,options:nil); status = "휴대폰 연결 대기 중"
         // A trusted peripheral's pending connect remains with Core Bluetooth while out of range.
         if (try? WatchStore.get(peerKey)) != nil { scheduleDiscoveryFallback();return }
@@ -147,9 +158,13 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     func refreshConnection() {
         guard Date().timeIntervalSince(lastManualRefresh) >= 3 else { return }
         lastManualRefresh = Date()
+        restartSavedConnection()
+    }
+    private func restartSavedConnection() {
         guard manager.state == .poweredOn else { lastError = "워치 Bluetooth를 켜 주세요.";return }
         if identity == nil { identity = try? WatchStore.identity() }
         guard UserDefaults.standard.string(forKey:phoneIDKey) != nil, (try? WatchStore.get(peerKey)) != nil else { scan();return }
+        refreshCount += 1
         let old = peripheral ?? switchingFrom
         reconnectWork?.cancel();reconnectWork = nil;reconnects = 0
         manager.stopScan();recoveryScanning = false;resetSession()
@@ -263,6 +278,11 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // Submit immediately: a suspended watch app may not get time to run a retry timer.
         reconnect()
     }
+    func peripheral(_ p: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
+        guard p === peripheral,
+              invalidatedServices.contains(where:{$0.uuid == CBUUID(string:profile.service)}) else { return }
+        restartSavedConnection()
+    }
     func peripheral(_ p: CBPeripheral, didDiscoverServices error: Error?) {
         guard p === peripheral else { return }
         guard error == nil, let service = p.services?.first(where:{$0.uuid == CBUUID(string:profile.service)}) else { fail("FoldBridge 서비스를 찾지 못했습니다.",retry:true); return }
@@ -294,7 +314,11 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         guard characteristic.uuid == CBUUID(string:profile.tx), let frame = characteristic.value else { finishBackgroundWhenIdle(); return }
         guard frame != lastIncomingFrame else { finishBackgroundWhenIdle(); return }
         lastIncomingFrame = frame
-        do { if let data = try assembler.accept(frame) { try receive(Wire.decode(data)) } }
+        do {
+            let data = try assembler.accept(frame)
+            lastIncomingActivity = Date()
+            if let data { try receive(Wire.decode(data)) }
+        }
         catch { fail("보안 확인 또는 데이터 검증에 실패했습니다.") }
         finishBackgroundWhenIdle()
     }
@@ -327,9 +351,16 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         }
         guard type == "sealed", let session else { throw Wire.Failure.authentication }
         let message = try session.open(object), event = message["type"] as? String
+        lastPeerActivity = Date()
         if event == "confirm" { remoteConfirmed = true; try finishAuthentication(); return }
         guard connected else { throw Wire.Failure.authentication }
+        if event == "reconnect" { remoteRefreshCount += 1; restartSavedConnection(); return }
+        if event == "pong" {
+            if let nonce = message["nonce"] as? String, nonce == pendingPing { pendingPing = nil; pongCount += 1 }
+            writeDiagnostics(); return
+        }
         if event == "ready" {
+            peerSupportsLiveness = (message["liveness"] as? Int) == 1
             status = "휴대폰 연결됨"; reconcileDelivered {
                 self.sendSecure(["type":"state","active":self.canProcessContinuously]); self.sendPushToken(); self.synchronize()
             }
@@ -452,6 +483,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     func setActive(_ value: Bool) {
         active = value
+        updateMaintenanceTimer()
         if value { refreshNotificationSettings();resumeSavedConnection() }
         if value { backgroundNotice = ""; reconnects = 0 }
         if connected { sendSecure(["type":"state","active":canProcessContinuously]); if value { reconcileDelivered { self.synchronize() } } }
@@ -460,10 +492,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     func setContinuousRuntime(_ value: Bool) {
         continuousRuntime = value
-        maintenanceTimer?.invalidate(); maintenanceTimer = nil; lastMaintenance = .distantPast
-        if value {
-            maintenanceTimer = Timer.scheduledTimer(withTimeInterval:30,repeats:true) { [weak self] _ in self?.maintainConnection() }
-        }
+        updateMaintenanceTimer()
         if connected { sendSecure(["type":"state","active":canProcessContinuously]); if value { synchronize() } }
         else if value { reconnect() }
         writeDiagnostics()
@@ -482,10 +511,36 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             }
         } else { reconnect() }
     }
+    private func updateMaintenanceTimer() {
+        maintenanceTimer?.invalidate(); maintenanceTimer = nil; lastMaintenance = .distantPast
+        guard canProcessContinuously else { return }
+        maintenanceTimer = Timer.scheduledTimer(withTimeInterval:5,repeats:true) { [weak self] _ in self?.maintainConnection() }
+    }
     func maintainConnection() {
-        guard continuousRuntime, Date().timeIntervalSince(lastMaintenance) >= 30 else { return }
+        guard canProcessContinuously, Date().timeIntervalSince(lastMaintenance) >= 5 else { return }
         lastMaintenance = Date()
-        if connected { synchronize() } else { reconnect() }
+        if connected {
+            if peerSupportsLiveness {
+                if pendingPing != nil, Date().timeIntervalSince(max(pingSentAt,lastIncomingActivity)) >= 20 {
+                    restartSavedConnection(); return
+                }
+                if pendingPing == nil, Date().timeIntervalSince(lastPeerActivity) >= 15 {
+                    let nonce = UUID().uuidString
+                    pendingPing = nonce; pingSentAt = Date()
+                    sendSecure(["type":"ping","nonce":nonce])
+                }
+            }
+            if Date().timeIntervalSince(lastSync) >= 30 { synchronize() }
+        } else if peripheral == nil {
+            reconnect()
+        } else if let p = peripheral, p.state == .disconnected {
+            resetSession(); reconnect()
+        } else if (try? WatchStore.get(peerKey)) != nil,
+                  Date().timeIntervalSince(connectionAttemptAt) >= 20 {
+            // A saved peer must not stay forever in cached connect/discovery/auth state.
+            restartSavedConnection()
+        }
+        writeDiagnostics()
     }
     func sendPushToken() {
         guard profile != .local, Bundle.main.object(forInfoDictionaryKey:"FoldBridgePushEnabled") as? Bool == true,
@@ -541,10 +596,16 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         peripheral?.delegate = nil
         epoch += 1; scanEpoch += 1; connected = false; peripheral = nil; tx = nil; rx = nil; session = nil; stage = "idle"; code = ""; localConfirmed = false; remoteConfirmed = false; writing = false; outgoing.removeAll(); assembler.reset()
         lastIncomingFrame = nil; lastSync = .distantPast
+        pendingPing = nil; pingSentAt = .distantPast; lastPeerActivity = .distantPast
+        peerSupportsLiveness = false; connectionAttemptAt = Date(); lastIncomingActivity = .distantPast
     }
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
+            "build":17,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
+            "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,
+            "pongCount":pongCount,"remoteRefreshCount":remoteRefreshCount,
             "continuousRequested":continuousRuntime,"notificationAllowed":notificationAllowed,
             "received":receivedCount,"scheduled":scheduledCount,"pendingReceipts":pendingReceipts.count,
             "lastError":lastError,"backgroundNotice":backgroundNotice]

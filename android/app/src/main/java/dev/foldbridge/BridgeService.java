@@ -25,7 +25,8 @@ public final class BridgeService extends Service {
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",10,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",11,"bridgeRunning",s!=null,"status",status,"error",error,
+            "sessionGeneration",s==null?0:s.generation,"refreshCount",s==null?0:s.refreshCount,"stage",s==null?"idle":s.stage,
             "authenticated",s!=null&&s.authenticated,"watchActive",s!=null&&s.watchActive,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
             "received",NotificationRelay.received,"forwarded",NotificationRelay.forwarded,
@@ -48,7 +49,7 @@ public final class BridgeService extends Service {
     private final Set<String> acknowledgedIcons=new HashSet<>();
     private BluetoothGattServer server; private BluetoothGattCharacteristic tx;
     private BluetoothLeAdvertiser advertiser; private BluetoothDevice central;
-    private int bluetoothRetries=0, bluetoothEpoch=0;
+    private int bluetoothRetries=0, bluetoothEpoch=0, refreshCount=0;
     private AdvertiseCallback advertisements;
     private final Runnable bluetoothRetry=()->{if(server==null)startBluetooth();};
     private Vault vault; private KeyPair identity; private Crypto.Session session;
@@ -115,9 +116,22 @@ public final class BridgeService extends Service {
         tx=null;
     }
     private void refreshBluetooth() {
-        stopBluetooth();bluetoothRetries=0;blockedUntil=0;failures=0;pairUntil=0;
+        refreshCount++;bluetoothRetries=0;blockedUntil=0;failures=0;pairUntil=0;
         error="";status="연결 새로고침 중";recordState(this);
-        handler.postDelayed(bluetoothRetry,500);
+        if(server==null){startBluetooth();return;}
+        if(authenticated&&subscribed) {
+            // Ask the authenticated watch to cancel/reconnect before dropping the link.
+            // Keep the GATT service instance so its cached characteristics remain valid.
+            int epoch=generation;
+            sendSecure(object("type","reconnect"));
+            handler.postDelayed(()->{if(epoch==generation)refreshLink();},1500);
+        } else refreshLink();
+    }
+    private void refreshLink() {
+        BluetoothDevice previous=central;
+        clearSession();
+        if(server!=null&&previous!=null)try{server.cancelConnection(previous);}catch(RuntimeException ignored){}
+        status="워치 연결 대기 중";error="";recordState(this);
     }
     private void retryBluetooth(String reason) {
         stopBluetooth();fail(reason);
@@ -234,12 +248,17 @@ public final class BridgeService extends Service {
         } else if("state".equals(eventType)) watchActive=event.optBoolean("active");
         else if("push_token".equals(eventType)) { String token=event.getString("token"); if(!token.matches("[0-9a-f]{64,256}"))throw new GeneralSecurityException("Push token"); vault.put("push_token",token); }
         else if("sync".equals(eventType)) flush();
+        else if("ping".equals(eventType)) {
+            String nonce=event.getString("nonce");
+            if(nonce.length()>64)throw new GeneralSecurityException("Ping length");
+            sendSecure(object("type","pong","nonce",nonce));
+        }
     }
     static void confirmPair() { BridgeService s=instance; if(s!=null)s.handler.post(()->{if(s.session!=null&&!s.authenticated){s.localConfirmed=true;s.sendSecure(object("type","confirm"));s.finishAuthentication();}}); }
     private void finishAuthentication() {
         if(authenticated||!localConfirmed||!remoteConfirmed)return;
         vault.put("peer",b64(peerPublic)); authenticated=true;pairingCode="";failures=0;blockedUntil=0;error="";status="워치 연결됨";
-        sendSecure(object("type","ready"));
+        sendSecure(object("type","ready","liveness",1));
         recordState(this);
     }
     private void sendPlain(JSONObject object) {

@@ -32,6 +32,7 @@
   <string name="text_8e60890e9abe0505" formatted="false">"Allow Nearby devices permission again."</string>
   <string name="text_f827e01ee33be15f" formatted="false">"Nearby devices permission is required."</string>
   <string name="text_a95d33f5a937594b" formatted="false">"Original FoldBridge"</string>
+  <string name="text_4b38d0f49669d662" formatted="false">"Refreshing both sides while keeping your pairing. You do not need to refresh the other device."</string>
   <string name="text_3bdd8d4850572271" formatted="false">"Refreshing the connection while keeping your pairing. If needed, tap ‘Refresh connection’ on the watch too."</string>
   <string name="text_6609ccb10fbda19f" formatted="false">"Off"</string>
   <string name="text_147bc1c4b5346d71" formatted="false">"My notifications"</string>

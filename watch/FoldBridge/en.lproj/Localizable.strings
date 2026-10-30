@@ -31,6 +31,7 @@
 "근처 기기 권한을 다시 허용해 주세요." = "Allow Nearby devices permission again.";
 "근처 기기 권한이 필요합니다." = "Nearby devices permission is required.";
 "기존 FoldBridge" = "Original FoldBridge";
+"기존 등록을 유지한 채 양쪽 연결을 다시 준비합니다. 상대 기기의 새로고침은 누르지 않아도 됩니다." = "Refreshing both sides while keeping your pairing. You do not need to refresh the other device.";
 "기존 등록을 유지한 채 연결을 다시 준비합니다. 필요하면 워치에서도 ‘연결 새로고침’을 눌러 주세요." = "Refreshing the connection while keeping your pairing. If needed, tap ‘Refresh connection’ on the watch too.";
 "꺼짐" = "Off";
 "내 알림" = "My notifications";
