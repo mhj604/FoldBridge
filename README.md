@@ -12,7 +12,7 @@
 | --- | --- |
 | 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) — 서버 없는 BLE 구성 |
 | Android | **0.5.0-local · 코드 10** / [APK 다운로드](artifacts/android/FoldBridge-Local-0.5.0.apk) |
-| Apple Watch | **0.4.3 · 빌드 14** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
+| Apple Watch | **0.4.4 · 빌드 15** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
 | 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) |
 | 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
 | 연결이 끊긴 경우 | **[새로고침·문제 해결](docs/TROUBLESHOOTING_KO.md)** |
@@ -48,11 +48,11 @@ open watch/FoldBridge.xcodeproj
 
 ## 알림 모양과 개인정보 표시
 
-**미해결 요청:** 첫 요약 팝업과 펼친 화면의 전체 레이아웃 통일, 모든 단계의 원본 앱 아이콘 표시는 구현되지 않았습니다. 현재 가능한 영역과 추가 조사 결과는 [알림 표시의 미해결 범위](docs/NOTIFICATION_DISPLAY_LIMITS_KO.md)에 구분했습니다.
+0.4.4는 작은 원본 아이콘을 유지하면서 펼친 본문의 글씨 위치와 간격을 기본 알림에 가깝게 조정합니다. 첫 요약 팝업과 상세 화면의 전체 디자인을 동일하게 만들거나 시스템 아이콘을 알림별로 교체하는 기능은 제공하지 않습니다. 이전 요청의 조사 결과는 [알림 표시 범위](docs/NOTIFICATION_DISPLAY_LIMITS_KO.md)에 기록했습니다.
 
 처음 뜨는 팝업과 알림 센터 카드의 시스템 아이콘은 **FoldBridge**입니다. 원본 앱 아이콘이 있으면 **눌러 펼친 본문에만 24pt**로 표시합니다. 원본 아이콘이 없는 알림은 기본 텍스트 화면을 사용합니다.
 
-원본 아이콘은 사진 첨부로 보내지 않습니다. 따라서 큰 미디어 미리보기나 카드 썸네일로 재사용되지 않습니다. 아이콘이 있는 상세 본문은 워치 화면 폭에서 좌우 20pt를 뺀 고정 폭으로 배치하며, 확장 프레임·중첩 스크롤·고정 본문 높이를 사용하지 않습니다. 제목과 본문은 시스템 글꼴로 줄바꿈하고, 스크롤과 닫기 버튼은 watchOS가 처리합니다. [Apple 알림 표시 구조](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
+원본 아이콘은 사진 첨부로 보내지 않습니다. 따라서 큰 미디어 미리보기나 카드 썸네일로 재사용되지 않습니다. 아이콘이 있는 상세 본문은 화면 좌우 16pt 기준으로 배치하고 문단 간격은 2pt입니다. 기존 상하 추가 여백은 제거했습니다. 확장 프레임·중첩 스크롤·고정 본문 높이를 사용하지 않습니다. 제목과 본문은 시스템 글꼴로 줄바꿈하고, 스크롤과 닫기 버튼은 watchOS가 처리합니다. [Apple 알림 표시 구조](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
 
 Android가 민감한 본문을 가리면 워치에도 가림 문구가 전달됩니다. 본문 전체 전달을 원하는 사용자는 자신의 기기에서 앱별 수신 설정을 할 수 있습니다. **[민감한 알림 본문 허용](docs/BUILD_AND_SETUP.md#민감한-알림-본문-허용)**을 참고하세요. APK가 이 설정을 스스로 부여하지 않습니다.
 

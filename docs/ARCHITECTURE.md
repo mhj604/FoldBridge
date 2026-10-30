@@ -77,3 +77,7 @@ watchOS의 short-look과 상단 sash는 시스템이 FoldBridge 앱 이름/아�
 사용자가 원본 아이콘을 유지하는 두 번째 표시 방식을 선택했다. `FOLDBRIDGE_COMPACT_ICON_ALERT`만 CompactNotificationController/CompactNotificationView에 연결한다. 기존 native 카테고리와는 분리하며 원본 아이콘이 캐시에 있을 때만 선택한다.
 
 notification host의 intrinsic size를 제한하기 위해 화면 폭에서 40pt를 뺀 유한 폭을 모든 행과 텍스트에 지정한다. icon은 24×24pt, 간격은 8pt이며 나머지 폭에 앱 이름을 배치한다. 본문 높이와 줄 수를 고정하지 않는다. GeometryReader, maxWidth infinity, Spacer, 중첩 ScrollView, 추가 scene padding을 사용하지 않는다. 이미지가 미디어 미리보기로 승격되지 않도록 UNNotificationAttachment는 사용하지 않는다. 첫 팝업/카드/sash는 시스템 FoldBridge 표시를 유지한다.
+
+## 상세 본문의 기본 간격에 맞춘 조정 (Watch 0.4.4)
+
+원본 아이콘은 오른쪽 24pt로 유지한다. 유한 본문 폭을 screenBounds.width-32로 넓혀 좌우 기준 여백을 16pt로 맞추고, VStack 문단 간격은 2pt로 줄인다. 추가 vertical padding 4pt를 제거해 제목·본문의 시작 위치를 위로 옮긴다. 제목·발신자·본문의 왼쪽 기준선과 시스템 글꼴은 유지한다. 이 값은 FoldBridge가 선택한 배치이며 Apple 시스템 알림의 비공개 치수와 동일하다고 주장하지 않는다.

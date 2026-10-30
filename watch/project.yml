@@ -7,8 +7,8 @@ settings:
   base:
     SWIFT_VERSION: "5.0"
     CODE_SIGN_STYLE: Automatic
-    CURRENT_PROJECT_VERSION: 14
-    MARKETING_VERSION: 0.4.3
+    CURRENT_PROJECT_VERSION: 15
+    MARKETING_VERSION: 0.4.4
 targets:
   FoldBridge:
     type: application
@@ -24,8 +24,8 @@ targets:
       path: FoldBridge/Info.plist
       properties:
         CFBundleDisplayName: FoldBridge
-        CFBundleShortVersionString: "0.4.3"
-        CFBundleVersion: "14"
+        CFBundleShortVersionString: "0.4.4"
+        CFBundleVersion: "15"
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, ko]
         WKApplication: true

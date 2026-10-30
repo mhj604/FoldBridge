@@ -1,6 +1,6 @@
 # 빌드와 설치
 
-현재 배포는 Android `0.5.0-local` / versionCode 10, 워치 `0.4.3` / build 14이다. 처음 사용하는 경우 [빠른 시작](QUICK_START_KO.md)을 먼저 읽는다.
+현재 배포는 Android `0.5.0-local` / versionCode 10, 워치 `0.4.4` / build 15이다. 처음 사용하는 경우 [빠른 시작](QUICK_START_KO.md)을 먼저 읽는다.
 
 ## Android
 

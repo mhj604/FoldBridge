@@ -220,7 +220,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button(language.text("휴대폰 등록 해제"),role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.4.3").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.4.4").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle(language.text("설정"))
             .confirmationDialog(language.text("연결 유지를 시작할까요?"),isPresented:$startingLocation,titleVisibility:.visible) {
@@ -295,14 +295,14 @@ final class CompactNotificationController: WKUserNotificationHostingController<C
 struct CompactNotificationView: View {
     let content: UNNotificationContent?
     private let iconSize: CGFloat = 24
-    // Notification hosts measure intrinsic content. A finite width is essential:
-    // do not use an expanding frame, GeometryReader, Spacer, or nested ScrollView.
-    private var contentWidth: CGFloat { max(100,WKInterfaceDevice.current().screenBounds.width-40) }
+    // Keep a finite intrinsic width, with a shared 16pt screen inset for text.
+    // Do not add scene padding: the system owns the sash and scrolling host.
+    private var contentWidth: CGFloat { max(100,WKInterfaceDevice.current().screenBounds.width-32) }
 
     var body: some View {
         if let content {
             let icon = AppIconStore.image(for:content.userInfo["fb_icon"] as? String)
-            VStack(alignment:.leading,spacing:4) {
+            VStack(alignment:.leading,spacing:2) {
                 HStack(alignment:.top,spacing:8) {
                     Text(content.title)
                         .font(.headline)
@@ -334,7 +334,6 @@ struct CompactNotificationView: View {
                 }
             }
             .frame(width:contentWidth,alignment:.leading)
-            .padding(.vertical,4)
         }
     }
 }
