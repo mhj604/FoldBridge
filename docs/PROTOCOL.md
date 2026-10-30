@@ -50,4 +50,4 @@ AES-256-GCM의 AAD는 `FoldBridge/v1`이다. 휴대폰 nonce prefix는 `FBP1`, �
 
 휴대폰은 현재 연결에서 해당 아이콘을 보낸 메시지가 ACK되면 같은 `icon_key`의 `icon_png`를 생략한다. 재연결하면 첫 전송에 다시 포함한다. 일반 텍스트+아이콘이 크기 상한에 가까워지면 아이콘 본문을 생략해 알림 텍스트 전달을 우선한다. 기존 버전은 모르는 필드를 무시할 수 있으며 아이콘 필드가 없는 알림도 처리한다.
 
-watchOS 0.4.1부터 로컬 알림은 카테고리 `FOLDBRIDGE_NATIVE_ALERT`와 원본 앱의 thread ID를 사용한다. WKNotificationScene을 등록하지 않고 short-look과 long-look 모두 시스템 기본 표시를 사용한다. 캐시된 원본 아이콘은 복사본을 만들어 UNNotificationAttachment로 첨부한다. 시스템이 복사본을 이동해도 원본 캐시는 유지한다. 이미지 첨부 등록이 실패하면 첨부 없이 텍스트만 재요청하고, 최종 등록 성공 후에만 ACK한다. 시스템 발송 앱 표시는 FoldBridge다. 이전 `FOLDBRIDGE_ALERT` 알림도 사용자 정의 scene이 없어 기본 화면으로 표시된다.
+watchOS 로컬 알림은 카테고리 `FOLDBRIDGE_NATIVE_ALERT`와 원본 앱의 thread ID를 사용한다. 0.4.2는 WKNotificationScene을 등록하지 않고 이미지 첨부도 생성하지 않는다. 카드와 상세 화면의 텍스트는 모두 기본 시스템 표시를 사용한다. 원본 아이콘 메타데이터는 호환을 위해 받을 수 있으나 기본 화면의 시스템 아이콘을 대체하지 않는다. 그룹/개별 카드의 시스템 앱 아이콘은 FoldBridge이며 원본 앱은 title로 구분한다. 과거 버전으로 이미 등록된 첨부는 시스템 알림 저장소에 남는다.

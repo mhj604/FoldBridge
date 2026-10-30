@@ -12,7 +12,7 @@
 | --- | --- |
 | 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) — 서버 없는 BLE 구성 |
 | Android | **0.5.0-local · 코드 10** / [APK 다운로드](artifacts/android/FoldBridge-Local-0.5.0.apk) |
-| Apple Watch | **0.4.1 · 빌드 12** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
+| Apple Watch | **0.4.2 · 빌드 13** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
 | 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) |
 | 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
 | 연결이 끊긴 경우 | **[새로고침·문제 해결](docs/TROUBLESHOOTING_KO.md)** |
@@ -48,7 +48,7 @@ open watch/FoldBridge.xcodeproj
 
 ## 알림 모양과 개인정보 표시
 
-알림 센터의 카드와 눌러서 펼친 상세 화면을 모두 **watchOS 기본 알림 화면**으로 표시합니다. 원본 앱 아이콘은 표준 이미지 첨부로 전달하며, 별도 아이콘 헤더나 SwiftUI 알림 화면을 그리지 않습니다. 글꼴·줄바꿈·여백·스크롤은 시스템이 처리합니다. 처음 뜨는 아이콘과 상단 앱 이름은 watchOS가 FoldBridge로 생성합니다. [Apple 알림 표시 구조](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
+알림 센터의 카드와 눌러서 펼친 상세 화면을 모두 **watchOS 기본 알림 화면**으로 표시합니다. 현재 기본 레이아웃에서는 원본 앱 아이콘을 별도로 표시하지 않으며, 앱 이름·제목·본문으로 구분합니다. 앱 아이콘을 사진 첨부로 보내지 않습니다. 이미지 첨부는 watchOS에서 큰 미디어 미리보기와 카드 썸네일로 재사용되므로 앱 아이콘 대체 방식으로 사용하지 않습니다. 글꼴·줄바꿈·여백·스크롤은 시스템이 처리합니다. 처음 뜨는 아이콘과 상단 앱 이름은 watchOS가 FoldBridge로 생성합니다. [Apple 알림 표시 구조](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
 
 Android가 민감한 본문을 가리면 워치에도 가림 문구가 전달됩니다. 본문 전체 전달을 원하는 사용자는 자신의 기기에서 앱별 수신 설정을 할 수 있습니다. **[민감한 알림 본문 허용](docs/BUILD_AND_SETUP.md#민감한-알림-본문-허용)**을 참고하세요. APK가 이 설정을 스스로 부여하지 않습니다.
 

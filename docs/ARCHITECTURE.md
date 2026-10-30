@@ -44,7 +44,7 @@ Android 개인 키는 Android Keystore, 워치 개인 키는 기기 전용 Keych
 
 Android `AppIcons`는 PackageManager의 원본 앱 아이콘을 읽고 BLE 메시지 크기에 맞춰 48px부터 단계적으로 축소한 PNG로 만든다. PNG는 최대 3,072바이트이며 SHA-256 키로 식별한다. 같은 연결에서 해당 아이콘을 포함한 알림의 ACK를 받으면 이후에는 아이콘 키만 보낸다. 아이콘과 알림 본문은 함께 암호화된다.
 
-워치는 아이콘을 Application Support 폴더에 저장하고 메모리 캐시를 사용한다. 원본 아이콘을 watchOS 표준 이미지 첨부로 전달한다. 카드와 펼친 상세 화면은 모두 시스템 기본 알림 표시를 사용한다. 사용자 정의 WKNotificationScene/SwiftUI 알림 본문을 등록하지 않는다. 발신 앱 ID로 알림을 묶는다. 새 아이콘이 기존 수신 알림에 추가돼도 같은 내용 리비전을 다시 알리지 않는다.
+워치는 아이콘을 Application Support 폴더에 저장하고 메모리 캐시를 사용한다. 0.4.2 기본 표시에서는 원본 아이콘을 이미지 첨부로 만들지 않는다. 카드와 펼친 상세 화면은 텍스트 기반 시스템 기본 알림 표시를 사용한다. 사용자 정의 WKNotificationScene/SwiftUI 알림 본문을 등록하지 않는다. 발신 앱 ID로 알림을 묶는다. 새 아이콘이 기존 수신 알림에 추가돼도 같은 내용 리비전을 다시 알리지 않는다.
 
 watchOS의 short-look과 상단 sash는 시스템이 FoldBridge 앱 이름/아이콘으로 생성한다. 이는 원본 Android 앱의 알림으로 바꿀 수 없으며 원본 아이콘은 사용자 정의 콘텐츠 영역에 표시한다. [Apple 문서](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
 
@@ -67,3 +67,7 @@ watchOS의 short-look과 상단 sash는 시스템이 FoldBridge 앱 이름/아�
 초기 버전은 UNNotificationContent의 title/subtitle/body를 시스템이 배치했다. 원본 아이콘 추가 이후 WKNotificationScene의 사용자 정의 SwiftUI 화면을 사용하면서 펼친 알림에서 크기/배치 문제가 반복됐다. 간격 조정으로 해결하지 않고 해당 scene과 hosting controller/view 자체를 제거했다. 새 알림 카테고리는 FOLDBRIDGE_NATIVE_ALERT이며 UI는 watchOS가 그린다.
 
 원본 아이콘은 UNNotificationAttachment를 이용한다. 캐시 PNG를 고유한 임시 폴더로 복사하고 첨부하므로 시스템의 첨부 파일 이동으로 캐시가 사라지지 않는다. 첨부 등록 실패 시 텍스트만 다시 등록한다. 이전 알림을 삭제하거나 다시 울리게 하지 않으며, 등록·언어 선택·BLE 통신은 유지한다.
+
+## 미디어 첨부 제거 (Watch 0.4.2)
+
+0.4.1의 첨부는 앱 아이콘이 아닌 미디어이므로 시스템이 크게 표시하거나 그룹/개별 카드의 썸네일로 재사용할 수 있었다. 원본 PNG 크기와 시스템 미디어 영역 크기는 별개다. 0.4.2는 이 첨부 경로 전체를 제거한다. 기본 알림에는 FoldBridge 시스템 아이콘과 원본 앱 이름/제목/본문만 표시한다. 이전 알림의 첨부를 삭제하거나 다시 등록하지 않으므로 새로 수신하는 알림부터 적용된다. 기본 시스템 아이콘을 그룹과 개별 카드에서 각각 바꾸는 공개 API는 사용하지 않는다.
