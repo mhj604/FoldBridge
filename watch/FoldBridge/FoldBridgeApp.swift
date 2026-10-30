@@ -84,7 +84,10 @@ final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDele
 final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDelegate {
     func applicationDidFinishLaunching() {
         UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().setNotificationCategories([UNNotificationCategory(identifier:"FOLDBRIDGE_NATIVE_ALERT",actions:[],intentIdentifiers:[],options:[])])
+        UNUserNotificationCenter.current().setNotificationCategories([
+            UNNotificationCategory(identifier:RelayCategory.textOnly,actions:[],intentIdentifiers:[],options:[]),
+            UNNotificationCategory(identifier:RelayCategory.withSourceIcon,actions:[],intentIdentifiers:[],options:[])
+        ])
         WatchLink.shared.resumeSavedConnection()
         if ProcessInfo.processInfo.environment["FOLDBRIDGE_RESUME_LOCATION"] == "1" {
             LocationKeepAlive.shared.preserveEnabledIntentForUpdate()
@@ -121,6 +124,7 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
             link.setActive(phase == .active)
             if phase == .active { LocationKeepAlive.shared.resumeIfRequested() }
         } }
+        WKNotificationScene(controller:CompactNotificationController.self,category:RelayCategory.withSourceIcon)
     }
 }
 
@@ -216,7 +220,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button(language.text("휴대폰 등록 해제"),role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.4.2").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.4.3").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle(language.text("설정"))
             .confirmationDialog(language.text("연결 유지를 시작할까요?"),isPresented:$startingLocation,titleVisibility:.visible) {
@@ -274,3 +278,63 @@ struct BridgeDiagnosticsView: View {
     }
 }
 
+
+// Only this category has a custom long-look. The system owns the popup, sash,
+// Notification Center cards, scroll container, and dismiss control.
+enum RelayCategory {
+    static let textOnly = "FOLDBRIDGE_NATIVE_ALERT"
+    static let withSourceIcon = "FOLDBRIDGE_COMPACT_ICON_ALERT"
+}
+
+final class CompactNotificationController: WKUserNotificationHostingController<CompactNotificationView> {
+    private var content: UNNotificationContent?
+    override var body: CompactNotificationView { CompactNotificationView(content:content) }
+    override func didReceive(_ notification: UNNotification) { content = notification.request.content }
+}
+
+struct CompactNotificationView: View {
+    let content: UNNotificationContent?
+    private let iconSize: CGFloat = 24
+    // Notification hosts measure intrinsic content. A finite width is essential:
+    // do not use an expanding frame, GeometryReader, Spacer, or nested ScrollView.
+    private var contentWidth: CGFloat { max(100,WKInterfaceDevice.current().screenBounds.width-40) }
+
+    var body: some View {
+        if let content {
+            let icon = AppIconStore.image(for:content.userInfo["fb_icon"] as? String)
+            VStack(alignment:.leading,spacing:4) {
+                HStack(alignment:.top,spacing:8) {
+                    Text(content.title)
+                        .font(.headline)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal:false,vertical:true)
+                        .frame(width:icon == nil ? contentWidth:contentWidth-iconSize-8,alignment:.leading)
+                    if let icon {
+                        Image(uiImage:icon)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width:iconSize,height:iconSize)
+                            .clipShape(RoundedRectangle(cornerRadius:5))
+                            .accessibilityHidden(true)
+                    }
+                }.frame(width:contentWidth,alignment:.leading)
+                if !content.subtitle.isEmpty {
+                    Text(content.subtitle)
+                        .font(.headline)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal:false,vertical:true)
+                        .frame(width:contentWidth,alignment:.leading)
+                }
+                if !content.body.isEmpty {
+                    Text(content.body)
+                        .font(.body)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal:false,vertical:true)
+                        .frame(width:contentWidth,alignment:.leading)
+                }
+            }
+            .frame(width:contentWidth,alignment:.leading)
+            .padding(.vertical,4)
+        }
+    }
+}

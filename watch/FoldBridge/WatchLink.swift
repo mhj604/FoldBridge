@@ -380,9 +380,9 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func scheduleReceipt(_ receipt: (alert: WatchAlert, revision: String)) {
         let alert = receipt.alert, revision = receipt.revision
         let content = UNMutableNotificationContent(); content.title = alert.app; content.subtitle = alert.title; content.body = alert.body; content.sound = .default
-        // Use the system renderer for both collapsed and expanded notifications.
-        // No WKNotificationScene may intercept this category.
-        content.categoryIdentifier = "FOLDBRIDGE_NATIVE_ALERT"
+        // Only a cached icon opts into the finite-width compact long-look.
+        // Missing icons keep the system text layout; neither path attaches media.
+        content.categoryIdentifier = AppIconStore.image(for:alert.iconKey) == nil ? RelayCategory.textOnly:RelayCategory.withSourceIcon
         content.threadIdentifier = alert.appID ?? alert.app
         content.userInfo = ["fb_id":alert.id,"fb_rev":revision]
         if let iconKey = alert.iconKey { content.userInfo["fb_icon"] = iconKey }
