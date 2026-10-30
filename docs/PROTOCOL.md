@@ -1,5 +1,7 @@
 # FoldBridge Local BLE 프로토콜
 
+**한국어** · [English](PROTOCOL_EN.md) · [전체 문서](README.md)
+
 Android는 GATT peripheral/server, watchOS는 central/client다. 앱 안에서 휴대폰을 선택하며 Android 시스템 Bluetooth 페어링을 별도로 요구하지 않는다.
 
 ## GATT와 프레임

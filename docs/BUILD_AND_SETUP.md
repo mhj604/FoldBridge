@@ -1,5 +1,7 @@
 # 빌드와 설치
 
+**한국어** · [English](BUILD_AND_SETUP_EN.md) · [전체 문서](README.md)
+
 현재 배포는 Android `0.5.2-local` / versionCode 13, 워치 `0.4.7` / build 21이다. 처음 사용하는 경우 [빠른 시작](QUICK_START_KO.md)을 먼저 읽는다.
 
 ## Android
@@ -11,11 +13,10 @@ python3 android/build_android.py \
   --sdk /absolute/path/to/android-sdk \
   --java-home /absolute/path/to/jdk \
   --keystore /absolute/path/to/foldbridge-local.keystore \
-  --output /absolute/path/to/FoldBridge-Local-0.5.2.apk \
-  --skip-signature-check
+  --output /absolute/path/to/FoldBridge-Local-0.5.2.apk
 ```
 
-`--skip-signature-check`는 이 작업에서 추가 서명 검사 명령을 생략하는 옵션이며 APK 서명 자체는 수행한다. Gradle 구성도 포함하지만 이 배포 APK는 위 스크립트로 빌드했다.
+Gradle 구성도 포함하지만 이 배포 APK는 위 스크립트로 빌드했다.
 
 기존 Local 앱 위에 업데이트하려면 동일한 서명 키를 사용해야 한다. 이번 실제 설치에 사용한 키는 저장소 밖에서 보관한다. 다른 키로 기존 앱을 덮어쓸 수는 없다. 처음 빌드할 때 생성한 키는 후속 업데이트를 위해 별도로 보관한다.
 

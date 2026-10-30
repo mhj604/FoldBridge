@@ -1,5 +1,7 @@
 # Watch 0.4.7 / Android 0.5.2 — 연결 유지 갱신과 알림 카드 여백
 
+**한국어** · [English](RELEASE_WATCH_v0.4.7_EN.md) · [전체 문서](README.md)
+
 - Watch **0.4.7 / build 21**
 - Android **0.5.2-local / versionCode 13**
 
@@ -32,3 +34,8 @@ Galaxy Z Fold7과 Apple Watch Ultra 2 / watchOS 27.0.1에 같은 서명으로 �
 기존과 같은 Android 서명과 워치 Bundle ID로 업데이트하면 등록 키·필터·미전달 대기열을 유지합니다. 앱을 삭제하거나 코드를 다시 등록할 필요는 없습니다.
 
 이 변경은 폰에서 워치 앱을 무조건 강제 실행하는 기능이 아닙니다. 유지 중인 BLE 연결에 특성 변경이 오면 watchOS가 허용하는 백그라운드 실행 기회에 처리합니다. 강제 종료·재부팅 후 첫 잠금 해제 전·Bluetooth 꺼짐·범위 이탈·OS의 실행/수신 예산 소진에서는 즉시 복구를 보장하지 않습니다. 한도 안내가 나오거나 복원이 멈추면 워치 앱을 한 번 열어야 할 수 있습니다. [Apple 백그라운드 작업](https://developer.apple.com/documentation/watchkit/using-background-tasks)
+
+
+## 한국어·영어 사용 안내
+
+설치·FAQ·문제 해결·빌드/서명·구조·프로토콜·알림 표시·기여 방법을 두 언어로 제공합니다. [전체 문서](https://github.com/mhj604/FoldBridge/blob/local-ble/docs/README.md) · [English overview](https://github.com/mhj604/FoldBridge/blob/local-ble/README.en.md)

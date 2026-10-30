@@ -1,5 +1,7 @@
 # 처음부터 설치하고 연결하기
 
+**한국어** · [English](QUICK_START_EN.md) · [전체 문서](README.md)
+
 이 문서는 `local-ble` 브랜치의 Android 0.5.2 / watchOS 0.4.7를 기준으로 합니다. 사용 중 알림은 갤럭시와 워치 사이 BLE로 직접 전달됩니다. 서버 주소·아이폰 중계·유료 Push 설정은 필요하지 않습니다.
 
 ## 1. 준비하기
@@ -22,7 +24,7 @@ cd FoldBridge
 
 ## 3. 갤럭시 앱 설치
 
-1. [배포 APK](../artifacts/android/FoldBridge-Local-0.5.2.apk) 또는 [Releases](https://github.com/mhj604/FoldBridge/releases)에서 APK를 받습니다. GitHub 파일 화면에서는 Download raw file로 받습니다.
+1. [배포 APK 바로 다운로드](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.7/FoldBridge-Local-0.5.2.apk) 또는 [Releases](https://github.com/mhj604/FoldBridge/releases)에서 APK를 받습니다. GitHub 파일 화면에서는 Download raw file로 받습니다.
 2. APK를 연 앱의 ‘이 출처 허용’이 필요하면 기기 안내에 따라 설치를 진행합니다.
 3. **FoldBridge Local**을 열고 근처 기기와 일반 알림 권한을 허용합니다.
 4. 앱의 **알림 접근 허용**을 누르고 **FoldBridge Local 알림 전달**을 켭니다. 이 권한이 실제 다른 앱의 알림 수집에 필요합니다.

@@ -1,0 +1,43 @@
+# FoldBridge 문서 / Documentation
+
+**[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[다운로드 / Downloads](https://github.com/mhj604/FoldBridge/releases)**
+
+처음 사용하는 분은 **빠른 시작**부터 읽어 주세요. 현재 배포는 **Android 0.5.2-local / 코드 13**, **Watch 0.4.7 / 빌드 21**입니다.
+
+New users: start with **Install and connect**. Current release: **Android 0.5.2-local / code 13**, **Watch 0.4.7 / build 21**.
+
+| 내용 / Topic | 한국어 | English |
+| --- | --- | --- |
+| 개요·다운로드 / Overview and downloads | [시작 화면](../README.md) | [Overview](../README.en.md) |
+| 처음 설치·등록 / First installation and registration | [빠른 시작](QUICK_START_KO.md) | [Install and connect](QUICK_START_EN.md) |
+| 자주 묻는 질문 / Common questions | [FAQ](FAQ_KO.md) | [FAQ](FAQ_EN.md) |
+| 연결·알림 문제 / Connection and notification problems | [문제 해결](TROUBLESHOOTING_KO.md) | [Troubleshooting](TROUBLESHOOTING_EN.md) |
+| 빌드·서명·민감한 본문 / Build, signing, sensitive content | [빌드와 설치](BUILD_AND_SETUP.md) | [Build and settings](BUILD_AND_SETUP_EN.md) |
+| 현재 앱 구조 / Current architecture | [구조](ARCHITECTURE.md) | [Architecture](ARCHITECTURE_EN.md) |
+| 암호화·BLE·복원 / Encryption, BLE, restoration | [프로토콜](PROTOCOL.md) | [Protocol](PROTOCOL_EN.md) |
+| 시스템 아이콘과 본문 / System icons and custom content | [알림 표시 범위](NOTIFICATION_DISPLAY_LIMITS_KO.md) | [Notification display](NOTIFICATION_DISPLAY_LIMITS_EN.md) |
+| 알림 화면·배치 이력 / Notification screenshots and layout | [화면 비교](NOTIFICATION_LAYOUT_COMPARISON_KO.md) | [Layout examples](NOTIFICATION_LAYOUT_COMPARISON_EN.md) |
+| 최신 배포 변경 / Current release changes | [0.4.7 안내](RELEASE_WATCH_v0.4.7_KO.md) | [0.4.7 notes](RELEASE_WATCH_v0.4.7_EN.md) |
+| 버전별 변경 / Changes by version | [변경 이력](../CHANGELOG.md) | [Changelog](../CHANGELOG.en.md) |
+| 주요 구축 과정 / Development milestones | [구축 이력](DEVELOPMENT_HISTORY.md) | [Development history](DEVELOPMENT_HISTORY_EN.md) |
+| 수정·번역·문의 / Contributions, translations, help | [기여 방법](../CONTRIBUTING.md) | [Contributing](../CONTRIBUTING.en.md) |
+
+## 먼저 알아둘 점 / Before starting
+
+- **사용 중:** 갤럭시와 워치의 Bluetooth로 직접 전달합니다. 서버·인터넷·아이폰 중계가 필요하지 않습니다.
+- **최초 준비:** 워치 초기 설정에는 아이폰, 워치 앱 서명·설치에는 Mac/Xcode와 자신의 Apple Team이 필요합니다.
+- **업데이트:** Android 서명 키, 워치 Bundle ID와 Team을 유지합니다. 연결 문제에는 먼저 한쪽의 연결 새로고침을 사용합니다.
+- **백그라운드:** watchOS 실행 기회와 수신 예산이 적용됩니다. 실행이 중단된 경우 워치 앱을 한 번 열어야 할 수 있습니다.
+
+- **During use:** notification delivery runs directly over Bluetooth; no server, internet, or iPhone relay is needed.
+- **Initial setup:** Apple Watch setup needs an iPhone; signing/installing the watch app needs Mac/Xcode and your Apple team.
+- **Updates:** retain the Android signing key and watch Bundle ID/team. Try Refresh connection on one device for ordinary connection problems.
+- **Background:** watchOS controls runtime opportunities and budgets. Opening the watch app once may be needed after execution stops.
+
+문서를 한 번에 내려받으려면 [한글·영어 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.7/FoldBridge-0.4.7-guides-ko-en.zip)을 사용하세요. / [Download the Korean/English guide bundle](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.7/FoldBridge-0.4.7-guides-ko-en.zip) to keep the documentation together.
+
+## 이전 문서 / Archives
+
+이전 버전의 `RELEASE_*_KO.md`와 초기 `legacy/` 문서는 한국어 원문으로 보존합니다. 현재 사용법은 위 표의 문서를 따릅니다. 중요한 과거 변경은 두 언어의 변경·구축 이력에 정리했습니다.
+
+Older `RELEASE_*_KO.md` and initial `legacy/` documents remain archived in their original language. Use the guides above for current operation. Significant earlier changes are summarized in both languages' changelog and development history.

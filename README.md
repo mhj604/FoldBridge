@@ -1,5 +1,7 @@
 # FoldBridge Local
 
+**한국어** · [English](README.en.md) · [전체 문서](docs/README.md)
+
 갤럭시에 도착한 알림을 **Apple Watch로 직접 전달**하는 Android·watchOS 앱입니다. 두 기기는 Bluetooth LE로 통신하며, 알림 전달에 서버·인터넷·페어링된 아이폰을 사용하지 않습니다. 루팅·운동·오디오 세션도 사용하지 않습니다.
 
 워치의 최초 설정과 개발용 앱 설치에는 Apple의 기기 등록과 Mac/Xcode가 필요합니다. 위치 세션을 이용하는 백그라운드 수신은 실험 기능이며, watchOS가 앱을 중단할 수 있어 모든 알림의 상시·즉시 수신을 보장하지는 않습니다.
@@ -8,12 +10,14 @@
 
 ## 바로 시작하기
 
+**[최신 배포 파일](https://github.com/mhj604/FoldBridge/releases)** · **[자주 묻는 질문](docs/FAQ_KO.md)** · **[English setup](docs/QUICK_START_EN.md)**
+
 | 항목 | 현재 버전 / 링크 |
 | --- | --- |
 | 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) — 서버 없는 BLE 구성 |
-| Android | **0.5.2-local · 코드 13** / [APK 다운로드](artifacts/android/FoldBridge-Local-0.5.2.apk) |
+| Android | **0.5.2-local · 코드 13** / [APK 바로 다운로드](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.7/FoldBridge-Local-0.5.2.apk) |
 | Apple Watch | **0.4.7 · 빌드 21** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
-| 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) |
+| 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) · [한글·영어 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.7/FoldBridge-0.4.7-guides-ko-en.zip) |
 | 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
 | 연결이 끊긴 경우 | **[새로고침·문제 해결](docs/TROUBLESHOOTING_KO.md)** |
 
@@ -29,7 +33,7 @@ cd FoldBridge
 open watch/FoldBridge.xcodeproj
 ```
 
-`main`에도 최신 소스와 한국어 문서를 반영합니다. `relay/`, `windows/`, `legacy/`는 과거 구성으로 현재 Local 앱 실행에는 필요하지 않습니다.
+`main`에도 최신 소스와 한국어·영어 문서를 반영합니다. `relay/`, `windows/`, `legacy/`는 과거 구성으로 현재 Local 앱 실행에는 필요하지 않습니다.
 
 ## 한국어 / English 전환
 
@@ -44,7 +48,7 @@ open watch/FoldBridge.xcodeproj
 - 미전달 알림만 휴대폰에 암호화해 최대 24시간·1,024개 대기시킵니다. 워치가 표시 요청을 수락하면 대기열에서 제거합니다.
 - 충전율 변경 때 반복되던 Samsung System UI 충전 알림은 기본 제외합니다. **충전 상태 알림**을 켜면 포함합니다.
 - 재부팅 후 저장된 등록으로 재연결을 시도합니다. 양쪽 첫 잠금 해제와 Bluetooth가 필요합니다. 워치가 자동 실행되지 않으면 FoldBridge를 한 번 열어 주세요.
-- **연결 새로고침**은 정상 연결에서는 암호화된 갱신 요청을 보내 기존 연결과 세션을 유지합니다. 연결이 없으면 저장된 상대에 재접속합니다. **지금 동기화**는 이미 연결된 상태에서 미전달 알림을 가져옵니다.
+- **연결 새로고침**은 정상 연결에서 암호화된 갱신 요청을 보내 기존 연결과 세션을 유지합니다. 연결이 없으면 저장된 상대에 재접속합니다. **지금 동기화**는 이미 연결된 상태에서 미전달 알림을 가져옵니다.
 
 ## 알림 모양과 개인정보 표시
 

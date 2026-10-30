@@ -1,0 +1,61 @@
+# FoldBridge Local BLE protocol
+
+[한국어](PROTOCOL.md) · **English** · [All guides](README.md)
+
+Current behavior: Android 0.5.2 / Watch 0.4.7. Android is the GATT server/peripheral; watchOS is the central/client. Initial registration happens inside FoldBridge rather than through a separate manual Android Bluetooth-settings step.
+
+## GATT and framing
+
+| Purpose | UUID / transport |
+| --- | --- |
+| Service | `c62d0200-7de5-4c34-a432-7c838e687a40` |
+| Phone → watch | `c62d0201-7de5-4c34-a432-7c838e687a40`, indication |
+| Watch → phone | `c62d0202-7de5-4c34-a432-7c838e687a40`, write with response |
+
+The CCC descriptor is `0x2902`; indication enable and notification disable values are handled. The original FoldBridge profile uses the `c62d0100/0101/0102` family.
+
+Each ATT value starts with an 8-byte big-endian header: message ID (`uint32`), fragment index (`uint16`), and fragment count (`uint16`). Fragments fit the negotiated ATT value limit and a 200-byte cap. Maximum assembled message size is 16,384 bytes, with a 120-second assembly timeout. Assembly is ordered and resets with the session.
+
+## Registration and encryption
+
+Each endpoint retains a P-256 ECDH identity key. Android uses Android Keystore and watchOS uses device-local Keychain storage.
+
+1. The watch generates a fresh 32-byte nonce and sends `SHA256(SPKI_DER_public_key || nonce)` as a commit.
+2. The phone generates its own fresh nonce and commit.
+3. The watch reveals its public key/nonce; the phone checks the commit and reveals its own values.
+4. The watch checks the phone commit. Both reject a peer public key that differs from the pinned key.
+5. Derive a 32-byte key using ECDH and HKDF-SHA256, salt `watch_nonce || phone_nonce`, info `FoldBridge/v1`.
+6. For the comparison code, hash `key || UTF8("compare")`, read the first four bytes as a big-endian uint32, reduce modulo 1,000,000, and display six digits.
+7. On first registration, the user compares and confirms on both devices. Saved matching peer keys allow automatic confirmation later.
+
+Messages use AES-256-GCM with AAD `FoldBridge/v1`. Directional nonce prefixes are `FBP1` for phone and `FBW1` for watch, followed by a 64-bit sequence number. Repeated/decreasing sequences are rejected. New authentication always uses fresh nonces; process-lost session keys are not restored.
+
+The encrypted envelope is `{type:"sealed", seq:1, data:"base64(ciphertext || tag)"}`. Current messages include `confirm`, `ready`, `state`, `sync`, `notification`, `ack`, `refresh`, and `refreshed`. Legacy `reconnect`, `ping`, and `pong` are accepted for compatibility. Local does not send APNs tokens or contact a relay.
+
+## Notifications, icons, and acknowledgment
+
+Notification fields include a hashed Android notification ID, content revision hash, app name, title, body, and posted time. Optional fields are `app_id`, `icon_key` (PNG SHA-256 hex), and `icon_png` (base64 PNG). PNG data is limited to 3,072 bytes and decoded dimensions to 64×64; the watch checks its hash and caches it. Icon metadata is not part of the content revision.
+
+Within a session, the phone omits PNG bytes after an icon-bearing notification has been acknowledged. A new session clears that optimization. Text delivery takes priority if the combined message approaches size limits.
+
+The phone keeps an encrypted pending outbox, limited to 24 hours / 1,024 items, with the latest revision per ID. One delivery waits for an application ACK. After up to three 90-second attempts without an ACK, that item waits for the next wake/sync while later items can proceed. Missing application ACKs alone do not cancel the physical BLE link. Refresh/sync resumes deferred attempts. Service/listener recovery also replays currently active Android notifications.
+
+The watch checks notification authorization, registers a local notification, then ACKs accepted requests. Known revisions are ACKed without being displayed again. An ACK is not a guarantee of sound, visibility, or user reading. The watch stores up to 512 ID/revision hashes, not a separate title/body inbox.
+
+Source-icon notifications use `FOLDBRIDGE_COMPACT_ICON_ALERT` for a compact long-look body with a 24pt icon. Notifications without icons use `FOLDBRIDGE_NATIVE_ALERT`. Neither attaches icons as media. Grouping uses the source app identity. The system sender remains FoldBridge.
+
+## Refresh and restoration
+
+- Healthy refresh sends encrypted `refresh` while retaining the link/session. Phone replies with `refreshed`; watch replies with `state`/`sync`.
+- `ready.liveness` is 0. The app generates no periodic ping and does not treat background wall-clock silence as proof of link failure. Foreground maintenance runs every 15 seconds with foreground recovery grace.
+- Process restoration reuses the OS-retained link where possible, explicitly restores CCC subscription, and performs a fresh pinned-key handshake. An authenticated service-change event can instead rebind characteristics without replacing a healthy crypto session.
+- Saved-peer pending connects are retained where possible. Repeated physical disconnects back off up to 30 seconds; successful authentication resets the backoff. Recovery scanning is used for missing cache entries or foreground connection stalls.
+- If the phone lost its crypto state but retains a subscription, plaintext `wake`/v1 requests fresh authentication only. It does not authorize any notification. Saved-peer authentication waiting does not trigger the previous fixed 120-second link cancellation; first-time registration still has a deadline.
+- In-place reauthentication separates old ATT completion callbacks from the new session's packets. Accepted ordinary ATT write lengths also restore a lower bound for the phone MTU.
+- Control messages such as state/sync/refresh do not create user notifications. Charging filters run before protocol delivery.
+
+## Scope and older behavior
+
+This protocol does not expand OS runtime budgets or bypass force-quit, first-unlock, Bluetooth, or range conditions. Static identity-key ECDH does not provide a claim of forward secrecy after identity-key compromise. [watchOS background tasks](https://developer.apple.com/documentation/watchkit/using-background-tasks)
+
+Android 0.5.1 / Watch 0.4.6 used forced reconnect requests and periodic ping deadlines; those behaviors were replaced in 0.5.2 / 0.4.7. The Korean document retains that historical section. Initial APNs design notes remain under `legacy/docs/PROTOCOL-0.1.0.md`.
