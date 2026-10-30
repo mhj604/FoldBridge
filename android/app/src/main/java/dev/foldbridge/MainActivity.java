@@ -19,7 +19,8 @@ public final class MainActivity extends Activity {
     private final Handler handler=new Handler(Looper.getMainLooper());
     private LinearLayout root,pairCard;
     private TextView state,subtitle,receiptCount,waitingCount,code,statusDot;
-    private Button connectButton,permissionButton,selectedAppsButton;
+    private Button connectButton,refreshButton,permissionButton,selectedAppsButton;
+    private long lastRefresh=-3000;
     private Switch allApps;
     private final int ink=Color.rgb(239,245,248),muted=Color.rgb(147,166,180),accent=Color.rgb(130,230,209);
     private final int background=Color.rgb(9,15,21),surface=Color.rgb(20,30,40),line=Color.rgb(39,53,65);
@@ -50,7 +51,9 @@ public final class MainActivity extends Activity {
         state=addText(headline,"연결 준비 중",20,ink,true);connection.addView(headline);
         subtitle=addText(connection,"",13,muted,false);subtitle.setPadding(0,dp(9),0,dp(4));
         permissionButton=action("알림 접근 허용",this::openNotificationAccess,true);connection.addView(permissionButton,buttonParams());
-        connectButton=action("워치 연결",()->start(false),true);connection.addView(connectButton,buttonParams());root.addView(connection,sectionParams(0));
+        connectButton=action("워치 연결",()->start(false),true);connection.addView(connectButton,buttonParams());
+        refreshButton=action("연결 새로고침",this::refreshConnection,false);connection.addView(refreshButton,buttonParams());
+        root.addView(connection,sectionParams(0));
 
         pairCard=card();addText(pairCard,"처음 연결하는 워치인가요?",13,muted,false);
         code=addText(pairCard,"",34,ink,true);code.setLetterSpacing(.14f);code.setPadding(0,dp(10),0,dp(8));
@@ -91,6 +94,7 @@ public final class MainActivity extends Activity {
         statusDot.setTextColor(!access||!BridgeService.error.isEmpty()?Color.rgb(255,192,126):connected?accent:muted);
         text(subtitle,!access?"다른 앱의 알림을 읽을 수 있도록 허용해 주세요.":!BridgeService.error.isEmpty()?BridgeService.error:!bound?"알림 수집 서비스에 연결하고 있어요.":connected?"새 알림을 워치로 전달하고 있어요.":"워치에서 FoldBridge를 열어 주세요.");
         permissionButton.setVisibility(access?View.GONE:View.VISIBLE);connectButton.setVisibility(running?View.GONE:View.VISIBLE);
+        refreshButton.setVisibility(running?View.VISIBLE:View.GONE);
         pairCard.setVisibility(BridgeService.pairingCode.isEmpty()?View.GONE:View.VISIBLE);text(code,BridgeService.pairingCode);
         text(receiptCount,Long.toString(BridgeService.acknowledged));text(waitingCount,Integer.toString(BridgeService.waiting));
         boolean all=getSharedPreferences("settings",MODE_PRIVATE).getBoolean("all_apps",true);if(allApps.isChecked()!=all)allApps.setChecked(all);selectedAppsButton.setVisibility(all?View.GONE:View.VISIBLE);
@@ -108,7 +112,7 @@ public final class MainActivity extends Activity {
     }
     private void showDiagnostics(){
         String timing=BridgeService.lastRtt<0?"아직 없음":BridgeService.lastRtt+" ms";
-        new AlertDialog.Builder(this).setTitle("연결 진단").setMessage("연결: "+BridgeService.status+"\n알림 접근: "+(NotificationRelay.hasAccess(this)?"허용됨":"꺼짐")+"\n알림 수집: "+(NotificationRelay.instance!=null?"연결됨":"대기 중")+"\n수집 "+NotificationRelay.received+" · 전달 요청 "+NotificationRelay.forwarded+"\n최근 전달 확인: "+timing+"\n\nFoldBridge Local 0.3.2").setPositiveButton("닫기",null).show();
+        new AlertDialog.Builder(this).setTitle("연결 진단").setMessage("연결: "+BridgeService.status+"\n알림 접근: "+(NotificationRelay.hasAccess(this)?"허용됨":"꺼짐")+"\n알림 수집: "+(NotificationRelay.instance!=null?"연결됨":"대기 중")+"\n수집 "+NotificationRelay.received+" · 전달 요청 "+NotificationRelay.forwarded+"\n최근 전달 확인: "+timing+"\n\nFoldBridge Local 0.4.0").setPositiveButton("닫기",null).show();
     }
     private void start(boolean pair) {
         if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED||checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE)!=PackageManager.PERMISSION_GRANTED) {requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_ADVERTISE,Manifest.permission.POST_NOTIFICATIONS},7);toast("권한을 허용한 뒤 연결 버튼을 다시 누르세요.");return;}
@@ -119,6 +123,15 @@ public final class MainActivity extends Activity {
         if(!NotificationRelay.hasAccess(this))new AlertDialog.Builder(this).setTitle("다른 앱 알림을 읽는 권한이 꺼져 있습니다")
             .setMessage("Bluetooth 연결만으로는 다른 앱의 알림을 전달할 수 없습니다. 설정에서 ‘FoldBridge Local 알림 전달’의 알림 접근을 허용해 주세요.")
             .setPositiveButton("알림 접근 설정",(d,w)->openNotificationAccess()).setNegativeButton("닫기",null).show();
+    }
+    private void refreshConnection() {
+        if(SystemClock.elapsedRealtime()-lastRefresh<3000)return;
+        if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED||checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE)!=PackageManager.PERMISSION_GRANTED){start(false);return;}
+        lastRefresh=SystemClock.elapsedRealtime();
+        getSharedPreferences("settings",MODE_PRIVATE).edit().putBoolean("connection_enabled",true).apply();
+        startForegroundService(new Intent(this,BridgeService.class).setAction("refresh"));
+        NotificationRelay.reconnectIfAllowed(this);
+        toast("기존 등록을 유지한 채 연결을 다시 준비합니다. 필요하면 워치에서도 ‘연결 새로고침’을 눌러 주세요.");
     }
     private void selectApps() {
         TreeMap<String,String> names=new TreeMap<>(); Intent launcher=new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);

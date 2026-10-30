@@ -172,6 +172,8 @@ struct ContentView: View {
                             .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
                     }.frame(maxWidth:.infinity).padding(.vertical,22).padding(.horizontal,10)
                         .background(BridgeStyle.surface,in:RoundedRectangle(cornerRadius:18))
+                    Button { link.refreshConnection() } label: { Label("연결 새로고침",systemImage:"arrow.triangle.2.circlepath").font(.caption) }
+                        .tint(BridgeStyle.accent).frame(maxWidth:.infinity)
                     if link.connected {
                         Button { link.synchronize() } label: { Label("지금 동기화",systemImage:"arrow.clockwise").font(.caption) }
                             .buttonStyle(.plain).foregroundStyle(BridgeStyle.accent).frame(maxWidth:.infinity).padding(.vertical,8)
@@ -205,6 +207,7 @@ struct BridgeSettingsView: View {
         List {
             Section("연결") {
                 NavigationLink { PhoneConnectionView().environmentObject(link) } label: { Label("휴대폰",systemImage:"iphone") }
+                Button { link.refreshConnection() } label: { Label("연결 새로고침",systemImage:"arrow.triangle.2.circlepath") }
                 Toggle("연결 유지",isOn:Binding(get:{keepAlive.requested},set:{if $0 { startingLocation = true } else { keepAlive.stop() }}))
                     .tint(BridgeStyle.accent)
                 Text("위치 세션으로 연결 유지를 시도합니다. 배터리 사용이 늘 수 있고 상시 수신은 보장되지 않습니다.")
@@ -217,7 +220,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button("휴대폰 등록 해제",role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.2.4").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.3.0").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle("설정")
             .confirmationDialog("연결 유지를 시작할까요?",isPresented:$startingLocation,titleVisibility:.visible) {

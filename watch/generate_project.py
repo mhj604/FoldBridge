@@ -13,7 +13,7 @@ def quoted(value): return json.dumps(str(value),ensure_ascii=False)
 
 def generate(push=False,bundle_id='dev.foldbridge.watch'):
     info={'CFBundleDisplayName':'FoldBridge','CFBundleName':'$(PRODUCT_NAME)','CFBundleExecutable':'$(EXECUTABLE_NAME)',
-          'CFBundleIdentifier':'$(PRODUCT_BUNDLE_IDENTIFIER)','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.2.4','CFBundleVersion':'9',
+          'CFBundleIdentifier':'$(PRODUCT_BUNDLE_IDENTIFIER)','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.3.0','CFBundleVersion':'10',
           'WKApplication':True,'WKWatchOnly':True,
           'NSBluetoothAlwaysUsageDescription':'갤럭시 휴대폰의 알림을 받기 위해 블루투스를 사용합니다.',
           'NSLocationWhenInUseUsageDescription':'선택한 위치 기반 연결 유지 모드에서 백그라운드 실행을 시도하기 위해 위치 업데이트를 사용합니다. 위치 좌표는 저장하거나 전송하지 않습니다.',
@@ -42,7 +42,7 @@ def generate(push=False,bundle_id='dev.foldbridge.watch'):
         for config in ['Debug','Release']:
             settings={'SWIFT_VERSION':'5.0','SDKROOT':'watchos','WATCHOS_DEPLOYMENT_TARGET':'10.0','CLANG_ENABLE_MODULES':'YES','SWIFT_OPTIMIZATION_LEVEL':'-Onone' if config=='Debug' else '-O'}
             if scope=='target':
-                settings.update({'PRODUCT_BUNDLE_IDENTIFIER':bundle_id,'PRODUCT_NAME':'$(TARGET_NAME)','ASSETCATALOG_COMPILER_APPICON_NAME':'AppIcon','TARGETED_DEVICE_FAMILY':'4','CODE_SIGN_STYLE':'Automatic','GENERATE_INFOPLIST_FILE':'NO','INFOPLIST_FILE':'FoldBridge/InfoPush.plist' if push else 'FoldBridge/Info.plist','SUPPORTED_PLATFORMS':'watchos watchsimulator','LD_RUNPATH_SEARCH_PATHS':'$(inherited) @executable_path/Frameworks','SKIP_INSTALL':'NO','ENABLE_USER_SCRIPT_SANDBOXING':'YES'})
+                settings.update({'PRODUCT_BUNDLE_IDENTIFIER':bundle_id,'PRODUCT_NAME':'$(TARGET_NAME)','ASSETCATALOG_COMPILER_APPICON_NAME':'FoldBridgeIcon','TARGETED_DEVICE_FAMILY':'4','CODE_SIGN_STYLE':'Automatic','GENERATE_INFOPLIST_FILE':'NO','INFOPLIST_FILE':'FoldBridge/InfoPush.plist' if push else 'FoldBridge/Info.plist','SUPPORTED_PLATFORMS':'watchos watchsimulator','LD_RUNPATH_SEARCH_PATHS':'$(inherited) @executable_path/Frameworks','SKIP_INSTALL':'NO','ENABLE_USER_SCRIPT_SANDBOXING':'YES'})
                 if push: settings['CODE_SIGN_ENTITLEMENTS']='FoldBridge/Push.entitlements'
             add(scope+config,'isa = XCBuildConfiguration; buildSettings = {'+' '.join(f'{k} = {quoted(v)};' for k,v in settings.items())+'}; name = '+config+';')
         add(scope+'config','isa = XCConfigurationList; buildConfigurations = ('+','.join(identifier(scope+c) for c in ['Debug','Release'])+'); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug;')

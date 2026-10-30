@@ -1,6 +1,6 @@
 # 빌드와 설치
 
-현재 배포는 Android `0.3.0-local` / versionCode 6, 워치 `0.2.0` / build 5다.
+현재 배포는 Android `0.4.0-local` / versionCode 9, 워치 `0.3.0` / build 10이다. 처음 사용하는 경우 [빠른 시작](QUICK_START_KO.md)을 먼저 읽는다.
 
 ## Android
 
@@ -11,7 +11,7 @@ python3 android/build_android.py \
   --sdk /absolute/path/to/android-sdk \
   --java-home /absolute/path/to/jdk \
   --keystore /absolute/path/to/foldbridge-local.keystore \
-  --output /absolute/path/to/FoldBridge-Local-0.3.2.apk \
+  --output /absolute/path/to/FoldBridge-Local-0.4.0.apk \
   --skip-signature-check
 ```
 
@@ -60,7 +60,7 @@ Android 상태 파일은 `/sdcard/Android/data/dev.foldbridge.local/files/foldbr
 
 ```sh
 xcrun swift tools/generate-app-icon.swift \
-  watch/FoldBridge/Assets.xcassets/AppIcon.appiconset/AppIcon.png \
+  watch/FoldBridge/Assets.xcassets/FoldBridgeIcon.appiconset/FoldBridgeIcon.png \
   android/app/src/main/res/drawable/foldbridge_icon.png
 ```
 

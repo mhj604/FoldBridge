@@ -1,7 +1,7 @@
 {
   "images": [
     {
-      "filename": "AppIcon.png",
+      "filename": "FoldBridgeIcon.png",
       "idiom": "universal",
       "platform": "watchos",
       "size": "1024x1024"

@@ -44,6 +44,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var peerKey: String { profile == .local ? "peer.local" : "peer" }
     private var phoneIDKey: String { profile == .local ? "phoneID.local" : "phoneID" }
     private var switchingFrom: CBPeripheral?
+    private var refreshAfterDisconnect = false
+    private var lastManualRefresh = Date.distantPast
     private var maintenanceTimer: Timer?
     private var lastMaintenance = Date.distantPast
     private var manager: CBCentralManager!
@@ -142,9 +144,32 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             self.startRecoveryScan()
         }
     }
+    func refreshConnection() {
+        guard Date().timeIntervalSince(lastManualRefresh) >= 3 else { return }
+        lastManualRefresh = Date()
+        guard manager.state == .poweredOn else { lastError = "워치 Bluetooth를 켜 주세요.";return }
+        if identity == nil { identity = try? WatchStore.identity() }
+        guard UserDefaults.standard.string(forKey:phoneIDKey) != nil, (try? WatchStore.get(peerKey)) != nil else { scan();return }
+        let old = peripheral ?? switchingFrom
+        reconnectWork?.cancel();reconnectWork = nil;reconnects = 0
+        manager.stopScan();recoveryScanning = false;resetSession()
+        lastError = "";backgroundNotice = "";status = "연결 새로고침 중"
+        if let old, old.state != .disconnected {
+            switchingFrom = old;refreshAfterDisconnect = true
+            manager.cancelPeripheralConnection(old)
+            let current = epoch
+            DispatchQueue.main.asyncAfter(deadline:.now()+3) {
+                guard self.epoch == current, self.switchingFrom === old else { return }
+                self.switchingFrom = nil;self.refreshAfterDisconnect = false;self.startRecoveryScan()
+            }
+        } else {
+            switchingFrom = nil;refreshAfterDisconnect = false;startRecoveryScan()
+        }
+        scheduleRecoveryRefresh();writeDiagnostics()
+    }
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOn { reconnect() }
-        else { resetSession(); status = "블루투스를 켜세요" }
+        else { switchingFrom = nil;refreshAfterDisconnect = false;resetSession();status = "블루투스를 켜세요" }
     }
     func resumeSavedConnection() {
         if identity == nil { identity = try? WatchStore.identity() }
@@ -217,6 +242,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     func centralManager(_ central: CBCentralManager, didConnect p: CBPeripheral) {
         guard p.identifier == peripheral?.identifier else { central.cancelPeripheralConnection(p); return }
+        guard stage == "idle" else { return }
+        stage = "discovering"
         p.delegate = self; p.discoverServices([CBUUID(string:profile.service)]); status = "보안 연결 준비 중"
         let current = epoch
         DispatchQueue.main.asyncAfter(deadline:.now()+120) {
@@ -225,7 +252,12 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     func centralManager(_ central: CBCentralManager, didFailToConnect p: CBPeripheral, error: Error?) { if p.identifier == peripheral?.identifier { fail("휴대폰에 연결하지 못했습니다.",retry:true) } }
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral p: CBPeripheral, error: Error?) {
-        if p === switchingFrom { switchingFrom = nil; reconnect(); return }
+        if p === switchingFrom {
+            switchingFrom = nil
+            if refreshAfterDisconnect { refreshAfterDisconnect = false;startRecoveryScan() }
+            else { reconnect() }
+            return
+        }
         guard p.identifier == peripheral?.identifier else { return }
         resetSession(); status = "휴대폰 연결이 끊겼습니다"
         // Submit immediately: a suspended watch app may not get time to run a retry timer.
@@ -233,20 +265,21 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     func peripheral(_ p: CBPeripheral, didDiscoverServices error: Error?) {
         guard p === peripheral else { return }
-        guard error == nil, let service = p.services?.first(where:{$0.uuid == CBUUID(string:profile.service)}) else { fail("FoldBridge 서비스를 찾지 못했습니다."); return }
+        guard error == nil, let service = p.services?.first(where:{$0.uuid == CBUUID(string:profile.service)}) else { fail("FoldBridge 서비스를 찾지 못했습니다.",retry:true); return }
         p.discoverCharacteristics([CBUUID(string:profile.tx),CBUUID(string:profile.rx)],for:service)
     }
     func peripheral(_ p: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard p === peripheral else { return }
-        guard error == nil else { fail("통신 채널을 열지 못했습니다."); return }
+        guard error == nil else { fail("통신 채널을 열지 못했습니다.",retry:true); return }
         tx = service.characteristics?.first(where:{$0.uuid == CBUUID(string:profile.tx)})
         rx = service.characteristics?.first(where:{$0.uuid == CBUUID(string:profile.rx)})
-        guard let tx, rx != nil else { fail("필요한 통신 채널이 없습니다."); return }
+        guard let tx, rx != nil else { fail("필요한 통신 채널이 없습니다.",retry:true); return }
         p.setNotifyValue(true,for:tx)
     }
     func peripheral(_ p: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         guard p === peripheral, characteristic === tx else { return }
-        guard characteristic.uuid == CBUUID(string:profile.tx), error == nil, characteristic.isNotifying, let identity else { fail("알림 구독을 시작하지 못했습니다."); return }
+        guard characteristic.uuid == CBUUID(string:profile.tx), error == nil, characteristic.isNotifying, let identity else { fail("알림 구독을 시작하지 못했습니다.",retry:true); return }
+        guard stage == "discovering" else { return }
         ownNonce = Data((0..<32).map { _ in UInt8.random(in:0...255) }); stage = "commit"
         sendPlain(["type":"commit","v":1,"commit":Data(SHA256.hash(data:identity.publicKey.derRepresentation+ownNonce)).base64EncodedString()])
     }

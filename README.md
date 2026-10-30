@@ -1,92 +1,71 @@
 # FoldBridge Local
 
-갤럭시 알림을 Apple Watch로 직접 전달하는 개인용 Android·watchOS 앱입니다. 전송은 두 기기 사이의 BLE로 처리합니다. Android Local 앱에는 인터넷 권한이 없으며 APNs·중계 서버를 사용하지 않습니다. 운동·오디오 세션과 루팅은 사용하지 않습니다.
+갤럭시에 도착한 알림을 **Apple Watch로 직접 전달**하는 Android·watchOS 앱입니다. 두 기기는 Bluetooth LE로 통신하며, 알림 전달에 서버·인터넷·페어링된 아이폰을 사용하지 않습니다. 루팅·운동·오디오 세션도 사용하지 않습니다.
 
-## 이번 배포
+워치의 최초 설정과 개발용 앱 설치에는 Apple의 기기 등록과 Mac/Xcode가 필요합니다. 위치 세션을 이용하는 백그라운드 수신은 실험 기능이며, watchOS가 앱을 중단할 수 있어 모든 알림의 상시·즉시 수신을 보장하지는 않습니다.
 
-- Android: `FoldBridge-Local-0.3.2.apk`, 앱 ID `dev.foldbridge.local`, 버전 코드 8.
-- watchOS: `dev.foldbridge.watch`, 버전 0.2.4, 빌드 9.
-- 기존 갤럭시 FoldBridge와 별도로 설치합니다. 기존 앱의 데이터와 서명은 건드리지 않습니다.
-- 워치는 기존 앱과 Local 앱의 휴대폰 ID·페어링 키를 별도로 보관합니다. 앱 전환으로 페어링을 삭제하지 않습니다.
+<img src="watch/FoldBridge/Assets.xcassets/FoldBridgeIcon.appiconset/FoldBridgeIcon.png" width="96" alt="FoldBridge 앱 아이콘">
 
-## 바뀐 전달 방식
+## 바로 시작하기
 
-- 워치 알림의 앱 이름·제목·본문을 같은 왼쪽 기준선에 배치합니다. 원본 앱 아이콘은 작은 크기로 헤더 오른쪽에 유지하고, 시스템 글꼴·화면별 좌우 여백·기본 상단 색상을 사용합니다. 이전 40pt 아이콘 행과 12pt 간격이 본문을 밀어내던 배치를 줄였습니다. 긴 본문은 높이를 고정하지 않고 watchOS 알림 화면에서 스크롤합니다.
-- 워치 앱 안에는 알림 목록·상세 화면과 제목·본문 저장을 두지 않습니다. 업데이트 첫 실행에서 이전 앱 내 기록을 제거하고, 시스템 알림 센터의 알림과 페어링은 유지합니다. 중복 방지를 위한 ID/리비전 해시 512개만 저장합니다.
-- Android의 민감한 알림 본문 가림은 FoldBridge Local에 `RECEIVE_SENSITIVE_NOTIFICATIONS` AppOp를 허용해 해제합니다. 일반 알림 접근과 별도인 기기 설정이며 APK가 스스로 부여하지 않습니다. [설정 절차](docs/BUILD_AND_SETUP.md#민감한-알림-본문-허용)
-- 갤럭시의 원본 앱 아이콘을 PNG로 가져와 암호화해 전달합니다. 워치의 펼친 알림 본문에 표시합니다. watchOS가 자동 생성하는 최초 알림 아이콘과 상단 앱 이름은 FoldBridge로 고정되므로 Android 앱 아이콘으로 대체할 수 없습니다. [Apple 알림 표시 규칙](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
-- 같은 아이콘은 연결 중 수신 확인을 받은 뒤 재전송하지 않습니다. 워치에 캐시하며 아이콘 없는 기존 알림은 기본 표시를 사용합니다.
-- 갤럭시는 연결 카드·전달 개수·알림 설정 중심으로, 워치는 연결 상태와 별도 설정으로 정리했습니다. 메인 화면의 테스트 버튼과 긴 진단 문구는 제거했습니다.
+| 항목 | 현재 버전 / 링크 |
+| --- | --- |
+| 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) — 서버 없는 BLE 구성 |
+| Android | **0.4.0-local · 코드 9** / [APK 다운로드](artifacts/android/FoldBridge-Local-0.4.0.apk) |
+| Apple Watch | **0.3.0 · 빌드 10** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
+| 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) |
+| 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
+| 연결이 끊긴 경우 | **[새로고침·문제 해결](docs/TROUBLESHOOTING_KO.md)** |
 
-- Samsung System UI의 `charging_state` / `CHR` 충전 상태 알림은 기본으로 전달하지 않습니다. 충전율이 변하며 반복 갱신되는 시스템 알림이 워치에서 계속 울리는 문제를 해결합니다. `충전 상태 알림 전달`을 켜면 다시 포함합니다. 다른 앱과 중요 시스템 알림을 일괄 제외하지 않습니다.
-- Bluetooth 연결과 다른 앱의 알림을 읽는 **알림 접근**은 별개입니다. 일반 알림 권한만 허용하면 전달할 알림을 수집하지 못합니다. 이번 실기기 문제에서는 Local 알림 접근이 꺼져 있었고 수집 서비스도 연결되지 않았습니다. 권한 활성화 후 시스템의 수집 서비스 연결을 확인했습니다.
-- 앱 상단에서 알림 접근 허용 여부·수집 서비스 연결·수집/전달 요청/워치 수신 확인 수를 따로 표시합니다. 알림 접근이 꺼져 있으면 연결 상태보다 권한 누락을 먼저 표시하고 해당 설정으로 안내합니다. 허용됐으나 서비스가 연결되지 않은 경우 재바인딩을 요청합니다.
-- 워치 알림 표시 권한을 확인한 뒤 알림을 등록하고 수신 확인을 보냅니다. 권한이 꺼져 있을 때는 미확인 알림을 휴대폰에 남깁니다. 앱 전면에서도 배너·알림 목록·소리 표시를 요청합니다.
-- 워치 백그라운드 작업의 임의 4초 종료를 제거했습니다. 수신 처리 완료 또는 watchOS 만료 통지에 맞춰 작업을 끝냅니다. 이는 OS 실행 예산을 늘리거나 제한을 우회하는 기능이 아닙니다.
-- 진단 상태 파일에는 연결·권한·단계별 개수와 오류 상태만 기록하며 알림 제목·본문·보안 키·위치 좌표는 넣지 않습니다. Android는 앱의 외부 파일 폴더, 워치는 `Documents/foldbridge-status.json`에 저장합니다.
-- `모든 앱 알림 전달`이 기본으로 켜집니다. 선택한 앱만 전달하는 설정도 있습니다. 충전 상태 알림은 위의 별도 설정을 따릅니다.
-- 앱 코드에서 진행 중 알림·로컬 전용 알림·그룹 요약·비밀 표시 알림을 일괄 제외하던 필터를 제거했습니다. Android가 알림 접근 서비스에 실제 제공하는 제목·본문만 전달합니다. OS가 숨긴 내용은 복원하지 않습니다. 자체 연결 상태 알림은 반복 전달을 막기 위해 제외합니다.
-- GATT indication으로 패킷 전송 확인을 받고, 워치의 메시지 수신 확인 후 다음 알림을 보냅니다. 미확인 메시지를 조용히 버리지 않고 재시도·재연결 대상으로 남깁니다.
-- 미전달 알림은 암호화해 최대 24시간·1024개 보관합니다. 같은 알림 ID의 갱신은 최신 내용으로 대체합니다. 한도 초과 시 가장 오래된 항목부터 비웁니다.
-- 서비스·알림 접근 재연결 때 현재 남아 있는 알림을 다시 가져옵니다. 워치가 기억하는 수신 기록으로 중복을 줄입니다.
-- 연결 시작 설정과 등록한 보안 키를 유지합니다. 갤럭시는 재부팅 후 첫 잠금 해제, APK 업데이트, Bluetooth 복구 시 연결 서비스 자동 시작을 요청하고, BLE 준비 실패는 지연을 늘리며 재시도합니다. 워치는 앱 실행/OS 복원/백그라운드 갱신 기회에 저장된 휴대폰으로 재연결합니다. 기존 기기 조회 실패나 오래된 연결 주소에도 다시 검색하고, 저장된 공개 키로 확인한 뒤 새 세션을 만듭니다. 등록 해제를 누르지 않는 한 코드를 다시 비교할 필요는 없습니다.
-- 워치의 30분 뒤 백그라운드 갱신 요청은 재연결 보조 수단입니다. 실행 시각과 재부팅 직후 앱 실행은 watchOS가 결정합니다. 워치 앱이 실행되지 않으면 잠금 해제 후 FoldBridge를 한 번 열어야 할 수 있습니다. 강제 종료·OS 백그라운드 제한까지 무시하지 않습니다.
-
-## 갤럭시에서 설정
-
-1. `FoldBridge-Local-0.3.2.apk`를 설치하고 **FoldBridge Local**을 엽니다. 기존 FoldBridge는 삭제할 필요가 없습니다. Local 이전 버전에서 업데이트할 때는 동일 서명 키를 사용합니다. 연결 시작 설정을 켜 둔 경우 업데이트 뒤 앱을 열면 서비스를 재개합니다.
-2. 근처 기기와 알림 권한을 허용합니다.
-3. 메인의 `알림 접근 허용` 또는 `설정 → 알림 접근 설정`에서 **FoldBridge Local 알림 전달**을 허용합니다. APK 설치 정책에 따라 앱 정보에서 제한된 설정 허용이 먼저 필요할 수 있습니다.
-4. 기존 FoldBridge에서 `연결 중지`를 누릅니다. 두 BLE 서비스를 함께 켜면 간섭할 수 있으므로 기존 앱은 보관하되 연결은 중지합니다. Local 앱의 `모든 앱 알림`을 켜 두고 `설정 → 새 워치 등록`을 누릅니다.
-5. 워치에 표시되는 코드와 같을 때 양쪽에서 확인합니다. 평소에는 `연결 시작`으로 서비스를 유지합니다.
-
-## 워치에서 설정
-
-1. FoldBridge의 `휴대폰 연결`을 엽니다. 새 설치는 Local을 기본 선택합니다. 이전 앱을 사용 중이었다면 `연결할 앱 선택 → FoldBridge Local`을 선택합니다.
-2. `휴대폰 찾기`에서 갤럭시를 선택합니다. 양쪽 보안 코드를 비교하고 확인합니다.
-3. 워치 알림 권한을 허용합니다.
-4. `설정 → 연결 유지`를 켜고 위치 권한을 허용합니다. 이 모드는 워치 위치 세션으로 실행 시간을 확보하는 실험입니다. 좌표는 읽어 저장하거나 전송하지 않고, 위치 콜백을 받은 시각만 표시합니다.
-5. 이 빌드부터 연결 유지 설정을 저장합니다. 앱을 다시 전면에서 열면 사용자가 켜 둔 설정을 재개합니다. `연결 유지`를 끄면 설정과 세션을 끕니다.
-6. 위치 세션을 요청한 동안 30초 간격과 위치 콜백에서 연결·미전달 동기화를 시도합니다. 타이머 자체가 중단된 앱을 깨우는 기능은 아닙니다.
-
-기존 앱으로 돌아가려면 `설정 → 휴대폰 → 연결할 앱 선택 → 이전 FoldBridge`를 선택합니다. 전환 과정에서 Local 앱의 페어링도 남겨 둡니다.
-
-## 남는 한계
-
-위치 세션을 이용하는 백그라운드 수신은 실험 기능이며, 모든 알림의 무제한·즉시 수신은 보장하지 않습니다. watchOS는 앱을 중단하거나 종료할 수 있고, 위치 수신·권한·시스템 상태에 따라 실행 시간이 달라집니다. 워치에서는 위치 자동 일시중지를 끄는 iOS 속성을 사용할 수 없습니다. 일반 Bluetooth 백그라운드 검색·알림 실행에는 24시간당 5회의 합산 예산이 적용됩니다. 위치 모드가 이 제한을 언제나 우회한다고 주장하지 않습니다.
-
-Android의 알림 접근 제한, 사용자가 선택한 필터, 보관 한도, Bluetooth 통신 범위 및 두 기기의 알림·집중 모드 설정도 영향을 줍니다. 읽음·삭제의 양방향 동기화는 포함하지 않습니다. 알림 열람과 삭제는 워치 알림 센터에서 처리합니다.
-
-실제 설치 및 수신 문제의 원인과 적용 이력은 [구축 이력](docs/DEVELOPMENT_HISTORY.md)에 기록했습니다. 별도의 테스트 스위트나 자동 CI는 실행하지 않았습니다.
-
-## 소스와 빌드
-
-- `android/`: Local 앱 Java 소스와 빌드 도구. Java 패키지는 `dev.foldbridge`, 설치 앱 ID는 `dev.foldbridge.local`입니다.
-- `watch/FoldBridge.xcodeproj`: 현재 워치 앱 Xcode 프로젝트.
-- `relay/`, `windows/`, `legacy/`: 과거 배포 구성입니다. 이번 Local APK의 동작에는 사용하지 않습니다. 과거 검사 결과는 이번 변경의 결과를 뜻하지 않습니다.
-
-Android SDK Platform 36, Build Tools 36.0.0, JDK 17 이상으로 빌드합니다. 예:
+1. 갤럭시에 APK를 설치하고 **근처 기기·알림·알림 접근**을 허용합니다.
+2. Mac에서 소스를 받아 `watch/FoldBridge.xcodeproj`를 Xcode로 엽니다. 자신의 Team과 고유한 Bundle ID를 선택해 실제 워치에 설치합니다. 다른 사람의 워치 서명 파일을 그대로 설치하는 방식은 아닙니다.
+3. 갤럭시 **설정 → 새 워치 등록**, 워치 **휴대폰 연결 → 휴대폰 찾기**에서 서로 선택합니다. 코드가 같으면 양쪽에서 확인합니다.
+4. 워치에서 알림 표시를 허용합니다. 원하는 경우 **설정 → 연결 유지**를 켜고 위치 권한을 허용합니다.
+5. 연결이 풀리면 **갤럭시와 워치의 ‘연결 새로고침’**을 누릅니다. 기존 등록과 대기 알림은 보존됩니다.
 
 ```sh
-python3 android/build_android.py --sdk /path/to/sdk --java-home /path/to/jdk --keystore /path/to/debug.keystore --output FoldBridge-Local.apk --skip-signature-check
+git clone --branch local-ble https://github.com/mhj604/FoldBridge.git
+cd FoldBridge
+open watch/FoldBridge.xcodeproj
 ```
 
-향후 Android 업데이트에는 이번에 생성한 동일한 서명 키를 사용해야 합니다. 서명 키는 저장소에 포함하지 않습니다. 로컬의 `FoldBridge-Local-signing-backup.zip`에 이번 키를 별도로 보관했습니다. 이 개발용 키의 alias는 `androiddebugkey`, store/key password는 `android`입니다.
+`main`에도 최신 소스와 한국어 문서를 반영합니다. `relay/`, `windows/`, `legacy/`는 과거 구성으로 현재 Local 앱 실행에는 필요하지 않습니다.
 
-워치는 무료 Personal Team으로 서명합니다. 앱 ID·Team을 유지하면 기존 저장 데이터를 사용하는 업데이트가 가능합니다. 개발용 서명의 만료 조건은 Apple의 프로비저닝 정책을 따릅니다.
+## 무엇을 할 수 있나요?
 
-## 근거
+- 다른 앱의 제목·본문·원본 앱 아이콘을 암호화해 워치로 전달합니다. 모든 앱 전달이 기본이며 앱 선택도 가능합니다.
+- 알림은 워치 **알림 센터**에 표시합니다. FoldBridge 내부에 이전 메시지 목록이나 본문을 따로 보관하지 않습니다.
+- 미전달 알림만 휴대폰에 암호화해 최대 24시간·1,024개 대기시킵니다. 워치가 표시 요청을 수락하면 대기열에서 제거합니다.
+- 충전율 변경 때 반복되던 Samsung System UI 충전 알림은 기본 제외합니다. **충전 상태 알림**을 켜면 포함합니다.
+- 재부팅 후 저장된 등록으로 재연결을 시도합니다. 양쪽 첫 잠금 해제와 Bluetooth가 필요합니다. 워치가 자동 실행되지 않으면 FoldBridge를 한 번 열어 주세요.
+- **연결 새로고침**은 기존 등록 키를 유지한 채 낡은 연결·인증 상태를 정리하고 다시 연결합니다. **지금 동기화**는 이미 연결된 상태에서 미전달 알림을 가져옵니다.
 
-- [Apple 백그라운드 위치 업데이트](https://developer.apple.com/documentation/corelocation/handling-location-updates-in-the-background)
-- [Apple Bluetooth 백그라운드 작업](https://developer.apple.com/documentation/watchkit/using-background-tasks)
-- [Android foreground service 시작 제한](https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start)
+## 알림 모양과 개인정보 표시
 
-## 문서와 배포 파일
+원본 앱 아이콘은 펼친 알림의 본문에 표시합니다. 처음 뜨는 아이콘과 상단 앱 이름은 watchOS가 FoldBridge로 생성합니다. 앱 이름·제목·본문의 왼쪽 기준선을 맞추고 시스템 글꼴과 화면 여백을 사용합니다. [Apple 알림 표시 구조](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
 
-- [구조](docs/ARCHITECTURE.md)
-- [현재 BLE 프로토콜](docs/PROTOCOL.md)
-- [빌드와 설치](docs/BUILD_AND_SETUP.md)
-- [구축 이력과 문제 해결](docs/DEVELOPMENT_HISTORY.md)
-- [Android APK](artifacts/android/FoldBridge-Local-0.3.2.apk)
+Android가 민감한 본문을 가리면 워치에도 가림 문구가 전달됩니다. 본문 전체 전달을 원하는 사용자는 자신의 기기에서 앱별 수신 설정을 할 수 있습니다. **[민감한 알림 본문 허용](docs/BUILD_AND_SETUP.md#민감한-알림-본문-허용)**을 참고하세요. APK가 이 설정을 스스로 부여하지 않습니다.
 
-`relay/`, `windows/`, `legacy/`는 초기 구성의 소스와 문서를 보존한 것입니다. 현재 Local 앱은 이 구성에 의존하지 않습니다. 원본 ZIP이나 기기 로그, 페어링 키, Android 서명 키, Apple 프로비저닝 프로파일은 포함하지 않습니다. Xcode Team은 각자 선택합니다.
+알림 내용·개인 키·위치 좌표를 진단 파일이나 이 저장소에 올리지 않습니다. 위치 연결 유지에서도 좌표는 저장하거나 전송하지 않습니다.
+
+## 환경과 한계
+
+| 환경 | 필요 사항 |
+| --- | --- |
+| 갤럭시 / Android | Android 13 이상, BLE peripheral/광고 지원, 근처 기기와 알림 접근 허용 |
+| Apple Watch | watchOS 10 이상 대상으로 빌드, Bluetooth와 알림 권한. 실제 사용 기기는 Ultra 2 / watchOS 27 계열 |
+| 워치 앱 설치 | Mac, 기기 OS에 맞는 Xcode, 자신의 Apple 개발 Team, 개발자 모드와 Mac 개발용 페어링 |
+| Apple 계정 | 무료 Personal Team 사용 가능. 갤럭시와 워치 계정을 맞출 필요는 없습니다. 워치 설치 서명은 자신의 Team을 사용합니다. |
+
+워치 개발용 서명은 만료에 따라 재서명이 필요할 수 있습니다. 위치 세션은 배터리를 더 사용하며, 강제 종료·OS의 실행 예산·Bluetooth 범위·집중 모드·알림 권한은 수신에 영향을 줍니다. 읽음/삭제의 양방향 동기화와 답장은 구현하지 않았습니다.
+
+## 직접 빌드하거나 기여하기
+
+- [설치·연결 순서](docs/QUICK_START_KO.md)
+- [빌드 도구·서명·민감한 알림 설정](docs/BUILD_AND_SETUP.md)
+- [문제 해결과 새로고침 사용법](docs/TROUBLESHOOTING_KO.md)
+- [구조](docs/ARCHITECTURE.md) / [BLE 프로토콜](docs/PROTOCOL.md)
+- [변경 이력](CHANGELOG.md) / [전체 구축 이력](docs/DEVELOPMENT_HISTORY.md)
+- [기여 방법](CONTRIBUTING.md)
+
+Android APK는 저장소와 Releases에서 내려받을 수 있습니다. Apple 서명 프로파일·Android 서명 키·기기 로그는 공개하지 않습니다. 자기 키로 빌드한 Android 앱은 배포 APK와 서명이 달라 같은 앱 위에 업데이트할 수 없습니다. **[서명과 업데이트 안내](docs/QUICK_START_KO.md#업데이트할-때)**를 먼저 읽어 주세요.

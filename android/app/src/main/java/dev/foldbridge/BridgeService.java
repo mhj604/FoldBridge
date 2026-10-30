@@ -25,7 +25,7 @@ public final class BridgeService extends Service {
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",8,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",9,"bridgeRunning",s!=null,"status",status,"error",error,
             "authenticated",s!=null&&s.authenticated,"watchActive",s!=null&&s.watchActive,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
             "received",NotificationRelay.received,"forwarded",NotificationRelay.forwarded,
@@ -48,7 +48,8 @@ public final class BridgeService extends Service {
     private final Set<String> acknowledgedIcons=new HashSet<>();
     private BluetoothGattServer server; private BluetoothGattCharacteristic tx;
     private BluetoothLeAdvertiser advertiser; private BluetoothDevice central;
-    private int bluetoothRetries=0;
+    private int bluetoothRetries=0, bluetoothEpoch=0;
+    private AdvertiseCallback advertisements;
     private final Runnable bluetoothRetry=()->{if(server==null)startBluetooth();};
     private Vault vault; private KeyPair identity; private Crypto.Session session;
     private Outbox outbox;
@@ -85,7 +86,8 @@ public final class BridgeService extends Service {
         PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_IMMUTABLE);
         startForeground(10,new Notification.Builder(this,"connection").setSmallIcon(android.R.drawable.stat_sys_data_bluetooth).setContentTitle("FoldBridge Local 실행 중").setContentText("Bluetooth로 애플워치 알림을 전달합니다").setOngoing(true).setContentIntent(open).build());
         if("pair".equals(intent==null?null:intent.getAction())) { pairUntil=SystemClock.elapsedRealtime()+120000; error=""; }
-        if(server==null) startBluetooth();
+        if("refresh".equals(intent==null?null:intent.getAction()))refreshBluetooth();
+        else if(server==null)startBluetooth();
         flush();
         handler.post(NotificationRelay::replayActive);
         NotificationRelay.reconnectIfAllowed(this);
@@ -93,11 +95,26 @@ public final class BridgeService extends Service {
         return START_STICKY;
     }
     void resumeBluetooth() {handler.post(()->{if(server==null)startBluetooth();});}
-    private void retryBluetooth(String reason) {
-        if(advertiser!=null)try{advertiser.stopAdvertising(advertisements);}catch(RuntimeException ignored){}
-        if(server!=null){server.close();server=null;}
-        tx=null;clearSession();fail(reason);
+    private void stopBluetooth() {
+        bluetoothEpoch++;
         handler.removeCallbacks(bluetoothRetry);
+        BluetoothDevice previous=central;
+        clearSession();
+        if(advertiser!=null&&advertisements!=null)try{advertiser.stopAdvertising(advertisements);}catch(RuntimeException ignored){}
+        advertisements=null;
+        if(server!=null){
+            if(previous!=null)try{server.cancelConnection(previous);}catch(RuntimeException ignored){}
+            server.close();server=null;
+        }
+        tx=null;
+    }
+    private void refreshBluetooth() {
+        stopBluetooth();bluetoothRetries=0;blockedUntil=0;failures=0;pairUntil=0;
+        error="";status="연결 새로고침 중";recordState(this);
+        handler.postDelayed(bluetoothRetry,500);
+    }
+    private void retryBluetooth(String reason) {
+        stopBluetooth();fail(reason);
         long delay=Math.min(30000L,1000L << Math.min(bluetoothRetries++,5));
         handler.postDelayed(bluetoothRetry,delay);
     }
@@ -113,7 +130,8 @@ public final class BridgeService extends Service {
         if(adapter==null || !adapter.isEnabled()) {status="Bluetooth가 켜지면 다시 연결합니다";error="";recordState(this);return;}
         advertiser=adapter.getBluetoothLeAdvertiser();
         if(advertiser==null) {retryBluetooth("Bluetooth 광고 준비를 기다립니다.");return;}
-        server=manager.openGattServer(this,callbacks);
+        int token=++bluetoothEpoch;
+        server=manager.openGattServer(this,callbacks(token));
         if(server==null) {retryBluetooth("Bluetooth 서버 준비를 다시 시도합니다.");return;}
         BluetoothGattService service=new BluetoothGattService(SERVICE,BluetoothGattService.SERVICE_TYPE_PRIMARY);
         tx=new BluetoothGattCharacteristic(TX,BluetoothGattCharacteristic.PROPERTY_INDICATE,0);
@@ -122,30 +140,32 @@ public final class BridgeService extends Service {
         service.addCharacteristic(new BluetoothGattCharacteristic(RX,BluetoothGattCharacteristic.PROPERTY_WRITE,BluetoothGattCharacteristic.PERMISSION_WRITE));
         if(!server.addService(service))retryBluetooth("BLE 서비스 등록을 다시 시도합니다.");
     }
-    private final AdvertiseCallback advertisements=new AdvertiseCallback() {
-        @Override public void onStartSuccess(AdvertiseSettings settings) { handler.post(()->{if(instance==BridgeService.this){bluetoothRetries=0;status="워치 연결 대기 중"; error="";recordState(BridgeService.this);}}); }
-        @Override public void onStartFailure(int code) { handler.post(()->{if(instance==BridgeService.this)retryBluetooth("BLE 광고를 다시 시도합니다: "+code);}); }
-    };
-    private final BluetoothGattServerCallback callbacks=new BluetoothGattServerCallback() {
-        @Override public void onServiceAdded(int result,BluetoothGattService service) { handler.post(()->{
+    private AdvertiseCallback advertisements(int token) {return new AdvertiseCallback() {
+        @Override public void onStartSuccess(AdvertiseSettings settings) { handler.post(()->{if(token!=bluetoothEpoch)return;if(instance==BridgeService.this&&token==bluetoothEpoch){bluetoothRetries=0;status="워치 연결 대기 중"; error="";recordState(BridgeService.this);}}); }
+        @Override public void onStartFailure(int code) { handler.post(()->{if(token!=bluetoothEpoch)return;if(instance==BridgeService.this&&token==bluetoothEpoch)retryBluetooth("BLE 광고를 다시 시도합니다: "+code);}); }
+    };}
+    private BluetoothGattServerCallback callbacks(int token) {return new BluetoothGattServerCallback() {
+        @Override public void onServiceAdded(int result,BluetoothGattService service) { handler.post(()->{if(token!=bluetoothEpoch)return;
             if(server==null||instance!=BridgeService.this)return;
             if(result!=BluetoothGatt.GATT_SUCCESS) {retryBluetooth("BLE 서비스 등록을 다시 시도합니다: "+result);return;}
+            advertisements=advertisements(token);
             advertiser.startAdvertising(new AdvertiseSettings.Builder().setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY).setConnectable(true).setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM).build(),new AdvertiseData.Builder().addServiceUuid(new ParcelUuid(SERVICE)).build(),advertisements);
         }); }
-        @Override public void onConnectionStateChange(BluetoothDevice device,int result,int state) { handler.post(()->{
+        @Override public void onConnectionStateChange(BluetoothDevice device,int result,int state) { handler.post(()->{if(token!=bluetoothEpoch)return;
             if(server==null) return;
             if(state==BluetoothProfile.STATE_CONNECTED) {
+                if(central!=null&&device.getAddress().equals(central.getAddress()))return;
                 if(central!=null || SystemClock.elapsedRealtime()<blockedUntil) { server.cancelConnection(device); return; }
-                clearSession(); central=device; status="워치 인증 중";
+                clearSession();central=device;error="";status="워치 인증 중";recordState(BridgeService.this);
                 int epoch=generation; handler.postDelayed(()->{if(epoch==generation&&!authenticated) disconnect("인증 시간이 만료됐습니다.");},120000);
-            } else if(central!=null&&device.getAddress().equals(central.getAddress())) { clearSession(); status="연결 끊김, 워치 재연결 대기"; }
+            } else if(state==BluetoothProfile.STATE_DISCONNECTED&&central!=null&&device.getAddress().equals(central.getAddress())) { clearSession(); status="연결 끊김, 워치 재연결 대기"; }
         }); }
-        @Override public void onMtuChanged(BluetoothDevice device,int value) { handler.post(()->{if(matches(device))mtu=Math.max(23,value);}); }
+        @Override public void onMtuChanged(BluetoothDevice device,int value) { handler.post(()->{if(token!=bluetoothEpoch)return;if(matches(device))mtu=Math.max(23,value);}); }
         @Override public void onDescriptorReadRequest(BluetoothDevice device,int requestId,int offset,BluetoothGattDescriptor descriptor) {
-            handler.post(()->{if(server!=null)server.sendResponse(device,requestId,offset==0?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_INVALID_OFFSET,offset,subscribed?BluetoothGattDescriptor.ENABLE_INDICATION_VALUE:BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);});
+            handler.post(()->{if(token!=bluetoothEpoch)return;if(server!=null)server.sendResponse(device,requestId,offset==0?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_INVALID_OFFSET,offset,subscribed?BluetoothGattDescriptor.ENABLE_INDICATION_VALUE:BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);});
         }
         @Override public void onDescriptorWriteRequest(BluetoothDevice device,int requestId,BluetoothGattDescriptor descriptor,boolean prepared,boolean response,int offset,byte[] value) {
-            handler.post(()->{
+            handler.post(()->{if(token!=bluetoothEpoch)return;
                 if(server==null)return;
                 boolean valid=matches(device)&&CCC.equals(descriptor.getUuid())&&!prepared&&offset==0&&Arrays.equals(value,BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
                 if(valid)subscribed=true;
@@ -153,7 +173,7 @@ public final class BridgeService extends Service {
             });
         }
         @Override public void onCharacteristicWriteRequest(BluetoothDevice device,int requestId,BluetoothGattCharacteristic characteristic,boolean prepared,boolean response,int offset,byte[] value) {
-            handler.post(()->{
+            handler.post(()->{if(token!=bluetoothEpoch)return;
                 if(server==null)return;
                 boolean valid=matches(device)&&RX.equals(characteristic.getUuid())&&!prepared&&offset==0&&subscribed;
                 if(response)server.sendResponse(device,requestId,valid?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,0,null);
@@ -162,12 +182,12 @@ public final class BridgeService extends Service {
                 catch(Exception e) { disconnect("인증 또는 데이터 검증 실패"); }
             });
         }
-        @Override public void onNotificationSent(BluetoothDevice device,int result) { handler.post(()->{
+        @Override public void onNotificationSent(BluetoothDevice device,int result) { handler.post(()->{if(token!=bluetoothEpoch)return;
             if(!matches(device))return; inFlight=false;
             if(result!=BluetoothGatt.GATT_SUCCESS) { disconnect("BLE 전송 실패: "+result); return; }
             outgoing.pollFirst(); drain();
         }); }
-    };
+    };}
     private boolean matches(BluetoothDevice d) { return central!=null&&d.getAddress().equals(central.getAddress()); }
     private void receive(JSONObject message) throws Exception {
         String type=message.optString("type");
@@ -212,7 +232,7 @@ public final class BridgeService extends Service {
     static void confirmPair() { BridgeService s=instance; if(s!=null)s.handler.post(()->{if(s.session!=null&&!s.authenticated){s.localConfirmed=true;s.sendSecure(object("type","confirm"));s.finishAuthentication();}}); }
     private void finishAuthentication() {
         if(authenticated||!localConfirmed||!remoteConfirmed)return;
-        vault.put("peer",b64(peerPublic)); authenticated=true; pairingCode=""; failures=0; status="워치 연결됨";
+        vault.put("peer",b64(peerPublic)); authenticated=true;pairingCode="";failures=0;blockedUntil=0;error="";status="워치 연결됨";
         sendSecure(object("type","ready"));
         recordState(this);
     }
@@ -303,20 +323,12 @@ public final class BridgeService extends Service {
     private void fail(String why) { error=why; status="확인 필요";recordState(this); }
     static void bluetoothOff() {
         BridgeService s=instance;if(s==null)return;
-        s.handler.post(()->{
-            s.handler.removeCallbacks(s.bluetoothRetry);s.bluetoothRetries=0;s.clearSession();
-            if(s.advertiser!=null)try{s.advertiser.stopAdvertising(s.advertisements);}catch(RuntimeException ignored){}
-            if(s.server!=null){s.server.close();s.server=null;}
-            status="Bluetooth가 켜지면 다시 연결합니다";
-        });
+        s.handler.post(()->{s.stopBluetooth();s.bluetoothRetries=0;error="";status="Bluetooth가 켜지면 다시 연결합니다";recordState(s);});
     }
     static void test() { String id=UUID.randomUUID().toString(); enqueue(object("type","notification","id",id,"rev",id,"app","FoldBridge","title","연결 테스트","body","이 알림이 워치에 도착하면 전달 경로가 동작합니다.","posted_at",System.currentTimeMillis())); }
     static void forget(Context context) { BridgeService s=instance; if(s!=null){s.disconnect("연결을 해제했습니다.");s.pending.clear();waiting=0;s.persist();}try {Vault v=new Vault(context); v.remove("peer");v.remove("push_token");if(s==null)v.remove("outbox");}catch(Exception ignored){} }
     @Override public IBinder onBind(Intent intent) {return null;}
     @Override public void onDestroy() {
-       
-        handler.removeCallbacksAndMessages(null);
-        if(advertiser!=null)try{advertiser.stopAdvertising(advertisements);}catch(Exception ignored){}
-        if(server!=null){server.close();server=null;} clearSession(); instance=null; status="중지됨"; super.onDestroy();
+        handler.removeCallbacksAndMessages(null);stopBluetooth();instance=null;status="중지됨";super.onDestroy();
     }
 }
