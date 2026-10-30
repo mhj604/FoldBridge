@@ -32,9 +32,9 @@
 
 ## 로컬 데이터
 
-Android 개인 키는 Android Keystore, 워치 개인 키는 기기 전용 Keychain에 둔다. 휴대폰 미전달 목록과 워치 수신 기록을 저장한다. 양쪽 `foldbridge-status.json`은 연결/권한/단계별 개수만 기록하며 알림 본문·개인 키·위치 좌표는 넣지 않는다.
+Android 개인 키는 Android Keystore, 워치 개인 키는 기기 전용 Keychain에 둔다. 휴대폰에는 수신 확인 전 미전달 목록만 저장한다. 워치는 알림 내용의 별도 수신함을 두지 않으며 중복 방지용 ID/리비전 해시 512개만 저장한다. 빌드 6 첫 실행에서 이전 inbox의 해시만 옮긴 뒤 제목·본문을 포함한 기존 inbox를 제거한다. watchOS 알림 센터의 알림은 유지한다. 양쪽 `foldbridge-status.json`은 연결/권한/단계별 개수만 기록하며 알림 본문·개인 키·위치 좌표는 넣지 않는다.
 
-워치 앱의 기존 FoldBridge와 Local 프로필은 휴대폰 키/식별자를 따로 보관한다. 기존 앱과 Local Android BLE 서비스를 동시에 실행하지 않는다. 읽음·삭제의 양방향 동기화는 구현하지 않았으며 워치에서 삭제는 워치 목록/로컬 알림에만 적용된다.
+워치 앱의 기존 FoldBridge와 Local 프로필은 휴대폰 키/식별자를 따로 보관한다. 기존 앱과 Local Android BLE 서비스를 동시에 실행하지 않는다. 읽음·삭제의 양방향 동기화는 구현하지 않았으며 알림 열람/삭제는 watchOS 알림 센터에서 처리한다.
 
 ## 보존한 초기 구성
 
@@ -44,7 +44,7 @@ Android 개인 키는 Android Keystore, 워치 개인 키는 기기 전용 Keych
 
 Android `AppIcons`는 PackageManager의 원본 앱 아이콘을 읽고 BLE 메시지 크기에 맞춰 48px부터 단계적으로 축소한 PNG로 만든다. PNG는 최대 3,072바이트이며 SHA-256 키로 식별한다. 같은 연결에서 해당 아이콘을 포함한 알림의 ACK를 받으면 이후에는 아이콘 키만 보낸다. 아이콘과 알림 본문은 함께 암호화된다.
 
-워치는 아이콘을 Application Support 폴더에 저장하고 메모리 캐시를 사용한다. 알림 목록과 상세 화면, `FOLDBRIDGE_ALERT` 카테고리의 SwiftUI long-look 본문에 원본 아이콘을 표시한다. 발신 앱 ID로 알림을 묶는다. 새 아이콘이 기존 수신 알림에 추가돼도 같은 내용 리비전을 다시 알리지 않는다.
+워치는 아이콘을 Application Support 폴더에 저장하고 메모리 캐시를 사용한다. `FOLDBRIDGE_ALERT` 카테고리의 SwiftUI long-look 본문에 원본 아이콘을 표시한다. 발신 앱 ID로 알림을 묶는다. 새 아이콘이 기존 수신 알림에 추가돼도 같은 내용 리비전을 다시 알리지 않는다.
 
 watchOS의 short-look과 상단 sash는 시스템이 FoldBridge 앱 이름/아이콘으로 생성한다. 이는 원본 Android 앱의 알림으로 바꿀 수 없으며 원본 아이콘은 사용자 정의 콘텐츠 영역에 표시한다. [Apple 문서](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
 

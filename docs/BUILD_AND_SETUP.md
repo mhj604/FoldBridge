@@ -65,3 +65,19 @@ xcrun swift tools/generate-app-icon.swift \
 ```
 
 다른 앱의 원본 아이콘은 사용자 갤럭시에서 런타임에 읽어 전달한다. 저장소나 APK에 타사 앱 아이콘 모음을 포함하지 않는다.
+
+## 민감한 알림 본문 허용
+
+Android의 민감한 알림 가림은 알림 접근을 허용해도 별도로 적용될 수 있다. 실제 기기에서 Local 앱의 `RECEIVE_SENSITIVE_NOTIFICATIONS`가 `ignore`였으며, 일반 잠금 화면 내용 표시는 이미 허용되어 있었다. 앱별 AppOp를 허용하고 수집 서비스를 다시 연결해 적용한다. 루팅이나 전체 기기의 가림 해제는 필요하지 않다. APK 업데이트와 별도인 기기 설정이며, 앱 삭제/재설치나 OS 정책 변경 후에는 다시 필요할 수 있다.
+
+사용자가 본문 전체 전달을 원하는 경우, USB 디버깅이 허용된 자신의 기기에서 실행한다:
+
+```sh
+adb shell cmd appops set --user 0 dev.foldbridge.local RECEIVE_SENSITIVE_NOTIFICATIONS allow
+adb shell cmd notification disallow_listener dev.foldbridge.local/dev.foldbridge.NotificationRelay 0
+adb shell cmd notification allow_listener dev.foldbridge.local/dev.foldbridge.NotificationRelay 0
+```
+
+원래 차단 상태로 되돌리려면 AppOp를 `ignore`로 바꾸고 같은 수집 서비스 재연결을 실행한다. 다른 앱에서 본문을 제공하지 않거나 자체적으로 숨긴 내용은 복원할 수 없다. [Android 구현의 앱별 허용 처리](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-release/services/core/java/com/android/server/notification/NotificationManagerService.java#13603)
+
+워치 자체의 펼치기 전 미리보기 설정은 별도다. 자동으로 자세히 보려면 워치 설정 → 알림 → 전체 알림을 보려면 탭하기를 끈다. 앱은 이 시스템 설정을 직접 바꿀 수 없다. [Apple 알림 설정](https://support.apple.com/108369)

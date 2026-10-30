@@ -18,7 +18,7 @@ struct PhoneCandidate: Identifiable {
     var id: UUID { peripheral.identifier }
     var name: String { peripheral.name ?? "Android 휴대폰" }
 }
-struct WatchAlert: Identifiable, Codable {
+struct WatchAlert {
     let id: String, app: String, title: String, body: String
     let received: Date
     let appID: String?
@@ -29,7 +29,6 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     static let shared = WatchLink()
     @Published var status = "휴대폰 연결을 시작하세요"
     @Published var candidates: [PhoneCandidate] = []
-    @Published var alerts: [WatchAlert] = []
     @Published var code = ""
     @Published var connected = false
     @Published var lastError = ""
@@ -64,8 +63,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var lastIncomingFrame: Data?, lastSync = Date.distantPast
     private var pendingReceipts: [(alert: WatchAlert, revision: String)] = []
     private var presentingReceipt = false
-    private struct Inbox: Codable {
-        let alerts: [WatchAlert]
+    private struct ReceiptLedger: Codable {
         let seen: [String: String]
         let order: [String]
     }
@@ -75,9 +73,14 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         do {
             identity = try WatchStore.identity()
             if let saved = try WatchStore.get("seen"), let data = try JSONSerialization.jsonObject(with:saved) as? [String:String] { seen = data }
-            if let data = try WatchStore.get("inbox"), let saved = try? JSONDecoder().decode(Inbox.self,from:data) {
-                alerts = saved.alerts; seen = saved.seen; seenOrder = saved.order
+            // The legacy inbox is decoded as receipt metadata only; message fields are ignored.
+            let savedLedger = try WatchStore.get("receipts") ?? WatchStore.get("inbox")
+            if let data = savedLedger, let saved = try? JSONDecoder().decode(ReceiptLedger.self,from:data) {
+                seen = saved.seen; seenOrder = saved.order
             } else { seenOrder = seen.keys.sorted() }
+            try WatchStore.put("receipts",JSONEncoder().encode(ReceiptLedger(seen:seen,order:seenOrder)))
+            WatchStore.remove("inbox")
+            WatchStore.remove("seen")
         } catch { lastError = "보안 저장소를 사용할 수 없습니다." }
         manager = CBCentralManager(delegate:self, queue:nil, options:[
             CBCentralManagerOptionShowPowerAlertKey:true,
@@ -258,11 +261,6 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         let appID = (message["app_id"] as? String).map { String($0.prefix(255)) }
         let iconKey = AppIconStore.accept(key:message["icon_key"] as? String,png:message["icon_png"] as? String)
         if seen[id] == revision {
-            if let iconKey, let index = alerts.firstIndex(where:{$0.id == id}), alerts[index].iconKey != iconKey {
-                let previous = alerts[index]
-                alerts[index] = WatchAlert(id:id,app:app,title:title,body:body,received:previous.received,appID:appID,iconKey:iconKey)
-                saveInbox()
-            }
             sendSecure(["type":"ack","id":id,"rev":revision]); return
         }
         guard !pendingReceipts.contains(where:{$0.alert.id == id && $0.revision == revision}) else { return }
@@ -301,9 +299,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
                 self.pendingReceipts.removeFirst()
                 if error == nil {
                     self.scheduledCount += 1; UserDefaults.standard.set(self.scheduledCount,forKey:"diagnosticScheduled")
-                    // Persist even if BLE disconnected while the notification was being added.
-                    self.alerts.removeAll(where:{$0.id == alert.id}); self.alerts.insert(alert,at:0)
-                    if self.alerts.count > 100 { self.alerts.removeLast(self.alerts.count-100) }
+                    // Retain only receipt hashes; notification content belongs to Notification Center.
                     self.remember(alert.id,revision)
                     if self.connected { self.sendSecure(["type":"ack","id":alert.id,"rev":revision]) }
                 } else { self.lastError = "알림 표시를 요청하지 못했습니다. 다음 동기화 때 다시 요청합니다." }
@@ -316,16 +312,11 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         seen[id] = revision
         seenOrder.removeAll(where:{$0 == id}); seenOrder.append(id)
         while seenOrder.count > 512 { seen.removeValue(forKey:seenOrder.removeFirst()) }
-        saveInbox()
+        saveReceipts()
     }
-    private func saveInbox() {
-        do { try WatchStore.put("inbox",JSONEncoder().encode(Inbox(alerts:alerts,seen:seen,order:seenOrder))) }
-        catch { lastError = "수신 목록을 저장하지 못했습니다." }
-    }
-    func dismiss(_ id: String) {
-        alerts.removeAll(where:{$0.id == id}); saveInbox()
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers:[id])
-        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers:[id])
+    private func saveReceipts() {
+        do { try WatchStore.put("receipts",JSONEncoder().encode(ReceiptLedger(seen:seen,order:seenOrder))) }
+        catch { lastError = "중복 알림 방지 상태를 저장하지 못했습니다." }
     }
     func synchronize() {
         guard connected else { reconnect(); return }
@@ -442,9 +433,9 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     func forget() {
         let old = peripheral; resetSession(); reconnectWork?.cancel(); reconnectWork = nil
-        UserDefaults.standard.removeObject(forKey:phoneIDKey); WatchStore.remove(peerKey); WatchStore.remove("seen"); WatchStore.remove("inbox"); seen = [:]; seenOrder = []; pendingReceipts.removeAll()
+        UserDefaults.standard.removeObject(forKey:phoneIDKey); WatchStore.remove(peerKey); WatchStore.remove("seen"); WatchStore.remove("inbox"); WatchStore.remove("receipts"); seen = [:]; seenOrder = []; pendingReceipts.removeAll()
         if let old { manager.cancelPeripheralConnection(old) }
-        alerts.removeAll();UNUserNotificationCenter.current().removeAllPendingNotificationRequests();UNUserNotificationCenter.current().removeAllDeliveredNotifications(); completeBackgroundTasks(); status = "등록을 해제했습니다"
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests();UNUserNotificationCenter.current().removeAllDeliveredNotifications(); completeBackgroundTasks(); status = "등록을 해제했습니다"
     }
     private func resetSession() {
         peripheral?.delegate = nil

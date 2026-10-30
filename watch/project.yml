@@ -7,8 +7,8 @@ settings:
   base:
     SWIFT_VERSION: "5.0"
     CODE_SIGN_STYLE: Automatic
-    CURRENT_PROJECT_VERSION: 5
-    MARKETING_VERSION: 0.2.0
+    CURRENT_PROJECT_VERSION: 6
+    MARKETING_VERSION: 0.2.1
 targets:
   FoldBridge:
     type: application
@@ -24,8 +24,8 @@ targets:
       path: FoldBridge/Info.plist
       properties:
         CFBundleDisplayName: FoldBridge
-        CFBundleShortVersionString: "0.2.0"
-        CFBundleVersion: "5"
+        CFBundleShortVersionString: "0.2.1"
+        CFBundleVersion: "6"
         WKApplication: true
         WKWatchOnly: true
         NSBluetoothAlwaysUsageDescription: 갤럭시 휴대폰의 알림을 받기 위해 블루투스를 사용합니다.

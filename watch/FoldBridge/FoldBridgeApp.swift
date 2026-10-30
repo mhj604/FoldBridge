@@ -165,31 +165,13 @@ struct ContentView: View {
                         Button("알림 표시 허용") { link.requestNotifications() }.tint(BridgeStyle.accent)
                     }
                     if !link.lastError.isEmpty { Text(link.lastError).font(.caption2).foregroundStyle(.orange) }
-                    HStack {
-                        Text("최근 알림").font(.headline)
-                        Spacer()
-                        Text("\(link.alerts.count)").font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
-                    }.padding(.top,4)
-                    if link.alerts.isEmpty {
-                        VStack(spacing:10) {
-                            Image(systemName:"bell.badge").font(.title2).foregroundStyle(BridgeStyle.accent)
-                            Text("새 알림을 기다리고 있어요").font(.caption).multilineTextAlignment(.center)
-                        }.frame(maxWidth:.infinity).padding(.vertical,22).background(BridgeStyle.surface,in:RoundedRectangle(cornerRadius:18))
-                    }
-                    ForEach(link.alerts) { alert in
-                        NavigationLink { AlertDetailView(alert:alert).environmentObject(link) } label: {
-                            VStack(alignment:.leading,spacing:9) {
-                                HStack(spacing:8) {
-                                    SourceAppIcon(key:alert.iconKey,size:28)
-                                    Text(alert.app).font(.caption2.weight(.semibold)).lineLimit(1)
-                                    Spacer(minLength:0)
-                                    Text(alert.received,style:.time).font(.system(size:10)).foregroundStyle(.secondary)
-                                }
-                                if !alert.title.isEmpty { Text(alert.title).font(.system(.subheadline,design:.default,weight:.semibold)).lineLimit(2) }
-                                if !alert.body.isEmpty { Text(alert.body).font(.caption).foregroundStyle(.secondary).lineLimit(2) }
-                            }.frame(maxWidth:.infinity,alignment:.leading).padding(12).background(BridgeStyle.surface,in:RoundedRectangle(cornerRadius:17))
-                        }.buttonStyle(.plain)
-                    }
+                    VStack(spacing:10) {
+                        Image(systemName:"bell.badge").font(.title2).foregroundStyle(BridgeStyle.accent)
+                        Text("알림은 알림 센터에서").font(.headline).multilineTextAlignment(.center)
+                        Text("화면 위에서 아래로 쓸어내려 확인하세요.\n이 앱에는 알림 내용을 보관하지 않아요.")
+                            .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                    }.frame(maxWidth:.infinity).padding(.vertical,22).padding(.horizontal,10)
+                        .background(BridgeStyle.surface,in:RoundedRectangle(cornerRadius:18))
                     if link.connected {
                         Button { link.synchronize() } label: { Label("지금 동기화",systemImage:"arrow.clockwise").font(.caption) }
                             .buttonStyle(.plain).foregroundStyle(BridgeStyle.accent).frame(maxWidth:.infinity).padding(.vertical,8)
@@ -214,23 +196,6 @@ struct PairingCodeCard: View {
     }
 }
 
-struct AlertDetailView: View {
-    let alert: WatchAlert
-    @EnvironmentObject var link: WatchLink
-    @Environment(\.dismiss) private var dismiss
-    var body: some View {
-        ScrollView {
-            VStack(alignment:.leading,spacing:14) {
-                HStack(spacing:10) { SourceAppIcon(key:alert.iconKey,size:38);Text(alert.app).font(.headline) }
-                Text(alert.received,style:.time).font(.caption2).foregroundStyle(.secondary)
-                if !alert.title.isEmpty { Text(alert.title).font(.headline) }
-                if !alert.body.isEmpty { Text(alert.body).font(.body) }
-                Button("워치에서 삭제",role:.destructive) { link.dismiss(alert.id);dismiss() }.font(.caption).padding(.top,10)
-            }.frame(maxWidth:.infinity,alignment:.leading)
-        }.navigationTitle("알림")
-    }
-}
-
 struct BridgeSettingsView: View {
     @EnvironmentObject var link: WatchLink
     @StateObject private var keepAlive = LocationKeepAlive.shared
@@ -252,7 +217,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button("휴대폰 등록 해제",role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.2.0").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.2.1").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle("설정")
             .confirmationDialog("연결 유지를 시작할까요?",isPresented:$startingLocation,titleVisibility:.visible) {
