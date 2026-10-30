@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="text_bed73c3849f0b305" formatted="false">"\n수집 "</string>
+  <string name="text_dc8ff88cb32239ab" formatted="false">"\n알림 수집: "</string>
+  <string name="text_5aea853dcd0beb50" formatted="false">"\n알림 접근: "</string>
+  <string name="text_61b083cf69acdcb6" formatted="false">"\n최근 전달 확인: "</string>
+  <string name="text_5e6435bd3bb150e1" formatted="false">" · 전달 요청 "</string>
+  <string name="text_96c8e11b250ed402" formatted="false">"%@ 연결을 선택했습니다"</string>
+  <string name="text_3151a1684480fcbd" formatted="false">"Android 휴대폰"</string>
+  <string name="text_0eac8de385fa580e" formatted="false">"BLE 광고를 다시 시도합니다: "</string>
+  <string name="text_4997769f53999435" formatted="false">"BLE 서비스 등록을 다시 시도합니다."</string>
+  <string name="text_92274289e314e361" formatted="false">"BLE 서비스 등록을 다시 시도합니다: "</string>
+  <string name="text_c0251a9f09db98fd" formatted="false">"BLE 수신이 중단되어 다시 연결합니다."</string>
+  <string name="text_321f259a5c14df77" formatted="false">"BLE 전송 실패: "</string>
+  <string name="text_da59517098c3e72e" formatted="false">"BLE 전송 확인 시간 초과"</string>
+  <string name="text_d4cfbd5b6f1feb8d" formatted="false">"BLE 전송을 시작하지 못했습니다: "</string>
+  <string name="text_1b1ed780c38f5640" formatted="false">"Bluetooth 광고 준비를 기다립니다."</string>
+  <string name="text_cc5e92a778c365cd" formatted="false">"Bluetooth 서버 준비를 다시 시도합니다."</string>
+  <string name="text_31fdc892f7527c6c" formatted="false">"Bluetooth 연결만으로는 다른 앱의 알림을 전달할 수 없습니다. 설정에서 ‘FoldBridge Local 알림 전달’의 알림 접근을 허용해 주세요."</string>
+  <string name="text_a4b3bc978835cb01" formatted="false">"Bluetooth 준비를 다시 시도합니다."</string>
+  <string name="text_63593f4a1e56faad" formatted="false">"Bluetooth가 켜지면 다시 연결합니다"</string>
+  <string name="text_ee99ebc7344137cf" formatted="false">"Bluetooth로 애플워치 알림을 전달합니다"</string>
+  <string name="text_e24df1a9d56f340c" formatted="false">"FoldBridge Local 실행 중"</string>
+  <string name="text_e5d50dafe36bf172" formatted="false">"FoldBridge Local 알림 전달"</string>
+  <string name="text_b001ac3a6a2c90b6" formatted="false">"FoldBridge 서비스를 찾지 못했습니다."</string>
+  <string name="text_36f4140cf55e0caf" formatted="false">"FoldBridge 휴대폰 찾는 중"</string>
+  <string name="text_2d1fb24f511d0c93" formatted="false">"Push 등록 실패. 서명과 Push 설정을 확인하세요."</string>
+  <string name="text_ef1b18e8c8833e8c" formatted="false">"Push 토큰 저장 실패"</string>
+  <string name="text_7593672a4f9f8b6c" formatted="false">"watchOS 백그라운드 수신 한도에 도달했습니다. 앱을 직접 열어 알림을 동기화하세요."</string>
+  <string name="text_a82fe12979182027" formatted="false">"가까이, 더 자연스럽게"</string>
+  <string name="text_e257f43fe59ee363" formatted="false">"권한을 허용한 뒤 연결 버튼을 다시 누르세요."</string>
+  <string name="text_8e60890e9abe0505" formatted="false">"근처 기기 권한을 다시 허용해 주세요."</string>
+  <string name="text_f827e01ee33be15f" formatted="false">"근처 기기 권한이 필요합니다."</string>
+  <string name="text_a95d33f5a937594b" formatted="false">"기존 FoldBridge"</string>
+  <string name="text_3bdd8d4850572271" formatted="false">"기존 등록을 유지한 채 연결을 다시 준비합니다. 필요하면 워치에서도 ‘연결 새로고침’을 눌러 주세요."</string>
+  <string name="text_6609ccb10fbda19f" formatted="false">"꺼짐"</string>
+  <string name="text_147bc1c4b5346d71" formatted="false">"내 알림"</string>
+  <string name="text_4003963e4a0b62a6" formatted="false">"내용 없는 알림"</string>
+  <string name="text_93c7f5eb7dd66961" formatted="false">"다른 앱 알림을 읽는 권한이 꺼져 있습니다"</string>
+  <string name="text_363b29c580393281" formatted="false">"다른 앱의 알림을 읽을 수 있도록 허용해 주세요."</string>
+  <string name="text_05a9008de7da085f" formatted="false">"다시 연결할 때 두 기기에서 코드를 확인해야 합니다."</string>
+  <string name="text_1e8c10206f5b35bd" formatted="false">"닫기"</string>
+  <string name="text_6a0a0fec486c76bf" formatted="false">"대기 중"</string>
+  <string name="text_8df305a2c03071e0" formatted="false">"두 기기의 코드가 같은지 확인하세요"</string>
+  <string name="text_c273dc4b60effa1f" formatted="false">"두 기기의 코드를 비교하세요"</string>
+  <string name="text_a09d91cc7b81887e" formatted="false">"등록 해제"</string>
+  <string name="text_cb49665692660f6b" formatted="false">"등록된 워치와 보안 키가 다릅니다."</string>
+  <string name="text_3d77af561453ec21" formatted="false">"등록된 휴대폰을 다시 찾는 중"</string>
+  <string name="text_a5a0dd205ae79394" formatted="false">"등록을 해제했습니다"</string>
+  <string name="text_65e168f9dc077c49" formatted="false">"등록한 워치 해제"</string>
+  <string name="text_382116a060d88c86" formatted="false">"메시지가 너무 크거나 전송할 수 없습니다."</string>
+  <string name="text_6545df1e3504ec29" formatted="false">"모든 앱 알림"</string>
+  <string name="text_948fecb37cc203f8" formatted="false">"미전달 보관 한도에 도달해 가장 오래된 알림을 비웠습니다."</string>
+  <string name="text_ecc46449252f2f84" formatted="false">"백그라운드 수신 한도에 가까워졌습니다. 앱을 직접 열면 수신 기회가 갱신됩니다."</string>
+  <string name="text_7d629f85baf8fab0" formatted="false">"보류 알림을 저장하지 못했습니다. 현재 연결 전송은 계속됩니다."</string>
+  <string name="text_a72fb277f2661472" formatted="false">"보안 메시지 전송 실패"</string>
+  <string name="text_ca6bb2180277f910" formatted="false">"보안 연결 준비 중"</string>
+  <string name="text_e250a10b9607b093" formatted="false">"보안 연결을 다시 시도합니다."</string>
+  <string name="text_d2675e987e603b2f" formatted="false">"보안 저장소를 사용할 수 없습니다."</string>
+  <string name="text_ed312e694cb03b12" formatted="false">"보안 전송 실패"</string>
+  <string name="text_e533a1cf9db4f9a4" formatted="false">"보안 키를 준비하지 못했습니다."</string>
+  <string name="text_39d8a73d70a2488f" formatted="false">"보안 확인 또는 데이터 검증에 실패했습니다."</string>
+  <string name="text_06c476edb91361ec" formatted="false">"블루투스를 켜세요"</string>
+  <string name="text_cf40d166f5245e11" formatted="false">"블루투스와 앱 권한을 확인하세요."</string>
+  <string name="text_33fd19cf90df27b2" formatted="false">"새 알림을 워치로 전달하고 있어요."</string>
+  <string name="text_5bde3b7f9937aafb" formatted="false">"새 워치 등록"</string>
+  <string name="text_79edb556943a3ab1" formatted="false">"선택한 앱만 전달"</string>
+  <string name="text_115bced49291a6a0" formatted="false">"설정"</string>
+  <string name="text_291572f8cbcf5bb9" formatted="false">"설정을 확인해 주세요: "</string>
+  <string name="text_cef4d8ab741c76bf" formatted="false">"수신"</string>
+  <string name="text_6bbeb44e673fe476" formatted="false">"수신 확인"</string>
+  <string name="text_d87ab725df97a39a" formatted="false">"시스템 설정"</string>
+  <string name="text_b1f28cd21af730b2" formatted="false">"시작"</string>
+  <string name="text_ea254b18045fc705" formatted="false">"아직 없음"</string>
+  <string name="text_12ddd6ca69068faa" formatted="false">"알림"</string>
+  <string name="text_541f6ceafb3c49bb" formatted="false">"알림 구독을 시작하지 못했습니다."</string>
+  <string name="text_079d0758b9d53d6b" formatted="false">"알림 등록"</string>
+  <string name="text_1e435f07135cb0cb" formatted="false">"알림 수집 서비스에 연결하고 있어요."</string>
+  <string name="text_85612c6822e68ed1" formatted="false">"알림 접근 설정"</string>
+  <string name="text_b80d210cef3ef5fe" formatted="false">"알림 접근 허용"</string>
+  <string name="text_6cf9e87212ebf3c5" formatted="false">"알림 접근이 필요해요"</string>
+  <string name="text_0d0fb2259ef742c9" formatted="false">"알림 표시 권한이 꺼져 있습니다. ‘알림 표시 허용’을 누르거나 워치 알림 설정을 확인하세요. 미확인 알림은 휴대폰에 보관됩니다."</string>
+  <string name="text_76cfaf5966dfd35d" formatted="false">"알림 표시 허용"</string>
+  <string name="text_9874a067b28f754b" formatted="false">"알림 표시를 요청하지 못했습니다. 다음 동기화 때 다시 요청합니다."</string>
+  <string name="text_579e63566e325510" formatted="false">"알림은 알림 센터에서"</string>
+  <string name="text_17e48db3e847418b" formatted="false">"알림을 준비하지 못했습니다."</string>
+  <string name="text_3f0df84146df4645" formatted="false">"앱을 선택하지 않고 모두 전달합니다"</string>
+  <string name="text_9f96455d7246cbaa" formatted="false">"언어 / Language"</string>
+  <string name="text_32dd2947e74266d5" formatted="false">"연결"</string>
+  <string name="text_f4965b9f1b3fd16e" formatted="false">"연결 끊김, 워치 재연결 대기"</string>
+  <string name="text_f7b73f72009e7f13" formatted="false">"연결 대기 중"</string>
+  <string name="text_5acf3020fde3e93f" formatted="false">"연결 새로고침"</string>
+  <string name="text_724e65a5c182623b" formatted="false">"연결 새로고침 중"</string>
+  <string name="text_08b471ed5f3ef411" formatted="false">"연결 앱"</string>
+  <string name="text_6cc2a07d63acdcb4" formatted="false">"연결 유지"</string>
+  <string name="text_fe8d944f83f238df" formatted="false">"연결 유지 켜짐"</string>
+  <string name="text_dd468818314057d5" formatted="false">"연결 유지를 시작할까요?"</string>
+  <string name="text_62701734e12926e4" formatted="false">"연결 자동 시작이 제한됐습니다. Local 앱에서 연결 시작을 눌러 주세요."</string>
+  <string name="text_9475b248bea8b92b" formatted="false">"연결 정보 저장 실패"</string>
+  <string name="text_ec3e658f0cace37d" formatted="false">"연결 준비 중"</string>
+  <string name="text_18c3cd6787515887" formatted="false">"연결 중지"</string>
+  <string name="text_e47e5762c0d90bab" formatted="false">"연결 진단"</string>
+  <string name="text_4b39bb1b291b0b3a" formatted="false">"연결 테스트"</string>
+  <string name="text_3a32864c9dbe5f92" formatted="false">"연결 확인 시간이 만료됐습니다."</string>
+  <string name="text_5c80641e7dbe969f" formatted="false">"연결 확인 필요"</string>
+  <string name="text_8b539877c5151a7b" formatted="false">"연결: "</string>
+  <string name="text_90704df74930d55b" formatted="false">"연결됨"</string>
+  <string name="text_05984d3b319d7c1b" formatted="false">"연결을 시작해 볼까요?"</string>
+  <string name="text_96c99f45fb158d5d" formatted="false">"연결을 해제했습니다."</string>
+  <string name="text_b9f910c796b719be" formatted="false">"연결할 앱 선택"</string>
+  <string name="text_4a108146c6143278" formatted="false">"워치 Bluetooth를 켜 주세요."</string>
+  <string name="text_7dfda7077affbfb2" formatted="false">"워치 등록을 해제할까요?"</string>
+  <string name="text_d89425460f7aa686" formatted="false">"워치 수신 확인이 없어 다시 연결합니다. 알림은 보관합니다."</string>
+  <string name="text_fd5f6938b796335c" formatted="false">"워치 알림 권한을 확인하세요."</string>
+  <string name="text_2bb43d36571e78ca" formatted="false">"워치 연결"</string>
+  <string name="text_814aaa2891ff6223" formatted="false">"워치 연결 대기 중"</string>
+  <string name="text_abd079bcdb54a184" formatted="false">"워치 연결 상태"</string>
+  <string name="text_7102a06081b27fcd" formatted="false">"워치 연결됨"</string>
+  <string name="text_dba34198441b09a3" formatted="false">"워치 인증 중"</string>
+  <string name="text_f2ade259db8b69af" formatted="false">"워치를 기다리고 있어요"</string>
+  <string name="text_b12fa3c96273211c" formatted="false">"워치에서 FoldBridge를 열어 주세요."</string>
+  <string name="text_31122426f4579b3c" formatted="false">"워치에서 위치 권한을 선택해 주세요."</string>
+  <string name="text_d43e85b973231e71" formatted="false">"워치와 연결됐어요"</string>
+  <string name="text_7b1f8de96d9a1277" formatted="false">"워치의 위치 서비스를 켜 주세요."</string>
+  <string name="text_11c4a9aca684c3eb" formatted="false">"워치의 코드와 같으면 확인해 주세요."</string>
+  <string name="text_ecbd8810cc6b6b2a" formatted="false">"위치 권한 상태를 확인해 주세요."</string>
+  <string name="text_3646aa0a90e8f6b8" formatted="false">"위치 권한이 없어 연결 유지 모드를 시작하지 못했습니다."</string>
+  <string name="text_c24b1afd588e868d" formatted="false">"위치 권한이 해제되어 연결 유지 모드가 종료됐습니다."</string>
+  <string name="text_9846563c602eb4e4" formatted="false">"위치 기반 연결 유지 꺼짐"</string>
+  <string name="text_3a7796cf35f1f9c8" formatted="false">"위치 세션 요청됨 · 갱신 대기"</string>
+  <string name="text_21fbb48254517f35" formatted="false">"위치 세션으로 연결 유지를 시도합니다. 배터리 사용이 늘 수 있고 상시 수신은 보장되지 않습니다."</string>
+  <string name="text_383f05dbc11530d8" formatted="false">"위치 업데이트 대기 중 · 계속 수신은 보장되지 않습니다."</string>
+  <string name="text_72eb5b66e4f65417" formatted="false">"위치 업데이트 수신 중"</string>
+  <string name="text_49affaa2cd075424" formatted="false">"위치 업데이트로 백그라운드 실행을 시도합니다. 좌표는 저장하거나 전송하지 않습니다."</string>
+  <string name="text_bf2086d375dc0364" formatted="false">"이 알림이 워치에 도착하면 전달 경로가 동작합니다."</string>
+  <string name="text_8236bb82f2e856e5" formatted="false">"이전 FoldBridge"</string>
+  <string name="text_38cfb48d915d6347" formatted="false">"인증 또는 데이터 검증 실패"</string>
+  <string name="text_35d2d9890840a5e3" formatted="false">"인증 시간이 만료됐습니다."</string>
+  <string name="text_5fb926229090001c" formatted="false">"저장"</string>
+  <string name="text_ae94ec51b2c23b4f" formatted="false">"저장 실패"</string>
+  <string name="text_831a5eceed197cc8" formatted="false">"저장된 연결 정보를 읽을 수 없습니다. 연결을 해제하고 다시 등록하세요."</string>
+  <string name="text_7e7725dc285ced0b" formatted="false">"저장된 휴대폰 연결 복원 중"</string>
+  <string name="text_fb94c53605980e4d" formatted="false">"전달 대기"</string>
+  <string name="text_2fd0e24920c060b9" formatted="false">"전달할 앱 선택"</string>
+  <string name="text_af3559aead5c30ea" formatted="false">"전송 메시지가 너무 큽니다."</string>
+  <string name="text_1398a6b1f8a12d2f" formatted="false">"중복 알림 방지 상태를 저장하지 못했습니다."</string>
+  <string name="text_1fc7b158412783a0" formatted="false">"중지됨"</string>
+  <string name="text_8e2f0cbc8282e961" formatted="false">"지금 동기화"</string>
+  <string name="text_9b7d7c773e1744cc" formatted="false">"처음 연결하는 워치인가요?"</string>
+  <string name="text_23466026b7f56424" formatted="false">"충전 상태 알림"</string>
+  <string name="text_6b725729acdad283" formatted="false">"충전율이 바뀔 때도 알려줍니다"</string>
+  <string name="text_be876433993ab7ba" formatted="false">"취소"</string>
+  <string name="text_749a1aa6edfad5eb" formatted="false">"코드가 같아요"</string>
+  <string name="text_c3c997b250b4d898" formatted="false">"통신 채널을 열지 못했습니다."</string>
+  <string name="text_026fcf589610884f" formatted="false">"표시 허용됨"</string>
+  <string name="text_03890e012a7c2347" formatted="false">"필요한 통신 채널이 없습니다."</string>
+  <string name="text_293182ec397e6b89" formatted="false">"해제"</string>
+  <string name="text_9b90fe7e0ce3b383" formatted="false">"허용됨"</string>
+  <string name="text_e1fe3188fc34632d" formatted="false">"현재 알림을 읽지 못했습니다. Local 앱의 알림 접근 권한을 확인하세요."</string>
+  <string name="text_dcdbdc9854482ddc" formatted="false">"화면 위에서 아래로 쓸어내려 확인하세요.\n이 앱에는 알림 내용을 보관하지 않아요."</string>
+  <string name="text_84dd6e381dca36d8" formatted="false">"확인 필요"</string>
+  <string name="text_2a675ee941a2897e" formatted="false">"휴대폰"</string>
+  <string name="text_575919a538a54deb" formatted="false">"휴대폰 등록 해제"</string>
+  <string name="text_1773447ca7baf4a6" formatted="false">"휴대폰 등록을 해제할까요?"</string>
+  <string name="text_7b43c1a42b3f8fc1" formatted="false">"휴대폰 연결"</string>
+  <string name="text_d4c18c6d5bc27596" formatted="false">"휴대폰 연결 대기 중"</string>
+  <string name="text_9d021cf3b93990c4" formatted="false">"휴대폰 연결됨"</string>
+  <string name="text_4448f2791ba3d0a9" formatted="false">"휴대폰 연결을 시작하세요"</string>
+  <string name="text_b267988f78988563" formatted="false">"휴대폰 연결을 저장하지 못했습니다."</string>
+  <string name="text_5866c45833a0a3d2" formatted="false">"휴대폰 연결이 끊겼습니다"</string>
+  <string name="text_f5a5dd327c330079" formatted="false">"휴대폰 전송 확인 시간 초과"</string>
+  <string name="text_9626430b013633da" formatted="false">"휴대폰 찾기"</string>
+  <string name="text_f190ad7e01801f02" formatted="false">"휴대폰과 워치가 가까이 있으면 연결을 이어갑니다."</string>
+  <string name="text_c71702afa198ad4c" formatted="false">"휴대폰과 코드를 비교하세요"</string>
+  <string name="text_c06a87ce39e938fc" formatted="false">"휴대폰에 연결하지 못했습니다."</string>
+  <string name="text_7656daac0f4cb3b3" formatted="false">"휴대폰에서 ‘새 워치 등록’을 누른 뒤 선택해 주세요."</string>
+  <string name="text_e14bc27201f3cb9d" formatted="false">"휴대폰에서 새 워치 등록을 먼저 누르세요."</string>
+  <string name="text_376213a660e50e7e" formatted="false">"휴대폰에서 연결 시작을 누르세요"</string>
+  <string name="text_9f2f14c50f3352a7" formatted="false">"휴대폰으로 전송하지 못했습니다."</string>
+  <string name="text_d0825c9ecbdf31c5" formatted="false">"휴대폰의 알림을 손목에서 만나세요."</string>
+  <string name="text_f255b5077727094b" formatted="false">"휴대폰이 가까워지면 다시 연결합니다"</string>
+  <string name="notification_listener_label">FoldBridge Local 알림 전달</string>
+</resources>

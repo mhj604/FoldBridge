@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="text_bed73c3849f0b305" formatted="false">"\nCollected "</string>
+  <string name="text_dc8ff88cb32239ab" formatted="false">"\nNotification listener: "</string>
+  <string name="text_5aea853dcd0beb50" formatted="false">"\nNotification access: "</string>
+  <string name="text_61b083cf69acdcb6" formatted="false">"\nLast delivery confirmation: "</string>
+  <string name="text_5e6435bd3bb150e1" formatted="false">" · Forwarded "</string>
+  <string name="text_96c8e11b250ed402" formatted="false">"Selected %@"</string>
+  <string name="text_3151a1684480fcbd" formatted="false">"Android phone"</string>
+  <string name="text_0eac8de385fa580e" formatted="false">"Retrying BLE advertising: "</string>
+  <string name="text_4997769f53999435" formatted="false">"Retrying BLE service registration."</string>
+  <string name="text_92274289e314e361" formatted="false">"Retrying BLE service registration: "</string>
+  <string name="text_c0251a9f09db98fd" formatted="false">"BLE reception stopped. Reconnecting."</string>
+  <string name="text_321f259a5c14df77" formatted="false">"BLE transfer failed: "</string>
+  <string name="text_da59517098c3e72e" formatted="false">"BLE transfer confirmation timed out"</string>
+  <string name="text_d4cfbd5b6f1feb8d" formatted="false">"Could not start BLE transfer: "</string>
+  <string name="text_1b1ed780c38f5640" formatted="false">"Waiting for Bluetooth advertising."</string>
+  <string name="text_cc5e92a778c365cd" formatted="false">"Retrying Bluetooth server setup."</string>
+  <string name="text_31fdc892f7527c6c" formatted="false">"Bluetooth alone cannot forward other apps’ notifications. Enable notification access for ‘FoldBridge Local notifications’ in Settings."</string>
+  <string name="text_a4b3bc978835cb01" formatted="false">"Retrying Bluetooth setup."</string>
+  <string name="text_63593f4a1e56faad" formatted="false">"Will reconnect when Bluetooth is on"</string>
+  <string name="text_ee99ebc7344137cf" formatted="false">"Forwarding notifications to Apple Watch over Bluetooth"</string>
+  <string name="text_e24df1a9d56f340c" formatted="false">"FoldBridge Local is running"</string>
+  <string name="text_e5d50dafe36bf172" formatted="false">"FoldBridge Local notifications"</string>
+  <string name="text_b001ac3a6a2c90b6" formatted="false">"Could not find the FoldBridge service."</string>
+  <string name="text_36f4140cf55e0caf" formatted="false">"Looking for a FoldBridge phone"</string>
+  <string name="text_2d1fb24f511d0c93" formatted="false">"Push registration failed. Check signing and Push settings."</string>
+  <string name="text_ef1b18e8c8833e8c" formatted="false">"Could not save the Push token"</string>
+  <string name="text_7593672a4f9f8b6c" formatted="false">"The watchOS background reception limit has been reached. Open the app to sync notifications."</string>
+  <string name="text_a82fe12979182027" formatted="false">"Closer, naturally"</string>
+  <string name="text_e257f43fe59ee363" formatted="false">"Grant permissions, then tap Connect again."</string>
+  <string name="text_8e60890e9abe0505" formatted="false">"Allow Nearby devices permission again."</string>
+  <string name="text_f827e01ee33be15f" formatted="false">"Nearby devices permission is required."</string>
+  <string name="text_a95d33f5a937594b" formatted="false">"Original FoldBridge"</string>
+  <string name="text_3bdd8d4850572271" formatted="false">"Refreshing the connection while keeping your pairing. If needed, tap ‘Refresh connection’ on the watch too."</string>
+  <string name="text_6609ccb10fbda19f" formatted="false">"Off"</string>
+  <string name="text_147bc1c4b5346d71" formatted="false">"My notifications"</string>
+  <string name="text_4003963e4a0b62a6" formatted="false">"Notification without text"</string>
+  <string name="text_93c7f5eb7dd66961" formatted="false">"Notification access is off"</string>
+  <string name="text_363b29c580393281" formatted="false">"Allow access to read other apps’ notifications."</string>
+  <string name="text_05a9008de7da085f" formatted="false">"You will need to confirm the code on both devices to pair again."</string>
+  <string name="text_1e8c10206f5b35bd" formatted="false">"Close"</string>
+  <string name="text_6a0a0fec486c76bf" formatted="false">"Waiting"</string>
+  <string name="text_8df305a2c03071e0" formatted="false">"Check that both devices show the same code"</string>
+  <string name="text_c273dc4b60effa1f" formatted="false">"Compare the codes on both devices"</string>
+  <string name="text_a09d91cc7b81887e" formatted="false">"Unpair"</string>
+  <string name="text_cb49665692660f6b" formatted="false">"The security key does not match the paired watch."</string>
+  <string name="text_3d77af561453ec21" formatted="false">"Looking for your paired phone"</string>
+  <string name="text_a5a0dd205ae79394" formatted="false">"Unpaired"</string>
+  <string name="text_65e168f9dc077c49" formatted="false">"Unpair watch"</string>
+  <string name="text_382116a060d88c86" formatted="false">"The message is too large or could not be sent."</string>
+  <string name="text_6545df1e3504ec29" formatted="false">"All app notifications"</string>
+  <string name="text_948fecb37cc203f8" formatted="false">"The pending queue is full. The oldest notification was removed."</string>
+  <string name="text_ecc46449252f2f84" formatted="false">"Approaching the background reception limit. Open the app to renew the available opportunities."</string>
+  <string name="text_7d629f85baf8fab0" formatted="false">"Could not save pending notifications. Live delivery will continue."</string>
+  <string name="text_a72fb277f2661472" formatted="false">"Could not send the encrypted message"</string>
+  <string name="text_ca6bb2180277f910" formatted="false">"Preparing a secure connection"</string>
+  <string name="text_e250a10b9607b093" formatted="false">"Retrying the secure connection."</string>
+  <string name="text_d2675e987e603b2f" formatted="false">"Secure storage is unavailable."</string>
+  <string name="text_ed312e694cb03b12" formatted="false">"Secure transfer failed"</string>
+  <string name="text_e533a1cf9db4f9a4" formatted="false">"Could not prepare the security key."</string>
+  <string name="text_39d8a73d70a2488f" formatted="false">"Authentication or data validation failed."</string>
+  <string name="text_06c476edb91361ec" formatted="false">"Turn on Bluetooth"</string>
+  <string name="text_cf40d166f5245e11" formatted="false">"Check Bluetooth and app permissions."</string>
+  <string name="text_33fd19cf90df27b2" formatted="false">"Forwarding new notifications to your watch."</string>
+  <string name="text_5bde3b7f9937aafb" formatted="false">"Pair a new watch"</string>
+  <string name="text_79edb556943a3ab1" formatted="false">"Choose apps to forward"</string>
+  <string name="text_115bced49291a6a0" formatted="false">"Settings"</string>
+  <string name="text_291572f8cbcf5bb9" formatted="false">"Check your settings: "</string>
+  <string name="text_cef4d8ab741c76bf" formatted="false">"Received"</string>
+  <string name="text_6bbeb44e673fe476" formatted="false">"Confirmed"</string>
+  <string name="text_d87ab725df97a39a" formatted="false">"System default"</string>
+  <string name="text_b1f28cd21af730b2" formatted="false">"Start"</string>
+  <string name="text_ea254b18045fc705" formatted="false">"None yet"</string>
+  <string name="text_12ddd6ca69068faa" formatted="false">"Notifications"</string>
+  <string name="text_541f6ceafb3c49bb" formatted="false">"Could not subscribe to notifications."</string>
+  <string name="text_079d0758b9d53d6b" formatted="false">"Scheduled"</string>
+  <string name="text_1e435f07135cb0cb" formatted="false">"Connecting to the notification listener."</string>
+  <string name="text_85612c6822e68ed1" formatted="false">"Notification access settings"</string>
+  <string name="text_b80d210cef3ef5fe" formatted="false">"Allow notification access"</string>
+  <string name="text_6cf9e87212ebf3c5" formatted="false">"Notification access needed"</string>
+  <string name="text_0d0fb2259ef742c9" formatted="false">"Notification permission is off. Tap ‘Allow notifications’ or check the watch’s notification settings. Unconfirmed notifications stay on your phone."</string>
+  <string name="text_76cfaf5966dfd35d" formatted="false">"Allow notifications"</string>
+  <string name="text_9874a067b28f754b" formatted="false">"Could not schedule the notification. It will be retried on the next sync."</string>
+  <string name="text_579e63566e325510" formatted="false">"Find alerts in Notification Center"</string>
+  <string name="text_17e48db3e847418b" formatted="false">"Could not prepare the notification."</string>
+  <string name="text_3f0df84146df4645" formatted="false">"Forward notifications from every app"</string>
+  <string name="text_9f96455d7246cbaa" formatted="false">"Language / 언어"</string>
+  <string name="text_32dd2947e74266d5" formatted="false">"Connection"</string>
+  <string name="text_f4965b9f1b3fd16e" formatted="false">"Disconnected. Waiting for the watch to reconnect"</string>
+  <string name="text_f7b73f72009e7f13" formatted="false">"Waiting for connection"</string>
+  <string name="text_5acf3020fde3e93f" formatted="false">"Refresh connection"</string>
+  <string name="text_724e65a5c182623b" formatted="false">"Refreshing connection"</string>
+  <string name="text_08b471ed5f3ef411" formatted="false">"Phone app"</string>
+  <string name="text_6cc2a07d63acdcb4" formatted="false">"Keep connection"</string>
+  <string name="text_fe8d944f83f238df" formatted="false">"Keep connection is on"</string>
+  <string name="text_dd468818314057d5" formatted="false">"Start keeping the connection?"</string>
+  <string name="text_62701734e12926e4" formatted="false">"Automatic connection startup was restricted. Open the Local app and tap Connect."</string>
+  <string name="text_9475b248bea8b92b" formatted="false">"Could not save connection details"</string>
+  <string name="text_ec3e658f0cace37d" formatted="false">"Preparing connection"</string>
+  <string name="text_18c3cd6787515887" formatted="false">"Stop connection"</string>
+  <string name="text_e47e5762c0d90bab" formatted="false">"Connection diagnostics"</string>
+  <string name="text_4b39bb1b291b0b3a" formatted="false">"Connection test"</string>
+  <string name="text_3a32864c9dbe5f92" formatted="false">"Connection confirmation timed out."</string>
+  <string name="text_5c80641e7dbe969f" formatted="false">"Connection needs attention"</string>
+  <string name="text_8b539877c5151a7b" formatted="false">"Connection: "</string>
+  <string name="text_90704df74930d55b" formatted="false">"Connected"</string>
+  <string name="text_05984d3b319d7c1b" formatted="false">"Ready to connect?"</string>
+  <string name="text_96c99f45fb158d5d" formatted="false">"Disconnected."</string>
+  <string name="text_b9f910c796b719be" formatted="false">"Choose phone app"</string>
+  <string name="text_4a108146c6143278" formatted="false">"Turn on Bluetooth on your watch."</string>
+  <string name="text_7dfda7077affbfb2" formatted="false">"Unpair this watch?"</string>
+  <string name="text_d89425460f7aa686" formatted="false">"No confirmation from the watch. Reconnecting and keeping pending notifications."</string>
+  <string name="text_fd5f6938b796335c" formatted="false">"Check notification permission on your watch."</string>
+  <string name="text_2bb43d36571e78ca" formatted="false">"Connect watch"</string>
+  <string name="text_814aaa2891ff6223" formatted="false">"Waiting for your watch"</string>
+  <string name="text_abd079bcdb54a184" formatted="false">"Watch connection status"</string>
+  <string name="text_7102a06081b27fcd" formatted="false">"Watch connected"</string>
+  <string name="text_dba34198441b09a3" formatted="false">"Authenticating watch"</string>
+  <string name="text_f2ade259db8b69af" formatted="false">"Waiting for your watch"</string>
+  <string name="text_b12fa3c96273211c" formatted="false">"Open FoldBridge on your watch."</string>
+  <string name="text_31122426f4579b3c" formatted="false">"Choose a location permission on your watch."</string>
+  <string name="text_d43e85b973231e71" formatted="false">"Watch connected"</string>
+  <string name="text_7b1f8de96d9a1277" formatted="false">"Turn on Location Services on your watch."</string>
+  <string name="text_11c4a9aca684c3eb" formatted="false">"Confirm if this matches the code on your watch."</string>
+  <string name="text_ecbd8810cc6b6b2a" formatted="false">"Check the location permission status."</string>
+  <string name="text_3646aa0a90e8f6b8" formatted="false">"Location permission is required to start keep connection mode."</string>
+  <string name="text_c24b1afd588e868d" formatted="false">"Location permission was revoked. Keep connection mode has stopped."</string>
+  <string name="text_9846563c602eb4e4" formatted="false">"Location-based keep connection is off"</string>
+  <string name="text_3a7796cf35f1f9c8" formatted="false">"Location session requested · waiting for updates"</string>
+  <string name="text_21fbb48254517f35" formatted="false">"Uses a location session to help keep the connection. It may use more battery and does not guarantee continuous reception."</string>
+  <string name="text_383f05dbc11530d8" formatted="false">"Waiting for location updates · continuous reception is not guaranteed."</string>
+  <string name="text_72eb5b66e4f65417" formatted="false">"Receiving location updates"</string>
+  <string name="text_49affaa2cd075424" formatted="false">"Uses location updates to request background runtime. Coordinates are never stored or sent."</string>
+  <string name="text_bf2086d375dc0364" formatted="false">"If this notification arrives on your watch, the delivery path is working."</string>
+  <string name="text_8236bb82f2e856e5" formatted="false">"Original FoldBridge"</string>
+  <string name="text_38cfb48d915d6347" formatted="false">"Authentication or data validation failed"</string>
+  <string name="text_35d2d9890840a5e3" formatted="false">"Authentication timed out."</string>
+  <string name="text_5fb926229090001c" formatted="false">"Save"</string>
+  <string name="text_ae94ec51b2c23b4f" formatted="false">"Could not save"</string>
+  <string name="text_831a5eceed197cc8" formatted="false">"Could not read the saved connection. Unpair and pair again."</string>
+  <string name="text_7e7725dc285ced0b" formatted="false">"Restoring your saved phone connection"</string>
+  <string name="text_fb94c53605980e4d" formatted="false">"Pending"</string>
+  <string name="text_2fd0e24920c060b9" formatted="false">"Choose apps"</string>
+  <string name="text_af3559aead5c30ea" formatted="false">"The message is too large to send."</string>
+  <string name="text_1398a6b1f8a12d2f" formatted="false">"Could not save duplicate-notification tracking."</string>
+  <string name="text_1fc7b158412783a0" formatted="false">"Stopped"</string>
+  <string name="text_8e2f0cbc8282e961" formatted="false">"Sync now"</string>
+  <string name="text_9b7d7c773e1744cc" formatted="false">"Pairing a watch for the first time?"</string>
+  <string name="text_23466026b7f56424" formatted="false">"Charging status alerts"</string>
+  <string name="text_6b725729acdad283" formatted="false">"Include battery charging updates"</string>
+  <string name="text_be876433993ab7ba" formatted="false">"Cancel"</string>
+  <string name="text_749a1aa6edfad5eb" formatted="false">"Codes match"</string>
+  <string name="text_c3c997b250b4d898" formatted="false">"Could not open the communication channel."</string>
+  <string name="text_026fcf589610884f" formatted="false">"Notifications allowed"</string>
+  <string name="text_03890e012a7c2347" formatted="false">"The required communication channel is missing."</string>
+  <string name="text_293182ec397e6b89" formatted="false">"Unpair"</string>
+  <string name="text_9b90fe7e0ce3b383" formatted="false">"Allowed"</string>
+  <string name="text_e1fe3188fc34632d" formatted="false">"Could not read current notifications. Check notification access for the Local app."</string>
+  <string name="text_dcdbdc9854482ddc" formatted="false">"Swipe down from the top to see your alerts.\nNotification content is not stored inside this app."</string>
+  <string name="text_84dd6e381dca36d8" formatted="false">"Needs attention"</string>
+  <string name="text_2a675ee941a2897e" formatted="false">"Phone"</string>
+  <string name="text_575919a538a54deb" formatted="false">"Unpair phone"</string>
+  <string name="text_1773447ca7baf4a6" formatted="false">"Unpair this phone?"</string>
+  <string name="text_7b43c1a42b3f8fc1" formatted="false">"Connect phone"</string>
+  <string name="text_d4c18c6d5bc27596" formatted="false">"Waiting for phone connection"</string>
+  <string name="text_9d021cf3b93990c4" formatted="false">"Phone connected"</string>
+  <string name="text_4448f2791ba3d0a9" formatted="false">"Connect your phone to get started"</string>
+  <string name="text_b267988f78988563" formatted="false">"Could not save the phone connection."</string>
+  <string name="text_5866c45833a0a3d2" formatted="false">"Phone disconnected"</string>
+  <string name="text_f5a5dd327c330079" formatted="false">"Phone transfer confirmation timed out"</string>
+  <string name="text_9626430b013633da" formatted="false">"Find phone"</string>
+  <string name="text_f190ad7e01801f02" formatted="false">"Keep your phone and watch nearby to stay connected."</string>
+  <string name="text_c71702afa198ad4c" formatted="false">"Compare this code with your phone"</string>
+  <string name="text_c06a87ce39e938fc" formatted="false">"Could not connect to your phone."</string>
+  <string name="text_7656daac0f4cb3b3" formatted="false">"Tap ‘Pair a new watch’ on your phone, then select it here."</string>
+  <string name="text_e14bc27201f3cb9d" formatted="false">"Tap ‘Pair a new watch’ on your phone first."</string>
+  <string name="text_376213a660e50e7e" formatted="false">"Start the connection on your phone"</string>
+  <string name="text_9f2f14c50f3352a7" formatted="false">"Could not send to your phone."</string>
+  <string name="text_d0825c9ecbdf31c5" formatted="false">"Your phone’s notifications, on your wrist."</string>
+  <string name="text_f255b5077727094b" formatted="false">"Will reconnect when your phone is nearby"</string>
+  <string name="notification_listener_label">FoldBridge Local notifications</string>
+</resources>

@@ -1,0 +1,2 @@
+"NSBluetoothAlwaysUsageDescription" = "Bluetooth is used to receive notifications from your Galaxy phone.";
+"NSLocationWhenInUseUsageDescription" = "Location updates help request background runtime for the optional keep connection mode. Coordinates are never stored or sent.";

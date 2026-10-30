@@ -1,6 +1,6 @@
 # 처음부터 설치하고 연결하기
 
-이 문서는 `local-ble` 브랜치의 Android 0.4.0 / watchOS 0.3.0을 기준으로 합니다. 사용 중 알림은 갤럭시와 워치 사이 BLE로 직접 전달됩니다. 서버 주소·아이폰 중계·유료 Push 설정은 필요하지 않습니다.
+이 문서는 `local-ble` 브랜치의 Android 0.5.0 / watchOS 0.4.0을 기준으로 합니다. 사용 중 알림은 갤럭시와 워치 사이 BLE로 직접 전달됩니다. 서버 주소·아이폰 중계·유료 Push 설정은 필요하지 않습니다.
 
 ## 1. 준비하기
 
@@ -22,7 +22,7 @@ cd FoldBridge
 
 ## 3. 갤럭시 앱 설치
 
-1. [배포 APK](../artifacts/android/FoldBridge-Local-0.4.0.apk) 또는 [Releases](https://github.com/mhj604/FoldBridge/releases)에서 APK를 받습니다. GitHub 파일 화면에서는 Download raw file로 받습니다.
+1. [배포 APK](../artifacts/android/FoldBridge-Local-0.5.0.apk) 또는 [Releases](https://github.com/mhj604/FoldBridge/releases)에서 APK를 받습니다. GitHub 파일 화면에서는 Download raw file로 받습니다.
 2. APK를 연 앱의 ‘이 출처 허용’이 필요하면 기기 안내에 따라 설치를 진행합니다.
 3. **FoldBridge Local**을 열고 근처 기기와 일반 알림 권한을 허용합니다.
 4. 앱의 **알림 접근 허용**을 누르고 **FoldBridge Local 알림 전달**을 켭니다. 이 권한이 실제 다른 앱의 알림 수집에 필요합니다.
@@ -66,6 +66,12 @@ python3 watch/build_watch.py --team YOUR_TEAM_ID --bundle-id com.yourname.foldbr
 - 연결이 끊기면 먼저 갤럭시 **연결 새로고침**, 이어서 워치 **연결 새로고침**을 누릅니다. 워치 잠금을 풀고 앱을 열어 두면 새 인증을 진행할 수 있습니다.
 - **지금 동기화**는 연결된 상태에서 대기 알림을 가져오는 버튼입니다. 인증이 멈췄을 때는 새로고침을 사용합니다.
 - 재부팅 후 양쪽 잠금을 한 번 해제합니다. 워치가 자동 복원되지 않으면 FoldBridge를 한 번 엽니다.
+
+## 한국어 / English 선택
+
+양쪽 앱의 **설정 → 언어 / Language**를 엽니다. **시스템 설정**, **한국어**, **English** 중 선택합니다. 기기마다 별도로 선택하며 저장한 설정은 재시작 후에도 유지됩니다. 영어를 선택한 뒤 한국어로 돌아오려면 **Settings → Language / 언어 → 한국어**를 선택합니다.
+
+앱 조작 화면과 연결·오류 안내가 바뀌며, 받은 메시지는 번역하지 않습니다. Android는 시스템의 앱 언어 설정과도 연동합니다. 워치의 언어 선택은 FoldBridge 내부에 저장합니다. 언어 변경만으로 등록을 다시 할 필요는 없습니다.
 
 ## 업데이트할 때
 

@@ -25,7 +25,7 @@ public final class BridgeService extends Service {
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",9,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",10,"bridgeRunning",s!=null,"status",status,"error",error,
             "authenticated",s!=null&&s.authenticated,"watchActive",s!=null&&s.watchActive,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
             "received",NotificationRelay.received,"forwarded",NotificationRelay.forwarded,
@@ -81,10 +81,7 @@ public final class BridgeService extends Service {
         if(vault==null) return START_NOT_STICKY;
         if(!getSharedPreferences("settings",MODE_PRIVATE).getBoolean("connection_enabled",false)) {stopSelf();return START_NOT_STICKY;}
         if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE)!=PackageManager.PERMISSION_GRANTED) { fail("근처 기기 권한이 필요합니다."); stopSelf(); return START_NOT_STICKY; }
-        NotificationManager manager=getSystemService(NotificationManager.class);
-        manager.createNotificationChannel(new NotificationChannel("connection","워치 연결 상태",NotificationManager.IMPORTANCE_LOW));
-        PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_IMMUTABLE);
-        startForeground(10,new Notification.Builder(this,"connection").setSmallIcon(android.R.drawable.stat_sys_data_bluetooth).setContentTitle("FoldBridge Local 실행 중").setContentText("Bluetooth로 애플워치 알림을 전달합니다").setOngoing(true).setContentIntent(open).build());
+        updateConnectionNotification();
         if("pair".equals(intent==null?null:intent.getAction())) { pairUntil=SystemClock.elapsedRealtime()+120000; error=""; }
         if("refresh".equals(intent==null?null:intent.getAction()))refreshBluetooth();
         else if(server==null)startBluetooth();
@@ -93,6 +90,15 @@ public final class BridgeService extends Service {
         NotificationRelay.reconnectIfAllowed(this);
         handler.post(()->recordState(this));
         return START_STICKY;
+    }
+    private void updateConnectionNotification() {
+        NotificationManager manager=getSystemService(NotificationManager.class);
+        manager.createNotificationChannel(new NotificationChannel("connection",I18n.t(this,"워치 연결 상태"),NotificationManager.IMPORTANCE_LOW));
+        PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_IMMUTABLE);
+        startForeground(10,new Notification.Builder(this,"connection").setSmallIcon(android.R.drawable.stat_sys_data_bluetooth).setContentTitle(I18n.t(this,"FoldBridge Local 실행 중")).setContentText(I18n.t(this,"Bluetooth로 애플워치 알림을 전달합니다")).setOngoing(true).setContentIntent(open).build());
+    }
+    @Override public void onConfigurationChanged(android.content.res.Configuration configuration) {
+        super.onConfigurationChanged(configuration);updateConnectionNotification();
     }
     void resumeBluetooth() {handler.post(()->{if(server==null)startBluetooth();});}
     private void stopBluetooth() {

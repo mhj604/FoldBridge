@@ -16,7 +16,7 @@ enum PhoneProfile: String {
 struct PhoneCandidate: Identifiable {
     let peripheral: CBPeripheral
     var id: UUID { peripheral.identifier }
-    var name: String { peripheral.name ?? "Android 휴대폰" }
+    var name: String { peripheral.name ?? AppLanguage.shared.text("Android 휴대폰") }
 }
 struct WatchAlert {
     let id: String, app: String, title: String, body: String

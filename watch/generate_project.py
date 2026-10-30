@@ -13,11 +13,11 @@ def quoted(value): return json.dumps(str(value),ensure_ascii=False)
 
 def generate(push=False,bundle_id='dev.foldbridge.watch'):
     info={'CFBundleDisplayName':'FoldBridge','CFBundleName':'$(PRODUCT_NAME)','CFBundleExecutable':'$(EXECUTABLE_NAME)',
-          'CFBundleIdentifier':'$(PRODUCT_BUNDLE_IDENTIFIER)','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.3.0','CFBundleVersion':'10',
+          'CFBundleIdentifier':'$(PRODUCT_BUNDLE_IDENTIFIER)','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.4.0','CFBundleVersion':'11',
           'WKApplication':True,'WKWatchOnly':True,
           'NSBluetoothAlwaysUsageDescription':'갤럭시 휴대폰의 알림을 받기 위해 블루투스를 사용합니다.',
           'NSLocationWhenInUseUsageDescription':'선택한 위치 기반 연결 유지 모드에서 백그라운드 실행을 시도하기 위해 위치 업데이트를 사용합니다. 위치 좌표는 저장하거나 전송하지 않습니다.',
-          'UIBackgroundModes':['bluetooth-central','location'],'FoldBridgePushEnabled':False}
+          'UIBackgroundModes':['bluetooth-central','location'],'FoldBridgePushEnabled':False,'CFBundleDevelopmentRegion':'en','CFBundleLocalizations':['en','ko']}
     (ROOT/'FoldBridge/Info.plist').write_bytes(plistlib.dumps(info))
     info['FoldBridgePushEnabled']=True
     (ROOT/'FoldBridge/InfoPush.plist').write_bytes(plistlib.dumps(info))
@@ -30,13 +30,23 @@ def generate(push=False,bundle_id='dev.foldbridge.watch'):
         add('build:'+f.name,f'isa = PBXBuildFile; fileRef = {identifier("file:"+f.name)};')
     add('file:assets','isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>";')
     add('build:assets',f'isa = PBXBuildFile; fileRef = {identifier("file:assets")};')
+    localized=[]
+    for name in ['Localizable.strings','InfoPlist.strings']:
+        children=[]
+        for code in ['ko','en']:
+            ref='locale:'+code+':'+name;children.append(identifier(ref))
+            add(ref,f'isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = {code}; path = {quoted(code+".lproj/"+name)}; sourceTree = "<group>";')
+        group='localized:'+name;localized.append(group)
+        add(group,'isa = PBXVariantGroup; children = ('+','.join(children)+'); name = '+quoted(name)+'; sourceTree = "<group>";')
+        add('build:'+group,f'isa = PBXBuildFile; fileRef = {identifier(group)};')
     add('product','isa = PBXFileReference; explicitFileType = wrapper.application; path = FoldBridge.app; sourceTree = BUILT_PRODUCTS_DIR;')
-    add('sourcegroup','isa = PBXGroup; children = ('+','.join([*(identifier('file:'+f.name) for f in files),identifier('file:assets')])+'); path = FoldBridge; sourceTree = "<group>";')
+    add('sourcegroup','isa = PBXGroup; children = ('+','.join([*(identifier('file:'+f.name) for f in files),identifier('file:assets'),*(identifier(group) for group in localized)])+'); path = FoldBridge; sourceTree = "<group>";')
     add('products',f'isa = PBXGroup; children = ({identifier("product")}); name = Products; sourceTree = "<group>";')
     add('group',f'isa = PBXGroup; children = ({identifier("sourcegroup")},{identifier("products")}); sourceTree = "<group>";')
     add('sources','isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ('+','.join(identifier('build:'+f.name) for f in files)+'); runOnlyForDeploymentPostprocessing = 0;')
     add('Frameworks','isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0;')
-    add('Resources',f'isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = ({identifier("build:assets")}); runOnlyForDeploymentPostprocessing = 0;')
+    resource_files=','.join([identifier('build:assets'),*(identifier('build:'+group) for group in localized)])
+    add('Resources',f'isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = ({resource_files}); runOnlyForDeploymentPostprocessing = 0;')
     add('target',f'isa = PBXNativeTarget; buildConfigurationList = {identifier("targetconfig")}; buildPhases = ({identifier("sources")},{identifier("Frameworks")},{identifier("Resources")}); buildRules = (); dependencies = (); name = FoldBridge; productName = FoldBridge; productReference = {identifier("product")}; productType = "com.apple.product-type.application";')
     for scope in ['project','target']:
         for config in ['Debug','Release']:
@@ -47,7 +57,7 @@ def generate(push=False,bundle_id='dev.foldbridge.watch'):
             add(scope+config,'isa = XCBuildConfiguration; buildSettings = {'+' '.join(f'{k} = {quoted(v)};' for k,v in settings.items())+'}; name = '+config+';')
         add(scope+'config','isa = XCConfigurationList; buildConfigurations = ('+','.join(identifier(scope+c) for c in ['Debug','Release'])+'); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug;')
     capability='SystemCapabilities = { com.apple.Push = { enabled = 1; }; };' if push else ''
-    add('project',f'isa = PBXProject; attributes = {{ LastUpgradeCheck = 1600; TargetAttributes = {{ {identifier("target")} = {{ CreatedOnToolsVersion = 16.0; ProvisioningStyle = Automatic; {capability} }}; }}; }}; buildConfigurationList = {identifier("projectconfig")}; compatibilityVersion = "Xcode 14.0"; developmentRegion = ko; hasScannedForEncodings = 0; knownRegions = (ko,en,Base); mainGroup = {identifier("group")}; productRefGroup = {identifier("products")}; projectDirPath = ""; projectRoot = ""; targets = ({identifier("target")});')
+    add('project',f'isa = PBXProject; attributes = {{ LastUpgradeCheck = 1600; TargetAttributes = {{ {identifier("target")} = {{ CreatedOnToolsVersion = 16.0; ProvisioningStyle = Automatic; {capability} }}; }}; }}; buildConfigurationList = {identifier("projectconfig")}; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (ko,en,Base); mainGroup = {identifier("group")}; productRefGroup = {identifier("products")}; projectDirPath = ""; projectRoot = ""; targets = ({identifier("target")});')
     project=ROOT/'FoldBridge.xcodeproj';project.mkdir(exist_ok=True)
     (project/'project.pbxproj').write_text('// !$*UTF8*$!\n{ archiveVersion = 1; classes = {}; objectVersion = 56; objects = {\n'+'\n'.join(objects)+f'\n}}; rootObject = {identifier("project")}; }}\n')
     scheme=ET.Element('Scheme',{'LastUpgradeVersion':'1600','version':'1.3'})

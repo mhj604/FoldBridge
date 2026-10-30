@@ -1,6 +1,6 @@
 # 빌드와 설치
 
-현재 배포는 Android `0.4.0-local` / versionCode 9, 워치 `0.3.0` / build 10이다. 처음 사용하는 경우 [빠른 시작](QUICK_START_KO.md)을 먼저 읽는다.
+현재 배포는 Android `0.5.0-local` / versionCode 10, 워치 `0.4.0` / build 11이다. 처음 사용하는 경우 [빠른 시작](QUICK_START_KO.md)을 먼저 읽는다.
 
 ## Android
 
@@ -11,7 +11,7 @@ python3 android/build_android.py \
   --sdk /absolute/path/to/android-sdk \
   --java-home /absolute/path/to/jdk \
   --keystore /absolute/path/to/foldbridge-local.keystore \
-  --output /absolute/path/to/FoldBridge-Local-0.4.0.apk \
+  --output /absolute/path/to/FoldBridge-Local-0.5.0.apk \
   --skip-signature-check
 ```
 
@@ -87,3 +87,14 @@ adb shell cmd notification allow_listener dev.foldbridge.local/dev.foldbridge.No
 한 번 양쪽 코드로 등록하고 Galaxy의 연결 시작을 켜 두면 등록 키와 연결 의도는 계속 저장된다. 재부팅 뒤 양쪽 잠금을 한 번 해제하고 Bluetooth가 켜져 있어야 한다. Galaxy는 연결 서비스를 자동 재개하며, 워치는 OS 실행/복원 기회에 저장된 휴대폰으로 연결한다. 워치가 바로 연결되지 않으면 FoldBridge를 한 번 연다. 새 워치 등록이나 기존 등록 해제는 필요하지 않다. 사용자가 연결 중지/등록 해제를 선택한 상태는 자동 시작으로 덮어쓰지 않는다.
 
 watchOS는 일반 앱에 부팅 즉시 실행을 보장하는 공개 API를 제공하지 않는다. 30분 뒤 백그라운드 갱신 요청과 Core Bluetooth 복원은 실행 기회를 요청하는 수단이며 완전한 무인 재부팅 복구를 보장하지 않는다. [Apple 백그라운드 재연결](https://developer.apple.com/documentation/watchkit/using-background-tasks), [Android 부팅/업데이트 후 서비스 시작](https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start)
+
+## 번역 리소스
+
+번역 원본은 `localization/en.json`이다. 한국어 UI 문구를 키로 두고 영어 번역을 관리한다. 변경 후 아래 명령으로 Android 문자열 리소스/I18n 매핑과 watchOS `Localizable.strings`·권한 설명을 생성한다.
+
+```sh
+python3 tools/generate-localization.py
+python3 watch/generate_project.py
+```
+
+생성 파일도 저장소에 포함하므로 처음 받는 사용자가 별도로 생성할 필요는 없다. Android는 `LocaleManager`의 앱별 언어 설정을 사용하며, 워치는 `AppLanguage`에서 선택을 저장하고 선택된 언어 번들을 사용한다. 연결 진단 상태는 원래 식별 문구를 유지하고 화면에 표시할 때 번역하므로 언어 전환을 위해 연결을 다시 맺을 필요가 없다.

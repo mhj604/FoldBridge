@@ -11,8 +11,8 @@
 | 항목 | 현재 버전 / 링크 |
 | --- | --- |
 | 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) — 서버 없는 BLE 구성 |
-| Android | **0.4.0-local · 코드 9** / [APK 다운로드](artifacts/android/FoldBridge-Local-0.4.0.apk) |
-| Apple Watch | **0.3.0 · 빌드 10** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
+| Android | **0.5.0-local · 코드 10** / [APK 다운로드](artifacts/android/FoldBridge-Local-0.5.0.apk) |
+| Apple Watch | **0.4.0 · 빌드 11** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
 | 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) |
 | 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
 | 연결이 끊긴 경우 | **[새로고침·문제 해결](docs/TROUBLESHOOTING_KO.md)** |
@@ -30,6 +30,12 @@ open watch/FoldBridge.xcodeproj
 ```
 
 `main`에도 최신 소스와 한국어 문서를 반영합니다. `relay/`, `windows/`, `legacy/`는 과거 구성으로 현재 Local 앱 실행에는 필요하지 않습니다.
+
+## 한국어 / English 전환
+
+갤럭시와 워치 앱의 **설정 → 언어 / Language**에서 **시스템 설정·한국어·English**를 선택합니다. 각 기기에서 따로 선택하며, 재실행과 재시작 후에도 유지됩니다. 시스템 설정을 선택하면 한국어 환경은 한국어, 그 외 환경은 영어를 사용합니다.
+
+버튼·설정·연결 상태·오류 안내·진단과 앱 자체 연결 알림을 번역합니다. 다른 앱에서 전달받은 알림 제목·본문·앱 이름은 원문 그대로 유지합니다. 언어를 변경해도 등록 키와 미전달 알림을 지우지 않습니다. OS가 표시하는 권한 창은 해당 기기의 시스템 언어 설정을 따를 수 있습니다.
 
 ## 무엇을 할 수 있나요?
 

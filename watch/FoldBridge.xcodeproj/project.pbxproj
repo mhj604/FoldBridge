@@ -1,5 +1,7 @@
 // !$*UTF8*$!
 { archiveVersion = 1; classes = {}; objectVersion = 56; objects = {
+		DBF95FB0D38794350807B534 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppLanguage.swift"; sourceTree = "<group>"; };
+		08D87F1BFFB03C3BD41378E6 = { isa = PBXBuildFile; fileRef = DBF95FB0D38794350807B534; };
 		89CD9BB2FA1DD473FAE6B544 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FoldBridgeApp.swift"; sourceTree = "<group>"; };
 		7A5EBCA6E81DEEB42240C645 = { isa = PBXBuildFile; fileRef = 89CD9BB2FA1DD473FAE6B544; };
 		797206F73DC21D58F94E35F4 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WatchLink.swift"; sourceTree = "<group>"; };
@@ -10,13 +12,21 @@
 		5F7518E92421E4EB585DE8CC = { isa = PBXBuildFile; fileRef = E41C94BB3B7064A75547F688; };
 		8119A4784A182D847E337D77 = { isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB90684E69A6C96ED866993E = { isa = PBXBuildFile; fileRef = 8119A4784A182D847E337D77; };
+		C39E58E18A211F91A1FD25F4 = { isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = "ko.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		A3AC9E42EEE0F57E851340EB = { isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = "en.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		E12154C29FCC8A03034219F5 = { isa = PBXVariantGroup; children = (C39E58E18A211F91A1FD25F4,A3AC9E42EEE0F57E851340EB); name = "Localizable.strings"; sourceTree = "<group>"; };
+		E73776B5BAF9EBDADF811803 = { isa = PBXBuildFile; fileRef = E12154C29FCC8A03034219F5; };
+		1E0A318BB50298E9DFB5187B = { isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = "ko.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		99C4F88D152C2FBAEB8E4C30 = { isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = "en.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		8182B2E802A8AEA494385039 = { isa = PBXVariantGroup; children = (1E0A318BB50298E9DFB5187B,99C4F88D152C2FBAEB8E4C30); name = "InfoPlist.strings"; sourceTree = "<group>"; };
+		0BAE2A324D27E3E5059F614D = { isa = PBXBuildFile; fileRef = 8182B2E802A8AEA494385039; };
 		38A007151ABE87CC01A5B6E9 = { isa = PBXFileReference; explicitFileType = wrapper.application; path = FoldBridge.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		482182478A3ECD4745BEA917 = { isa = PBXGroup; children = (89CD9BB2FA1DD473FAE6B544,797206F73DC21D58F94E35F4,6F6EAD622C6B26F5C2550C5F,E41C94BB3B7064A75547F688,8119A4784A182D847E337D77); path = FoldBridge; sourceTree = "<group>"; };
+		482182478A3ECD4745BEA917 = { isa = PBXGroup; children = (DBF95FB0D38794350807B534,89CD9BB2FA1DD473FAE6B544,797206F73DC21D58F94E35F4,6F6EAD622C6B26F5C2550C5F,E41C94BB3B7064A75547F688,8119A4784A182D847E337D77,E12154C29FCC8A03034219F5,8182B2E802A8AEA494385039); path = FoldBridge; sourceTree = "<group>"; };
 		FBDC4F23F93125BBEEAE800C = { isa = PBXGroup; children = (38A007151ABE87CC01A5B6E9); name = Products; sourceTree = "<group>"; };
 		64292B1C2B2E13EAD8788FC8 = { isa = PBXGroup; children = (482182478A3ECD4745BEA917,FBDC4F23F93125BBEEAE800C); sourceTree = "<group>"; };
-		BCE16DD0260827ECF338C787 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (7A5EBCA6E81DEEB42240C645,C4B2E8932F8046E1CA0FDE59,204BD3050FA628EC74F46B1D,5F7518E92421E4EB585DE8CC); runOnlyForDeploymentPostprocessing = 0; };
+		BCE16DD0260827ECF338C787 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (08D87F1BFFB03C3BD41378E6,7A5EBCA6E81DEEB42240C645,C4B2E8932F8046E1CA0FDE59,204BD3050FA628EC74F46B1D,5F7518E92421E4EB585DE8CC); runOnlyForDeploymentPostprocessing = 0; };
 		AF39DD055C3EF8226FBE929D = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		87DF60DE337FB58864343E39 = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (FB90684E69A6C96ED866993E); runOnlyForDeploymentPostprocessing = 0; };
+		87DF60DE337FB58864343E39 = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (FB90684E69A6C96ED866993E,E73776B5BAF9EBDADF811803,0BAE2A324D27E3E5059F614D); runOnlyForDeploymentPostprocessing = 0; };
 		0E8A3AD980EC179856012B7E = { isa = PBXNativeTarget; buildConfigurationList = 651ECA092BE81738918D8CDB; buildPhases = (BCE16DD0260827ECF338C787,AF39DD055C3EF8226FBE929D,87DF60DE337FB58864343E39); buildRules = (); dependencies = (); name = FoldBridge; productName = FoldBridge; productReference = 38A007151ABE87CC01A5B6E9; productType = "com.apple.product-type.application"; };
 		89E1FD6268CC0F221A2BE178 = { isa = XCBuildConfiguration; buildSettings = {SWIFT_VERSION = "5.0"; SDKROOT = "watchos"; WATCHOS_DEPLOYMENT_TARGET = "10.0"; CLANG_ENABLE_MODULES = "YES"; SWIFT_OPTIMIZATION_LEVEL = "-Onone";}; name = Debug; };
 		E6DE6C99132752C914FEF632 = { isa = XCBuildConfiguration; buildSettings = {SWIFT_VERSION = "5.0"; SDKROOT = "watchos"; WATCHOS_DEPLOYMENT_TARGET = "10.0"; CLANG_ENABLE_MODULES = "YES"; SWIFT_OPTIMIZATION_LEVEL = "-O";}; name = Release; };
@@ -24,5 +34,5 @@
 		7082CC0B6FC1282FCEABD07A = { isa = XCBuildConfiguration; buildSettings = {SWIFT_VERSION = "5.0"; SDKROOT = "watchos"; WATCHOS_DEPLOYMENT_TARGET = "10.0"; CLANG_ENABLE_MODULES = "YES"; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; PRODUCT_BUNDLE_IDENTIFIER = "dev.foldbridge.watch"; PRODUCT_NAME = "$(TARGET_NAME)"; ASSETCATALOG_COMPILER_APPICON_NAME = "FoldBridgeIcon"; TARGETED_DEVICE_FAMILY = "4"; CODE_SIGN_STYLE = "Automatic"; GENERATE_INFOPLIST_FILE = "NO"; INFOPLIST_FILE = "FoldBridge/Info.plist"; SUPPORTED_PLATFORMS = "watchos watchsimulator"; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; SKIP_INSTALL = "NO"; ENABLE_USER_SCRIPT_SANDBOXING = "YES";}; name = Debug; };
 		639A7CA24D39909E713B47F7 = { isa = XCBuildConfiguration; buildSettings = {SWIFT_VERSION = "5.0"; SDKROOT = "watchos"; WATCHOS_DEPLOYMENT_TARGET = "10.0"; CLANG_ENABLE_MODULES = "YES"; SWIFT_OPTIMIZATION_LEVEL = "-O"; PRODUCT_BUNDLE_IDENTIFIER = "dev.foldbridge.watch"; PRODUCT_NAME = "$(TARGET_NAME)"; ASSETCATALOG_COMPILER_APPICON_NAME = "FoldBridgeIcon"; TARGETED_DEVICE_FAMILY = "4"; CODE_SIGN_STYLE = "Automatic"; GENERATE_INFOPLIST_FILE = "NO"; INFOPLIST_FILE = "FoldBridge/Info.plist"; SUPPORTED_PLATFORMS = "watchos watchsimulator"; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; SKIP_INSTALL = "NO"; ENABLE_USER_SCRIPT_SANDBOXING = "YES";}; name = Release; };
 		651ECA092BE81738918D8CDB = { isa = XCConfigurationList; buildConfigurations = (7082CC0B6FC1282FCEABD07A,639A7CA24D39909E713B47F7); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
-		98F54143AB4E86B28C3AFEE0 = { isa = PBXProject; attributes = { LastUpgradeCheck = 1600; TargetAttributes = { 0E8A3AD980EC179856012B7E = { CreatedOnToolsVersion = 16.0; ProvisioningStyle = Automatic;  }; }; }; buildConfigurationList = F8C70E4123C9AE82C42562CC; compatibilityVersion = "Xcode 14.0"; developmentRegion = ko; hasScannedForEncodings = 0; knownRegions = (ko,en,Base); mainGroup = 64292B1C2B2E13EAD8788FC8; productRefGroup = FBDC4F23F93125BBEEAE800C; projectDirPath = ""; projectRoot = ""; targets = (0E8A3AD980EC179856012B7E); };
+		98F54143AB4E86B28C3AFEE0 = { isa = PBXProject; attributes = { LastUpgradeCheck = 1600; TargetAttributes = { 0E8A3AD980EC179856012B7E = { CreatedOnToolsVersion = 16.0; ProvisioningStyle = Automatic;  }; }; }; buildConfigurationList = F8C70E4123C9AE82C42562CC; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (ko,en,Base); mainGroup = 64292B1C2B2E13EAD8788FC8; productRefGroup = FBDC4F23F93125BBEEAE800C; projectDirPath = ""; projectRoot = ""; targets = (0E8A3AD980EC179856012B7E); };
 }; rootObject = 98F54143AB4E86B28C3AFEE0; }
