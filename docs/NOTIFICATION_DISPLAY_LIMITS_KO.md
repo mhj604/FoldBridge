@@ -33,3 +33,28 @@ Apple의 watchOS 지원표에서 Communication Notifications는 유료 프로그
 ## 현재 배포 상태
 
 이 조사는 앱 수정·설치 완료를 의미하지 않는다. 설치된 Watch 0.4.3 / 빌드 14와 Galaxy 0.5.0은 유지한다. 작동 중인 상세 본문을 다시 변경하거나 테스트 알림을 보내지 않았다. 무료 서명·일반 watchOS 앱·서버와 아이폰 없는 사용이라는 현재 조건에서 두 요청을 모두 충족하는 지원 API 경로는 찾지 못했다.
+
+## REA로 배포 산출물 분석
+
+사용자 요청에 따라 기존 REA 6.8.0 CLI로 빌드 14의 로컬 `.app`과 실행 코드를 읽었다. 소스만 읽은 결과를 REA 결과라고 부르지 않으며, 이 분석은 워치 화면의 실시간 관찰이 아니다.
+
+| REA 작업 | 관찰 | Evidence ID |
+| --- | --- | --- |
+| `inspect-plist` | 버전 0.4.3 / 14, `dev.foldbridge.watch`, 기본 아이콘 `FoldBridgeIcon` | `ev_6208e9f430e3f9a74f8d59ba0baac03093f6bfba93ba1d2cbaccee012cbb9530` |
+| `inspect-macho` — 실행 파일 | 앱 시작 파일은 `@rpath/FoldBridge.debug.dylib`를 로드 | `ev_a4d6004a4b9244ae58cabd784bc2fe5c698ea680ce1ca194f40d59d98779f3e3` |
+| `inspect-macho` — 실제 디버그 코드 | `WKNotificationScene` 및 `UNNotificationRequest`·`UNUserNotificationCenter` 의존성 | `ev_8faec91328de28e10e45ff1ba0175b4c131f3b8cf239ec992320ac072c60545f` |
+| `inspect-asset-catalog` | 컴파일된 카탈로그의 이미지 이름은 `FoldBridgeIcon`, 1024px 아이콘 | `ev_4d07718e6a05a01bae3606a81f6471575e3e270f14a5b70132ae92d51526d707` |
+
+별도로 소스에서는 원본 아이콘을 저장한 뒤 알림 카테고리를 정하고, 같은 알림 요청을 시스템에 한 번 등록하는 순서를 읽었다. 최초 표시와 나중 표시를 위해 서로 다른 아이콘 카테고리를 번갈아 등록하는 코드는 이 경로에 없다. 이는 코드의 순서에 대한 관찰이며 실제 시스템 화면이 언제 전환되는지를 측정한 결과는 아니다.
+
+일반 `codesign` 도구로 읽은 현재 서명에는 `application-identifier`, `com.apple.developer.team-identifier`, `get-task-allow`만 있고 Communication Notifications 권한은 없었다. 이 서명 관찰은 REA가 제공한 Evidence와 구분한다.
+
+### 분석의 한계
+
+- REA의 plist·리소스 관찰은 실행 파일 전체의 해시 식별을 제공하지 않는다. Mach-O 관찰은 각 파일을 별도 해시로 식별한다.
+- Mach-O imports/exports는 완전한 심벌 목록이 아니므로 검색 결과가 없다는 이유만으로 모든 비공개 기능의 부재를 주장하지 않는다.
+- asset catalog 관찰은 이미지 메타데이터이며 실제 픽셀이나 워치에서 렌더링한 화면을 관찰한 것이 아니다.
+- 현재 사용한 REA 경로는 로컬 산출물 분석이다. watchOS 알림 표시를 담당하는 시스템 프로세스를 분석하거나 변경한 것이 아니다.
+- REA 분석 결과는 기본 아이콘과 사용자 정의 본문의 경로를 뒷받침한다. 시스템 화면의 변경 가능 범위와 계정 권한의 근거는 위 Apple 문서이며, 이 분석으로 운영체제 권한이 추가되지는 않는다.
+
+현재 남은 문제는 두 요구를 만족할 실제 시스템 표시 경로의 확보다. REA 사용 자체나 문서 업데이트를 앱 문제 해결로 완료 처리하지 않는다.
