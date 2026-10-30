@@ -5,12 +5,13 @@
 ## 이번 배포
 
 - Android: `FoldBridge-Local-0.3.1.apk`, 앱 ID `dev.foldbridge.local`, 버전 코드 7.
-- watchOS: `dev.foldbridge.watch`, 버전 0.2.2, 빌드 7.
+- watchOS: `dev.foldbridge.watch`, 버전 0.2.3, 빌드 8.
 - 기존 갤럭시 FoldBridge와 별도로 설치합니다. 기존 앱의 데이터와 서명은 건드리지 않습니다.
 - 워치는 기존 앱과 Local 앱의 휴대폰 ID·페어링 키를 별도로 보관합니다. 앱 전환으로 페어링을 삭제하지 않습니다.
 
 ## 바뀐 전달 방식
 
+- 워치 알림의 앱 이름·제목·본문을 같은 왼쪽 기준선에 배치합니다. 원본 앱 아이콘은 작은 크기로 헤더 오른쪽에 유지하고, 시스템 글꼴·화면별 좌우 여백·기본 상단 색상을 사용합니다. 이전 40pt 아이콘 행과 12pt 간격이 본문을 밀어내던 배치를 줄였습니다. 긴 본문은 높이를 고정하지 않고 watchOS 알림 화면에서 스크롤합니다.
 - 워치 앱 안에는 알림 목록·상세 화면과 제목·본문 저장을 두지 않습니다. 업데이트 첫 실행에서 이전 앱 내 기록을 제거하고, 시스템 알림 센터의 알림과 페어링은 유지합니다. 중복 방지를 위한 ID/리비전 해시 512개만 저장합니다.
 - Android의 민감한 알림 본문 가림은 FoldBridge Local에 `RECEIVE_SENSITIVE_NOTIFICATIONS` AppOp를 허용해 해제합니다. 일반 알림 접근과 별도인 기기 설정이며 APK가 스스로 부여하지 않습니다. [설정 절차](docs/BUILD_AND_SETUP.md#민감한-알림-본문-허용)
 - 갤럭시의 원본 앱 아이콘을 PNG로 가져와 암호화해 전달합니다. 워치의 펼친 알림 본문에 표시합니다. watchOS가 자동 생성하는 최초 알림 아이콘과 상단 앱 이름은 FoldBridge로 고정되므로 Android 앱 아이콘으로 대체할 수 없습니다. [Apple 알림 표시 규칙](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)

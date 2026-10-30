@@ -217,7 +217,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button("휴대폰 등록 해제",role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.2.2").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.2.3").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle("설정")
             .confirmationDialog("연결 유지를 시작할까요?",isPresented:$startingLocation,titleVisibility:.visible) {
@@ -276,23 +276,45 @@ struct BridgeDiagnosticsView: View {
 final class RelayNotificationController: WKUserNotificationHostingController<RelayNotificationView> {
     private var content: UNNotificationContent?
     override var body: RelayNotificationView { RelayNotificationView(content:content) }
-    override class var sashColor: Color? { BridgeStyle.surface }
-    override class var titleColor: Color? { .white }
     override func didReceive(_ notification: UNNotification) { content = notification.request.content }
 }
 
 struct RelayNotificationView: View {
     let content: UNNotificationContent?
+    @ScaledMetric(relativeTo:.headline) private var iconSize: CGFloat = 24
+
     var body: some View {
         if let content {
-            VStack(alignment:.leading,spacing:12) {
-                HStack(spacing:10) {
-                    SourceAppIcon(key:content.userInfo["fb_icon"] as? String,size:40)
-                    Text(content.title).font(.headline).lineLimit(2)
+            // The system supplies the sash, scrolling, and dismiss control. Keep this
+            // content intrinsic-height and use one leading edge for all text below it.
+            VStack(alignment:.leading,spacing:4) {
+                HStack(alignment:.firstTextBaseline,spacing:6) {
+                    Text(content.title)
+                        .font(.headline)
+                        .fixedSize(horizontal:false,vertical:true)
+                        .frame(maxWidth:.infinity,alignment:.leading)
+                    SourceAppIcon(key:content.userInfo["fb_icon"] as? String,size:iconSize)
+                        .alignmentGuide(.firstTextBaseline) { dimensions in dimensions.height*0.8 }
                 }
-                if !content.subtitle.isEmpty { Text(content.subtitle).font(.headline) }
-                if !content.body.isEmpty { Text(content.body).font(.body) }
-            }.frame(maxWidth:.infinity,alignment:.leading).padding(.vertical,6)
+                .padding(.bottom,2)
+
+                if !content.subtitle.isEmpty {
+                    Text(content.subtitle)
+                        .font(.headline)
+                        .fixedSize(horizontal:false,vertical:true)
+                        .frame(maxWidth:.infinity,alignment:.leading)
+                }
+                if !content.body.isEmpty {
+                    Text(content.body)
+                        .font(.body)
+                        .fixedSize(horizontal:false,vertical:true)
+                        .frame(maxWidth:.infinity,alignment:.leading)
+                }
+            }
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth:.infinity,alignment:.topLeading)
+            .scenePadding(.horizontal)
+            .padding(.bottom,8)
         }
     }
 }
