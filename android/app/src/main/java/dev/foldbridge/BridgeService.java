@@ -18,13 +18,14 @@ public final class BridgeService extends Service {
     private static final int MAX_PENDING=1024;
     public static final UUID SERVICE=UUID.fromString("c62d0200-7de5-4c34-a432-7c838e687a40"), TX=UUID.fromString("c62d0201-7de5-4c34-a432-7c838e687a40"), RX=UUID.fromString("c62d0202-7de5-4c34-a432-7c838e687a40"), CCC=UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
     static volatile BridgeService instance;
+    static boolean isConnected(){BridgeService service=instance;return service!=null&&service.authenticated;}
     static volatile String status="중지됨", pairingCode="", error="";
     static volatile long acknowledged=0, apnsAccepted=0, lastRtt=-1;
     static volatile int waiting=0;
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",5,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",6,"bridgeRunning",s!=null,"status",status,"error",error,
             "authenticated",s!=null&&s.authenticated,"watchActive",s!=null&&s.watchActive,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
             "received",NotificationRelay.received,"forwarded",NotificationRelay.forwarded,
@@ -44,6 +45,7 @@ public final class BridgeService extends Service {
     private final ArrayDeque<byte[]> outgoing=new ArrayDeque<>();
     private final ArrayDeque<byte[]> messages=new ArrayDeque<>();
     private final LinkedHashMap<String,Delivery> pending=new LinkedHashMap<>();
+    private final Set<String> acknowledgedIcons=new HashSet<>();
     private BluetoothGattServer server; private BluetoothGattCharacteristic tx;
     private BluetoothLeAdvertiser advertiser; private BluetoothDevice central;
     private Vault vault; private KeyPair identity; private Crypto.Session session;
@@ -56,6 +58,7 @@ public final class BridgeService extends Service {
     private static final class Delivery {
         final JSONObject message; final long queuedAt;
         int bleAttempts=0;
+        boolean iconSent=false;
         Delivery(JSONObject message){this.message=message;this.queuedAt=SystemClock.elapsedRealtime()-Math.max(0,System.currentTimeMillis()-message.optLong("posted_at",System.currentTimeMillis()));}
     }
     private static String b64(byte[] b) { return Base64.getEncoder().encodeToString(b); }
@@ -176,7 +179,10 @@ public final class BridgeService extends Service {
         if(!authenticated)throw new GeneralSecurityException("Confirm both devices");
         if("ack".equals(eventType)) {
             String id=event.getString("id"), revision=event.getString("rev"); Delivery d=pending.get(id);
-            if(d!=null&&d.message.optString("rev").equals(revision)) { pending.remove(id); acknowledged++; lastRtt=SystemClock.elapsedRealtime()-d.queuedAt; waiting=pending.size(); persist(); android.util.Log.i("FoldBridge","watch_receipt count="+acknowledged+" pending="+waiting); }
+            if(d!=null&&d.message.optString("rev").equals(revision)) {
+                String icon=d.message.optString("icon_key");if(d.iconSent&&!icon.isEmpty())acknowledgedIcons.add(icon);
+                pending.remove(id); acknowledged++; lastRtt=SystemClock.elapsedRealtime()-d.queuedAt; waiting=pending.size(); persist(); android.util.Log.i("FoldBridge","watch_receipt count="+acknowledged+" pending="+waiting);
+            }
             if(activeDelivery!=null&&activeDelivery.message.optString("id").equals(id)&&activeDelivery.message.optString("rev").equals(revision))activeDelivery=null;
             drainPending();
             recordState(this);
@@ -215,7 +221,13 @@ public final class BridgeService extends Service {
         BridgeService s=instance; if(s==null)return;
         s.handler.post(()->{
             String id=notification.optString("id"); Delivery previous=s.pending.get(id);
-            if(previous!=null&&previous.message.optString("rev").equals(notification.optString("rev")))return;
+            if(previous!=null&&previous.message.optString("rev").equals(notification.optString("rev"))) {
+                if(!previous.message.has("icon_key")&&notification.has("icon_key")) {
+                    for(String field:new String[]{"app_id","icon_key","icon_png"})try{previous.message.put(field,notification.get(field));}catch(JSONException ignored){}
+                    s.persist();
+                }
+                return;
+            }
             Delivery d=new Delivery(notification); s.pending.put(id,d);
             while(s.pending.size()>MAX_PENDING){s.pending.remove(s.pending.keySet().iterator().next());error="미전달 보관 한도에 도달해 가장 오래된 알림을 비웠습니다.";}
             waiting=s.pending.size(); s.drainPending();s.persist();
@@ -239,7 +251,14 @@ public final class BridgeService extends Service {
         if(instance!=this||!authenticated||pending.get(d.message.optString("id"))!=d)return;
         activeDelivery=d;d.bleAttempts++;
         android.util.Log.i("FoldBridge","notification_send attempt="+d.bleAttempts+" pending="+pending.size());
-        int epoch=generation;sendSecure(d.message);
+        int epoch=generation;
+        try {
+            JSONObject message=new JSONObject(d.message.toString());
+            if(acknowledgedIcons.contains(message.optString("icon_key")))message.remove("icon_png");
+            if(message.toString().getBytes(StandardCharsets.UTF_8).length>11000)message.remove("icon_png");
+            d.iconSent=message.has("icon_png");
+            sendSecure(message);
+        } catch(JSONException error) {disconnect("알림을 준비하지 못했습니다.");return;}
         handler.postDelayed(()->{
             if(instance!=this||generation!=epoch||activeDelivery!=d||!authenticated)return;
             activeDelivery=null;
@@ -257,7 +276,7 @@ public final class BridgeService extends Service {
     private void flush() {flushExpired();persist();drainPending();}
     private void persist(){if(outbox!=null){JSONArray list=new JSONArray();for(Delivery d:pending.values())list.put(d.message);outbox.save(list);}}
     private void clearSession() {
-        generation++; central=null; session=null; peerPublic=null; ownNonce=null; peerCommit=null; stage="idle";
+        generation++; acknowledgedIcons.clear(); central=null; session=null; peerPublic=null; ownNonce=null; peerCommit=null; stage="idle";
         activeDelivery=null;for(Delivery d:pending.values())d.bleAttempts=0;
         authenticated=false; localConfirmed=false; remoteConfirmed=false; subscribed=false; inFlight=false; watchActive=false; mtu=23; pairingCode=""; outgoing.clear(); messages.clear(); assembler.reset();
     }

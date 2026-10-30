@@ -1,6 +1,34 @@
 import Foundation
 import Security
 import CryptoKit
+import UIKit
+
+enum AppIconStore {
+    private static let images: NSCache<NSString,UIImage> = { let value = NSCache<NSString,UIImage>(); value.countLimit = 64; return value }()
+    private static func url(_ key: String) -> URL? {
+        guard key.count == 64, key.allSatisfy({ "0123456789abcdef".contains($0) }),
+              let base = FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask).first else { return nil }
+        return base.appendingPathComponent("AppIcons",isDirectory:true).appendingPathComponent(key+".png")
+    }
+    static func accept(key: String?, png: String?) -> String? {
+        guard let key, let target = url(key) else { return nil }
+        if let png, png.utf8.count <= 4096, let data = Data(base64Encoded:png), data.count <= 3072,
+           SHA256.hash(data:data).map({String(format:"%02x",$0)}).joined() == key,
+           let image = UIImage(data:data), image.size.width <= 64, image.size.height <= 64 {
+            do {
+                try FileManager.default.createDirectory(at:target.deletingLastPathComponent(),withIntermediateDirectories:true)
+                try data.write(to:target,options:.atomic); images.setObject(image,forKey:key as NSString)
+            } catch { return nil }
+        }
+        return FileManager.default.fileExists(atPath:target.path) ? key:nil
+    }
+    static func image(for key: String?) -> UIImage? {
+        guard let key else { return nil }
+        if let image = images.object(forKey:key as NSString) { return image }
+        guard let path = url(key), let data = try? Data(contentsOf:path), let image = UIImage(data:data) else { return nil }
+        images.setObject(image,forKey:key as NSString); return image
+    }
+}
 
 enum WatchStore {
     enum StorageError: Error { case keychain(OSStatus) }

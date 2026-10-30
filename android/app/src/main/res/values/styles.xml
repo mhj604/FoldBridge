@@ -1,0 +1,11 @@
+<resources>
+    <style name="FoldBridgeTheme" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:colorAccent">#82E6D1</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">#090F15</item>
+        <item name="android:navigationBarColor">#090F15</item>
+        <item name="android:statusBarColor">#090F15</item>
+    </style>
+</resources>

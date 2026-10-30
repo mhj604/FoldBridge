@@ -60,7 +60,10 @@ public final class NotificationRelay extends NotificationListenerService {
         try{app=getPackageManager().getApplicationLabel(getPackageManager().getApplicationInfo(app,0)).toString();}catch(Exception ignored){}
         if(title.isEmpty()&&body.isEmpty())title="내용 없는 알림";
         String rev=hex(Crypto.digest((title+"\n"+body).getBytes(StandardCharsets.UTF_8))).substring(0,32);
-        BridgeService.enqueue(BridgeService.object("type","notification","id",id,"rev",rev,"app",text(app,80),"title",title,"body",body,"posted_at",postedAt));
+        var message=BridgeService.object("type","notification","id",id,"rev",rev,"app",text(app,80),"app_id",sbn.getPackageName(),"title",title,"body",body,"posted_at",postedAt);
+        AppIcons.Artwork artwork=AppIcons.get(this,sbn.getPackageName());
+        if(artwork!=null)try {message.put("icon_key",artwork.key());message.put("icon_png",artwork.png());}catch(org.json.JSONException ignored){}
+        BridgeService.enqueue(message);
         forwarded++;
     }
     private static String text(CharSequence value,int max) {

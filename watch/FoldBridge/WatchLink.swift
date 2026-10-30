@@ -21,6 +21,8 @@ struct PhoneCandidate: Identifiable {
 struct WatchAlert: Identifiable, Codable {
     let id: String, app: String, title: String, body: String
     let received: Date
+    let appID: String?
+    let iconKey: String?
 }
 
 final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
@@ -35,7 +37,11 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     @Published var backgroundNotice = ""
     @Published private(set) var receivedCount = UserDefaults.standard.integer(forKey:"diagnosticReceived")
     @Published private(set) var scheduledCount = UserDefaults.standard.integer(forKey:"diagnosticScheduled")
-    @Published private(set) var profile = PhoneProfile(rawValue:UserDefaults.standard.string(forKey:"phoneProfile") ?? "") ?? .original
+    @Published private(set) var profile: PhoneProfile = {
+        let defaults = UserDefaults.standard
+        if let saved = defaults.string(forKey:"phoneProfile"), let profile = PhoneProfile(rawValue:saved) { return profile }
+        return defaults.string(forKey:"phoneID") == nil ? .local:.original
+    }()
     private var peerKey: String { profile == .local ? "peer.local" : "peer" }
     private var phoneIDKey: String { profile == .local ? "phoneID.local" : "phoneID" }
     private var switchingFrom: CBPeripheral?
@@ -249,10 +255,19 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         guard let id = message["id"] as? String, let revision = message["rev"] as? String,
               let title = message["title"] as? String, let body = message["body"] as? String,
               let app = message["app"] as? String, id.count <= 64, revision.count <= 64, title.count <= 160, body.count <= 1200 else { throw Wire.Failure.bounds }
-        if seen[id] == revision { sendSecure(["type":"ack","id":id,"rev":revision]); return }
+        let appID = (message["app_id"] as? String).map { String($0.prefix(255)) }
+        let iconKey = AppIconStore.accept(key:message["icon_key"] as? String,png:message["icon_png"] as? String)
+        if seen[id] == revision {
+            if let iconKey, let index = alerts.firstIndex(where:{$0.id == id}), alerts[index].iconKey != iconKey {
+                let previous = alerts[index]
+                alerts[index] = WatchAlert(id:id,app:app,title:title,body:body,received:previous.received,appID:appID,iconKey:iconKey)
+                saveInbox()
+            }
+            sendSecure(["type":"ack","id":id,"rev":revision]); return
+        }
         guard !pendingReceipts.contains(where:{$0.alert.id == id && $0.revision == revision}) else { return }
         receivedCount += 1; UserDefaults.standard.set(receivedCount,forKey:"diagnosticReceived")
-        pendingReceipts.append((WatchAlert(id:id,app:app,title:title,body:body,received:Date()),revision))
+        pendingReceipts.append((WatchAlert(id:id,app:app,title:title,body:body,received:Date(),appID:appID,iconKey:iconKey),revision))
         writeDiagnostics()
         presentNextReceipt()
     }
@@ -274,7 +289,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func scheduleReceipt(_ receipt: (alert: WatchAlert, revision: String)) {
         let alert = receipt.alert, revision = receipt.revision
         let content = UNMutableNotificationContent(); content.title = alert.app; content.subtitle = alert.title; content.body = alert.body; content.sound = .default
+        content.categoryIdentifier = "FOLDBRIDGE_ALERT"
+        content.threadIdentifier = alert.appID ?? alert.app
         content.userInfo = ["fb_id":alert.id,"fb_rev":revision]
+        if let iconKey = alert.iconKey { content.userInfo["fb_icon"] = iconKey }
         UNUserNotificationCenter.current().add(UNNotificationRequest(identifier:alert.id,content:content,trigger:nil)) { error in
             DispatchQueue.main.async {
                 self.presentingReceipt = false

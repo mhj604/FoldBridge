@@ -43,3 +43,11 @@ AES-256-GCM의 AAD는 `FoldBridge/v1`이다. 휴대폰 nonce prefix는 `FBP1`, �
 ## 실행 한계
 
 이 프로토콜은 OS 실행 예산을 늘리지 않는다. 위치 기반 연결 유지에서도 watchOS의 중단/종료나 Bluetooth 범위 이탈로 지연될 수 있다. 정적 ECDH 신원 키를 사용하므로 신원 키 유출 이후의 전방향 안전성을 주장하지 않는다. 초기 APNs 설계는 `legacy/docs/PROTOCOL-0.1.0.md`에 별도 보존했다.
+
+## 선택적 아이콘 메타데이터 (Local 0.3.0)
+
+`notification`에 `app_id`(Android 패키지), `icon_key`(PNG SHA-256 hex), `icon_png`(PNG base64)가 추가된다. PNG는 최대 3,072바이트, 디코딩 크기는 최대 64×64다. 워치는 해시를 확인하고 기기 내 캐시에 저장한다. 아이콘 메타데이터는 내용 리비전에 포함하지 않는다.
+
+휴대폰은 현재 연결에서 해당 아이콘을 보낸 메시지가 ACK되면 같은 `icon_key`의 `icon_png`를 생략한다. 재연결하면 첫 전송에 다시 포함한다. 일반 텍스트+아이콘이 크기 상한에 가까워지면 아이콘 본문을 생략해 알림 텍스트 전달을 우선한다. 기존 버전은 모르는 필드를 무시할 수 있으며 아이콘 필드가 없는 알림도 처리한다.
+
+watchOS 로컬 알림은 카테고리 `FOLDBRIDGE_ALERT`와 원본 앱의 thread ID를 사용한다. long-look 콘텐츠는 캐시된 `fb_icon` 키로 원본 아이콘을 표시한다. 시스템 short-look/sash의 발송 앱 표시는 그대로다.

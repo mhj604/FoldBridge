@@ -1,6 +1,6 @@
 # 빌드와 설치
 
-현재 배포는 Android `0.2.2-local` / versionCode 5, 워치 `0.1.0` / build 4다.
+현재 배포는 Android `0.3.0-local` / versionCode 6, 워치 `0.2.0` / build 5다.
 
 ## Android
 
@@ -11,7 +11,7 @@ python3 android/build_android.py \
   --sdk /absolute/path/to/android-sdk \
   --java-home /absolute/path/to/jdk \
   --keystore /absolute/path/to/foldbridge-local.keystore \
-  --output /absolute/path/to/FoldBridge-Local-0.2.2.apk \
+  --output /absolute/path/to/FoldBridge-Local-0.3.0.apk \
   --skip-signature-check
 ```
 
@@ -22,9 +22,9 @@ python3 android/build_android.py \
 APK는 `artifacts/android/`에도 포함한다. 설치 후 다음을 설정한다.
 
 1. 근처 기기와 일반 알림 권한 허용.
-2. **다른 앱 알림 읽기 허용**에서 **FoldBridge Local 알림 전달**의 알림 접근 허용.
+2. **알림 접근 허용** 또는 **설정 → 알림 접근 설정**에서 **FoldBridge Local 알림 전달**의 알림 접근 허용.
 3. 기존 Android FoldBridge 앱을 실행 중이면 연결 중지.
-4. 처음 연결할 때 Local의 **새 워치 등록 (2분)**을 누르고 워치와 코드를 비교해 양쪽 확인.
+4. 처음 연결할 때 Local의 **설정 → 새 워치 등록**을 누르고 워치와 코드를 비교해 양쪽 확인.
 5. 일반 사용 시 연결 시작. 충전 상태 알림 전달은 기본 꺼짐.
 
 ## Apple Watch
@@ -37,7 +37,7 @@ python3 watch/build_watch.py --team YOUR_TEAM_ID
 
 또는 `watch/FoldBridge.xcodeproj`를 Xcode에서 열어 Team과 실제 워치를 선택하고 Run으로 설치한다. 기본 bundle ID는 `dev.foldbridge.watch`이며 업데이트할 때 bundle ID와 서명 Team을 유지한다. 워치 개발자 모드와 Mac 개발용 페어링을 먼저 완료한다. 기기 발견 문제가 있으면 워치와 페어링된 아이폰을 USB로 연결하는 초기 개발 설정이 필요할 수 있다. 앱 통신 자체는 Galaxy–Watch BLE를 사용한다.
 
-워치 앱에서 **새 Local 앱 연결 → 휴대폰 찾기 → Galaxy 선택**으로 등록한다. **알림 표시 허용**을 처리하고, 필요한 경우 **위치 연결 유지 시작**을 선택해 위치 권한을 허용한다. 위치 모드는 배터리를 더 사용할 수 있고 상시 수신을 보장하지 않는다. 무료 개발 Team의 설치는 프로비저닝 만료에 따라 재서명이 필요할 수 있다.
+워치 앱에서 **휴대폰 연결 → 휴대폰 찾기 → Galaxy 선택**으로 등록한다. 이전 프로필을 사용 중이면 **연결할 앱 선택 → FoldBridge Local**로 바꾼다. **알림 표시 허용**을 처리하고, 필요한 경우 **설정 → 연결 유지**를 켜서 위치 권한을 허용한다. 위치 모드는 배터리를 더 사용할 수 있고 상시 수신을 보장하지 않는다. 무료 개발 Team의 설치는 프로비저닝 만료에 따라 재서명이 필요할 수 있다.
 
 ## 진단 도구
 
@@ -53,3 +53,15 @@ rea read-adb-logcat DEVICE_SERIAL --pid APP_PID --count 200 --format json
 ```
 
 Android 상태 파일은 `/sdcard/Android/data/dev.foldbridge.local/files/foldbridge-status.json`, 워치 상태 파일은 앱 컨테이너의 `Documents/foldbridge-status.json`이다. 개인 기기의 상태 파일과 로그는 저장소에 넣지 않는다.
+
+## 앱 아이콘 자산
+
+저장소의 FoldBridge 자체 아이콘은 `tools/generate-app-icon.swift`로 만든 기기 연결 모양이다. Mac에서 아래처럼 다시 만들 수 있다.
+
+```sh
+xcrun swift tools/generate-app-icon.swift \
+  watch/FoldBridge/Assets.xcassets/AppIcon.appiconset/AppIcon.png \
+  android/app/src/main/res/drawable/foldbridge_icon.png
+```
+
+다른 앱의 원본 아이콘은 사용자 갤럭시에서 런타임에 읽어 전달한다. 저장소나 APK에 타사 앱 아이콘 모음을 포함하지 않는다.

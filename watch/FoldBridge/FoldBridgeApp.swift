@@ -84,6 +84,7 @@ final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDele
 final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDelegate {
     func applicationDidFinishLaunching() {
         UNUserNotificationCenter.current().delegate = self
+        UNUserNotificationCenter.current().setNotificationCategories([UNNotificationCategory(identifier:"FOLDBRIDGE_ALERT",actions:[],intentIdentifiers:[],options:[])])
         _ = WatchLink.shared
         if ProcessInfo.processInfo.environment["FOLDBRIDGE_RESUME_LOCATION"] == "1" {
             LocationKeepAlive.shared.preserveEnabledIntentForUpdate()
@@ -118,66 +119,215 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
             link.setActive(phase == .active)
             if phase == .active { LocationKeepAlive.shared.resumeIfRequested() }
         } }
+        WKNotificationScene(controller:RelayNotificationController.self,category:"FOLDBRIDGE_ALERT")
+    }
+}
+
+private enum BridgeStyle {
+    static let accent = Color(red:0.51,green:0.90,blue:0.82)
+    static let surface = Color(red:0.08,green:0.12,blue:0.16)
+}
+
+struct SourceAppIcon: View {
+    let key: String?
+    var size: CGFloat = 32
+    var body: some View {
+        Group {
+            if let image = AppIconStore.image(for:key) {
+                Image(uiImage:image).resizable().interpolation(.high).scaledToFit()
+            } else {
+                Image(systemName:"app.fill").resizable().scaledToFit().foregroundStyle(BridgeStyle.accent).padding(size*0.17)
+            }
+        }.frame(width:size,height:size).background(.white.opacity(0.05),in:RoundedRectangle(cornerRadius:size*0.23))
+            .clipShape(RoundedRectangle(cornerRadius:size*0.23))
     }
 }
 
 struct ContentView: View {
     @EnvironmentObject var link: WatchLink
     @StateObject private var keepAlive = LocationKeepAlive.shared
-    @State private var forgetting = false
-    @State private var startingLocation = false
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment:.leading,spacing:12) {
-                    Text("FOLDBRIDGE").font(.caption2.bold()).foregroundStyle(.mint)
-                    Label(link.status,systemImage:link.connected ? "checkmark.circle.fill":"antenna.radiowaves.left.and.right").font(.headline)
-                    Text(link.profile.title).font(.caption2).foregroundStyle(.mint)
-                    Button(link.profile == .original ? "새 Local 앱 연결" : "기존 앱으로 전환") {
-                        link.selectProfile(link.profile == .original ? .local : .original)
-                    }.font(.caption)
-                    if !link.lastError.isEmpty { Text(link.lastError).font(.caption).foregroundStyle(.orange) }
-                    if !link.backgroundNotice.isEmpty { Text(link.backgroundNotice).font(.caption).foregroundStyle(.orange) }
-                    if !link.code.isEmpty {
-                        Text(link.code).font(.system(.largeTitle,design:.monospaced).bold())
-                        Text("휴대폰과 코드가 같을 때만\n양쪽에서 확인하세요.").font(.caption)
-                        Button("코드가 같습니다") { link.confirm() }.tint(.mint)
+                LazyVStack(alignment:.leading,spacing:12) {
+                    HStack(spacing:7) {
+                        Circle().fill(link.connected ? BridgeStyle.accent:Color.secondary).frame(width:6,height:6)
+                        Text(link.connected ? "휴대폰 연결됨":"연결 대기 중").font(.caption2.weight(.medium))
+                        Spacer()
+                        if keepAlive.requested { Image(systemName:"link").foregroundStyle(BridgeStyle.accent).accessibilityLabel("연결 유지 켜짐") }
+                    }.foregroundStyle(.secondary).padding(.vertical,4)
+                    if !link.code.isEmpty { PairingCodeCard().environmentObject(link) }
+                    if !link.connected && link.code.isEmpty {
+                        NavigationLink { PhoneConnectionView().environmentObject(link) } label: { Label("휴대폰 연결",systemImage:"plus.circle.fill") }
+                            .tint(BridgeStyle.accent)
                     }
-                    if !link.notificationAllowed { Button("알림 표시 허용") { link.requestNotifications() } }
-                    Text("수신 \(link.receivedCount) · 알림 등록 \(link.scheduledCount)").font(.caption2).foregroundStyle(.secondary)
-                    if link.connected { Button("알림 동기화") { link.synchronize() }.tint(.mint) }
-                    VStack(alignment:.leading,spacing:6) {
-                        Text("연결 유지 · 실험 기능").font(.caption.bold())
-                        Text(keepAlive.status).font(.caption2).foregroundStyle(.secondary)
-                        if let date = keepAlive.lastUpdate {
-                            HStack { Text("마지막 위치 이벤트"); Text(date,style:.relative) }.font(.caption2).foregroundStyle(.secondary)
-                        }
-                        if keepAlive.requested {
-                            Button("위치 연결 유지 중지",role:.destructive) { keepAlive.stop() }.font(.caption)
-                        } else {
-                            Button("위치 연결 유지 시작") { startingLocation = true }.tint(.mint)
-                                .confirmationDialog("위치 권한으로 연결 유지를 시도합니다. 좌표는 저장·전송하지 않습니다. 배터리 사용이 늘 수 있고 상시 수신은 보장되지 않습니다.",isPresented:$startingLocation,titleVisibility:.visible) {
-                                    Button("시작하고 위치 권한 선택") { keepAlive.start() }
-                                    Button("취소",role:.cancel) {}
-                                }
-                        }
+                    if !link.notificationAllowed {
+                        Button("알림 표시 허용") { link.requestNotifications() }.tint(BridgeStyle.accent)
                     }
-                    if !link.connected {
-                        Button("휴대폰 찾기") { link.scan() }.tint(.mint)
-                        ForEach(link.candidates) { phone in Button { link.connect(phone) } label: { VStack(alignment:.leading){Text(phone.name);Text(phone.id.uuidString.prefix(8)).font(.caption2).foregroundStyle(.secondary)} } }
+                    if !link.lastError.isEmpty { Text(link.lastError).font(.caption2).foregroundStyle(.orange) }
+                    HStack {
+                        Text("최근 알림").font(.headline)
+                        Spacer()
+                        Text("\(link.alerts.count)").font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
+                    }.padding(.top,4)
+                    if link.alerts.isEmpty {
+                        VStack(spacing:10) {
+                            Image(systemName:"bell.badge").font(.title2).foregroundStyle(BridgeStyle.accent)
+                            Text("새 알림을 기다리고 있어요").font(.caption).multilineTextAlignment(.center)
+                        }.frame(maxWidth:.infinity).padding(.vertical,22).background(BridgeStyle.surface,in:RoundedRectangle(cornerRadius:18))
                     }
-                    if link.alerts.isEmpty { Text("연결 후 휴대폰에서 테스트 알림을 보내세요.").font(.caption).foregroundStyle(.secondary) }
                     ForEach(link.alerts) { alert in
-                        VStack(alignment:.leading,spacing:4) {
-                            Text(alert.app).font(.caption2.bold()).foregroundStyle(.mint)
-                            Text(alert.title).font(.headline);Text(alert.body).font(.caption)
-                            Button("워치에서 삭제",role:.destructive) { link.dismiss(alert.id) }.font(.caption2)
-                        }.frame(maxWidth:.infinity,alignment:.leading).padding(10).background(.white.opacity(0.08),in:RoundedRectangle(cornerRadius:12))
+                        NavigationLink { AlertDetailView(alert:alert).environmentObject(link) } label: {
+                            VStack(alignment:.leading,spacing:9) {
+                                HStack(spacing:8) {
+                                    SourceAppIcon(key:alert.iconKey,size:28)
+                                    Text(alert.app).font(.caption2.weight(.semibold)).lineLimit(1)
+                                    Spacer(minLength:0)
+                                    Text(alert.received,style:.time).font(.system(size:10)).foregroundStyle(.secondary)
+                                }
+                                if !alert.title.isEmpty { Text(alert.title).font(.system(.subheadline,design:.default,weight:.semibold)).lineLimit(2) }
+                                if !alert.body.isEmpty { Text(alert.body).font(.caption).foregroundStyle(.secondary).lineLimit(2) }
+                            }.frame(maxWidth:.infinity,alignment:.leading).padding(12).background(BridgeStyle.surface,in:RoundedRectangle(cornerRadius:17))
+                        }.buttonStyle(.plain)
                     }
-                    Text("갤럭시와 Bluetooth로 직접 연결합니다. 백그라운드 수신은 watchOS 한도를 받으며, 앱을 열면 휴대폰에 남아 있는 미전달 알림을 동기화합니다.").font(.caption2).foregroundStyle(.secondary)
-                    Button("휴대폰 등록 해제",role:.destructive) { forgetting = true }.font(.caption)
-                }.padding(.horizontal,4)
-            }.navigationTitle("알림 연결").confirmationDialog("휴대폰 등록을 해제할까요?",isPresented:$forgetting) { Button("등록 해제",role:.destructive){keepAlive.stop();link.forget()} }
+                    if link.connected {
+                        Button { link.synchronize() } label: { Label("지금 동기화",systemImage:"arrow.clockwise").font(.caption) }
+                            .buttonStyle(.plain).foregroundStyle(BridgeStyle.accent).frame(maxWidth:.infinity).padding(.vertical,8)
+                    }
+                }.padding(.horizontal,3)
+            }.navigationTitle("FoldBridge")
+                .toolbar { ToolbarItem(placement:.topBarTrailing) {
+                    NavigationLink { BridgeSettingsView().environmentObject(link) } label: { Image(systemName:"gearshape").accessibilityLabel("설정") }
+                } }
+        }.tint(BridgeStyle.accent)
+    }
+}
+
+struct PairingCodeCard: View {
+    @EnvironmentObject var link: WatchLink
+    var body: some View {
+        VStack(spacing:9) {
+            Text("휴대폰과 코드를 비교하세요").font(.caption2).foregroundStyle(.secondary)
+            Text(link.code).font(.system(size:29,weight:.semibold,design:.monospaced)).tracking(2)
+            Button("코드가 같아요") { link.confirm() }.tint(BridgeStyle.accent)
+        }.padding(12).background(BridgeStyle.surface,in:RoundedRectangle(cornerRadius:18))
+    }
+}
+
+struct AlertDetailView: View {
+    let alert: WatchAlert
+    @EnvironmentObject var link: WatchLink
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        ScrollView {
+            VStack(alignment:.leading,spacing:14) {
+                HStack(spacing:10) { SourceAppIcon(key:alert.iconKey,size:38);Text(alert.app).font(.headline) }
+                Text(alert.received,style:.time).font(.caption2).foregroundStyle(.secondary)
+                if !alert.title.isEmpty { Text(alert.title).font(.headline) }
+                if !alert.body.isEmpty { Text(alert.body).font(.body) }
+                Button("워치에서 삭제",role:.destructive) { link.dismiss(alert.id);dismiss() }.font(.caption).padding(.top,10)
+            }.frame(maxWidth:.infinity,alignment:.leading)
+        }.navigationTitle("알림")
+    }
+}
+
+struct BridgeSettingsView: View {
+    @EnvironmentObject var link: WatchLink
+    @StateObject private var keepAlive = LocationKeepAlive.shared
+    @State private var startingLocation = false
+    @State private var forgetting = false
+    var body: some View {
+        List {
+            Section("연결") {
+                NavigationLink { PhoneConnectionView().environmentObject(link) } label: { Label("휴대폰",systemImage:"iphone") }
+                Toggle("연결 유지",isOn:Binding(get:{keepAlive.requested},set:{if $0 { startingLocation = true } else { keepAlive.stop() }}))
+                    .tint(BridgeStyle.accent)
+                Text("위치 세션으로 연결 유지를 시도합니다. 배터리 사용이 늘 수 있고 상시 수신은 보장되지 않습니다.")
+                    .font(.caption2).foregroundStyle(.secondary)
+            }
+            Section("알림") {
+                if link.notificationAllowed { Label("표시 허용됨",systemImage:"bell.badge.fill").foregroundStyle(BridgeStyle.accent) }
+                else { Button("알림 표시 허용") { link.requestNotifications() } }
+                NavigationLink { BridgeDiagnosticsView().environmentObject(link) } label: { Label("연결 진단",systemImage:"waveform.path.ecg") }
+            }
+            Section {
+                Button("휴대폰 등록 해제",role:.destructive) { forgetting = true }
+                Text("FoldBridge 0.2.0").font(.caption2).foregroundStyle(.secondary)
+            }
+        }.navigationTitle("설정")
+            .confirmationDialog("연결 유지를 시작할까요?",isPresented:$startingLocation,titleVisibility:.visible) {
+                Button("시작") { keepAlive.start() }
+                Button("취소",role:.cancel) {}
+            } message: { Text("위치 업데이트로 백그라운드 실행을 시도합니다. 좌표는 저장하거나 전송하지 않습니다.") }
+            .confirmationDialog("휴대폰 등록을 해제할까요?",isPresented:$forgetting) {
+                Button("등록 해제",role:.destructive) { keepAlive.stop();link.forget() }
+            }
+    }
+}
+
+struct PhoneConnectionView: View {
+    @EnvironmentObject var link: WatchLink
+    var body: some View {
+        ScrollView {
+            VStack(alignment:.leading,spacing:13) {
+                Text(link.status).font(.headline)
+                Text(link.profile.title).font(.caption2).foregroundStyle(.secondary)
+                if !link.code.isEmpty { PairingCodeCard().environmentObject(link) }
+                if !link.connected {
+                    Button { link.scan() } label: { Label("휴대폰 찾기",systemImage:"magnifyingglass") }.tint(BridgeStyle.accent)
+                    ForEach(link.candidates) { phone in
+                        Button { link.connect(phone) } label: { Label(phone.name,systemImage:"iphone") }
+                    }
+                    Text("휴대폰에서 ‘새 워치 등록’을 누른 뒤 선택해 주세요.").font(.caption2).foregroundStyle(.secondary)
+                }
+                if !link.lastError.isEmpty { Text(link.lastError).font(.caption2).foregroundStyle(.orange) }
+                NavigationLink("연결할 앱 선택") {
+                    List {
+                        Button { link.selectProfile(.local) } label: { HStack { Text("FoldBridge Local");if link.profile == .local { Image(systemName:"checkmark").foregroundStyle(BridgeStyle.accent) } } }
+                        Button { link.selectProfile(.original) } label: { HStack { Text("이전 FoldBridge");if link.profile == .original { Image(systemName:"checkmark").foregroundStyle(BridgeStyle.accent) } } }
+                    }.navigationTitle("연결 앱")
+                }.font(.caption)
+            }
+        }.navigationTitle("휴대폰")
+    }
+}
+
+struct BridgeDiagnosticsView: View {
+    @EnvironmentObject var link: WatchLink
+    @StateObject private var keepAlive = LocationKeepAlive.shared
+    var body: some View {
+        List {
+            LabeledContent("수신",value:"\(link.receivedCount)")
+            LabeledContent("알림 등록",value:"\(link.scheduledCount)")
+            Text(link.status).font(.caption)
+            Text(keepAlive.status).font(.caption)
+            if let time = keepAlive.lastUpdate { Text(time,style:.relative).font(.caption2) }
+            if !link.backgroundNotice.isEmpty { Text(link.backgroundNotice).font(.caption2).foregroundStyle(.orange) }
+            if !link.lastError.isEmpty { Text(link.lastError).font(.caption2).foregroundStyle(.orange) }
+        }.navigationTitle("연결 진단")
+    }
+}
+
+final class RelayNotificationController: WKUserNotificationHostingController<RelayNotificationView> {
+    private var content: UNNotificationContent?
+    override var body: RelayNotificationView { RelayNotificationView(content:content) }
+    override class var sashColor: Color? { BridgeStyle.surface }
+    override class var titleColor: Color? { .white }
+    override func didReceive(_ notification: UNNotification) { content = notification.request.content }
+}
+
+struct RelayNotificationView: View {
+    let content: UNNotificationContent?
+    var body: some View {
+        if let content {
+            VStack(alignment:.leading,spacing:12) {
+                HStack(spacing:10) {
+                    SourceAppIcon(key:content.userInfo["fb_icon"] as? String,size:40)
+                    Text(content.title).font(.headline).lineLimit(2)
+                }
+                if !content.subtitle.isEmpty { Text(content.subtitle).font(.headline) }
+                if !content.body.isEmpty { Text(content.body).font(.body) }
+            }.frame(maxWidth:.infinity,alignment:.leading).padding(.vertical,6)
         }
     }
 }

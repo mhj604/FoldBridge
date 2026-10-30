@@ -5,7 +5,7 @@
 ## 데이터 흐름
 
 1. `NotificationRelay`가 Android 알림 접근 서비스로 다른 앱의 알림을 받는다.
-2. 제목·본문·앱 표시명과 알림 ID/내용 리비전을 만들고 `BridgeService`의 미전달 목록에 넣는다.
+2. 제목·본문·앱 표시명·원본 앱 아이콘과 알림 ID/내용 리비전을 만들고 `BridgeService`의 미전달 목록에 넣는다.
 3. 갤럭시는 BLE GATT peripheral/server, 워치는 central/client로 연결한다.
 4. 양쪽에서 처음 비교한 키를 고정하고, 연결마다 새 세션 키를 파생해 메시지를 암호화한다.
 5. 워치 `WatchLink`가 메시지를 조립·복호화하고 로컬 알림 표시 권한을 확인한다.
@@ -39,3 +39,13 @@ Android 개인 키는 Android Keystore, 워치 개인 키는 기기 전용 Keych
 ## 보존한 초기 구성
 
 `relay/`의 APNs 중계, `windows/`의 Windows 도구, `legacy/`의 초기 문서/테스트 소스는 이력 보존용이다. 현재 Android Local manifest에는 INTERNET 권한이 없고 실행 중계 경로도 사용하지 않는다.
+
+## 원본 앱 아이콘과 알림 UI
+
+Android `AppIcons`는 PackageManager의 원본 앱 아이콘을 읽고 BLE 메시지 크기에 맞춰 48px부터 단계적으로 축소한 PNG로 만든다. PNG는 최대 3,072바이트이며 SHA-256 키로 식별한다. 같은 연결에서 해당 아이콘을 포함한 알림의 ACK를 받으면 이후에는 아이콘 키만 보낸다. 아이콘과 알림 본문은 함께 암호화된다.
+
+워치는 아이콘을 Application Support 폴더에 저장하고 메모리 캐시를 사용한다. 알림 목록과 상세 화면, `FOLDBRIDGE_ALERT` 카테고리의 SwiftUI long-look 본문에 원본 아이콘을 표시한다. 발신 앱 ID로 알림을 묶는다. 새 아이콘이 기존 수신 알림에 추가돼도 같은 내용 리비전을 다시 알리지 않는다.
+
+watchOS의 short-look과 상단 sash는 시스템이 FoldBridge 앱 이름/아이콘으로 생성한다. 이는 원본 Android 앱의 알림으로 바꿀 수 없으며 원본 아이콘은 사용자 정의 콘텐츠 영역에 표시한다. [Apple 문서](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
+
+기존 암호화/프레임 형식을 유지하며 추가 아이콘 필드는 선택 사항이다. 아이콘이 없거나 원본을 가져올 수 없으면 기본 앱 심벌을 표시한다.

@@ -13,7 +13,7 @@ def quoted(value): return json.dumps(str(value),ensure_ascii=False)
 
 def generate(push=False,bundle_id='dev.foldbridge.watch'):
     info={'CFBundleDisplayName':'FoldBridge','CFBundleName':'$(PRODUCT_NAME)','CFBundleExecutable':'$(EXECUTABLE_NAME)',
-          'CFBundleIdentifier':'$(PRODUCT_BUNDLE_IDENTIFIER)','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.1.0','CFBundleVersion':'4',
+          'CFBundleIdentifier':'$(PRODUCT_BUNDLE_IDENTIFIER)','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.2.0','CFBundleVersion':'5',
           'WKApplication':True,'WKWatchOnly':True,
           'NSBluetoothAlwaysUsageDescription':'갤럭시 휴대폰의 알림을 받기 위해 블루투스를 사용합니다.',
           'NSLocationWhenInUseUsageDescription':'선택한 위치 기반 연결 유지 모드에서 백그라운드 실행을 시도하기 위해 위치 업데이트를 사용합니다. 위치 좌표는 저장하거나 전송하지 않습니다.',
@@ -28,18 +28,21 @@ def generate(push=False,bundle_id='dev.foldbridge.watch'):
     for f in files:
         add('file:'+f.name,f'isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = {quoted(f.name)}; sourceTree = "<group>";')
         add('build:'+f.name,f'isa = PBXBuildFile; fileRef = {identifier("file:"+f.name)};')
+    add('file:assets','isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>";')
+    add('build:assets',f'isa = PBXBuildFile; fileRef = {identifier("file:assets")};')
     add('product','isa = PBXFileReference; explicitFileType = wrapper.application; path = FoldBridge.app; sourceTree = BUILT_PRODUCTS_DIR;')
-    add('sourcegroup','isa = PBXGroup; children = ('+','.join(identifier('file:'+f.name) for f in files)+'); path = FoldBridge; sourceTree = "<group>";')
+    add('sourcegroup','isa = PBXGroup; children = ('+','.join([*(identifier('file:'+f.name) for f in files),identifier('file:assets')])+'); path = FoldBridge; sourceTree = "<group>";')
     add('products',f'isa = PBXGroup; children = ({identifier("product")}); name = Products; sourceTree = "<group>";')
     add('group',f'isa = PBXGroup; children = ({identifier("sourcegroup")},{identifier("products")}); sourceTree = "<group>";')
     add('sources','isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ('+','.join(identifier('build:'+f.name) for f in files)+'); runOnlyForDeploymentPostprocessing = 0;')
-    for phase in ['Frameworks','Resources']:add(phase,f'isa = PBX{phase}BuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0;')
+    add('Frameworks','isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0;')
+    add('Resources',f'isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = ({identifier("build:assets")}); runOnlyForDeploymentPostprocessing = 0;')
     add('target',f'isa = PBXNativeTarget; buildConfigurationList = {identifier("targetconfig")}; buildPhases = ({identifier("sources")},{identifier("Frameworks")},{identifier("Resources")}); buildRules = (); dependencies = (); name = FoldBridge; productName = FoldBridge; productReference = {identifier("product")}; productType = "com.apple.product-type.application";')
     for scope in ['project','target']:
         for config in ['Debug','Release']:
             settings={'SWIFT_VERSION':'5.0','SDKROOT':'watchos','WATCHOS_DEPLOYMENT_TARGET':'10.0','CLANG_ENABLE_MODULES':'YES','SWIFT_OPTIMIZATION_LEVEL':'-Onone' if config=='Debug' else '-O'}
             if scope=='target':
-                settings.update({'PRODUCT_BUNDLE_IDENTIFIER':bundle_id,'PRODUCT_NAME':'$(TARGET_NAME)','TARGETED_DEVICE_FAMILY':'4','CODE_SIGN_STYLE':'Automatic','GENERATE_INFOPLIST_FILE':'NO','INFOPLIST_FILE':'FoldBridge/InfoPush.plist' if push else 'FoldBridge/Info.plist','SUPPORTED_PLATFORMS':'watchos watchsimulator','LD_RUNPATH_SEARCH_PATHS':'$(inherited) @executable_path/Frameworks','SKIP_INSTALL':'NO','ENABLE_USER_SCRIPT_SANDBOXING':'YES'})
+                settings.update({'PRODUCT_BUNDLE_IDENTIFIER':bundle_id,'PRODUCT_NAME':'$(TARGET_NAME)','ASSETCATALOG_COMPILER_APPICON_NAME':'AppIcon','TARGETED_DEVICE_FAMILY':'4','CODE_SIGN_STYLE':'Automatic','GENERATE_INFOPLIST_FILE':'NO','INFOPLIST_FILE':'FoldBridge/InfoPush.plist' if push else 'FoldBridge/Info.plist','SUPPORTED_PLATFORMS':'watchos watchsimulator','LD_RUNPATH_SEARCH_PATHS':'$(inherited) @executable_path/Frameworks','SKIP_INSTALL':'NO','ENABLE_USER_SCRIPT_SANDBOXING':'YES'})
                 if push: settings['CODE_SIGN_ENTITLEMENTS']='FoldBridge/Push.entitlements'
             add(scope+config,'isa = XCBuildConfiguration; buildSettings = {'+' '.join(f'{k} = {quoted(v)};' for k,v in settings.items())+'}; name = '+config+';')
         add(scope+'config','isa = XCConfigurationList; buildConfigurations = ('+','.join(identifier(scope+c) for c in ['Debug','Release'])+'); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug;')
