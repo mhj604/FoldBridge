@@ -2,7 +2,18 @@
 
 [한국어](NOTIFICATION_DISPLAY_LIMITS_KO.md) · **English** · [All guides](README.md)
 
-Current presentation: **Watch 0.4.8/build 22**. The Korean document also preserves earlier investigations. Full system-icon replacement was excluded from the subsequent layout work; the current approach retains a small source icon in expanded content.
+Current presentation: **Watch 0.4.9/build 23**. The Korean document also preserves earlier investigations. Full system-icon replacement was excluded from the subsequent layout work; the current approach retains a small source icon in expanded content.
+
+## Initial-icon investigation, 2026-11-02
+
+Apple explains that notifications sent directly to Apple Watch use the watch app's icon. FoldBridge registers these local notifications, so supplying an Android `app_id` or source PNG does not change their system sender. [Apple's icon explanation](https://developer.apple.com/videos/play/wwdc2025/334/?time=955)
+
+In the inspected Xcode 27.2 watchOS SDK, `UNNotificationContent` has no public property for an arbitrary per-notification system icon. UIKit declares `supportsAlternateIcons`, `setAlternateIconName`, and `alternateIconName` as `API_UNAVAILABLE(watchos)`. An iOS alternate-icon example is therefore not a watchOS per-notification solution. [Alternate icon API](https://developer.apple.com/documentation/uikit/uiapplication/setalternateiconname(_:completionhandler:))
+
+- **Communication notifications** specialize person-to-person messages/calls with sender images and app badges. They do not provide arbitrary source-app identity replacement for all notifications. Apple's capability table marks ADP/ADEP support and leaves the free Apple Developer column blank for this capability. This was not adopted under the current free-team requirement. [Communication notifications](https://developer.apple.com/documentation/usernotifications/implementing-communication-notifications) · [Capability table](https://developer.apple.com/help/account/reference/supported-capabilities-watchos/)
+- **A separate watch relay app for each source** is an architectural inference: separate bundle IDs with fixed icons would use each relay's own system icon. It requires separate installation, signing, BLE connections, and background reception; the current implementation cannot post notifications as another app. It is not a demonstrated general solution or dynamic icon replacement within one FoldBridge app.
+
+No deployable path was found for replacing every initial popup's system icon under the current single-app, free-team, unrooted-Galaxy, no-server/no-iPhone-relay requirements. This investigation does not change app behavior or install a new version. Media attachments and sender avatars are not presented as successful system-icon replacement.
 
 | Area | Renderer | Current appearance |
 | --- | --- | --- |
@@ -15,7 +26,7 @@ Without source icon data, FoldBridge uses the system text layout. Source icons a
 
 ## Layout control
 
-Apple describes short-look as system-generated and long-look as a separate scrolling presentation whose content can be customized. Changing a SwiftUI body does not replace the whole system template. Watch 0.4.8 retains the layout adjustments from 0.4.7, which shortened only the lower spacing by 4pt on watchOS 27+. [Layout examples](NOTIFICATION_LAYOUT_COMPARISON_EN.md) · [Apple notification presentation](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
+Apple describes short-look as system-generated and long-look as a separate scrolling presentation whose content can be customized. Changing a SwiftUI body does not replace the whole system template. Watch 0.4.9 retains the layout adjustments from 0.4.7, which shortened only the lower spacing by 4pt on watchOS 27+. [Layout examples](NOTIFICATION_LAYOUT_COMPARISON_EN.md) · [Apple notification presentation](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
 
 ## Earlier alternatives investigated
 

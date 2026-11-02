@@ -2,7 +2,20 @@
 
 **한국어** · [English](NOTIFICATION_DISPLAY_LIMITS_EN.md) · [전체 문서](README.md)
 
-현재 Watch **0.4.8 / 빌드 22**는 시스템 팝업·카드·상단 헤더에 FoldBridge를 표시하고, 원본 앱 아이콘은 펼친 본문에 24pt로 표시합니다. 알림 배치는 0.4.7의 조정 상태를 유지합니다. [현재 화면 예문](NOTIFICATION_LAYOUT_COMPARISON_KO.md) · [최신 배포 안내](RELEASE_WATCH_v0.4.8_KO.md)
+현재 Watch **0.4.9 / 빌드 23**은 시스템 팝업·카드·상단 헤더에 FoldBridge를 표시하고, 원본 앱 아이콘은 펼친 본문에 24pt로 표시합니다. 알림 배치는 0.4.7의 조정 상태를 유지합니다. [현재 화면 예문](NOTIFICATION_LAYOUT_COMPARISON_KO.md) · [최신 배포 안내](RELEASE_WATCH_v0.4.9_KO.md)
+
+## 2026-11-02: 처음 뜨는 아이콘 교체 재조사
+
+Apple은 직접 워치에 보내는 알림에 워치 앱의 아이콘이 표시된다고 설명한다. FoldBridge가 직접 로컬 알림을 등록하므로 시스템은 FoldBridge의 앱 아이콘을 선택한다. 알림 payload의 `app_id`나 원본 PNG는 이 발신 주체를 바꾸지 않는다. [Apple의 아이콘 설명](https://developer.apple.com/videos/play/wwdc2025/334/?time=955)
+
+이번에 읽은 Xcode 27.2 watchOS SDK에서 `UNNotificationContent`에는 일반 알림별 시스템 아이콘을 지정하는 공개 속성이 없다. `UIApplication`의 `supportsAlternateIcons`, `setAlternateIconName`과 `alternateIconName`은 모두 `API_UNAVAILABLE(watchos)`로 선언되어 있다. iOS의 앱 아이콘 변경 예제를 watchOS 알림별 아이콘 교체 기능으로 적용할 수 없다. [대체 앱 아이콘 API](https://developer.apple.com/documentation/uikit/uiapplication/setalternateiconname(_:completionhandler:))
+
+다음 두 경로도 구분한다.
+
+- **통신 알림:** 사람 간 메시지·통화의 발신자 이미지와 앱 배지를 표시하는 경로다. 모든 앱 알림의 시스템 발신 아이콘을 임의의 이미지로 바꾸는 기능이 아니다. Apple 지원표의 Communication Notifications 행은 유료 ADP/ADEP에 지원 표시가 있고 무료 Apple Developer 열은 비어 있다. 현재 무료 Team 조건에서 사용할 해법으로 채택하지 않았다. [통신 알림](https://developer.apple.com/documentation/usernotifications/implementing-communication-notifications) · [지원표](https://developer.apple.com/help/account/reference/supported-capabilities-watchos/)
+- **원본 앱마다 별도 중계 워치 앱:** 각각 다른 Bundle ID와 고정 아이콘으로 설치하면 그 중계 앱의 시스템 아이콘이 표시될 것이라는 설계상 추론이다. 단일 FoldBridge의 아이콘을 알림마다 바꾸는 기능은 아니다. 앱별 설치·서명·BLE 연결과 백그라운드 수신 구조가 따로 필요하고, 한 중계 앱이 다른 앱 이름으로 알림을 등록하는 구현은 현재 없다. 전체 앱의 첫 아이콘을 바꾸는 완료된 대안으로 취급하지 않는다.
+
+현재의 무료 Team·루팅 없는 갤럭시·서버/아이폰 중계 없는 단일 앱 조건에서, 모든 첫 팝업을 원본 앱 아이콘으로 표시할 적용 가능한 경로는 찾지 못했다. 이번 재조사는 앱 동작 변경이나 새 설치를 의미하지 않는다. 이미지 첨부로 되돌리거나 발신자 아바타를 원본 앱 아이콘 교체로 설명하지 않는다.
 
 아래는 0.4.3 당시의 조사 기록입니다. 당시 설치 상태·계정 조사와 현재 사용법을 구분해 주세요.
 
