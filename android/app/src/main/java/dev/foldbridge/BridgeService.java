@@ -25,7 +25,7 @@ public final class BridgeService extends Service {
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",15,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",16,"bridgeRunning",s!=null,"status",status,"error",error,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
             "softRefreshCount",s==null?0:s.softRefreshCount,"disconnectCount",s==null?0:s.disconnectCount,"lastDisconnectReason",s==null?"":s.lastDisconnectReason,
@@ -87,6 +87,7 @@ public final class BridgeService extends Service {
             vault.remove("outbox");vault.remove("first_pair_cutoff");waiting=0;
         }
         catch(Exception e) { fail("보안 키를 준비하지 못했습니다."); stopSelf(); }
+        if(vault!=null)VehicleBridge.get(this).start();
     }
     @Override public int onStartCommand(Intent intent,int flags,int startId) {
         if(vault==null) return START_NOT_STICKY;
@@ -290,6 +291,8 @@ public final class BridgeService extends Service {
             recordState(this);
         } else if("state".equals(eventType)) watchActive=event.optBoolean("active");
         else if("push_token".equals(eventType)) { String token=event.getString("token"); if(!token.matches("[0-9a-f]{64,256}"))throw new GeneralSecurityException("Push token"); vault.put("push_token",token); }
+        else if("vehicle_list".equals(eventType)) sendVehicleCatalogue();
+        else if("vehicle_command".equals(eventType)) sendSecure(VehicleBridge.get(this).execute(event));
         else if("sync".equals(eventType)) flush();
         else if("refresh".equals(eventType)) {softRefreshCount++;sendSecure(object("type","refreshed"));flush();recordState(this);}
         else if("ping".equals(eventType)) {
@@ -320,6 +323,8 @@ public final class BridgeService extends Service {
         try { if(session==null)return; long seq=session.next(); byte[] data=session.seal(message.toString().getBytes(StandardCharsets.UTF_8),seq); sendPlain(object("type","sealed","seq",seq,"data",b64(data))); }
         catch(Exception e) { disconnect("보안 전송 실패"); }
     }
+    private void sendVehicleCatalogue(){if(authenticated)sendSecure(VehicleBridge.get(this).catalogue());}
+    static void vehicleChanged(){BridgeService s=instance;if(s!=null)s.handler.post(s::sendVehicleCatalogue);}
     private void drain() {
         if(server==null||central==null||inFlight)return;
         if(outgoing.isEmpty()&&!messages.isEmpty())outgoing.addAll(frames.split(messages.removeFirst(),Math.max(20,mtu-3)));

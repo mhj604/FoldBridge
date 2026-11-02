@@ -62,3 +62,16 @@ Source-icon notifications use `FOLDBRIDGE_COMPACT_ICON_ALERT` for a compact long
 This protocol does not expand OS runtime budgets or bypass force-quit, first-unlock, Bluetooth, or range conditions. Static identity-key ECDH does not provide a claim of forward secrecy after identity-key compromise. [watchOS background tasks](https://developer.apple.com/documentation/watchkit/using-background-tasks)
 
 Android 0.5.1 / Watch 0.4.6 used forced reconnect requests and periodic ping deadlines; those behaviors were replaced in 0.5.2 / 0.4.7. The Korean document retains that historical section. Initial APNs design notes remain under `legacy/docs/PROTOCOL-0.1.0.md`.
+
+## Vehicle controls (Android 0.6.0 / Watch 0.5.0)
+
+Use only the existing authenticated encrypted channel.
+
+| Message | Direction | Fields |
+| --- | --- | --- |
+| `vehicle_list` | Watch → phone | `type` |
+| `vehicle_catalogue` | Phone → watch | `status`, `revision`, `actions:[{id,label}]` |
+| `vehicle_command` | Watch → phone | UUID `id`, `revision`, `action` |
+| `vehicle_result` | Phone → watch | Request `id`, `status` |
+
+The catalogue contains at most 12 owner-selected labelled official widget controls. The phone requires an enabled current selection and revision, stores the request ID, then invokes the widget once. The last 64 IDs suppress duplicates. Minimum dispatch spacing is 3 seconds. `widget_invoked` reports widget invocation, not vehicle success. Other results are `duplicate`, `invalid`, `not_ready`, `stale`, `busy`, and `unavailable`. The watch marks an unanswered request unknown after 30 seconds without automatic resend. Reconnection does not restore pending vehicle commands.

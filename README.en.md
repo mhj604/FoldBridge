@@ -33,6 +33,11 @@ cd FoldBridge
 open watch/FoldBridge.xcodeproj
 ```
 
+
+## MyHyundai through Galaxy
+
+Android **0.6.0-local** / Watch **0.5.0** adds **FoldBridge watch → BLE → Galaxy official MyHyundai widget**. It does not redirect the original MyHyundai watch app. Bind the widget, choose controls on Galaxy, then open **Vehicle controls** in FoldBridge on the watch. Actual vehicle service requires internet and MyHyundai authentication; widget invocation is not vehicle success. **[Setup and scope](docs/VEHICLE_CONTROL_EN.md)** · [0.6.0 APK](artifacts/android/FoldBridge-Local-0.6.0.apk)
+
 ## Everyday use
 
 - Forward app names, titles, bodies, and available source app icons over an encrypted BLE session. All apps are selected by default; you can choose individual apps.

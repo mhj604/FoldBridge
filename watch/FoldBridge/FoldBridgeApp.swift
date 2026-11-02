@@ -164,6 +164,11 @@ struct ContentView: View {
                             .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
                     }.frame(maxWidth:.infinity).padding(.vertical,22).padding(.horizontal,10)
                         .background(BridgeStyle.surface,in:RoundedRectangle(cornerRadius:18))
+                    if link.profile == .local {
+                        NavigationLink { VehicleControlView().environmentObject(link) } label: {
+                            Label(language.text("차량 제어"),systemImage:"car.fill")
+                        }.tint(BridgeStyle.accent)
+                    }
                     Button { link.refreshConnection() } label: { Label(language.text("연결 새로고침"),systemImage:"arrow.triangle.2.circlepath").font(.caption) }
                         .tint(BridgeStyle.accent).frame(maxWidth:.infinity)
                     if link.connected {
@@ -221,7 +226,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button(language.text("휴대폰 등록 해제"),role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.4.9").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.5.0").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle(language.text("설정"))
             .confirmationDialog(language.text("연결 유지를 시작할까요?"),isPresented:$startingLocation,titleVisibility:.visible) {

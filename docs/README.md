@@ -14,6 +14,7 @@ New users: start with **Install and connect**. Current release: **Android 0.5.4-
 | 연결·알림 문제 / Connection and notification problems | [문제 해결](TROUBLESHOOTING_KO.md) | [Troubleshooting](TROUBLESHOOTING_EN.md) |
 | 빌드·서명·민감한 본문 / Build, signing, sensitive content | [빌드와 설치](BUILD_AND_SETUP.md) | [Build and settings](BUILD_AND_SETUP_EN.md) |
 | 케이블 없는 APK 업데이트 / Wireless APK updates | [무선 설치](WIRELESS_INSTALL_KO.md) | [Wireless installation](WIRELESS_INSTALL_EN.md) |
+| 마이현대 차량 제어 / MyHyundai vehicle controls | [위젯 연결과 사용](VEHICLE_CONTROL_KO.md) | [Widget setup and use](VEHICLE_CONTROL_EN.md) |
 | 현재 앱 구조 / Current architecture | [구조](ARCHITECTURE.md) | [Architecture](ARCHITECTURE_EN.md) |
 | 암호화·BLE·복원 / Encryption, BLE, restoration | [프로토콜](PROTOCOL.md) | [Protocol](PROTOCOL_EN.md) |
 | 시스템 아이콘과 본문 / System icons and custom content | [알림 표시 범위](NOTIFICATION_DISPLAY_LIMITS_KO.md) | [Notification display](NOTIFICATION_DISPLAY_LIMITS_EN.md) |
@@ -22,6 +23,8 @@ New users: start with **Install and connect**. Current release: **Android 0.5.4-
 | 버전별 변경 / Changes by version | [변경 이력](../CHANGELOG.md) | [Changelog](../CHANGELOG.en.md) |
 | 주요 구축 과정 / Development milestones | [구축 이력](DEVELOPMENT_HISTORY.md) | [Development history](DEVELOPMENT_HISTORY_EN.md) |
 | 수정·번역·문의 / Contributions, translations, help | [기여 방법](../CONTRIBUTING.md) | [Contributing](../CONTRIBUTING.en.md) |
+
+차량 제어 추가 버전은 Android **0.6.0-local / 16**, Watch **0.5.0 / 24**입니다. / Vehicle-control addition: Android **0.6.0-local / 16**, Watch **0.5.0 / 24**.
 
 ## 먼저 알아둘 점 / Before starting
 

@@ -4,6 +4,13 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.0 · build 24 / Android 0.6.0-local · code 16
+
+- Add FoldBridge watch vehicle controls and owner-authorized hosting of the official Korean MyHyundai widget on Galaxy.
+- Expose selected labelled widget controls over the existing authenticated, encrypted BLE link.
+- Suppress duplicate request IDs, require the current catalogue revision, and never automatically retry commands after a timeout. Distinguish widget invocation from vehicle success.
+- The original MyHyundai watch app remains iPhone-bound. No vehicle command was executed. [Setup and scope](docs/VEHICLE_CONTROL_EN.md)
+
 ## Watch 0.4.9 · build 23 / Android 0.5.4-local · code 15
 
 - Initial registration and every reconnection forward only notifications posted after authentication completes; pre-connection and offline items are not replayed.

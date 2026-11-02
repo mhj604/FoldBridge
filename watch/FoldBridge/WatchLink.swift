@@ -34,6 +34,12 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     @Published var lastError = ""
     @Published var notificationAllowed = false
     @Published var backgroundNotice = ""
+    @Published private(set) var vehicleActions: [VehicleAction] = []
+    @Published private(set) var vehicleState = "loading"
+    @Published private(set) var vehicleResult = ""
+    @Published private(set) var vehicleBusy = false
+    private var vehicleRevision = ""
+    private var vehicleRequestID: String?
     @Published private(set) var receivedCount = UserDefaults.standard.integer(forKey:"diagnosticReceived")
     @Published private(set) var scheduledCount = UserDefaults.standard.integer(forKey:"diagnosticScheduled")
     @Published private(set) var profile: PhoneProfile = {
@@ -480,6 +486,26 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         lastPeerActivity = Date()
         if event == "confirm" { remoteConfirmed = true; try finishAuthentication(); return }
         guard connected else { throw Wire.Failure.authentication }
+        if event == "vehicle_catalogue" {
+            guard let revision = message["revision"] as? String, revision.count <= 64,
+                  let state = message["status"] as? String,
+                  let actions = message["actions"] as? [[String:Any]], actions.count <= 12 else { throw Wire.Failure.bounds }
+            var parsed: [VehicleAction] = []
+            for action in actions {
+                guard let id = action["id"] as? String, id.count <= 64,
+                      let label = action["label"] as? String, !label.isEmpty, label.count <= 80 else { throw Wire.Failure.bounds }
+                parsed.append(VehicleAction(id:id,label:label))
+            }
+            vehicleRevision = revision; vehicleState = state; vehicleActions = parsed
+            return
+        }
+        if event == "vehicle_result" {
+            guard let id = message["id"] as? String, id == vehicleRequestID else { return }
+            vehicleResult = message["status"] as? String ?? "unavailable"
+            vehicleRequestID = nil; vehicleBusy = false
+            if vehicleResult == "stale" { requestVehicleControls() }
+            return
+        }
         if event == "refresh" || event == "reconnect" {
             remoteRefreshCount += 1; softRefreshCount += 1; pendingPing = nil
             lastError = ""; status = "휴대폰 연결됨"
@@ -498,7 +524,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         if event == "ready" {
             peerSupportsLiveness = (message["liveness"] as? Int) == 1
             status = "휴대폰 연결됨"; reconcileDelivered {
-                self.sendSecure(["type":"state","active":self.canProcessContinuously]); self.sendPushToken(); self.synchronize()
+                self.sendSecure(["type":"state","active":self.canProcessContinuously]); self.sendPushToken(); self.synchronize(); self.requestVehicleControls()
             }
         } else if event == "notification" { try show(message) }
     }
@@ -591,6 +617,22 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         guard connected else { reconnect(); return }
         guard Date().timeIntervalSince(lastSync) > 1 else { return }
         lastSync = Date(); sendSecure(["type":"sync"])
+    }
+    func requestVehicleControls() {
+        guard connected, profile == .local else { return }
+        sendSecure(["type":"vehicle_list"])
+    }
+    func runVehicleAction(_ action: VehicleAction) {
+        guard connected, profile == .local, !vehicleBusy, !vehicleRevision.isEmpty,
+              vehicleState == "ready", vehicleActions.contains(action) else { vehicleResult = "not_ready"; return }
+        let id = UUID().uuidString, current = epoch
+        vehicleRequestID = id; vehicleBusy = true; vehicleResult = ""
+        sendSecure(["type":"vehicle_command","id":id,"revision":vehicleRevision,"action":action.id])
+        // Never automatically resend an actuator request if its reply is lost.
+        DispatchQueue.main.asyncAfter(deadline:.now()+30) {
+            guard current == self.epoch, self.vehicleRequestID == id else { return }
+            self.vehicleRequestID = nil; self.vehicleBusy = false; self.vehicleResult = "unknown"
+        }
     }
     private func reconcileDelivered(_ completion: @escaping ()->Void) {
         let current = epoch
@@ -746,11 +788,13 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // Notification Center keeps already presented alerts; unscheduled payloads
         // from an older connection must never be replayed after reconnection.
         pendingReceipts.removeAll();presentingReceipt = false
+        if vehicleBusy { vehicleResult = "unknown" }
+        vehicleRequestID = nil;vehicleBusy = false;vehicleRevision = "";vehicleActions = [];vehicleState = "loading"
     }
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":23,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":24,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,
