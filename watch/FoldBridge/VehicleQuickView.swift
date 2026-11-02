@@ -17,6 +17,7 @@ struct VehicleQuickView: View {
                             VStack(spacing:7) {
                                 Image(systemName:control.symbol).font(.system(size:23,weight:.medium))
                                 Text(language.text(control.title)).font(.caption.weight(.semibold))
+                                    .multilineTextAlignment(.center).lineLimit(2).minimumScaleFactor(0.85)
                             }.frame(maxWidth:.infinity,minHeight:68)
                         }.buttonStyle(.bordered).tint(accent).disabled(router.waiting || link.vehicleBusy)
                     }
@@ -26,7 +27,7 @@ struct VehicleQuickView: View {
                 if router.needsAssignment, let requested = router.requested {
                     VStack(alignment:.leading,spacing:6) {
                         Text(language.text(requested.title)).font(.headline)
-                        ForEach(link.vehicleActions) { action in
+                        ForEach(router.actions(for:requested)) { action in
                             Button(action.label) { router.bind(action,to:requested) }
                                 .font(.caption).tint(accent)
                         }
@@ -59,10 +60,13 @@ struct VehicleQuickSettingsView: View {
             ForEach(VehicleQuickControl.allCases) { control in
                 NavigationLink {
                     List {
-                        ForEach(link.vehicleActions) { action in
+                        ForEach(router.actions(for:control)) { action in
                             Button { router.bind(action,to:control) } label: {
                                 HStack { Text(action.label);if router.title(for:control) == action.label { Image(systemName:"checkmark") } }
                             }
+                        }
+                        if router.actions(for:control).isEmpty {
+                            Text(language.text("갤럭시 위젯에 해당 제어 버튼이 없습니다.")).font(.caption2)
                         }
                         Button(language.text("연결 해제"),role:.destructive) { router.bind(nil,to:control) }
                     }.navigationTitle(language.text(control.title))

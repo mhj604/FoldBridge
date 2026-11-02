@@ -65,8 +65,15 @@ final class VehicleQuickRouter: ObservableObject {
         if WatchLink.shared.connected { WatchLink.shared.requestVehicleControls() }
         WatchLink.shared.noteVehicleQuickEvent("panel.open")
     }
-    func title(for control: VehicleQuickControl) -> String? { mappings[control.rawValue]?.label }
+    func title(for control: VehicleQuickControl) -> String? {
+        guard let saved = mappings[control.rawValue], canonicalLabels(for:control).contains(normalize(saved.label)) else { return nil }
+        return saved.label
+    }
+    func actions(for control: VehicleQuickControl) -> [VehicleAction] {
+        WatchLink.shared.vehicleActions.filter { canonicalLabels(for:control).contains(normalize($0.label)) }
+    }
     func bind(_ action: VehicleAction?,to control: VehicleQuickControl) {
+        guard action == nil || canonicalLabels(for:control).contains(normalize(action!.label)) else { return }
         var saved = mappings
         if let action { saved[control.rawValue] = Mapping(id:action.id,label:action.label) }
         else { saved.removeValue(forKey:control.rawValue) }
@@ -135,10 +142,11 @@ final class VehicleQuickRouter: ObservableObject {
             link.noteVehicleQuickEvent("catalogue."+link.vehicleState);return
         }
         var mapping = mappings[control.rawValue]
+        if let previous = mapping, !canonicalLabels(for:control).contains(normalize(previous.label)) { mapping = nil }
         if mapping == nil {
             // Only exact, unambiguous official labels may be assigned automatically.
             // Generic toggle labels such as "시동" never select start vs stop implicitly.
-            let matches = link.vehicleActions.filter { canonicalLabels(for:control).contains(normalize($0.label)) }
+            let matches = actions(for:control)
             if matches.count == 1 {
                 bind(matches[0],to:control);mapping = mappings[control.rawValue]
             }
@@ -150,8 +158,8 @@ final class VehicleQuickRouter: ObservableObject {
             if matches.count == 1 { bind(matches[0],to:control);mapping = mappings[control.rawValue] }
         }
         guard let mapping, let action = link.vehicleActions.first(where:{$0.id == mapping.id && $0.label == mapping.label}) else {
-            needsAssignment = true
-            message = "아래에서 이 버튼에 연결할 마이현대 항목을 선택하세요. 지정 후 위젯을 다시 누르면 전달됩니다."
+            needsAssignment = !actions(for:control).isEmpty
+            message = needsAssignment ? "아래에서 이 버튼에 연결할 마이현대 항목을 선택하세요. 지정 후 위젯을 다시 누르면 전달됩니다." : "갤럭시 위젯에 해당 제어 버튼이 없습니다."
             link.noteVehicleQuickEvent("mapping.required");return
         }
         awaitingDispatch = true;message = "요청 전달 중"
@@ -172,8 +180,8 @@ final class VehicleQuickRouter: ObservableObject {
     }
     private func canonicalLabels(for control: VehicleQuickControl) -> Set<String> {
         switch control {
-        case .start:return ["시동켜기","시동시작","원격시동","원격시동켜기","엔진시동","엔진켜기","enginestart","startengine","remotestart","start"]
-        case .stop:return ["시동끄기","시동종료","원격시동끄기","원격시동종료","엔진끄기","enginestop","stopengine","stop"]
+        case .start:return ["시동공조켜기","시동공조시작","startengineclimate","engineclimatestart","시동켜기","시동시작","원격시동","원격시동켜기","엔진시동","엔진켜기","enginestart","startengine","remotestart","start"]
+        case .hazard:return ["비상등켜기","비상등","hazardlightson","hazardlights","turnonhazardlights"]
         case .lock:return ["문잠금","도어잠금","문잠그기","차문잠금","도어잠그기","doorlock","lockdoors","lock"]
         case .unlock:return ["문열기","문잠금해제","잠금해제","도어잠금해제","차문열기","문열림","doorunlock","unlockdoors","unlock"]
         }

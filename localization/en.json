@@ -259,5 +259,9 @@
   "눌러서 제어 창 열기": "Tap to open controls",
   "결과 안내를 닫고 제어 버튼을 준비하는 중입니다.": "Dismissing the result notice and preparing vehicle controls.",
   "결과 안내를 닫지 못했습니다. 갤럭시 위젯 화면을 확인해 주세요.": "Could not dismiss the result notice. Check the Galaxy widget.",
-  "제어 버튼을 누르면 결과 안내를 닫고 선택한 제어를 전달합니다.": "Tap a vehicle control to dismiss the result notice and send that action."
+  "제어 버튼을 누르면 결과 안내를 닫고 선택한 제어를 전달합니다.": "Tap a vehicle control to dismiss the result notice and send that action.",
+  "시동/공조 켜기": "Start engine / climate",
+  "비상등 켜기": "Turn on hazard lights",
+  "문 잠금 해제": "Unlock doors",
+  "갤럭시 위젯에 해당 제어 버튼이 없습니다.": "This control is not available in the Galaxy widget."
 }

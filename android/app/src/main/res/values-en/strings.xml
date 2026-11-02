@@ -39,6 +39,7 @@
   <string name="text_35a25220cde0ec12" formatted="false">"Dispatch this button to the Galaxy MyHyundai widget."</string>
   <string name="text_716368765b57ff7a" formatted="false">"Complete vehicle selection, sign-in, and authentication in the Galaxy MyHyundai widget."</string>
   <string name="text_698a06b6df956dc0" formatted="false">"Galaxy or its control list was unavailable. No command was sent."</string>
+  <string name="text_03c44490f0a1b35e" formatted="false">"This control is not available in the Galaxy widget."</string>
   <string name="text_c203433a6e35fd19" formatted="false">"Connecting to Galaxy and loading the control list."</string>
   <string name="text_a1b424d1a4c17033" formatted="false">"On the Galaxy, choose the buttons to show on the watch."</string>
   <string name="text_1bafce7586ee0d6b" formatted="false">"Connect the official Galaxy control widget to your watch."</string>
@@ -92,6 +93,7 @@
   <string name="text_03ba9816b4a8923b" formatted="false">"All vehicle controls"</string>
   <string name="text_ab8425b03153d84a" formatted="false">"Unlock"</string>
   <string name="text_bee96bc1136efbf8" formatted="false">"Lock"</string>
+  <string name="text_dda6f24caf87cc14" formatted="false">"Unlock doors"</string>
   <string name="text_948fecb37cc203f8" formatted="false">"The pending queue is full. The oldest notification was removed."</string>
   <string name="text_ecc46449252f2f84" formatted="false">"Approaching the background reception limit. Open the app to renew the available opportunities."</string>
   <string name="text_0966c38e1bd49d46" formatted="false">"Select a button"</string>
@@ -106,6 +108,7 @@
   <string name="text_39d8a73d70a2488f" formatted="false">"Authentication or data validation failed."</string>
   <string name="text_06c476edb91361ec" formatted="false">"Turn on Bluetooth"</string>
   <string name="text_cf40d166f5245e11" formatted="false">"Check Bluetooth and app permissions."</string>
+  <string name="text_0f5fa144600c3f32" formatted="false">"Turn on hazard lights"</string>
   <string name="text_68786c846bef4f2e" formatted="false">"The quick control assignment was removed."</string>
   <string name="text_d17b49a452c70f7f" formatted="false">"Quick control settings"</string>
   <string name="text_ffde243be2c39509" formatted="false">"Assign a MyHyundai action to this button in Quick control settings."</string>
@@ -117,6 +120,7 @@
   <string name="text_cef4d8ab741c76bf" formatted="false">"Received"</string>
   <string name="text_6bbeb44e673fe476" formatted="false">"Confirmed"</string>
   <string name="text_48143d7a01533441" formatted="false">"Start"</string>
+  <string name="text_9c3401283706ee09" formatted="false">"Start engine / climate"</string>
   <string name="text_22b259cb4ad7df67" formatted="false">"Run start, stop, lock and unlock controls directly from your watch."</string>
   <string name="text_d87ab725df97a39a" formatted="false">"System default"</string>
   <string name="text_b1f28cd21af730b2" formatted="false">"Start"</string>

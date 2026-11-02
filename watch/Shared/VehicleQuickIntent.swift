@@ -2,17 +2,17 @@ import AppIntents
 import Foundation
 
 enum VehicleQuickControl: String, AppEnum, CaseIterable, Identifiable {
-    case start, stop, lock, unlock
+    case start, lock, hazard, unlock
     var id: String { rawValue }
     static var typeDisplayRepresentation: TypeDisplayRepresentation = "차량 버튼"
     static var caseDisplayRepresentations: [Self:DisplayRepresentation] = [
-        .start:"시동", .stop:"정지", .lock:"문 잠금", .unlock:"문 열기"
+        .start:"시동/공조 켜기", .lock:"문 잠금", .hazard:"비상등 켜기", .unlock:"문 잠금 해제"
     ]
     var title: String {
-        switch self { case .start:return "시동"; case .stop:return "정지"; case .lock:return "문 잠금"; case .unlock:return "문 열기" }
+        switch self { case .start:return "시동/공조 켜기"; case .lock:return "문 잠금"; case .hazard:return "비상등 켜기"; case .unlock:return "문 잠금 해제" }
     }
     var symbol: String {
-        switch self { case .start:return "power"; case .stop:return "stop.fill"; case .lock:return "lock.fill"; case .unlock:return "lock.open.fill" }
+        switch self { case .start:return "power"; case .lock:return "lock.fill"; case .hazard:return "exclamationmark.triangle.fill"; case .unlock:return "lock.open.fill" }
     }
 }
 

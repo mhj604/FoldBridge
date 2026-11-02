@@ -13,7 +13,7 @@ Initial Apple Watch setup still requires a paired iPhone. Installing the watch a
 | What you need | Download or guide |
 | --- | --- |
 | Android **0.6.3-local · code 19** | [Download APK](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.3.apk) |
-| Apple Watch **0.5.6 · build 30** | [Current source](https://github.com/mhj604/FoldBridge/archive/refs/heads/local-ble.zip) · [Xcode project](watch/FoldBridge.xcodeproj) |
+| Apple Watch **0.5.7 · build 31** | [Current source](https://github.com/mhj604/FoldBridge/archive/refs/heads/local-ble.zip) · [Xcode project](watch/FoldBridge.xcodeproj) |
 | First installation | **[Step-by-step setup](docs/QUICK_START_EN.md)** |
 | Common questions | [FAQ](docs/FAQ_EN.md) |
 | Connection or notification problems | [Troubleshooting](docs/TROUBLESHOOTING_EN.md) |
@@ -36,7 +36,7 @@ open watch/FoldBridge.xcodeproj
 
 ## MyHyundai through Galaxy
 
-Android **0.6.3-local** / Watch **0.5.6** adds **FoldBridge watch → BLE → Galaxy official MyHyundai widget**. It does not redirect the original MyHyundai watch app. Bind the widget, choose controls on Galaxy, then open **Vehicle controls** in FoldBridge on the watch. A single **Vehicle controls widget** in Smart Stack or on a watch face opens the control panel. Choose Start, Stop, Lock or Unlock inside the panel. Actual vehicle service requires internet and MyHyundai authentication; widget invocation is not vehicle success. **[Setup and scope](docs/VEHICLE_CONTROL_EN.md)** · [0.6.3 APK](artifacts/android/FoldBridge-Local-0.6.3.apk)
+Android **0.6.3-local** / Watch **0.5.7** adds **FoldBridge watch → BLE → Galaxy official MyHyundai widget**. It does not redirect the original MyHyundai watch app. Bind the widget, choose controls on Galaxy, then open **Vehicle controls** in FoldBridge on the watch. A single **Vehicle controls widget** in Smart Stack or on a watch face opens the control panel. Choose Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors inside the panel. Actual vehicle service requires internet and MyHyundai authentication; widget invocation is not vehicle success. **[Setup and scope](docs/VEHICLE_CONTROL_EN.md)** · [0.6.3 APK](artifacts/android/FoldBridge-Local-0.6.3.apk)
 
 ## Everyday use
 

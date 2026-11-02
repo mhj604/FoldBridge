@@ -39,6 +39,7 @@
   <string name="text_35a25220cde0ec12" formatted="false">"갤럭시 마이현대 위젯에 전달합니다."</string>
   <string name="text_716368765b57ff7a" formatted="false">"갤럭시 마이현대 위젯의 차량·로그인·인증 설정을 완료해 주세요."</string>
   <string name="text_698a06b6df956dc0" formatted="false">"갤럭시 연결 또는 제어 목록을 받지 못했습니다. 명령은 보내지 않았습니다."</string>
+  <string name="text_03c44490f0a1b35e" formatted="false">"갤럭시 위젯에 해당 제어 버튼이 없습니다."</string>
   <string name="text_c203433a6e35fd19" formatted="false">"갤럭시에 연결하고 제어 목록을 확인하는 중입니다."</string>
   <string name="text_a1b424d1a4c17033" formatted="false">"갤럭시에서 워치에 표시할 버튼을 선택해 주세요."</string>
   <string name="text_1bafce7586ee0d6b" formatted="false">"갤럭시의 공식 제어 위젯을 워치에 연결합니다."</string>
@@ -92,6 +93,7 @@
   <string name="text_03ba9816b4a8923b" formatted="false">"모든 차량 제어"</string>
   <string name="text_ab8425b03153d84a" formatted="false">"문 열기"</string>
   <string name="text_bee96bc1136efbf8" formatted="false">"문 잠금"</string>
+  <string name="text_dda6f24caf87cc14" formatted="false">"문 잠금 해제"</string>
   <string name="text_948fecb37cc203f8" formatted="false">"미전달 보관 한도에 도달해 가장 오래된 알림을 비웠습니다."</string>
   <string name="text_ecc46449252f2f84" formatted="false">"백그라운드 수신 한도에 가까워졌습니다. 앱을 직접 열면 수신 기회가 갱신됩니다."</string>
   <string name="text_0966c38e1bd49d46" formatted="false">"버튼 선택 필요"</string>
@@ -106,6 +108,7 @@
   <string name="text_39d8a73d70a2488f" formatted="false">"보안 확인 또는 데이터 검증에 실패했습니다."</string>
   <string name="text_06c476edb91361ec" formatted="false">"블루투스를 켜세요"</string>
   <string name="text_cf40d166f5245e11" formatted="false">"블루투스와 앱 권한을 확인하세요."</string>
+  <string name="text_0f5fa144600c3f32" formatted="false">"비상등 켜기"</string>
   <string name="text_68786c846bef4f2e" formatted="false">"빠른 제어 버튼 연결을 해제했습니다."</string>
   <string name="text_d17b49a452c70f7f" formatted="false">"빠른 제어 설정"</string>
   <string name="text_ffde243be2c39509" formatted="false">"빠른 제어 설정에서 이 버튼에 연결할 마이현대 항목을 지정해 주세요."</string>
@@ -117,6 +120,7 @@
   <string name="text_cef4d8ab741c76bf" formatted="false">"수신"</string>
   <string name="text_6bbeb44e673fe476" formatted="false">"수신 확인"</string>
   <string name="text_48143d7a01533441" formatted="false">"시동"</string>
+  <string name="text_9c3401283706ee09" formatted="false">"시동/공조 켜기"</string>
   <string name="text_22b259cb4ad7df67" formatted="false">"시동·정지·문 잠금·문 열기를 워치에서 바로 실행합니다."</string>
   <string name="text_d87ab725df97a39a" formatted="false">"시스템 설정"</string>
   <string name="text_b1f28cd21af730b2" formatted="false">"시작"</string>

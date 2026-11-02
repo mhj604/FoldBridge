@@ -44,7 +44,7 @@ No automated test operates a vehicle. This implementation provides the official-
 
 ## One vehicle control widget (Watch 0.5.5 / build 29)
 
-Smart Stack and watch faces now offer one **Vehicle controls** widget. Tap it to open the FoldBridge control panel, then choose **Start, Stop, Lock or Unlock**. Opening the widget alone sends no vehicle command. The widget kind is unchanged, so an existing widget can refresh to this layout. Separate action recommendations and the widget action picker are removed.
+Smart Stack and watch faces now offer one **Vehicle controls** widget. Tap it to open the FoldBridge control panel, then choose **Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors**. Opening the widget alone sends no vehicle command. The widget kind is unchanged, so an existing widget can refresh to this layout. Separate action recommendations and the widget action picker are removed.
 
 1. Open Smart Stack, touch and hold, then choose **+ → FoldBridge → Vehicle controls**. For a watch face, use **Edit → Complications → FoldBridge vehicle controls**.
 2. Tap the widget to open the panel and prepare the Galaxy connection and current catalogue.
@@ -54,9 +54,9 @@ A command is sent once only when the assigned ID and label match the current cat
 
 ## Automatically acknowledge result notices (Android 0.6.3 / Watch 0.5.6)
 
-Recommended versions: Android **0.6.3-local / code 19**, Watch **0.5.6 / build 30**. The official widget can replace its controls with an **OK** result notice after incomplete, successful, approved or failed requests. An empty control list alone does not indicate a lost login.
+Recommended versions: Android **0.6.3-local / code 19**, Watch **0.5.7 / build 31**. The official widget can replace its controls with an **OK** result notice after incomplete, successful, approved or failed requests. An empty control list alone does not indicate a lost login.
 
-Tap **Start, Stop, Lock or Unlock** in the watch control panel. When a result notice is present, FoldBridge acknowledges it once, fetches a fresh catalogue and sends the action you just chose once the controls are ready. A separate recovery tap or second action tap is no longer required. Merely opening the widget does not start this sequence.
+Tap **Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors** in the watch control panel. When a result notice is present, FoldBridge acknowledges it once, fetches a fresh catalogue and sends the action you just chose once the controls are ready. A separate recovery tap or second action tap is no longer required. Merely opening the widget does not start this sequence.
 
 Recognition is based on a unique **확인·닫기 / OK·Close** acknowledgement inside the official widget rather than one exact message body. Clickable notice containers containing words such as “engine start” are not treated as vehicle controls. Authentication prompts and questions authorizing vehicle operations are distinguished from result notices.
 
@@ -73,3 +73,9 @@ The current build uses a unique exact label within the bound widget as the stabl
 A saved-peer connection attempt immediately registers a service-filtered Bluetooth scan as well. After range loss, the system retains the pending connection. A fresh advertisement can resubmit a disconnected peer even if an old auto-reconnect flag remains set. Location-session callbacks and the maintenance timer can recover a disconnected peer without foreground UI. Transport failures also preserve the cancellation callback and register recovery before returning from background runtime.
 
 The Galaxy connection service and Bluetooth must remain enabled. watchOS background Bluetooth runtime limits, force quitting and post-reboot lock conditions still apply; this is not a guarantee of immediate reconnection in every OS state. [Apple background Bluetooth guidance](https://developer.apple.com/videos/play/wwdc2022/10135/)
+
+## Match the official widget controls (Watch 0.5.7)
+
+The current Galaxy official widget exposes **Start engine / climate, Lock doors, Turn on hazard lights and Unlock doors**. The watch panel uses the same order and labels. The unsupported Stop button is removed because the bound widget has no engine-stop action. Unlock is labelled as unlocking the doors rather than opening them.
+
+Existing engine, lock and unlock assignments remain when they match the intended function. Hazard lights is a new action and is assigned when exactly one explicit official label matches. Legacy Stop assignments are never transferred to hazard lights. If the corresponding function is absent, the UI reports it rather than choosing an unrelated target. Existing phone widget authorization and selected controls are retained.

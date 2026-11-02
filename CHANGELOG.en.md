@@ -4,6 +4,13 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.7 · build 31 (Android 0.6.3 unchanged)
+
+- Match the quick-control panel to the current official widget: **Start engine / climate · Lock doors · Turn on hazard lights · Unlock doors**.
+- Remove the unsupported Stop action and add a new `hazard` action. Legacy Stop assignments are not transferred to hazard lights.
+- Include the official engine/climate label in automatic assignment. Each assignment picker exposes only matching official functions; old assignments to unrelated functions are replaced by the appropriate match.
+- Retain automatic result acknowledgement and the single vehicle-control launcher. [Usage](docs/VEHICLE_CONTROL_EN.md)
+
 ## Watch 0.5.6 · build 30 / Android 0.6.3-local · code 19
 
 - Recognize general result acknowledgement screens, including completion, approval and failure, instead of matching only the previous-request-incomplete sentence. Do not collect clickable result-message containers as vehicle controls.
