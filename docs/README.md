@@ -2,9 +2,9 @@
 
 **[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[다운로드 / Downloads](https://github.com/mhj604/FoldBridge/releases)**
 
-처음 사용하는 분은 **빠른 시작**부터 읽어 주세요. 현재 배포는 **Android 0.5.2-local / 코드 13**, **Watch 0.4.7 / 빌드 21**입니다.
+처음 사용하는 분은 **빠른 시작**부터 읽어 주세요. 현재 배포는 **Android 0.5.3-local / 코드 14**, **Watch 0.4.8 / 빌드 22**입니다.
 
-New users: start with **Install and connect**. Current release: **Android 0.5.2-local / code 13**, **Watch 0.4.7 / build 21**.
+New users: start with **Install and connect**. Current release: **Android 0.5.3-local / code 14**, **Watch 0.4.8 / build 22**.
 
 | 내용 / Topic | 한국어 | English |
 | --- | --- | --- |
@@ -17,7 +17,7 @@ New users: start with **Install and connect**. Current release: **Android 0.5.2-
 | 암호화·BLE·복원 / Encryption, BLE, restoration | [프로토콜](PROTOCOL.md) | [Protocol](PROTOCOL_EN.md) |
 | 시스템 아이콘과 본문 / System icons and custom content | [알림 표시 범위](NOTIFICATION_DISPLAY_LIMITS_KO.md) | [Notification display](NOTIFICATION_DISPLAY_LIMITS_EN.md) |
 | 알림 화면·배치 이력 / Notification screenshots and layout | [화면 비교](NOTIFICATION_LAYOUT_COMPARISON_KO.md) | [Layout examples](NOTIFICATION_LAYOUT_COMPARISON_EN.md) |
-| 최신 배포 변경 / Current release changes | [0.4.7 안내](RELEASE_WATCH_v0.4.7_KO.md) | [0.4.7 notes](RELEASE_WATCH_v0.4.7_EN.md) |
+| 최신 배포 변경 / Current release changes | [0.4.8 안내](RELEASE_WATCH_v0.4.8_KO.md) | [0.4.8 notes](RELEASE_WATCH_v0.4.8_EN.md) |
 | 버전별 변경 / Changes by version | [변경 이력](../CHANGELOG.md) | [Changelog](../CHANGELOG.en.md) |
 | 주요 구축 과정 / Development milestones | [구축 이력](DEVELOPMENT_HISTORY.md) | [Development history](DEVELOPMENT_HISTORY_EN.md) |
 | 수정·번역·문의 / Contributions, translations, help | [기여 방법](../CONTRIBUTING.md) | [Contributing](../CONTRIBUTING.en.md) |
@@ -34,7 +34,7 @@ New users: start with **Install and connect**. Current release: **Android 0.5.2-
 - **Updates:** retain the Android signing key and watch Bundle ID/team. Try Refresh connection on one device for ordinary connection problems.
 - **Background:** watchOS controls runtime opportunities and budgets. Opening the watch app once may be needed after execution stops.
 
-문서를 한 번에 내려받으려면 [한글·영어 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.7/FoldBridge-0.4.7-guides-ko-en.zip)을 사용하세요. / [Download the Korean/English guide bundle](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.7/FoldBridge-0.4.7-guides-ko-en.zip) to keep the documentation together.
+문서를 한 번에 내려받으려면 [한글·영어 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-0.4.8-guides-ko-en.zip)을 사용하세요. / [Download the Korean/English guide bundle](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-0.4.8-guides-ko-en.zip) to keep the documentation together.
 
 ## 이전 문서 / Archives
 

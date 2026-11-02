@@ -2,7 +2,7 @@
 
 [한국어](CHANGELOG.md) · **English** · [Documentation](docs/README.md)
 
-Documentation update: current setup, FAQ, build, architecture, protocol, display scope, important history, and contribution guides are available in Korean and English through the [documentation index](docs/README.md). App runtime code is unchanged.
+The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
 ## Watch 0.4.7 · build 21 / Android 0.5.2-local · code 13
 
@@ -13,6 +13,15 @@ Documentation update: current setup, FAQ, build, architecture, protocol, display
 - Keep missing notification ACKs in the pending outbox instead of cancelling a healthy BLE link.
 - Retain text/source-icon positions and reduce only lower card spacing by 4pt.
 - [Current release details and bounded device observations](docs/RELEASE_WATCH_v0.4.7_EN.md)
+
+## Watch 0.4.8 · build 22 / Android 0.5.3-local · code 14
+
+- Clear notifications queued before the first successful watch registration and persist an encrypted registration-time cutoff. Active-notification replay after process restart cannot re-enqueue older items.
+- Preserve the pending queue when recovering an already registered peer.
+- Enable Core Bluetooth's automatic reconnect option for saved peers. Keep the same peripheral object while the OS owns a reconnect attempt, so foreground maintenance does not replace it.
+- After reconnection, rediscover GATT and authenticate with fresh nonces. Android advertising and existing retry/scan recovery remain available.
+- Range loss, interference, power, and OS scheduling can still interrupt or delay a link. Automatic recovery is requested, not guaranteed to be immediate.
+- [Release details](docs/RELEASE_WATCH_v0.4.8_EN.md)
 
 ## Watch 0.4.6 · build 17 / Android 0.5.1-local · code 11
 

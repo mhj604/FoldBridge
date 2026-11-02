@@ -13,7 +13,7 @@ def quoted(value): return json.dumps(str(value),ensure_ascii=False)
 
 def generate(push=False,bundle_id='dev.foldbridge.watch'):
     info={'CFBundleDisplayName':'FoldBridge','CFBundleName':'$(PRODUCT_NAME)','CFBundleExecutable':'$(EXECUTABLE_NAME)',
-          'CFBundleIdentifier':'$(PRODUCT_BUNDLE_IDENTIFIER)','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.4.7','CFBundleVersion':'21',
+          'CFBundleIdentifier':'$(PRODUCT_BUNDLE_IDENTIFIER)','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.4.8','CFBundleVersion':'22',
           'WKApplication':True,'WKWatchOnly':True,
           'NSBluetoothAlwaysUsageDescription':'갤럭시 휴대폰의 알림을 받기 위해 블루투스를 사용합니다.',
           'NSLocationWhenInUseUsageDescription':'선택한 위치 기반 연결 유지 모드에서 백그라운드 실행을 시도하기 위해 위치 업데이트를 사용합니다. 위치 좌표는 저장하거나 전송하지 않습니다.',

@@ -56,6 +56,12 @@ Phone records showed a Samsung system service's GATT registration change at the 
 
 With build 21 installed, a phone-only refresh reached a locked/background watch, incremented its remote-refresh counter, and retained both sessions with no recorded errors or pending items at that observation. This was a bounded physical-device observation with optional location keepalive enabled, not a claim of unrestricted background launch. [Release notes](RELEASE_WATCH_v0.4.7_EN.md)
 
+## Watch 0.4.8 / Android 0.5.3 pairing and recovery
+
+The first successful registration now clears the Android outbox and stores an encrypted posted-time cutoff. Listener callbacks use Android's notification post time, and active-notification replay after service restart filters against that cutoff. Already registered peers retain pending alerts while recovering.
+
+Saved watch-to-phone connections request Core Bluetooth automatic reconnection. The watch preserves the peripheral object while the OS owns that retry and rediscoveries GATT with fresh nonces when the link returns. Existing app retry/scan logic remains a fallback. This requests recovery after range loss; it cannot prevent disconnection or promise an immediate link under every radio and watchOS condition. [Release notes](RELEASE_WATCH_v0.4.8_EN.md)
+
 ## Korean and English documentation
 
 The repository now provides paired overview, installation, FAQ, troubleshooting, build/settings, architecture, protocol, display/layout, current-release, changelog, development-history, and contribution guides. The bilingual index links each pair. Original older release notes remain archived in Korean.

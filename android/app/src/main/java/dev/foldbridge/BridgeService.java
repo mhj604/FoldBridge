@@ -25,7 +25,7 @@ public final class BridgeService extends Service {
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",13,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",14,"bridgeRunning",s!=null,"status",status,"error",error,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
             "softRefreshCount",s==null?0:s.softRefreshCount,"disconnectCount",s==null?0:s.disconnectCount,"lastDisconnectReason",s==null?"":s.lastDisconnectReason,
@@ -63,6 +63,7 @@ public final class BridgeService extends Service {
     private final Runnable bluetoothRetry=()->{if(server==null)startBluetooth();};
     private Vault vault; private KeyPair identity; private Crypto.Session session;
     private Outbox outbox;
+    private long firstPairCutoffMillis=0;
     private Delivery activeDelivery;
     private byte[] ownNonce, peerPublic, peerCommit;
     private boolean subscribed=false, inFlight=false, localConfirmed=false, remoteConfirmed=false, authenticated=false, watchActive=false;
@@ -81,9 +82,11 @@ public final class BridgeService extends Service {
         super.onCreate(); instance=this;
         try {
             vault=new Vault(this); identity=vault.identity();outbox=new Outbox(vault);
+            try { firstPairCutoffMillis=Long.parseLong(vault.get("first_pair_cutoff")); } catch(NumberFormatException ignored) {}
             JSONArray saved=outbox.load();long now=System.currentTimeMillis();
-            for(int i=0;i<saved.length()&&i<MAX_PENDING;i++){JSONObject message=saved.getJSONObject(i);if(now-message.optLong("posted_at",0)<DELIVERY_RETENTION_MILLIS)pending.put(message.getString("id"),new Delivery(message));}
+            for(int i=0;i<saved.length()&&i<MAX_PENDING;i++){JSONObject message=saved.getJSONObject(i);long postedAt=message.optLong("posted_at",0);if(now-postedAt<DELIVERY_RETENTION_MILLIS&&(firstPairCutoffMillis==0||postedAt>firstPairCutoffMillis))pending.put(message.getString("id"),new Delivery(message));}
             waiting=pending.size();
+            if(pending.size()!=saved.length())persist();
         }
         catch(Exception e) { fail("보안 키를 준비하지 못했습니다."); stopSelf(); }
     }
@@ -185,7 +188,7 @@ public final class BridgeService extends Service {
                 if(central!=null || SystemClock.elapsedRealtime()<blockedUntil) { server.cancelConnection(device); return; }
                 clearSession();central=device;error="";status="워치 인증 중";recordState(BridgeService.this);
                 schedulePairingDeadline();
-            } else if(state==BluetoothProfile.STATE_DISCONNECTED&&central!=null&&device.getAddress().equals(central.getAddress())) { clearSession(); status="연결 끊김, 워치 재연결 대기"; }
+            } else if(state==BluetoothProfile.STATE_DISCONNECTED&&central!=null&&device.getAddress().equals(central.getAddress())) { clearSession(); status="연결 끊김, 워치 재연결 대기";recordState(BridgeService.this); }
         }); }
         @Override public void onMtuChanged(BluetoothDevice device,int value) { handler.post(()->{if(token!=bluetoothEpoch)return;if(matches(device))mtu=Math.max(23,value);}); }
         @Override public void onDescriptorReadRequest(BluetoothDevice device,int requestId,int offset,BluetoothGattDescriptor descriptor) {
@@ -281,6 +284,13 @@ public final class BridgeService extends Service {
     static void confirmPair() { BridgeService s=instance; if(s!=null)s.handler.post(()->{if(s.session!=null&&!s.authenticated){s.localConfirmed=true;s.sendSecure(object("type","confirm"));s.finishAuthentication();}}); }
     private void finishAuthentication() {
         if(authenticated||!localConfirmed||!remoteConfirmed)return;
+        // A new registration starts with a clean inbox. The persisted cutoff also
+        // filters active-notification replay after a process restart.
+        if(vault.get("peer").isEmpty()) {
+            firstPairCutoffMillis=System.currentTimeMillis();
+            vault.put("first_pair_cutoff",Long.toString(firstPairCutoffMillis));
+            pending.clear();activeDelivery=null;waiting=0;persist();
+        }
         vault.put("peer",b64(peerPublic)); authenticated=true;pairingCode="";failures=0;blockedUntil=0;error="";status="워치 연결됨";
         sendSecure(object("type","ready","liveness",0));
         recordState(this);
@@ -309,6 +319,8 @@ public final class BridgeService extends Service {
     static void enqueue(JSONObject notification) {
         BridgeService s=instance; if(s==null)return;
         s.handler.post(()->{
+            long postedAt=notification.optLong("posted_at",0);
+            if(s.firstPairCutoffMillis>0&&postedAt<=s.firstPairCutoffMillis)return;
             String id=notification.optString("id"); Delivery previous=s.pending.get(id);
             if(previous!=null&&previous.message.optString("rev").equals(notification.optString("rev"))) {
                 if(!previous.message.has("icon_key")&&notification.has("icon_key")) {
@@ -395,7 +407,7 @@ public final class BridgeService extends Service {
         s.handler.post(()->{s.stopBluetooth();s.bluetoothRetries=0;error="";status="Bluetooth가 켜지면 다시 연결합니다";recordState(s);});
     }
     static void test() { String id=UUID.randomUUID().toString(); enqueue(object("type","notification","id",id,"rev",id,"app","FoldBridge","title","연결 테스트","body","이 알림이 워치에 도착하면 전달 경로가 동작합니다.","posted_at",System.currentTimeMillis())); }
-    static void forget(Context context) { BridgeService s=instance; if(s!=null){s.disconnect("연결을 해제했습니다.");s.pending.clear();waiting=0;s.persist();}try {Vault v=new Vault(context); v.remove("peer");v.remove("push_token");if(s==null)v.remove("outbox");}catch(Exception ignored){} }
+    static void forget(Context context) { BridgeService s=instance; if(s!=null){s.disconnect("연결을 해제했습니다.");s.pending.clear();s.firstPairCutoffMillis=0;waiting=0;s.persist();}try {Vault v=new Vault(context); v.remove("peer");v.remove("first_pair_cutoff");v.remove("push_token");if(s==null)v.remove("outbox");}catch(Exception ignored){} }
     @Override public IBinder onBind(Intent intent) {return null;}
     @Override public void onDestroy() {
         handler.removeCallbacksAndMessages(null);stopBluetooth();instance=null;status="중지됨";super.onDestroy();

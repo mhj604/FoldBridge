@@ -2,7 +2,7 @@
 
 [한국어](NOTIFICATION_DISPLAY_LIMITS_KO.md) · **English** · [All guides](README.md)
 
-Current presentation: **Watch 0.4.7/build 21**. The Korean document also preserves earlier investigations. Full system-icon replacement was excluded from the subsequent layout work; the current approach retains a small source icon in expanded content.
+Current presentation: **Watch 0.4.8/build 22**. The Korean document also preserves earlier investigations. Full system-icon replacement was excluded from the subsequent layout work; the current approach retains a small source icon in expanded content.
 
 | Area | Renderer | Current appearance |
 | --- | --- | --- |
@@ -15,7 +15,7 @@ Without source icon data, FoldBridge uses the system text layout. Source icons a
 
 ## Layout control
 
-Apple describes short-look as system-generated and long-look as a separate scrolling presentation whose content can be customized. Changing a SwiftUI body does not replace the whole system template. Watch 0.4.7 keeps the earlier text/icon placement and shortens only the lower spacing by 4pt on watchOS 27+. [Layout examples](NOTIFICATION_LAYOUT_COMPARISON_EN.md) · [Apple notification presentation](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
+Apple describes short-look as system-generated and long-look as a separate scrolling presentation whose content can be customized. Changing a SwiftUI body does not replace the whole system template. Watch 0.4.8 retains the layout adjustments from 0.4.7, which shortened only the lower spacing by 4pt on watchOS 27+. [Layout examples](NOTIFICATION_LAYOUT_COMPARISON_EN.md) · [Apple notification presentation](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
 
 ## Earlier alternatives investigated
 

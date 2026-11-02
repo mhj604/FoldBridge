@@ -4,7 +4,7 @@
 
 These are existing example captures from 2026-10-31, not personal messages. The comparison uses an Ultra 2-sized watchOS 27.2 simulator, 205×251pt / 410×502px. A generic icon occupies the source-icon position.
 
-## Current Watch 0.4.7
+## Current layout (Watch 0.4.7+, retained in 0.4.8)
 
 ![Watch 0.4.7 Korean example](assets/notification-layout-047/watch-047-ko.png)
 

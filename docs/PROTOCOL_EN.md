@@ -2,7 +2,7 @@
 
 [한국어](PROTOCOL.md) · **English** · [All guides](README.md)
 
-Current behavior: Android 0.5.2 / Watch 0.4.7. Android is the GATT server/peripheral; watchOS is the central/client. Initial registration happens inside FoldBridge rather than through a separate manual Android Bluetooth-settings step.
+Current behavior: Android 0.5.3 / Watch 0.4.8. Android is the GATT server/peripheral; watchOS is the central/client. Initial registration happens inside FoldBridge rather than through a separate manual Android Bluetooth-settings step.
 
 ## GATT and framing
 
@@ -45,6 +45,9 @@ The watch checks notification authorization, registers a local notification, the
 Source-icon notifications use `FOLDBRIDGE_COMPACT_ICON_ALERT` for a compact long-look body with a 24pt icon. Notifications without icons use `FOLDBRIDGE_NATIVE_ALERT`. Neither attaches icons as media. Grouping uses the source app identity. The system sender remains FoldBridge.
 
 ## Refresh and restoration
+
+- On the first successful registration, Android clears the earlier pending outbox and stores an encrypted posted-time cutoff. `NotificationRelay` uses the actual `StatusBarNotification.postTime`; active-notification replay after restart also excludes items before the cutoff. Recovery of an already pinned peer preserves its queue.
+- Connections to a saved peer use watchOS 10+'s `CBConnectPeripheralOptionEnableAutoReconnect`. When Core Bluetooth reports that it is reconnecting, the watch retains that same `CBPeripheral`; after it returns, the watch rediscovers GATT and authenticates with fresh nonces. Android keeps its GATT server advertising after disconnect. This requests automatic recovery, but cannot prevent radio loss or guarantee an immediate reconnect under range, interference, power, or watchOS scheduling constraints.
 
 - Healthy refresh sends encrypted `refresh` while retaining the link/session. Phone replies with `refreshed`; watch replies with `state`/`sync`.
 - `ready.liveness` is 0. The app generates no periodic ping and does not treat background wall-clock silence as proof of link failure. Foreground maintenance runs every 15 seconds with foreground recovery grace.

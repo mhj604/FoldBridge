@@ -71,7 +71,12 @@ watchOS 0.4.3은 캐시된 원본 아이콘이 있는 알림에 `FOLDBRIDGE_COMP
 서비스 무효화 처리는 [Apple CBPeripheralDelegate](https://developer.apple.com/documentation/corebluetooth/cbperipheraldelegate/peripheral(_:didmodifyservices:))를 따른다. 연결 취소는 [Android BluetoothGattServer](https://developer.android.com/reference/android/bluetooth/BluetoothGattServer#cancelConnection(android.bluetooth.BluetoothDevice)) API를 사용한다.
 
 
-## 현재 갱신·복원 (Android 0.5.2 / Watch 0.4.7)
+## 현재 페어링·복원 (Android 0.5.3 / Watch 0.4.8)
+
+- 최초 신규 등록이 완료되는 순간 Android는 기존 대기열을 비우고 암호화 저장소에 게시 시각 cutoff를 저장한다. `NotificationRelay`는 실제 `StatusBarNotification.postTime`을 사용하며, 재시작 뒤 활성 알림 replay도 cutoff 이전 알림을 제외한다. 이미 고정된 상대가 재연결할 때는 대기열을 유지한다.
+- 저장된 상대 연결에는 watchOS 10+의 `CBConnectPeripheralOptionEnableAutoReconnect`를 사용한다. OS가 자동 연결을 진행 중이라고 알리면 워치는 같은 `CBPeripheral`을 유지하고, 다시 연결되면 GATT 특성을 검색하고 새 nonce로 인증한다. Android GATT 광고는 연결 해제 뒤에도 계속 유지한다. 이 동작은 자동 재연결을 요청하지만 Bluetooth 범위·간섭·전원·OS 스케줄링에 따른 끊김이나 지연을 없애지는 않는다.
+
+## 이전 갱신·복원 (Android 0.5.2 / Watch 0.4.7)
 
 - 정상 연결에서 한쪽 새로고침은 암호화된 `refresh`를 보낸다. 폰은 `refreshed`로 응답하고 워치는 `state`/`sync`로 응답한다. 연결·세션·등록 키를 보존한다.
 - 자동 ping을 생성하지 않으며 `ready.liveness`는 0이다. 워치가 백그라운드에서 실행되지 않은 시간을 통신 오류로 간주해 연결을 취소하지 않는다. 전면 유지보수는 15초 주기이고 전면 복구 시간 여유를 따로 둔다.

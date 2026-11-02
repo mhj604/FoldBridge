@@ -11,6 +11,8 @@
 
 Refresh preserves registration and pending items. Allow recovery to proceed instead of repeatedly pressing the button. Watch 0.4.7 removes the previous periodic ping and short background-response disconnects. Service changes rebind the GATT characteristics while preserving a healthy session; actual process restoration authenticates with fresh nonces.
 
+Watch 0.4.8 requests Core Bluetooth automatic reconnection for saved peers. When the devices return within range, watchOS and the app retry path attempt recovery, but an immediate link is not guaranteed. The first successful new registration clears older queued alerts; recovery of an already registered peer keeps its pending queue.
+
 A locked/background watch needs an OS-retained BLE connection and available watchOS runtime. The phone button cannot unconditionally launch a watch app. If a background-limit message appears or recovery stalls, open FoldBridge on the watch once. Force-quit, Bluetooth off, and being outside range need separate attention. [Background tasks](https://developer.apple.com/documentation/watchkit/using-background-tasks)
 
 If the error says the **saved peer key differs**, check whether an app was removed/reinstalled or a device/key changed. That situation may require forgetting registration on both sides and comparing new codes. A simple timeout usually does not.

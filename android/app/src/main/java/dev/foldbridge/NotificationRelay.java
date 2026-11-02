@@ -41,7 +41,8 @@ public final class NotificationRelay extends NotificationListenerService {
         if(!sbn.getPackageName().equals(getPackageName())&&!sbn.getPackageName().equals("dev.foldbridge")) {
             received++;android.util.Log.i("FoldBridge","notification_received count="+received);
         }
-        forward(sbn,System.currentTimeMillis());
+        long postedAt=sbn.getPostTime();
+        forward(sbn,postedAt>0?postedAt:System.currentTimeMillis());
     }
     private void forward(StatusBarNotification sbn,long postedAt) {
         if(BridgeService.instance==null||sbn.getPackageName().equals(getPackageName())||sbn.getPackageName().equals("dev.foldbridge"))return;

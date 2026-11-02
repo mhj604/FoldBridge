@@ -2,9 +2,13 @@
 
 [한국어](ARCHITECTURE.md) · **English** · [All guides](README.md)
 
-This describes the current Android 0.5.2 / Watch 0.4.7 implementation. The Korean document also preserves older implementation notes; [English milestones](DEVELOPMENT_HISTORY_EN.md) summarize that history.
+This describes the current Android 0.5.3 / Watch 0.4.8 implementation. The Korean document also preserves older implementation notes; [English milestones](DEVELOPMENT_HISTORY_EN.md) summarize that history.
 
 ## Delivery path
+
+On the first successful watch registration, Android clears the older pending outbox and stores an encrypted registration-time cutoff. After process restart, active-notification replay drops items posted before that cutoff. Recovery of an already registered peer retains the pending queue.
+
+Connections to a saved phone use watchOS 10+'s Core Bluetooth automatic reconnect option. While the OS is reconnecting, the watch retains its `CBPeripheral` so app maintenance does not replace the system-managed attempt. Android keeps its GATT server advertising; existing retry and scan recovery remains the fallback. Radio range, interference, power, and watchOS runtime limits can still interrupt or delay reconnection.
 
 ```text
 Other Android apps

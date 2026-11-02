@@ -2,7 +2,7 @@
 
 [한국어](QUICK_START_KO.md) · **English** · [All guides](README.md)
 
-For Android **0.5.2-local / code 13** and Watch **0.4.7 / build 21**. Notifications travel directly over BLE. No relay address, internet connection, or paid push setup is needed during use.
+For Android **0.5.3-local / code 14** and Watch **0.4.8 / build 22**. Notifications travel directly over BLE. No relay address, internet connection, or paid push setup is needed during use.
 
 ## 1. Prepare
 
@@ -24,7 +24,7 @@ The following paths are relative to this source folder. No setup is needed in `r
 
 ## 3. Install the phone app
 
-1. [Download FoldBridge-Local-0.5.2.apk](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.7/FoldBridge-Local-0.5.2.apk) and open it on the phone. Follow Android's installation prompt for the app that opened the APK.
+1. [Download FoldBridge-Local-0.5.3.apk](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-Local-0.5.3.apk) and open it on the phone. Follow Android's installation prompt for the app that opened the APK.
 2. Open **FoldBridge Local** and allow **Nearby devices** and notifications.
 3. Tap **Allow notification access**. Enable **FoldBridge Local notifications** in the system list. This separate permission lets the app receive other apps' notifications.
 4. If Android shows a restricted-settings notice, follow its device-specific instructions in App info, then return to notification access. Labels vary by OS version.
@@ -53,7 +53,7 @@ The script builds the app. Open the project, select the watch, and press Run to 
 
 ## 5. Register once
 
-1. Phone: **Settings → Pair a new watch**. The registration window lasts two minutes.
+1. Phone: **Settings → Pair a new watch**. The registration window lasts two minutes. When the first registration succeeds, older pending notifications are cleared; forwarding starts with notifications posted after pairing completes. Recovery of an already registered peer keeps pending notifications.
 2. Watch: open **Connect phone**. A new installation uses the Local profile. If needed, choose **Choose phone app → FoldBridge Local**.
 3. Tap **Find phone**, then select the Galaxy.
 4. Compare the displayed codes and confirm on both devices only when they match.

@@ -2,7 +2,7 @@
 
 **한국어** · [English](NOTIFICATION_DISPLAY_LIMITS_EN.md) · [전체 문서](README.md)
 
-현재 Watch **0.4.7 / 빌드 21**은 시스템 팝업·카드·상단 헤더에 FoldBridge를 표시하고, 원본 앱 아이콘은 펼친 본문에 24pt로 표시합니다. 아이콘·글씨 위치를 유지하며 카드 아래 여백만 4pt 줄였습니다. [현재 화면 예문](NOTIFICATION_LAYOUT_COMPARISON_KO.md) · [최신 배포 안내](RELEASE_WATCH_v0.4.7_KO.md)
+현재 Watch **0.4.8 / 빌드 22**는 시스템 팝업·카드·상단 헤더에 FoldBridge를 표시하고, 원본 앱 아이콘은 펼친 본문에 24pt로 표시합니다. 알림 배치는 0.4.7의 조정 상태를 유지합니다. [현재 화면 예문](NOTIFICATION_LAYOUT_COMPARISON_KO.md) · [최신 배포 안내](RELEASE_WATCH_v0.4.8_KO.md)
 
 아래는 0.4.3 당시의 조사 기록입니다. 당시 설치 상태·계정 조사와 현재 사용법을 구분해 주세요.
 

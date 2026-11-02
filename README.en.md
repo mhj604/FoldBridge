@@ -12,12 +12,12 @@ Initial Apple Watch setup still requires a paired iPhone. Installing the watch a
 
 | What you need | Download or guide |
 | --- | --- |
-| Android **0.5.2-local · code 13** | [Download APK](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.7/FoldBridge-Local-0.5.2.apk) |
-| Apple Watch **0.4.7 · build 21** | [Source ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.7/FoldBridge-watch-0.4.7-source.zip) · [Xcode project](watch/FoldBridge.xcodeproj) |
+| Android **0.5.3-local · code 14** | [Download APK](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-Local-0.5.3.apk) |
+| Apple Watch **0.4.8 · build 22** | [Source ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-watch-0.4.8-source.zip) · [Xcode project](watch/FoldBridge.xcodeproj) |
 | First installation | **[Step-by-step setup](docs/QUICK_START_EN.md)** |
 | Common questions | [FAQ](docs/FAQ_EN.md) |
 | Connection or notification problems | [Troubleshooting](docs/TROUBLESHOOTING_EN.md) |
-| Latest downloads and changes | [Releases](https://github.com/mhj604/FoldBridge/releases) · [Korean/English guide ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.7/FoldBridge-0.4.7-guides-ko-en.zip) |
+| Latest downloads and changes | [Releases](https://github.com/mhj604/FoldBridge/releases) · [Korean/English guide ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-0.4.8-guides-ko-en.zip) |
 
 1. Install **FoldBridge Local** on the phone. Grant Nearby devices, notifications, and **notification access** for the relay service.
 2. Open `watch/FoldBridge.xcodeproj` on your Mac. Select your Apple team, a unique Bundle ID, and your physical watch; press **Run**.
@@ -38,9 +38,10 @@ open watch/FoldBridge.xcodeproj
 - Forward app names, titles, bodies, and available source app icons over an encrypted BLE session. All apps are selected by default; you can choose individual apps.
 - Read received notifications in **watchOS Notification Center**. The watch app keeps no separate message history.
 - Only undelivered notifications wait on the phone, encrypted, for up to **24 hours / 1,024 items**. They are removed after the watch acknowledges the display request.
+- When the first new watch registration succeeds, earlier queued notifications are discarded; forwarding starts with notifications posted after registration. Pending items remain intact during recovery of an already registered peer.
 - Samsung System UI charging updates are excluded by default. Enable charging notifications if you want them.
 - **Refresh connection** preserves a healthy link and session while requesting synchronization. If disconnected, recovery uses the saved peer. **Sync now** retrieves pending notifications over an authenticated connection.
-- Registration survives restarts. Unlock both devices once after reboot and leave Bluetooth on. Open FoldBridge once if watchOS has not restored it.
+- Saved peers use Core Bluetooth's automatic reconnect request plus the app's retry path. If the devices leave Bluetooth range, the watch requests reconnection when the link drops and tries again when they return. Interference, power, and watchOS scheduling can still cause disconnects or delays; immediate recovery is not guaranteed.
 
 ### 한국어 / English
 
@@ -50,7 +51,7 @@ Each app has **Settings → Language / 언어 → System default / 한국어 / E
 
 The initial system popup, Notification Center cards, and system header identify **FoldBridge** as the sending app. When a source icon is available, the **expanded notification body** shows it at **24pt**, alongside the original app name and message. Without an icon, the system text layout is used.
 
-Source icons are not image attachments, so they do not become oversized media previews. Watch 0.4.7 keeps the text/icon placement from 0.4.6 and reduces only the card's lower spacing by **4pt**. [Layout examples](docs/NOTIFICATION_LAYOUT_COMPARISON_EN.md) · [Display behavior and scope](docs/NOTIFICATION_DISPLAY_LIMITS_EN.md)
+Source icons are not image attachments, so they do not become oversized media previews. The current build retains the compact expanded-body layout; Watch 0.4.7 kept the text/icon placement from 0.4.6 and reduced only the card's lower spacing by **4pt**. [Layout examples](docs/NOTIFICATION_LAYOUT_COMPARISON_EN.md) · [Display behavior and scope](docs/NOTIFICATION_DISPLAY_LIMITS_EN.md)
 
 Android may redact sensitive notification content before the relay receives it. See [sensitive-content settings](docs/BUILD_AND_SETUP_EN.md#sensitive-notification-content) if you want full content on your own device. The APK does not grant itself this setting.
 
@@ -63,7 +64,7 @@ Android may redact sensitive notification content before the relay receives it. 
 | Watch installation | Mac with compatible full Xcode, developer mode, development pairing, your Apple signing team |
 | Apple account | Free Personal Team supported; it need not match the watch's account |
 
-The phone-only refresh was observed reaching a locked/background watch with the same session retained, no recorded errors, and no pending notifications. This is a bounded observation, not a guarantee for every device or unlimited background delivery. [Current release details](docs/RELEASE_WATCH_v0.4.7_EN.md)
+The current release discards pre-registration backlog on the first pairing and requests OS-level reconnection for saved peers. Automatic recovery depends on Bluetooth range and watchOS scheduling. [Current release details](docs/RELEASE_WATCH_v0.4.8_EN.md)
 
 watchOS suspension, force-quit, runtime budgets, Bluetooth range, Focus, and notification permission affect delivery. Location keepalive can increase battery use. Development signing may expire and require rebuilding. Replies and bidirectional read/delete synchronization are not implemented. Notification text, private keys, device logs, and location coordinates are not published in this repository; location coordinates are not retained or transmitted by keepalive.
 
