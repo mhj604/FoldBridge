@@ -24,7 +24,7 @@ The apps attempt restoration using saved registration. Refresh on either device 
 
 ## Does the app keep a message inbox?
 
-Read messages in watchOS Notification Center. FoldBridge keeps no separate watch inbox. The phone encrypts only pending items for up to 24 hours / 1,024 entries. Replies and bidirectional read/delete synchronization are not implemented.
+Read messages in watchOS Notification Center. FoldBridge keeps no separate watch inbox. The phone retries unacknowledged items in memory only during the current authenticated connection and clears them when it disconnects. Pre-connection and offline notifications are not delivered later. Replies and read/delete synchronization are not implemented.
 
 ## Why does the system icon show FoldBridge?
 

@@ -2,25 +2,25 @@
 
 [한국어](ARCHITECTURE.md) · **English** · [All guides](README.md)
 
-This describes the current Android 0.5.3 / Watch 0.4.8 implementation. The Korean document also preserves older implementation notes; [English milestones](DEVELOPMENT_HISTORY_EN.md) summarize that history.
+This describes the current Android 0.5.4 / Watch 0.4.9 implementation. The Korean document also preserves older implementation notes; [English milestones](DEVELOPMENT_HISTORY_EN.md) summarize that history.
 
 ## Delivery path
 
-On the first successful watch registration, Android clears the older pending outbox and stores an encrypted registration-time cutoff. After process restart, active-notification replay drops items posted before that cutoff. Recovery of an already registered peer retains the pending queue.
+Every successful authentication starts a new connection-time cutoff and clears older pending items. Offline listener callbacks are ignored; active-notification replay uses the original Android post time and excludes alerts from before the current connection. Old persisted outboxes are removed when upgrading.
 
-Connections to a saved phone use watchOS 10+'s Core Bluetooth automatic reconnect option. While the OS is reconnecting, the watch retains its `CBPeripheral` so app maintenance does not replace the system-managed attempt. Android keeps its GATT server advertising; existing retry and scan recovery remains the fallback. Radio range, interference, power, and watchOS runtime limits can still interrupt or delay reconnection.
+Saved phones use Core Bluetooth automatic reconnection. The watch retains OS-owned pending connects and service-filtered recovery scans in background. Android stops advertising when connected and resumes it after disconnect; advertising retries do not recreate the GATT server. Range, interference, power, and watchOS runtime limits can still delay recovery.
 
 ```text
 Other Android apps
        ↓ notification access
-NotificationRelay → filters → encrypted pending outbox
+NotificationRelay → filters → current-session memory queue
        ↓ BridgeService: BLE GATT server/peripheral
        ⇄ framed, encrypted BLE messages
 WatchLink: BLE central/client
        ↓ local notification request
 watchOS Notification Center
        ↓ acknowledgment to phone
-Remove acknowledged revision from pending outbox
+Remove acknowledged revision from current-session queue
 ```
 
 The phone extracts the source app name/icon, title/body, hashed notification ID, and content revision. The watch reassembles/decrypts the message and requests a local notification. An ACK means that display registration was accepted or the revision was already known; it is not a read receipt. Both endpoints pin peer keys during the initial code comparison and derive fresh session keys for new authentication.
@@ -51,7 +51,7 @@ Location keepalive can increase battery consumption. No workout/audio session, r
 
 - All apps are selected by default, with an optional app selection list.
 - The app's own connection notification is excluded. Samsung System UI charging-state updates are excluded by default and can be enabled separately.
-- The phone encrypts undelivered items for at most 24 hours / 1,024 entries. A newer revision replaces the same ID; the oldest item is removed when capacity is exceeded.
+- The phone retries unacknowledged items in memory during the current session only, bounded to 24 hours / 1,024 entries. Newer revisions replace the same ID. Disconnect and process restart discard this queue; no offline outbox is restored.
 - The watch stores no separate message inbox. It retains up to 512 ID/revision hashes for duplicate suppression in Keychain. Notification content is managed by watchOS Notification Center.
 - Android identity/storage keys use Android Keystore. Watch identity and peer keys use device-local Keychain storage.
 - Diagnostic files contain connection/permission state, counters, and bounded stage/error records; notification bodies, private keys, and coordinates are excluded.
@@ -68,7 +68,7 @@ The system owns the popup, cards, and header showing FoldBridge. Only the expand
 
 | Path | Responsibility |
 | --- | --- |
-| `android/app/src/main/java/dev/foldbridge/` | Listener, filters, GATT server, crypto, outbox, Android UI |
+| `android/app/src/main/java/dev/foldbridge/` | Listener, filters, GATT server, crypto, session queue, Android UI |
 | `watch/FoldBridge/` | GATT client, identity/session, local notifications, keepalive, SwiftUI |
 | `localization/en.json` | Shared English translations keyed by Korean strings |
 | `tools/` | Translation and icon generation |

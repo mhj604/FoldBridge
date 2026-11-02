@@ -2,6 +2,10 @@
 
 **한국어** · [English](DEVELOPMENT_HISTORY_EN.md) · [전체 문서](README.md)
 
+## 현재: Watch 0.4.9 / Android 0.5.4
+
+매 연결의 인증 완료 시각을 알림 시작점으로 사용한다. 이전 0.4.8/0.5.3의 첫 신규 등록에만 적용되던 정책을 바꿔 재연결의 밀린 알림도 버린다. 폰은 디스크 outbox를 제거하고 현재 세션 메모리만 사용한다. 폰 광고 재개와 워치의 백그라운드 복구 검색·native pending connect를 보완한다. 케이블 없는 Mac–Galaxy 설치 등록도 지원하며 실제 기기 주소/키는 공개하지 않는다. [배포 안내](RELEASE_WATCH_v0.4.9_KO.md)
+
 ## 요구사항
 
 - Galaxy와 Apple Watch만으로 BLE/로컬 알림 전달.

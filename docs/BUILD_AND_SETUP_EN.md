@@ -2,7 +2,7 @@
 
 [한국어](BUILD_AND_SETUP.md) · **English** · [All guides](README.md)
 
-Current release: Android **0.5.3-local / code 14**, Watch **0.4.8 / build 22**. For installing the distributed APK and signing the watch app, start with [the setup guide](QUICK_START_EN.md).
+Current release: Android **0.5.4-local / code 15**, Watch **0.4.9 / build 23**. For installing the distributed APK and signing the watch app, start with [the setup guide](QUICK_START_EN.md).
 
 ## Android build
 
@@ -13,7 +13,7 @@ python3 android/build_android.py \
   --sdk /absolute/path/to/android-sdk \
   --java-home /absolute/path/to/jdk \
   --keystore /absolute/path/to/foldbridge-local.keystore \
-  --output /absolute/path/to/FoldBridge-Local-0.5.3.apk
+  --output /absolute/path/to/FoldBridge-Local-0.5.4.apk
 ```
 
 Retain the signing key outside the repository and reuse it for updates. A different key cannot update an existing installation in place. The distributed app ID is `dev.foldbridge.local`.

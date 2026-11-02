@@ -26,7 +26,7 @@ Android 11 이상에서는 USB 없이 ADB 페어링과 설치가 가능하다. M
 
    ```sh
    adb connect PHONE_IP:CONNECT_PORT
-   adb -s PHONE_IP:CONNECT_PORT install -r /absolute/path/to/FoldBridge-Local-0.5.3.apk
+   adb -s PHONE_IP:CONNECT_PORT install -r /absolute/path/to/FoldBridge-Local-0.5.4.apk
    ```
 
 ## 다음 업데이트

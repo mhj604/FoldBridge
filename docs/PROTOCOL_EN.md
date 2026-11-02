@@ -2,7 +2,7 @@
 
 [한국어](PROTOCOL.md) · **English** · [All guides](README.md)
 
-Current behavior: Android 0.5.3 / Watch 0.4.8. Android is the GATT server/peripheral; watchOS is the central/client. Initial registration happens inside FoldBridge rather than through a separate manual Android Bluetooth-settings step.
+Current behavior: Android 0.5.4 / Watch 0.4.9. Android is the GATT server/peripheral; watchOS is the central/client. Initial registration happens inside FoldBridge rather than through a separate manual Android Bluetooth-settings step.
 
 ## GATT and framing
 
@@ -38,7 +38,7 @@ Notification fields include a hashed Android notification ID, content revision h
 
 Within a session, the phone omits PNG bytes after an icon-bearing notification has been acknowledged. A new session clears that optimization. Text delivery takes priority if the combined message approaches size limits.
 
-The phone keeps an encrypted pending outbox, limited to 24 hours / 1,024 items, with the latest revision per ID. One delivery waits for an application ACK. After up to three 90-second attempts without an ACK, that item waits for the next wake/sync while later items can proceed. Missing application ACKs alone do not cancel the physical BLE link. Refresh/sync resumes deferred attempts. Service/listener recovery also replays currently active Android notifications.
+The phone retries notifications in memory only during the current authenticated connection, bounded to 24 hours / 1,024 entries with the latest revision per ID. One item waits for an application ACK, with up to three 90-second attempts before deferring it to a live-session wake/sync. Missing app ACKs alone do not cancel BLE. Disconnect and process restart discard the queue. Active-notification replay retains original post times and excludes items predating the current connection.
 
 The watch checks notification authorization, registers a local notification, then ACKs accepted requests. Known revisions are ACKed without being displayed again. An ACK is not a guarantee of sound, visibility, or user reading. The watch stores up to 512 ID/revision hashes, not a separate title/body inbox.
 
@@ -46,13 +46,13 @@ Source-icon notifications use `FOLDBRIDGE_COMPACT_ICON_ALERT` for a compact long
 
 ## Refresh and restoration
 
-- On the first successful registration, Android clears the earlier pending outbox and stores an encrypted posted-time cutoff. `NotificationRelay` uses the actual `StatusBarNotification.postTime`; active-notification replay after restart also excludes items before the cutoff. Recovery of an already pinned peer preserves its queue.
-- Connections to a saved peer use watchOS 10+'s `CBConnectPeripheralOptionEnableAutoReconnect`. When Core Bluetooth reports that it is reconnecting, the watch retains that same `CBPeripheral`; after it returns, the watch rediscovers GATT and authenticates with fresh nonces. Android keeps its GATT server advertising after disconnect. This requests automatic recovery, but cannot prevent radio loss or guarantee an immediate reconnect under range, interference, power, or watchOS scheduling constraints.
+- Every successful authentication, including reconnects, sets a new posted-time cutoff and clears prior pending items. Offline callbacks are ignored and old persisted outboxes are removed. The watch discards unscheduled receipts from the old session while preserving notifications already in Notification Center.
+- Connections to a saved peer use watchOS 10+'s `CBConnectPeripheralOptionEnableAutoReconnect`. When Core Bluetooth reports that it is reconnecting, the watch retains that same `CBPeripheral`; after it returns, the watch rediscovers GATT and authenticates with fresh nonces. Android stops advertising when connected and resumes it after disconnect using the same GATT server; advertising retry never tears down a healthy server. This requests automatic recovery, but cannot prevent radio loss or guarantee an immediate reconnect under range, interference, power, or watchOS scheduling constraints.
 
 - Healthy refresh sends encrypted `refresh` while retaining the link/session. Phone replies with `refreshed`; watch replies with `state`/`sync`.
 - `ready.liveness` is 0. The app generates no periodic ping and does not treat background wall-clock silence as proof of link failure. Foreground maintenance runs every 15 seconds with foreground recovery grace.
 - Process restoration reuses the OS-retained link where possible, explicitly restores CCC subscription, and performs a fresh pinned-key handshake. An authenticated service-change event can instead rebind characteristics without replacing a healthy crypto session.
-- Saved-peer pending connects are retained where possible. Repeated physical disconnects back off up to 30 seconds; successful authentication resets the backoff. Recovery scanning is used for missing cache entries or foreground connection stalls.
+- Saved-peer pending connects are retained. Recovery scanning stays service-filtered without a foreground-only timeout. Background disconnect callbacks submit native reconnection immediately; repeated foreground failures can back off. A disconnected cached object cannot block all later reconnect attempts.
 - If the phone lost its crypto state but retains a subscription, plaintext `wake`/v1 requests fresh authentication only. It does not authorize any notification. Saved-peer authentication waiting does not trigger the previous fixed 120-second link cancellation; first-time registration still has a deadline.
 - In-place reauthentication separates old ATT completion callbacks from the new session's packets. Accepted ordinary ATT write lengths also restore a lower bound for the phone MTU.
 - Control messages such as state/sync/refresh do not create user notifications. Charging filters run before protocol delivery.

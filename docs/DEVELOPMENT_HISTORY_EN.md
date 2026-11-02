@@ -4,6 +4,10 @@
 
 This summarizes the important milestones. For current setup, use [Install and connect](QUICK_START_EN.md); earlier implementation details do not necessarily describe the current release.
 
+## Current: Watch 0.4.9 / Android 0.5.4
+
+Each authenticated connection becomes the notification start point. Unlike 0.4.8/0.5.3's first-registration-only cutoff, reconnection also drops the older queue. The phone removes the disk outbox and retries only current-session items in memory. Phone advertising restart and watch background recovery scans/native pending connects support recovery. Cable-free Mac–Galaxy deployment uses saved ADB pairing; personal endpoints and keys remain local. [Release notes](RELEASE_WATCH_v0.4.9_EN.md)
+
 ## Requirements and initial installation
 
 The project began from a 0.1.0 package containing Android, watchOS, Windows, and APNs relay components. Watch-only project settings, signing, developer mode, Mac–Watch development pairing, and physical installation were addressed first.

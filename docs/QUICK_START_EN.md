@@ -2,7 +2,7 @@
 
 [한국어](QUICK_START_KO.md) · **English** · [All guides](README.md)
 
-For Android **0.5.3-local / code 14** and Watch **0.4.8 / build 22**. Notifications travel directly over BLE. No relay address, internet connection, or paid push setup is needed during use.
+For Android **0.5.4-local / code 15** and Watch **0.4.9 / build 23**. Notifications travel directly over BLE. No relay address, internet connection, or paid push setup is needed during use.
 
 ## 1. Prepare
 
@@ -24,7 +24,7 @@ The following paths are relative to this source folder. No setup is needed in `r
 
 ## 3. Install the phone app
 
-1. [Download FoldBridge-Local-0.5.3.apk](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-Local-0.5.3.apk) and open it on the phone. Follow Android's installation prompt for the app that opened the APK.
+1. [Download FoldBridge-Local-0.5.4.apk](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-Local-0.5.4.apk) and open it on the phone. Follow Android's installation prompt for the app that opened the APK.
 2. Open **FoldBridge Local** and allow **Nearby devices** and notifications.
 3. Tap **Allow notification access**. Enable **FoldBridge Local notifications** in the system list. This separate permission lets the app receive other apps' notifications.
 4. If Android shows a restricted-settings notice, follow its device-specific instructions in App info, then return to notification access. Labels vary by OS version.
@@ -53,7 +53,7 @@ The script builds the app. Open the project, select the watch, and press Run to 
 
 ## 5. Register once
 
-1. Phone: **Settings → Pair a new watch**. The registration window lasts two minutes. When the first registration succeeds, older pending notifications are cleared; forwarding starts with notifications posted after pairing completes. Recovery of an already registered peer keeps pending notifications.
+1. Phone: **Settings → Pair a new watch**. The window lasts two minutes. Initial registration and every later reconnection forward only notifications posted after authentication completes; earlier and offline notifications are discarded.
 2. Watch: open **Connect phone**. A new installation uses the Local profile. If needed, choose **Choose phone app → FoldBridge Local**.
 3. Tap **Find phone**, then select the Galaxy.
 4. Compare the displayed codes and confirm on both devices only when they match.
@@ -79,7 +79,7 @@ On each device, open **Settings → Language / 언어** and select **System defa
 - If you installed a distributed APK, update with a later APK from the same repository/signing key.
 - If you built Android yourself, retain and reuse your own key. A differently signed APK cannot update the existing installation. Uninstalling can lose registration and pending data; it is not the normal connection-recovery step.
 - Keep the watch **Bundle ID and team** unchanged. Free development signing may require rebuilding when provisioning expires.
-- **Refresh connection** preserves registration, filters, and pending items. Use **Unpair** only when you intend to register again.
+- **Refresh connection** preserves registration and filters. Healthy sessions synchronize current pending items; reconnection clears the previous queue. Use **Unpair** only to register again.
 
 ## Where the original icon appears
 

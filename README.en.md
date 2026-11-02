@@ -12,12 +12,12 @@ Initial Apple Watch setup still requires a paired iPhone. Installing the watch a
 
 | What you need | Download or guide |
 | --- | --- |
-| Android **0.5.3-local · code 14** | [Download APK](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-Local-0.5.3.apk) |
-| Apple Watch **0.4.8 · build 22** | [Source ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-watch-0.4.8-source.zip) · [Xcode project](watch/FoldBridge.xcodeproj) |
+| Android **0.5.4-local · code 15** | [Download APK](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-Local-0.5.4.apk) |
+| Apple Watch **0.4.9 · build 23** | [Source ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-watch-0.4.9-source.zip) · [Xcode project](watch/FoldBridge.xcodeproj) |
 | First installation | **[Step-by-step setup](docs/QUICK_START_EN.md)** |
 | Common questions | [FAQ](docs/FAQ_EN.md) |
 | Connection or notification problems | [Troubleshooting](docs/TROUBLESHOOTING_EN.md) |
-| Latest downloads and changes | [Releases](https://github.com/mhj604/FoldBridge/releases) · [Korean/English guide ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-0.4.8-guides-ko-en.zip) |
+| Latest downloads and changes | [Releases](https://github.com/mhj604/FoldBridge/releases) · [Korean/English guide ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
 
 1. Install **FoldBridge Local** on the phone. Grant Nearby devices, notifications, and **notification access** for the relay service.
 2. Open `watch/FoldBridge.xcodeproj` on your Mac. Select your Apple team, a unique Bundle ID, and your physical watch; press **Run**.
@@ -37,8 +37,8 @@ open watch/FoldBridge.xcodeproj
 
 - Forward app names, titles, bodies, and available source app icons over an encrypted BLE session. All apps are selected by default; you can choose individual apps.
 - Read received notifications in **watchOS Notification Center**. The watch app keeps no separate message history.
-- Only undelivered notifications wait on the phone, encrypted, for up to **24 hours / 1,024 items**. They are removed after the watch acknowledges the display request.
-- When the first new watch registration succeeds, earlier queued notifications are discarded; forwarding starts with notifications posted after registration. Pending items remain intact during recovery of an already registered peer.
+- Unacknowledged notifications retry in memory only during the current connection. Disconnection clears this queue; notification payloads are not persisted on the phone.
+- Every authenticated connection, including reconnections, starts with notifications posted after that connection completes. Earlier and offline notifications are not replayed.
 - Samsung System UI charging updates are excluded by default. Enable charging notifications if you want them.
 - **Refresh connection** preserves a healthy link and session while requesting synchronization. If disconnected, recovery uses the saved peer. **Sync now** retrieves pending notifications over an authenticated connection.
 - Saved peers use Core Bluetooth's automatic reconnect request plus the app's retry path. If the devices leave Bluetooth range, the watch requests reconnection when the link drops and tries again when they return. Interference, power, and watchOS scheduling can still cause disconnects or delays; immediate recovery is not guaranteed.
@@ -64,7 +64,7 @@ Android may redact sensitive notification content before the relay receives it. 
 | Watch installation | Mac with compatible full Xcode, developer mode, development pairing, your Apple signing team |
 | Apple account | Free Personal Team supported; it need not match the watch's account |
 
-The current release discards pre-registration backlog on the first pairing and requests OS-level reconnection for saved peers. Automatic recovery depends on Bluetooth range and watchOS scheduling. [Current release details](docs/RELEASE_WATCH_v0.4.8_EN.md)
+The current release clears old notifications on every reconnection, restarts phone advertising after disconnect, and retains background recovery requests. Recovery still depends on Bluetooth range and watchOS scheduling. [Release details](docs/RELEASE_WATCH_v0.4.9_EN.md)
 
 watchOS suspension, force-quit, runtime budgets, Bluetooth range, Focus, and notification permission affect delivery. Location keepalive can increase battery use. Development signing may expire and require rebuilding. Replies and bidirectional read/delete synchronization are not implemented. Notification text, private keys, device logs, and location coordinates are not published in this repository; location coordinates are not retained or transmitted by keepalive.
 

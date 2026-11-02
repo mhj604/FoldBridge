@@ -15,9 +15,9 @@
 | 항목 | 현재 버전 / 링크 |
 | --- | --- |
 | 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) — 서버 없는 BLE 구성 |
-| Android | **0.5.3-local · 코드 14** / [APK 바로 다운로드](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-Local-0.5.3.apk) |
-| Apple Watch | **0.4.8 · 빌드 22** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
-| 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) · [한글·영어 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-0.4.8-guides-ko-en.zip) |
+| Android | **0.5.4-local · 코드 15** / [APK 바로 다운로드](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-Local-0.5.4.apk) |
+| Apple Watch | **0.4.9 · 빌드 23** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
+| 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) · [한글·영어 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
 | 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
 | 연결이 끊긴 경우 | **[새로고침·문제 해결](docs/TROUBLESHOOTING_KO.md)** |
 
@@ -45,15 +45,15 @@ open watch/FoldBridge.xcodeproj
 
 - 다른 앱의 제목·본문·원본 앱 아이콘을 암호화해 워치로 전달합니다. 모든 앱 전달이 기본이며 앱 선택도 가능합니다.
 - 알림은 워치 **알림 센터**에 표시합니다. FoldBridge 내부에 이전 메시지 목록이나 본문을 따로 보관하지 않습니다.
-- 미전달 알림만 휴대폰에 암호화해 최대 24시간·1,024개 대기시킵니다. 워치가 표시 요청을 수락하면 대기열에서 제거합니다.
-- 첫 신규 워치 등록이 완료되면 그 이전에 쌓인 알림은 비우고, 등록 완료 뒤 게시된 알림부터 전달합니다. 기존 등록의 연결 복구 중에는 미전달 알림을 보존합니다.
+- 미확인 알림은 현재 연결 중에만 메모리에서 재시도합니다. 연결이 끊기면 대기열을 비우고 디스크에 저장하지 않습니다.
+- 최초 등록뿐 아니라 재연결 때도 인증 완료 시점을 기준으로 시작합니다. 그 전에 게시된 알림과 연결이 끊긴 동안의 알림은 나중에 몰아서 보내지 않습니다.
 - 충전율 변경 때 반복되던 Samsung System UI 충전 알림은 기본 제외합니다. **충전 상태 알림**을 켜면 포함합니다.
 - 저장된 등록은 watchOS Core Bluetooth 자동 재연결 요청과 앱 재시도를 함께 사용합니다. Bluetooth 범위를 벗어나 링크가 끊겨도 다시 가까워지면 재연결을 시도합니다. 전파 간섭·전원·OS 실행 제한 때문에 연결 단절이나 복구 지연 자체를 막거나 즉시 복구를 보장할 수는 없습니다.
 - **연결 새로고침**은 정상 연결에서 암호화된 갱신 요청을 보내 기존 연결과 세션을 유지합니다. 연결이 없으면 저장된 상대에 재접속합니다. **지금 동기화**는 이미 연결된 상태에서 미전달 알림을 가져옵니다.
 
 ## 알림 모양과 개인정보 표시
 
-현재 0.4.8은 작은 원본 아이콘과 펼친 본문 배치를 유지합니다. 첫 요약 팝업과 상세 화면의 전체 디자인을 동일하게 만들거나 시스템 아이콘을 알림별로 교체하는 기능은 제공하지 않습니다. 이전 요청의 조사 결과는 [알림 표시 범위](docs/NOTIFICATION_DISPLAY_LIMITS_KO.md)에 기록했습니다.
+현재 0.4.9은 작은 원본 아이콘과 펼친 본문 배치를 유지합니다. 첫 요약 팝업과 상세 화면의 전체 디자인을 동일하게 만들거나 시스템 아이콘을 알림별로 교체하는 기능은 제공하지 않습니다. 이전 요청의 조사 결과는 [알림 표시 범위](docs/NOTIFICATION_DISPLAY_LIMITS_KO.md)에 기록했습니다.
 
 처음 뜨는 팝업과 알림 센터 카드의 시스템 아이콘은 **FoldBridge**입니다. 원본 앱 아이콘이 있으면 **눌러 펼친 본문에만 24pt**로 표시합니다. 원본 아이콘이 없는 알림은 기본 텍스트 화면을 사용합니다.
 

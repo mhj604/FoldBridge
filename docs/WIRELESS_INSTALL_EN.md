@@ -26,7 +26,7 @@ One-time registration:
 
    ```sh
    adb connect PHONE_IP:CONNECT_PORT
-   adb -s PHONE_IP:CONNECT_PORT install -r /absolute/path/to/FoldBridge-Local-0.5.3.apk
+   adb -s PHONE_IP:CONNECT_PORT install -r /absolute/path/to/FoldBridge-Local-0.5.4.apk
    ```
 
 ## Later updates

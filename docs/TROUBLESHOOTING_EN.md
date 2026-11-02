@@ -7,11 +7,11 @@
 1. Enable Bluetooth on both devices and bring them close together. After a reboot, unlock both once.
 2. Press **Refresh connection** on either the phone or watch. You do not need to press both.
 3. On a healthy link, refresh sends an encrypted synchronization request and retains the connection/session. When disconnected, recovery uses the saved peer key.
-4. Once connected, pending notifications synchronize automatically.
+4. Receive notifications posted after the new connection completes. Earlier and offline notifications are not replayed.
 
-Refresh preserves registration and pending items. Allow recovery to proceed instead of repeatedly pressing the button. Watch 0.4.7 removes the previous periodic ping and short background-response disconnects. Service changes rebind the GATT characteristics while preserving a healthy session; actual process restoration authenticates with fresh nonces.
+Refresh preserves registration. Healthy sessions retain their queue; reconnection clears it. Wait for recovery rather than repeatedly pressing the button. Service changes rebind GATT while preserving a healthy session; actual process restoration uses fresh nonces.
 
-Watch 0.4.8 requests Core Bluetooth automatic reconnection for saved peers. When the devices return within range, watchOS and the app retry path attempt recovery, but an immediate link is not guaranteed. The first successful new registration clears older queued alerts; recovery of an already registered peer keeps its pending queue.
+Watch 0.4.9 retains OS automatic reconnection and removes the foreground requirement and 20-second expiry from recovery scanning. Android 0.5.4 resumes advertising after disconnect without closing a healthy GATT server for advertising retries. Radio range, interference, power, and OS scheduling can still cause interruptions or delays.
 
 A locked/background watch needs an OS-retained BLE connection and available watchOS runtime. The phone button cannot unconditionally launch a watch app. If a background-limit message appears or recovery stalls, open FoldBridge on the watch once. Force-quit, Bluetooth off, and being outside range need separate attention. [Background tasks](https://developer.apple.com/documentation/watchkit/using-background-tasks)
 

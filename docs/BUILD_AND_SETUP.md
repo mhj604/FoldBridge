@@ -2,7 +2,7 @@
 
 **한국어** · [English](BUILD_AND_SETUP_EN.md) · [전체 문서](README.md)
 
-현재 배포는 Android `0.5.3-local` / versionCode 14, 워치 `0.4.8` / build 22이다. 처음 사용하는 경우 [빠른 시작](QUICK_START_KO.md)을 먼저 읽는다.
+현재 배포는 Android `0.5.4-local` / versionCode 15, 워치 `0.4.9` / build 23이다. 처음 사용하는 경우 [빠른 시작](QUICK_START_KO.md)을 먼저 읽는다.
 
 ## Android
 
@@ -13,7 +13,7 @@ python3 android/build_android.py \
   --sdk /absolute/path/to/android-sdk \
   --java-home /absolute/path/to/jdk \
   --keystore /absolute/path/to/foldbridge-local.keystore \
-  --output /absolute/path/to/FoldBridge-Local-0.5.3.apk
+  --output /absolute/path/to/FoldBridge-Local-0.5.4.apk
 ```
 
 Gradle 구성도 포함하지만 이 배포 APK는 위 스크립트로 빌드했다.

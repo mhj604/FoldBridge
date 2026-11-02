@@ -36,7 +36,7 @@ AES-256-GCM의 AAD는 `FoldBridge/v1`이다. 휴대폰 nonce prefix는 `FBP1`, �
 
 `notification`에는 Android 알림 키의 해시 ID, 제목/본문의 해시 리비전, 앱 표시명, 제목, 본문, 게시 시각을 넣는다. 최초 양쪽 확인 전에는 전달하지 않는다.
 
-미전달 목록은 암호화해 최대 24시간/1,024개를 보관하고 ID별 최신 리비전으로 대체한다. 한 메시지씩 보내며 앱 ACK를 기다린다. 90초 내 확인이 없으면 최대 3회 시도 후 해당 항목을 다음 깨움/동기화까지 대기시키고 다음 항목을 처리한다. 앱 ACK 지연만으로 BLE 연결을 취소하지 않는다. Android 서비스 시작/알림 접근 재연결 때 현재 알림을 다시 가져온다.
+미확인 목록은 현재 인증된 연결의 메모리에만 최대 24시간/1,024개 유지한다. 한 메시지씩 ACK를 기다리며 90초 간격으로 최대 3회 시도한다. ACK 지연만으로 BLE를 취소하지 않는다. 연결 해제·프로세스 재시작 때 대기열을 비우고, 매 인증 완료 시점을 새로운 게시 시각 기준으로 사용한다. 활성 알림 재수집도 그 시점 이전 항목을 제외하므로 밀린 알림을 재전송하지 않는다.
 
 워치는 표시 권한을 확인한 뒤 로컬 알림을 등록하고 성공 시 ACK한다. 이미 기억하는 동일 리비전은 다시 표시하지 않고 ACK한다. ACK는 표시 요청 수락/기존 수신 기록 확인이며 화면 표시·진동·열람을 보장하지 않는다. 워치는 제목·본문이 담긴 별도 수신함을 저장하지 않는다. 중복 판별용 ID/리비전 해시 512개만 Keychain에 보관한다. 알림 내용은 watchOS 알림 센터에서 관리한다.
 
@@ -71,7 +71,7 @@ watchOS 0.4.3은 캐시된 원본 아이콘이 있는 알림에 `FOLDBRIDGE_COMP
 서비스 무효화 처리는 [Apple CBPeripheralDelegate](https://developer.apple.com/documentation/corebluetooth/cbperipheraldelegate/peripheral(_:didmodifyservices:))를 따른다. 연결 취소는 [Android BluetoothGattServer](https://developer.android.com/reference/android/bluetooth/BluetoothGattServer#cancelConnection(android.bluetooth.BluetoothDevice)) API를 사용한다.
 
 
-## 현재 페어링·복원 (Android 0.5.3 / Watch 0.4.8)
+## 이전 페어링·복원 (Android 0.5.3 / Watch 0.4.8)
 
 - 최초 신규 등록이 완료되는 순간 Android는 기존 대기열을 비우고 암호화 저장소에 게시 시각 cutoff를 저장한다. `NotificationRelay`는 실제 `StatusBarNotification.postTime`을 사용하며, 재시작 뒤 활성 알림 replay도 cutoff 이전 알림을 제외한다. 이미 고정된 상대가 재연결할 때는 대기열을 유지한다.
 - 저장된 상대 연결에는 watchOS 10+의 `CBConnectPeripheralOptionEnableAutoReconnect`를 사용한다. OS가 자동 연결을 진행 중이라고 알리면 워치는 같은 `CBPeripheral`을 유지하고, 다시 연결되면 GATT 특성을 검색하고 새 nonce로 인증한다. Android GATT 광고는 연결 해제 뒤에도 계속 유지한다. 이 동작은 자동 재연결을 요청하지만 Bluetooth 범위·간섭·전원·OS 스케줄링에 따른 끊김이나 지연을 없애지는 않는다.
@@ -88,3 +88,10 @@ watchOS 0.4.3은 캐시된 원본 아이콘이 있는 알림에 `FOLDBRIDGE_COMP
 - 진단에는 프로세스 식별용 임의 값, 연결 단계·카운터·오류 코드만 기록한다. 알림 본문·개인 키·위치 좌표는 기록하지 않는다.
 
 BLE 특성 변경으로 백그라운드 실행 기회를 받는 것은 watchOS가 제어한다. 이 프로토콜은 강제 실행 API나 실행 예산 우회가 아니다. [Apple 백그라운드 작업](https://developer.apple.com/documentation/watchkit/using-background-tasks)
+
+## 현재 연결·전달 (Android 0.5.4 / Watch 0.4.9)
+
+- 최초 등록과 모든 재연결에서 인증 완료 시각을 새 cutoff로 사용한다. 연결 전·중단 중 알림을 수집/복원하지 않고 이전 디스크 outbox를 제거한다. 워치도 이전 세션의 미표시 알림과 지연 표시 콜백을 새 세션으로 넘기지 않는다.
+- Android는 연결 후 광고를 멈추고 끊김 후 같은 GATT 서버에서 다시 시작한다. 광고 실패는 별도로 재시도하며 정상 링크를 닫지 않는다.
+- watchOS 자동 재연결과 서비스 필터 검색을 함께 유지한다. 복구 검색은 전면 상태나 20초 타이머로 중단하지 않는다. 백그라운드 끊김 콜백에서는 앱 타이머를 기다리지 않고 OS에 저장된 상대 연결을 요청한다.
+- 정상 연결의 새로고침은 세션을 유지한다. 물리 단절·전원·OS 실행 제한을 제거하거나 즉시 복구를 보장하지는 않는다.

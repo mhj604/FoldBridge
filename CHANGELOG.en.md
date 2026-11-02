@@ -4,6 +4,14 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.4.9 · build 23 / Android 0.5.4-local · code 15
+
+- Initial registration and every reconnection forward only notifications posted after authentication completes; pre-connection and offline items are not replayed.
+- Retry current-session items in memory only; clear them on disconnect and remove the previous disk outbox. Drop the watch's unscheduled old-session receipts and stale display callbacks.
+- Stop Android advertising when connected and resume it after disconnect without recreating GATT for advertising retries.
+- Retain service-filtered recovery scanning without foreground gating or a 20-second expiry. Background disconnect callbacks submit native reconnect requests immediately; disconnected cached peripherals no longer block recovery.
+- Healthy refresh preserves the session and notification layout is unchanged. [Release details](docs/RELEASE_WATCH_v0.4.9_EN.md)
+
 ## Watch 0.4.7 · build 21 / Android 0.5.2-local · code 13
 
 - Healthy one-sided refresh sends an encrypted update/sync request and retains the link/session.

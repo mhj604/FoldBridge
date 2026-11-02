@@ -2,7 +2,7 @@
 
 **한국어** · [English](QUICK_START_EN.md) · [전체 문서](README.md)
 
-이 문서는 `local-ble` 브랜치의 Android 0.5.3 / watchOS 0.4.8를 기준으로 합니다. 사용 중 알림은 갤럭시와 워치 사이 BLE로 직접 전달됩니다. 서버 주소·아이폰 중계·유료 Push 설정은 필요하지 않습니다.
+이 문서는 `local-ble` 브랜치의 Android 0.5.4 / watchOS 0.4.9를 기준으로 합니다. 사용 중 알림은 갤럭시와 워치 사이 BLE로 직접 전달됩니다. 서버 주소·아이폰 중계·유료 Push 설정은 필요하지 않습니다.
 
 ## 1. 준비하기
 
@@ -24,7 +24,7 @@ cd FoldBridge
 
 ## 3. 갤럭시 앱 설치
 
-1. [배포 APK 바로 다운로드](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-Local-0.5.3.apk) 또는 [Releases](https://github.com/mhj604/FoldBridge/releases)에서 APK를 받습니다. GitHub 파일 화면에서는 Download raw file로 받습니다.
+1. [배포 APK 바로 다운로드](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-Local-0.5.4.apk) 또는 [Releases](https://github.com/mhj604/FoldBridge/releases)에서 APK를 받습니다. GitHub 파일 화면에서는 Download raw file로 받습니다.
 2. APK를 연 앱의 ‘이 출처 허용’이 필요하면 기기 안내에 따라 설치를 진행합니다.
 3. **FoldBridge Local**을 열고 근처 기기와 일반 알림 권한을 허용합니다.
 4. 앱의 **알림 접근 허용**을 누르고 **FoldBridge Local 알림 전달**을 켭니다. 이 권한이 실제 다른 앱의 알림 수집에 필요합니다.
@@ -52,7 +52,7 @@ python3 watch/build_watch.py --team YOUR_TEAM_ID --bundle-id com.yourname.foldbr
 
 ## 5. 처음 한 번 등록
 
-1. 갤럭시에서 **설정 → 새 워치 등록**을 누릅니다. 등록 창은 2분 동안 열립니다. 최초 등록이 성공하면 이 시점 이전에 쌓인 미전달 알림은 비우며, 등록 완료 뒤 새로 게시된 알림부터 전달합니다. 이미 등록된 상대가 연결을 복구할 때는 미전달 알림을 보존합니다.
+1. 갤럭시에서 **설정 → 새 워치 등록**을 누릅니다. 등록 창은 2분 동안 열립니다. 최초 등록과 이후 재연결 모두 인증 완료 뒤 새로 게시된 알림부터 전달합니다. 이전 대기 알림과 연결이 끊긴 동안의 알림은 전달하지 않습니다.
 2. 워치 FoldBridge에서 **휴대폰 연결**을 엽니다. 새 설치는 Local 프로필이 기본입니다. 과거 프로필을 사용했다면 **연결할 앱 선택 → FoldBridge Local**로 바꿉니다.
 3. **휴대폰 찾기**를 누르고 갤럭시를 선택합니다.
 4. 같은 코드가 보일 때만 양쪽에서 **코드가 같아요**를 누릅니다.
@@ -80,7 +80,7 @@ python3 watch/build_watch.py --team YOUR_TEAM_ID --bundle-id com.yourname.foldbr
 - 배포 APK를 사용했다면 같은 저장소의 후속 APK로 업데이트합니다. 기존 앱 삭제는 보통 필요하지 않습니다.
 - 자기 키로 Android 앱을 빌드했다면 이후에도 그 키를 보관해 재사용합니다. 다른 키의 APK로는 기존 앱 위에 업데이트할 수 없습니다. 앱 삭제는 등록과 미전달 데이터 손실을 일으킬 수 있으므로 단순 연결 문제를 해결하려고 삭제하지 마세요.
 - 워치는 기존 Bundle ID와 Team을 유지해 업데이트합니다. 무료 개발용 서명이 만료되면 다시 빌드·설치해야 할 수 있습니다.
-- **연결 새로고침**은 등록 키·필터·미전달 대기열을 유지합니다. **등록 해제**는 다시 코드로 등록하려는 경우에만 사용합니다.
+- **연결 새로고침**은 등록 키·필터를 유지합니다. 정상 연결에서는 현재 연결의 알림을 동기화하고, 재연결이면 이전 대기열을 비웁니다. **등록 해제**는 다시 코드로 등록하려는 경우에만 사용합니다.
 
 민감한 알림 가림과 반복 알림 등은 [문제 해결](TROUBLESHOOTING_KO.md)을 참고하세요.
 

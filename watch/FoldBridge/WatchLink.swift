@@ -165,7 +165,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             guard current == self.epoch, !self.connected,
                   self.peripheral?.state == .connecting else { return }
             // Preserve the OS pending connection while looking for a changed phone address.
-            if self.active { self.startRecoveryScan() }
+            self.startRecoveryScan()
         }
     }
     private func connectionOptions() -> [String: Any]? {
@@ -234,7 +234,11 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         guard switchingFrom == nil, manager.state == .poweredOn else { return }
         if let existing = peripheral {
             if existing.state == .connected, stage == "idle" { beginDiscovery(existing) }
-            return
+            // A disconnected cached object without an OS-owned reconnect used to
+            // make every resume return early, leaving no native pending connection.
+            if existing.state != .disconnected || autoReconnectPending { return }
+            resetSession()
+            connect(PhoneCandidate(peripheral:existing));return
         }
         guard let text = UserDefaults.standard.string(forKey:phoneIDKey), let id = UUID(uuidString:text) else { return }
         if identity == nil { identity = try? WatchStore.identity() }
@@ -249,15 +253,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // A missing OS cache entry must not force the user to register the same phone again.
         // Discovery still authenticates the saved public key before any alert is accepted.
         recoveryScanning = true;scanEpoch += 1
-        let current = scanEpoch
         status = "등록된 휴대폰을 다시 찾는 중"
         manager.scanForPeripherals(withServices:[CBUUID(string:profile.service)],options:nil)
-        DispatchQueue.main.asyncAfter(deadline:.now()+20) {
-            guard current == self.scanEpoch, self.recoveryScanning else { return }
-            self.manager.stopScan();self.recoveryScanning = false
-            self.status = "휴대폰이 가까워지면 다시 연결합니다"
-            if self.active && self.peripheral == nil { self.retryConnection() }
-        }
+        // Leave this service-filtered recovery scan with Core Bluetooth while out
+        // of range. A foreground-only timeout must not remove background discovery.
     }
     private func retryConnection() {
         guard reconnectWork == nil, UserDefaults.standard.string(forKey:phoneIDKey) != nil else { return }
@@ -294,6 +293,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     func centralManager(_ central: CBCentralManager, didConnect p: CBPeripheral) {
         guard p.identifier == peripheral?.identifier else { central.cancelPeripheralConnection(p); return }
+        central.stopScan();recoveryScanning = false;scanEpoch += 1
+        reconnectWork?.cancel();reconnectWork = nil
         autoReconnectPending = false
         guard stage == "idle" else { return }
         beginDiscovery(p)
@@ -341,13 +342,16 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             resetSession(keeping:p)
             autoReconnectPending = true
             status = "휴대폰 연결 복구 중"
+            startRecoveryScan()
             writeDiagnostics()
             return
         }
         resetSession(); status = "휴대폰 연결이 끊겼습니다"
         // Keep short transient losses quick; back off repeated losses rather than
         // hammering Core Bluetooth every second after a system service change.
-        if reconnects <= 1 { reconnect() } else { retryConnection() }
+        // Submit a native pending connect before a background callback returns;
+        // a delayed app timer may not run once watchOS suspends the process.
+        if !active || reconnects <= 1 { reconnect() } else { retryConnection() }
     }
     func peripheral(_ p: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
         guard p === peripheral,
@@ -529,8 +533,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func presentNextReceipt() {
         guard !presentingReceipt, let receipt = pendingReceipts.first else { return }
         presentingReceipt = true
+        let current = epoch
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
+                guard current == self.epoch else { return }
                 self.notificationAllowed = settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional
                 guard self.notificationAllowed else {
                     self.presentingReceipt = false
@@ -542,6 +548,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         }
     }
     private func scheduleReceipt(_ receipt: (alert: WatchAlert, revision: String)) {
+        let current = epoch
         let alert = receipt.alert, revision = receipt.revision
         let content = UNMutableNotificationContent(); content.title = alert.app; content.subtitle = alert.title; content.body = alert.body; content.sound = .default
         // Only a cached icon opts into the finite-width compact long-look.
@@ -554,6 +561,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // previews and shared thumbnails by watchOS. Keep the native text payload.
         UNUserNotificationCenter.current().add(UNNotificationRequest(identifier:alert.id,content:content,trigger:nil)) { error in
             DispatchQueue.main.async {
+                guard current == self.epoch else { return }
                 self.presentingReceipt = false
                 guard self.pendingReceipts.first?.alert.id == alert.id,
                       self.pendingReceipts.first?.revision == revision else { return }
@@ -735,11 +743,15 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         pendingPing = nil; pingSentAt = .distantPast; lastPeerActivity = .distantPast
         peerSupportsLiveness = false; connectionAttemptAt = Date(); lastIncomingActivity = .distantPast
         refreshingServices = false
+        // Notification Center keeps already presented alerts; unscheduled payloads
+        // from an older connection must never be replayed after reconnection.
+        pendingReceipts.removeAll();presentingReceipt = false
     }
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":22,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":23,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,
             "pongCount":pongCount,"remoteRefreshCount":remoteRefreshCount,
