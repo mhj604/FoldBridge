@@ -2,7 +2,7 @@
 
 [한국어](ARCHITECTURE.md) · **English** · [All guides](README.md)
 
-This describes the current Android 0.6.2 / Watch 0.5.5 implementation. The Korean document also preserves older implementation notes; [English milestones](DEVELOPMENT_HISTORY_EN.md) summarize that history.
+This describes the current Android 0.6.3 / Watch 0.5.7 implementation. The Korean document also preserves older implementation notes; [English milestones](DEVELOPMENT_HISTORY_EN.md) summarize that history.
 
 ## Delivery path
 

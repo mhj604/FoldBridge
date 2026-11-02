@@ -10,14 +10,14 @@
 
 ## 바로 시작하기
 
-**[최신 배포 파일](https://github.com/mhj604/FoldBridge/releases)** · **[자주 묻는 질문](docs/FAQ_KO.md)** · **[English setup](docs/QUICK_START_EN.md)**
+**[현재 버전 사용 안내](docs/RELEASE_WATCH_v0.5.7_KO.md)** · **[최신 배포 파일](https://github.com/mhj604/FoldBridge/releases)** · **[자주 묻는 질문](docs/FAQ_KO.md)** · **[English setup](docs/QUICK_START_EN.md)**
 
 | 항목 | 현재 버전 / 링크 |
 | --- | --- |
 | 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) — 서버 없는 BLE 구성 |
 | Android | **0.6.3-local · 코드 19** / [APK 바로 다운로드](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.3.apk) |
 | Apple Watch | **0.5.7 · 빌드 31** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
-| 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) · [한글·영어 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
+| 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) · [이전 0.4.9 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
 | 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
 | 연결이 끊긴 경우 | **[새로고침·문제 해결](docs/TROUBLESHOOTING_KO.md)** |
 
@@ -58,7 +58,7 @@ Android **0.6.3-local** / Watch **0.5.7**에는 **FoldBridge 워치 → BLE → 
 
 ## 알림 모양과 개인정보 표시
 
-현재 0.4.9은 작은 원본 아이콘과 펼친 본문 배치를 유지합니다. 첫 요약 팝업과 상세 화면의 전체 디자인을 동일하게 만들거나 시스템 아이콘을 알림별로 교체하는 기능은 제공하지 않습니다. 이전 요청의 조사 결과는 [알림 표시 범위](docs/NOTIFICATION_DISPLAY_LIMITS_KO.md)에 기록했습니다.
+현재 버전은 0.4.9에서 정리한 작은 원본 아이콘과 펼친 본문 배치를 유지합니다. 첫 요약 팝업과 상세 화면의 전체 디자인을 동일하게 만들거나 시스템 아이콘을 알림별로 교체하는 기능은 제공하지 않습니다. 이전 요청의 조사 결과는 [알림 표시 범위](docs/NOTIFICATION_DISPLAY_LIMITS_KO.md)에 기록했습니다.
 
 처음 뜨는 팝업과 알림 센터 카드의 시스템 아이콘은 **FoldBridge**입니다. 원본 앱 아이콘이 있으면 **눌러 펼친 본문에만 24pt**로 표시합니다. 원본 아이콘이 없는 알림은 기본 텍스트 화면을 사용합니다.
 

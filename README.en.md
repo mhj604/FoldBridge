@@ -10,6 +10,8 @@ Initial Apple Watch setup still requires a paired iPhone. Installing the watch a
 
 ## Start here
 
+**[Current release guide](docs/RELEASE_WATCH_v0.5.7_EN.md)**
+
 | What you need | Download or guide |
 | --- | --- |
 | Android **0.6.3-local · code 19** | [Download APK](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.3.apk) |
@@ -17,7 +19,7 @@ Initial Apple Watch setup still requires a paired iPhone. Installing the watch a
 | First installation | **[Step-by-step setup](docs/QUICK_START_EN.md)** |
 | Common questions | [FAQ](docs/FAQ_EN.md) |
 | Connection or notification problems | [Troubleshooting](docs/TROUBLESHOOTING_EN.md) |
-| Latest downloads and changes | [Releases](https://github.com/mhj604/FoldBridge/releases) · [Korean/English guide ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
+| Latest downloads and changes | [Releases](https://github.com/mhj604/FoldBridge/releases) · [Archived 0.4.9 guide ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
 
 1. Install **FoldBridge Local** on the phone. Grant Nearby devices, notifications, and **notification access** for the relay service.
 2. Open `watch/FoldBridge.xcodeproj` on your Mac. Select your Apple team, a unique Bundle ID, and your physical watch; press **Run**.

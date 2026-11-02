@@ -79,3 +79,7 @@ The Galaxy connection service and Bluetooth must remain enabled. watchOS backgro
 The current Galaxy official widget exposes **Start engine / climate, Lock doors, Turn on hazard lights and Unlock doors**. The watch panel uses the same order and labels. The unsupported Stop button is removed because the bound widget has no engine-stop action. Unlock is labelled as unlocking the doors rather than opening them.
 
 Existing engine, lock and unlock assignments remain when they match the intended function. Hazard lights is a new action and is assigned when exactly one explicit official label matches. Legacy Stop assignments are never transferred to hazard lights. If the corresponding function is absent, the UI reports it rather than choosing an unrelated target. Existing phone widget authorization and selected controls are retained.
+
+## Acknowledgement and dispatch intervals
+
+There is no fixed delay. The notice is acknowledged when detected, then the selected action is sent once the response and a ready catalogue arrive. Catalogue polling uses **one-second intervals**, with a **15-second** preparation deadline from the original tap. A separate **three-second minimum interval** applies between vehicle commands; an early request returns busy and is not queued for later.
