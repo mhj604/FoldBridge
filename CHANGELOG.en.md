@@ -4,6 +4,13 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.2 · build 26 (Android 0.6.0 unchanged)
+
+- Fix the missing-assignment path that opened the app without dispatching a vehicle command. On first use, assign an official action automatically only when exactly one explicit canonical label matches.
+- Ambiguous labels such as a generic start/stop toggle, or missing previous assignments, show an action picker directly on the quick-control screen. Manual assignment does not execute a command.
+- Show specific phone-side states: vehicle controls disabled, widget not bound, no selected actions, and other catalogue conditions.
+- Add catalogue state/count, dispatch phase, and result codes to diagnostics without notification contents, vehicle identifiers, credentials, or control labels.
+
 ## Watch 0.5.1 · build 25 (Android 0.6.0 unchanged)
 
 - Add a WidgetKit vehicle-control extension for Smart Stack and watch faces. Rectangular widgets show Start, Stop, Lock and Unlock; small complications show one selected control.

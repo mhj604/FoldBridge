@@ -239,5 +239,8 @@
   "갤럭시에 연결하고 제어 목록을 확인하는 중입니다.": "Connecting to Galaxy and loading the control list.",
   "갤럭시 연결 또는 제어 목록을 받지 못했습니다. 명령은 보내지 않았습니다.": "Galaxy or its control list was unavailable. No command was sent.",
   "빠른 제어 설정에서 이 버튼에 연결할 마이현대 항목을 지정해 주세요.": "Assign a MyHyundai action to this button in Quick control settings.",
-  "각 빠른 버튼에 연결할 마이현대 항목을 한 번 선택하세요. 위젯에서 누르면 바로 전달됩니다.": "Assign each quick button to a MyHyundai action once. Tapping it in the widget sends it directly."
+  "각 빠른 버튼에 연결할 마이현대 항목을 한 번 선택하세요. 위젯에서 누르면 바로 전달됩니다.": "Assign each quick button to a MyHyundai action once. Tapping it in the widget sends it directly.",
+  "빠른 제어 버튼 연결을 해제했습니다.": "The quick control assignment was removed.",
+  "버튼을 지정했습니다. 위젯에서 다시 누르면 전달됩니다.": "Button assigned. Tap the widget again to send the command.",
+  "아래에서 이 버튼에 연결할 마이현대 항목을 선택하세요. 지정 후 위젯을 다시 누르면 전달됩니다.": "Choose the MyHyundai action for this button below. After assigning it, tap the widget again to send the command."
 }

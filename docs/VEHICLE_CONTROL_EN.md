@@ -64,3 +64,11 @@ For a watch-face complication, touch and hold the face, then choose **Edit → C
 The app opens, restores the Galaxy connection and requests a fresh catalogue. The saved action ID and label must both match before a single dispatch. Missing assignments or changed actions display setup guidance. Failure to obtain the connection/catalogue within 15 seconds cancels the pending tap; it does not execute later. Lost command replies never trigger automatic resend.
 
 Assignments stay on the watch and are scoped to the registered phone. The widget needs no shared storage capability and creates no separate BLE session. Widget text follows the watch system language; app screens use the FoldBridge language preference. MyHyundai authentication and actual vehicle outcome limitations still apply.
+
+### A widget tap opens the app but sends no command (0.5.2)
+
+Adding a widget does not itself assign the underlying vehicle action. Version 0.5.2 automatically assigns a control when exactly one explicit canonical label (such as Start engine, Stop engine, Lock or Unlock) matches the official catalogue. Existing user assignments are never silently overwritten.
+
+Ambiguous or changed actions display a picker directly below the quick-control buttons. Choosing an item stores the assignment only; a subsequent widget tap dispatches it. Disabled phone controls and incomplete widget configuration have distinct guidance.
+
+Receiving a valid official catalogue is not a vehicle-success response. MyHyundai still provides the actual outcome.

@@ -497,6 +497,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
                 parsed.append(VehicleAction(id:id,label:label))
             }
             vehicleRevision = revision; vehicleState = state; vehicleActions = parsed
+            trace("vehicle.catalogue."+state)
             VehicleQuickRouter.shared.catalogueArrived()
             return
         }
@@ -504,6 +505,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             guard let id = message["id"] as? String, id == vehicleRequestID else { return }
             vehicleResult = message["status"] as? String ?? "unavailable"
             vehicleRequestID = nil; vehicleBusy = false
+            trace("vehicle.result."+vehicleResult)
             if vehicleResult == "stale" { requestVehicleControls() }
             return
         }
@@ -792,17 +794,19 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         if vehicleBusy { vehicleResult = "unknown" }
         vehicleRequestID = nil;vehicleBusy = false;vehicleRevision = "";vehicleActions = [];vehicleState = "loading"
     }
+    func noteVehicleQuickEvent(_ event: String) { trace("vehicle.quick."+event) }
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":25,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":26,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,
             "pongCount":pongCount,"remoteRefreshCount":remoteRefreshCount,
             "continuousRequested":continuousRuntime,"notificationAllowed":notificationAllowed,
             "received":receivedCount,"scheduled":scheduledCount,"pendingReceipts":pendingReceipts.count,
-            "lastError":lastError,"backgroundNotice":backgroundNotice]
+            "lastError":lastError,"backgroundNotice":backgroundNotice,
+            "vehicleState":vehicleState,"vehicleActions":vehicleActions.count,"vehicleBusy":vehicleBusy,"vehicleResult":vehicleResult]
         guard let folder = FileManager.default.urls(for:.documentDirectory,in:.userDomainMask).first,
               let data = try? JSONSerialization.data(withJSONObject:state,options:[.sortedKeys]) else { return }
         try? FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true)

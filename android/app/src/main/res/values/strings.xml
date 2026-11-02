@@ -83,6 +83,7 @@
   <string name="text_948fecb37cc203f8" formatted="false">"The pending queue is full. The oldest notification was removed."</string>
   <string name="text_ecc46449252f2f84" formatted="false">"Approaching the background reception limit. Open the app to renew the available opportunities."</string>
   <string name="text_0966c38e1bd49d46" formatted="false">"Select a button"</string>
+  <string name="text_06709aee91547021" formatted="false">"Button assigned. Tap the widget again to send the command."</string>
   <string name="text_7d629f85baf8fab0" formatted="false">"Could not save pending notifications. Live delivery will continue."</string>
   <string name="text_a72fb277f2661472" formatted="false">"Could not send the encrypted message"</string>
   <string name="text_ca6bb2180277f910" formatted="false">"Preparing a secure connection"</string>
@@ -93,6 +94,7 @@
   <string name="text_39d8a73d70a2488f" formatted="false">"Authentication or data validation failed."</string>
   <string name="text_06c476edb91361ec" formatted="false">"Turn on Bluetooth"</string>
   <string name="text_cf40d166f5245e11" formatted="false">"Check Bluetooth and app permissions."</string>
+  <string name="text_68786c846bef4f2e" formatted="false">"The quick control assignment was removed."</string>
   <string name="text_d17b49a452c70f7f" formatted="false">"Quick control settings"</string>
   <string name="text_ffde243be2c39509" formatted="false">"Assign a MyHyundai action to this button in Quick control settings."</string>
   <string name="text_33fd19cf90df27b2" formatted="false">"Forwarding new notifications to your watch."</string>
@@ -108,6 +110,7 @@
   <string name="text_b1f28cd21af730b2" formatted="false">"Start"</string>
   <string name="text_ac2a58826d92e6ae" formatted="false">"Run"</string>
   <string name="text_a5f02f68f216f03b" formatted="false">"Select the buttons to use below. Tapping controls in the official widget can operate the vehicle."</string>
+  <string name="text_dc20bb491cd32fb2" formatted="false">"Choose the MyHyundai action for this button below. After assigning it, tap the widget again to send the command."</string>
   <string name="text_ea254b18045fc705" formatted="false">"None yet"</string>
   <string name="text_12ddd6ca69068faa" formatted="false">"Notifications"</string>
   <string name="text_541f6ceafb3c49bb" formatted="false">"Could not subscribe to notifications."</string>

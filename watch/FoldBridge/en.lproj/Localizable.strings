@@ -82,6 +82,7 @@
 "미전달 보관 한도에 도달해 가장 오래된 알림을 비웠습니다." = "The pending queue is full. The oldest notification was removed.";
 "백그라운드 수신 한도에 가까워졌습니다. 앱을 직접 열면 수신 기회가 갱신됩니다." = "Approaching the background reception limit. Open the app to renew the available opportunities.";
 "버튼 선택 필요" = "Select a button";
+"버튼을 지정했습니다. 위젯에서 다시 누르면 전달됩니다." = "Button assigned. Tap the widget again to send the command.";
 "보류 알림을 저장하지 못했습니다. 현재 연결 전송은 계속됩니다." = "Could not save pending notifications. Live delivery will continue.";
 "보안 메시지 전송 실패" = "Could not send the encrypted message";
 "보안 연결 준비 중" = "Preparing a secure connection";
@@ -92,6 +93,7 @@
 "보안 확인 또는 데이터 검증에 실패했습니다." = "Authentication or data validation failed.";
 "블루투스를 켜세요" = "Turn on Bluetooth";
 "블루투스와 앱 권한을 확인하세요." = "Check Bluetooth and app permissions.";
+"빠른 제어 버튼 연결을 해제했습니다." = "The quick control assignment was removed.";
 "빠른 제어 설정" = "Quick control settings";
 "빠른 제어 설정에서 이 버튼에 연결할 마이현대 항목을 지정해 주세요." = "Assign a MyHyundai action to this button in Quick control settings.";
 "새 알림을 워치로 전달하고 있어요." = "Forwarding new notifications to your watch.";
@@ -107,6 +109,7 @@
 "시작" = "Start";
 "실행" = "Run";
 "아래 목록에서 사용할 버튼만 선택하세요. 위젯의 제어 버튼을 누르면 실제 차량 명령이 실행될 수 있습니다." = "Select the buttons to use below. Tapping controls in the official widget can operate the vehicle.";
+"아래에서 이 버튼에 연결할 마이현대 항목을 선택하세요. 지정 후 위젯을 다시 누르면 전달됩니다." = "Choose the MyHyundai action for this button below. After assigning it, tap the widget again to send the command.";
 "아직 없음" = "None yet";
 "알림" = "Notifications";
 "알림 구독을 시작하지 못했습니다." = "Could not subscribe to notifications.";

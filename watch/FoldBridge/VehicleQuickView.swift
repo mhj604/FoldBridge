@@ -21,6 +21,15 @@ struct VehicleQuickView: View {
                 }
                 if router.waiting || link.vehicleBusy { ProgressView() }
                 if !router.message.isEmpty { Text(language.text(router.message)).font(.caption2).foregroundStyle(.secondary) }
+                if router.needsAssignment, let requested = router.requested {
+                    VStack(alignment:.leading,spacing:6) {
+                        Text(language.text(requested.title)).font(.headline)
+                        ForEach(link.vehicleActions) { action in
+                            Button(action.label) { router.bind(action,to:requested) }
+                                .font(.caption).tint(accent)
+                        }
+                    }
+                }
                 NavigationLink { VehicleQuickSettingsView().environmentObject(link) } label: {
                     Label(language.text("빠른 제어 설정"),systemImage:"slider.horizontal.3")
                 }
