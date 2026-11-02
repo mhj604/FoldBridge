@@ -25,16 +25,20 @@
   <string name="text_b001ac3a6a2c90b6" formatted="false">"FoldBridge 서비스를 찾지 못했습니다."</string>
   <string name="text_36f4140cf55e0caf" formatted="false">"FoldBridge 휴대폰 찾는 중"</string>
   <string name="text_e9647d1bce13188f" formatted="false">"FoldBridge에 연결한 위젯과 버튼 선택만 제거합니다."</string>
+  <string name="text_3d829d862c44532d" formatted="false">"FoldBridge의 Bluetooth 연결로 갤럭시 마이현대 제어 버튼을 실행합니다."</string>
   <string name="text_2d1fb24f511d0c93" formatted="false">"Push 등록 실패. 서명과 Push 설정을 확인하세요."</string>
   <string name="text_ef1b18e8c8833e8c" formatted="false">"Push 토큰 저장 실패"</string>
   <string name="text_7593672a4f9f8b6c" formatted="false">"watchOS 백그라운드 수신 한도에 도달했습니다. 앱을 직접 열어 알림을 동기화하세요."</string>
   <string name="text_a82fe12979182027" formatted="false">"가까이, 더 자연스럽게"</string>
+  <string name="text_8cf6e689229c5f6f" formatted="false">"각 빠른 버튼에 연결할 마이현대 항목을 한 번 선택하세요. 위젯에서 누르면 바로 전달됩니다."</string>
   <string name="text_e65aaae77963d8c1" formatted="false">"갤럭시 FoldBridge에서 워치 차량 제어를 켜 주세요."</string>
   <string name="text_25b05c8856847561" formatted="false">"갤럭시 FoldBridge의 차량 제어 설정에서 마이현대 위젯을 연결해 주세요."</string>
   <string name="text_3066355fd9885267" formatted="false">"갤럭시 마이현대 앱을 설치하고 로그인한 뒤 다시 열어 주세요."</string>
   <string name="text_216835d06a6cc0ef" formatted="false">"갤럭시 마이현대 위젯에 연결됐습니다."</string>
   <string name="text_35a25220cde0ec12" formatted="false">"갤럭시 마이현대 위젯에 전달합니다."</string>
   <string name="text_716368765b57ff7a" formatted="false">"갤럭시 마이현대 위젯의 차량·로그인·인증 설정을 완료해 주세요."</string>
+  <string name="text_698a06b6df956dc0" formatted="false">"갤럭시 연결 또는 제어 목록을 받지 못했습니다. 명령은 보내지 않았습니다."</string>
+  <string name="text_c203433a6e35fd19" formatted="false">"갤럭시에 연결하고 제어 목록을 확인하는 중입니다."</string>
   <string name="text_a1b424d1a4c17033" formatted="false">"갤럭시에서 워치에 표시할 버튼을 선택해 주세요."</string>
   <string name="text_1bafce7586ee0d6b" formatted="false">"갤럭시의 공식 제어 위젯을 워치에 연결합니다."</string>
   <string name="text_63949fcff4278ec5" formatted="false">"갤럭시의 차량 제어 목록을 불러오는 중입니다."</string>
@@ -73,8 +77,12 @@
   <string name="text_5e0d11f523b95051" formatted="false">"먼저 갤럭시와 연결해 주세요."</string>
   <string name="text_382116a060d88c86" formatted="false">"메시지가 너무 크거나 전송할 수 없습니다."</string>
   <string name="text_6545df1e3504ec29" formatted="false">"모든 앱 알림"</string>
+  <string name="text_03ba9816b4a8923b" formatted="false">"모든 차량 제어"</string>
+  <string name="text_ab8425b03153d84a" formatted="false">"문 열기"</string>
+  <string name="text_bee96bc1136efbf8" formatted="false">"문 잠금"</string>
   <string name="text_948fecb37cc203f8" formatted="false">"미전달 보관 한도에 도달해 가장 오래된 알림을 비웠습니다."</string>
   <string name="text_ecc46449252f2f84" formatted="false">"백그라운드 수신 한도에 가까워졌습니다. 앱을 직접 열면 수신 기회가 갱신됩니다."</string>
+  <string name="text_0966c38e1bd49d46" formatted="false">"버튼 선택 필요"</string>
   <string name="text_7d629f85baf8fab0" formatted="false">"보류 알림을 저장하지 못했습니다. 현재 연결 전송은 계속됩니다."</string>
   <string name="text_a72fb277f2661472" formatted="false">"보안 메시지 전송 실패"</string>
   <string name="text_ca6bb2180277f910" formatted="false">"보안 연결 준비 중"</string>
@@ -85,6 +93,8 @@
   <string name="text_39d8a73d70a2488f" formatted="false">"보안 확인 또는 데이터 검증에 실패했습니다."</string>
   <string name="text_06c476edb91361ec" formatted="false">"블루투스를 켜세요"</string>
   <string name="text_cf40d166f5245e11" formatted="false">"블루투스와 앱 권한을 확인하세요."</string>
+  <string name="text_d17b49a452c70f7f" formatted="false">"빠른 제어 설정"</string>
+  <string name="text_ffde243be2c39509" formatted="false">"빠른 제어 설정에서 이 버튼에 연결할 마이현대 항목을 지정해 주세요."</string>
   <string name="text_33fd19cf90df27b2" formatted="false">"새 알림을 워치로 전달하고 있어요."</string>
   <string name="text_5bde3b7f9937aafb" formatted="false">"새 워치 등록"</string>
   <string name="text_79edb556943a3ab1" formatted="false">"선택한 앱만 전달"</string>
@@ -92,6 +102,8 @@
   <string name="text_291572f8cbcf5bb9" formatted="false">"설정을 확인해 주세요: "</string>
   <string name="text_cef4d8ab741c76bf" formatted="false">"수신"</string>
   <string name="text_6bbeb44e673fe476" formatted="false">"수신 확인"</string>
+  <string name="text_48143d7a01533441" formatted="false">"시동"</string>
+  <string name="text_22b259cb4ad7df67" formatted="false">"시동·정지·문 잠금·문 열기를 워치에서 바로 실행합니다."</string>
   <string name="text_d87ab725df97a39a" formatted="false">"시스템 설정"</string>
   <string name="text_b1f28cd21af730b2" formatted="false">"시작"</string>
   <string name="text_ac2a58826d92e6ae" formatted="false">"실행"</string>
@@ -174,6 +186,7 @@
   <string name="text_38cfb48d915d6347" formatted="false">"인증 또는 데이터 검증 실패"</string>
   <string name="text_35d2d9890840a5e3" formatted="false">"인증 시간이 만료됐습니다."</string>
   <string name="text_ca345af930d30407" formatted="false">"작은 제어 위젯"</string>
+  <string name="text_c000bd69acd75944" formatted="false">"작은 컴플리케이션에서 사용할 차량 버튼을 선택합니다."</string>
   <string name="text_5fb926229090001c" formatted="false">"저장"</string>
   <string name="text_ae94ec51b2c23b4f" formatted="false">"저장 실패"</string>
   <string name="text_831a5eceed197cc8" formatted="false">"저장된 연결 정보를 읽을 수 없습니다. 연결을 해제하고 다시 등록하세요."</string>
@@ -182,15 +195,19 @@
   <string name="text_2fd0e24920c060b9" formatted="false">"전달할 앱 선택"</string>
   <string name="text_af3559aead5c30ea" formatted="false">"전송 메시지가 너무 큽니다."</string>
   <string name="text_dce684564c3c893f" formatted="false">"전체 제어 위젯"</string>
+  <string name="text_7a39039ca2ca3a32" formatted="false">"정지"</string>
   <string name="text_ad573a7e4fff31fd" formatted="false">"제어 목록 새로고침"</string>
   <string name="text_a033e8398f8c1834" formatted="false">"제어 목록이 바뀌었습니다. 새 목록에서 다시 선택해 주세요."</string>
   <string name="text_8589f9cade7cef7b" formatted="false">"중간 제어 위젯"</string>
   <string name="text_1398a6b1f8a12d2f" formatted="false">"중복 알림 방지 상태를 저장하지 못했습니다."</string>
   <string name="text_1fc7b158412783a0" formatted="false">"중지됨"</string>
   <string name="text_8e2f0cbc8282e961" formatted="false">"지금 동기화"</string>
+  <string name="text_2662d22ae20b28bb" formatted="false">"차량 버튼"</string>
+  <string name="text_b0991819b637b1aa" formatted="false">"차량 빠른 제어"</string>
   <string name="text_7d6e8ce74912828e" formatted="false">"차량 제어"</string>
   <string name="text_8240dd0b41e6ac0a" formatted="false">"차량 제어 설정"</string>
   <string name="text_9c77a0008eefc743" formatted="false">"차량 제어 연결 해제"</string>
+  <string name="text_8ae81e81bde031d5" formatted="false">"차량 제어 위젯"</string>
   <string name="text_9b7d7c773e1744cc" formatted="false">"처음 연결하는 워치인가요?"</string>
   <string name="text_23466026b7f56424" formatted="false">"충전 상태 알림"</string>
   <string name="text_6b725729acdad283" formatted="false">"충전율이 바뀔 때도 알려줍니다"</string>

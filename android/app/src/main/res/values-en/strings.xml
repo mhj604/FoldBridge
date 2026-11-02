@@ -25,16 +25,20 @@
   <string name="text_b001ac3a6a2c90b6" formatted="false">"Could not find the FoldBridge service."</string>
   <string name="text_36f4140cf55e0caf" formatted="false">"Looking for a FoldBridge phone"</string>
   <string name="text_e9647d1bce13188f" formatted="false">"Remove the widget binding and button selections from FoldBridge."</string>
+  <string name="text_3d829d862c44532d" formatted="false">"Run a Galaxy MyHyundai control using the FoldBridge Bluetooth connection."</string>
   <string name="text_2d1fb24f511d0c93" formatted="false">"Push registration failed. Check signing and Push settings."</string>
   <string name="text_ef1b18e8c8833e8c" formatted="false">"Could not save the Push token"</string>
   <string name="text_7593672a4f9f8b6c" formatted="false">"The watchOS background reception limit has been reached. Open the app to sync notifications."</string>
   <string name="text_a82fe12979182027" formatted="false">"Closer, naturally"</string>
+  <string name="text_8cf6e689229c5f6f" formatted="false">"Assign each quick button to a MyHyundai action once. Tapping it in the widget sends it directly."</string>
   <string name="text_e65aaae77963d8c1" formatted="false">"Enable watch vehicle controls in FoldBridge on the Galaxy."</string>
   <string name="text_25b05c8856847561" formatted="false">"Connect a MyHyundai widget in FoldBridge vehicle settings on the Galaxy."</string>
   <string name="text_3066355fd9885267" formatted="false">"Install MyHyundai on the Galaxy, sign in, and reopen this screen."</string>
   <string name="text_216835d06a6cc0ef" formatted="false">"Connected to the Galaxy MyHyundai widget."</string>
   <string name="text_35a25220cde0ec12" formatted="false">"Dispatch this button to the Galaxy MyHyundai widget."</string>
   <string name="text_716368765b57ff7a" formatted="false">"Complete vehicle selection, sign-in, and authentication in the Galaxy MyHyundai widget."</string>
+  <string name="text_698a06b6df956dc0" formatted="false">"Galaxy or its control list was unavailable. No command was sent."</string>
+  <string name="text_c203433a6e35fd19" formatted="false">"Connecting to Galaxy and loading the control list."</string>
   <string name="text_a1b424d1a4c17033" formatted="false">"On the Galaxy, choose the buttons to show on the watch."</string>
   <string name="text_1bafce7586ee0d6b" formatted="false">"Connect the official Galaxy control widget to your watch."</string>
   <string name="text_63949fcff4278ec5" formatted="false">"Loading vehicle controls from the Galaxy."</string>
@@ -73,8 +77,12 @@
   <string name="text_5e0d11f523b95051" formatted="false">"Connect to your Galaxy first."</string>
   <string name="text_382116a060d88c86" formatted="false">"The message is too large or could not be sent."</string>
   <string name="text_6545df1e3504ec29" formatted="false">"All app notifications"</string>
+  <string name="text_03ba9816b4a8923b" formatted="false">"All vehicle controls"</string>
+  <string name="text_ab8425b03153d84a" formatted="false">"Unlock"</string>
+  <string name="text_bee96bc1136efbf8" formatted="false">"Lock"</string>
   <string name="text_948fecb37cc203f8" formatted="false">"The pending queue is full. The oldest notification was removed."</string>
   <string name="text_ecc46449252f2f84" formatted="false">"Approaching the background reception limit. Open the app to renew the available opportunities."</string>
+  <string name="text_0966c38e1bd49d46" formatted="false">"Select a button"</string>
   <string name="text_7d629f85baf8fab0" formatted="false">"Could not save pending notifications. Live delivery will continue."</string>
   <string name="text_a72fb277f2661472" formatted="false">"Could not send the encrypted message"</string>
   <string name="text_ca6bb2180277f910" formatted="false">"Preparing a secure connection"</string>
@@ -85,6 +93,8 @@
   <string name="text_39d8a73d70a2488f" formatted="false">"Authentication or data validation failed."</string>
   <string name="text_06c476edb91361ec" formatted="false">"Turn on Bluetooth"</string>
   <string name="text_cf40d166f5245e11" formatted="false">"Check Bluetooth and app permissions."</string>
+  <string name="text_d17b49a452c70f7f" formatted="false">"Quick control settings"</string>
+  <string name="text_ffde243be2c39509" formatted="false">"Assign a MyHyundai action to this button in Quick control settings."</string>
   <string name="text_33fd19cf90df27b2" formatted="false">"Forwarding new notifications to your watch."</string>
   <string name="text_5bde3b7f9937aafb" formatted="false">"Pair a new watch"</string>
   <string name="text_79edb556943a3ab1" formatted="false">"Choose apps to forward"</string>
@@ -92,6 +102,8 @@
   <string name="text_291572f8cbcf5bb9" formatted="false">"Check your settings: "</string>
   <string name="text_cef4d8ab741c76bf" formatted="false">"Received"</string>
   <string name="text_6bbeb44e673fe476" formatted="false">"Confirmed"</string>
+  <string name="text_48143d7a01533441" formatted="false">"Start"</string>
+  <string name="text_22b259cb4ad7df67" formatted="false">"Run start, stop, lock and unlock controls directly from your watch."</string>
   <string name="text_d87ab725df97a39a" formatted="false">"System default"</string>
   <string name="text_b1f28cd21af730b2" formatted="false">"Start"</string>
   <string name="text_ac2a58826d92e6ae" formatted="false">"Run"</string>
@@ -174,6 +186,7 @@
   <string name="text_38cfb48d915d6347" formatted="false">"Authentication or data validation failed"</string>
   <string name="text_35d2d9890840a5e3" formatted="false">"Authentication timed out."</string>
   <string name="text_ca345af930d30407" formatted="false">"Small control widget"</string>
+  <string name="text_c000bd69acd75944" formatted="false">"Choose the vehicle button for a small complication."</string>
   <string name="text_5fb926229090001c" formatted="false">"Save"</string>
   <string name="text_ae94ec51b2c23b4f" formatted="false">"Could not save"</string>
   <string name="text_831a5eceed197cc8" formatted="false">"Could not read the saved connection. Unpair and pair again."</string>
@@ -182,15 +195,19 @@
   <string name="text_2fd0e24920c060b9" formatted="false">"Choose apps"</string>
   <string name="text_af3559aead5c30ea" formatted="false">"The message is too large to send."</string>
   <string name="text_dce684564c3c893f" formatted="false">"Full control widget"</string>
+  <string name="text_7a39039ca2ca3a32" formatted="false">"Stop"</string>
   <string name="text_ad573a7e4fff31fd" formatted="false">"Refresh control list"</string>
   <string name="text_a033e8398f8c1834" formatted="false">"The control list changed. Choose again from the updated list."</string>
   <string name="text_8589f9cade7cef7b" formatted="false">"Medium control widget"</string>
   <string name="text_1398a6b1f8a12d2f" formatted="false">"Could not save duplicate-notification tracking."</string>
   <string name="text_1fc7b158412783a0" formatted="false">"Stopped"</string>
   <string name="text_8e2f0cbc8282e961" formatted="false">"Sync now"</string>
+  <string name="text_2662d22ae20b28bb" formatted="false">"Vehicle button"</string>
+  <string name="text_b0991819b637b1aa" formatted="false">"Quick vehicle control"</string>
   <string name="text_7d6e8ce74912828e" formatted="false">"Vehicle controls"</string>
   <string name="text_8240dd0b41e6ac0a" formatted="false">"Vehicle control settings"</string>
   <string name="text_9c77a0008eefc743" formatted="false">"Disconnect vehicle controls"</string>
+  <string name="text_8ae81e81bde031d5" formatted="false">"Vehicle controls widget"</string>
   <string name="text_9b7d7c773e1744cc" formatted="false">"Pairing a watch for the first time?"</string>
   <string name="text_23466026b7f56424" formatted="false">"Charging status alerts"</string>
   <string name="text_6b725729acdad283" formatted="false">"Include battery charging updates"</string>

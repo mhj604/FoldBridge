@@ -222,5 +222,22 @@
   "제어 목록 새로고침": "Refresh control list",
   "마이현대가 휴대폰 인증을 요구하면 갤럭시에서 완료해 주세요.": "Complete authentication on the Galaxy if MyHyundai requests it.",
   "갤럭시 마이현대 위젯에 전달합니다.": "Dispatch this button to the Galaxy MyHyundai widget.",
-  "실행": "Run"
+  "실행": "Run",
+  "차량 버튼": "Vehicle button",
+  "시동": "Start",
+  "정지": "Stop",
+  "문 잠금": "Lock",
+  "문 열기": "Unlock",
+  "차량 빠른 제어": "Quick vehicle control",
+  "FoldBridge의 Bluetooth 연결로 갤럭시 마이현대 제어 버튼을 실행합니다.": "Run a Galaxy MyHyundai control using the FoldBridge Bluetooth connection.",
+  "차량 제어 위젯": "Vehicle controls widget",
+  "작은 컴플리케이션에서 사용할 차량 버튼을 선택합니다.": "Choose the vehicle button for a small complication.",
+  "시동·정지·문 잠금·문 열기를 워치에서 바로 실행합니다.": "Run start, stop, lock and unlock controls directly from your watch.",
+  "빠른 제어 설정": "Quick control settings",
+  "모든 차량 제어": "All vehicle controls",
+  "버튼 선택 필요": "Select a button",
+  "갤럭시에 연결하고 제어 목록을 확인하는 중입니다.": "Connecting to Galaxy and loading the control list.",
+  "갤럭시 연결 또는 제어 목록을 받지 못했습니다. 명령은 보내지 않았습니다.": "Galaxy or its control list was unavailable. No command was sent.",
+  "빠른 제어 설정에서 이 버튼에 연결할 마이현대 항목을 지정해 주세요.": "Assign a MyHyundai action to this button in Quick control settings.",
+  "각 빠른 버튼에 연결할 마이현대 항목을 한 번 선택하세요. 위젯에서 누르면 바로 전달됩니다.": "Assign each quick button to a MyHyundai action once. Tapping it in the widget sends it directly."
 }

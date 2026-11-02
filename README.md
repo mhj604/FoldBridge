@@ -15,8 +15,8 @@
 | 항목 | 현재 버전 / 링크 |
 | --- | --- |
 | 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) — 서버 없는 BLE 구성 |
-| Android | **0.5.4-local · 코드 15** / [APK 바로 다운로드](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-Local-0.5.4.apk) |
-| Apple Watch | **0.4.9 · 빌드 23** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
+| Android | **0.6.0-local · 코드 16** / [APK 바로 다운로드](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.0.apk) |
+| Apple Watch | **0.5.1 · 빌드 25** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
 | 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) · [한글·영어 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
 | 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
 | 연결이 끊긴 경우 | **[새로고침·문제 해결](docs/TROUBLESHOOTING_KO.md)** |
@@ -38,7 +38,7 @@ open watch/FoldBridge.xcodeproj
 
 ## 갤럭시를 통한 마이현대 차량 제어
 
-Android **0.6.0-local** / Watch **0.5.0**에는 **FoldBridge 워치 → BLE → 갤럭시 공식 마이현대 위젯** 연결 기능이 추가되었습니다. 기존 워치 마이현대의 아이폰 연동을 변경하지 않습니다. 갤럭시에서 위젯을 연결하고 표시할 버튼을 선택한 후 워치의 **차량 제어**를 사용합니다. 실제 차량 서비스에는 인터넷과 마이현대 인증이 필요하며 위젯 호출은 차량 성공 응답과 다릅니다. **[설정과 동작 범위](docs/VEHICLE_CONTROL_KO.md)** · [0.6.0 APK](artifacts/android/FoldBridge-Local-0.6.0.apk)
+Android **0.6.0-local** / Watch **0.5.1**에는 **FoldBridge 워치 → BLE → 갤럭시 공식 마이현대 위젯** 연결 기능이 추가되었습니다. 기존 워치 마이현대의 아이폰 연동을 변경하지 않습니다. 갤럭시에서 위젯을 연결하고 표시할 버튼을 선택한 후 워치의 **차량 제어**를 사용합니다. **스마트 스택 위젯·시계 페이스 버튼**에서 한 번 누르면 앱이 자동으로 열려 지정한 명령을 전달합니다. 실제 차량 서비스에는 인터넷과 마이현대 인증이 필요하며 위젯 호출은 차량 성공 응답과 다릅니다. **[설정과 동작 범위](docs/VEHICLE_CONTROL_KO.md)** · [0.6.0 APK](artifacts/android/FoldBridge-Local-0.6.0.apk)
 
 ## 한국어 / English 전환
 

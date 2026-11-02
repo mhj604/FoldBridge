@@ -497,6 +497,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
                 parsed.append(VehicleAction(id:id,label:label))
             }
             vehicleRevision = revision; vehicleState = state; vehicleActions = parsed
+            VehicleQuickRouter.shared.catalogueArrived()
             return
         }
         if event == "vehicle_result" {
@@ -794,7 +795,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":24,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":25,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,

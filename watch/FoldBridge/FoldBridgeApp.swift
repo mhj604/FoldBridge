@@ -116,9 +116,14 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var link = WatchLink.shared
     @StateObject private var language = AppLanguage.shared
+    @StateObject private var vehicleQuick = VehicleQuickRouter.shared
     var body: some Scene {
         WindowGroup { ContentView().environmentObject(link).environmentObject(language)
-            .environment(\.locale,language.locale).onAppear {
+            .environment(\.locale,language.locale)
+            .sheet(isPresented:$vehicleQuick.presented,onDismiss:{vehicleQuick.cancelPending()}) {
+                NavigationStack { VehicleQuickView().environmentObject(link).environmentObject(language) }
+                    .environment(\.locale,language.locale)
+            }.onAppear {
             link.setActive(scenePhase == .active)
             if scenePhase == .active { LocationKeepAlive.shared.resumeIfRequested() }
         }.onChange(of:scenePhase) { phase in
@@ -138,6 +143,7 @@ struct ContentView: View {
     @EnvironmentObject var language: AppLanguage
     @EnvironmentObject var link: WatchLink
     @StateObject private var keepAlive = LocationKeepAlive.shared
+    private func vehicleQuickMenu() { VehicleQuickRouter.shared.presented = true }
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -165,7 +171,7 @@ struct ContentView: View {
                     }.frame(maxWidth:.infinity).padding(.vertical,22).padding(.horizontal,10)
                         .background(BridgeStyle.surface,in:RoundedRectangle(cornerRadius:18))
                     if link.profile == .local {
-                        NavigationLink { VehicleControlView().environmentObject(link) } label: {
+                        Button { vehicleQuickMenu() } label: {
                             Label(language.text("차량 제어"),systemImage:"car.fill")
                         }.tint(BridgeStyle.accent)
                     }
@@ -226,7 +232,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button(language.text("휴대폰 등록 해제"),role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.5.0").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.5.1").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle(language.text("설정"))
             .confirmationDialog(language.text("연결 유지를 시작할까요?"),isPresented:$startingLocation,titleVisibility:.visible) {

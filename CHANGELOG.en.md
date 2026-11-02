@@ -4,6 +4,13 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.1 · build 25 (Android 0.6.0 unchanged)
+
+- Add a WidgetKit vehicle-control extension for Smart Stack and watch faces. Rectangular widgets show Start, Stop, Lock and Unlock; small complications show one selected control.
+- A tap automatically foregrounds the app, obtains a fresh catalogue over its existing BLE connection, and dispatches the assigned action once.
+- Assign official actions once in watch Quick control settings. A 15-second connection/catalogue timeout cancels the tap without delayed execution or automatic command resend.
+- No App Group capability or separate widget BLE session is required. [Widget setup](docs/VEHICLE_CONTROL_EN.md#smart-stack-widget-and-watch-face-buttons-watch-051--build-25)
+
 ## Watch 0.5.0 · build 24 / Android 0.6.0-local · code 16
 
 - Add FoldBridge watch vehicle controls and owner-authorized hosting of the official Korean MyHyundai widget on Galaxy.

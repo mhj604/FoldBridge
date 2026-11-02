@@ -40,3 +40,27 @@ Lost BLE responses and the 30-second reply timeout never automatically retry a v
 - Stale catalogue: refresh the control list on the watch.
 
 No automated test operates a vehicle. This implementation provides the official-widget bridge; it is not evidence of successful vehicle actuation or compatibility with every MyHyundai version.
+
+## Smart Stack widget and watch-face buttons (Watch 0.5.1 / build 25)
+
+Requires watchOS 11+. The rectangular widget has **Start, Stop, Lock and Unlock** buttons; smaller complications display one selected action. Tapping a button automatically brings FoldBridge to the foreground and dispatches the command. You do not navigate through the app list or menus; this is not invisible background execution.
+
+### Assign controls once
+
+1. Open watch **FoldBridge → Vehicle controls → Quick control settings**.
+2. Assign each quick button to its corresponding official MyHyundai action. Assignment itself sends no vehicle command.
+3. Only actions exposed by the phone are available. Complete phone widget setup first if an action is absent.
+
+### Add the widget
+
+1. Turn the Digital Crown from the watch face to open Smart Stack.
+2. Touch and hold the widget area; choose **+ → FoldBridge → Vehicle controls**.
+3. Pin it for convenient access. Tap the desired control once to dispatch through the assigned official widget button.
+
+For a watch-face complication, touch and hold the face, then choose **Edit → Complications → FoldBridge vehicle controls**. Choose Start, Stop, Lock or Unlock for a small slot. Available slots vary by face.
+
+### Dispatch behavior
+
+The app opens, restores the Galaxy connection and requests a fresh catalogue. The saved action ID and label must both match before a single dispatch. Missing assignments or changed actions display setup guidance. Failure to obtain the connection/catalogue within 15 seconds cancels the pending tap; it does not execute later. Lost command replies never trigger automatic resend.
+
+Assignments stay on the watch and are scoped to the registered phone. The widget needs no shared storage capability and creates no separate BLE session. Widget text follows the watch system language; app screens use the FoldBridge language preference. MyHyundai authentication and actual vehicle outcome limitations still apply.
