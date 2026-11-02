@@ -18,6 +18,7 @@ public final class VehicleSettingsActivity extends Activity {
     private FrameLayout widget;
     private LinearLayout actions;
     private Switch enabled;
+    private Button recover;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final Runnable observer=()->handler.post(this::render);
     private String t(String value){return I18n.t(this,value);}
@@ -36,6 +37,8 @@ public final class VehicleSettingsActivity extends Activity {
         status=addText(root,"",14);
         addButton(root,"마이현대 위젯 연결",this::chooseProvider);
         addButton(root,"위젯 차량·인증 설정",()->configure(bridge.widgetID(),false));
+        recover=new Button(this);recover.setText(t("안내 닫고 버튼 복구"));
+        recover.setOnClickListener(v->bridge.dismissNotice());root.addView(recover,new LinearLayout.LayoutParams(-1,dp(52)));
         addText(root,"공식 위젯",16);
         widget=new FrameLayout(this);root.addView(widget,new LinearLayout.LayoutParams(-1,dp(260)));
         addText(root,"워치에 표시할 버튼",17);
@@ -92,9 +95,13 @@ public final class VehicleSettingsActivity extends Activity {
             case "disabled"->"워치 차량 제어가 꺼져 있습니다.";
             case "needs_widget"->"마이현대 제어 위젯을 연결해 주세요.";
             case "choose_buttons"->"워치에서 사용할 버튼을 선택해 주세요.";
-            case "loading"->"마이현대 위젯을 불러오는 중입니다.";
-            default->"마이현대 위젯에서 차량·로그인·인증 설정을 완료해 주세요. 인식 가능한 제어 버튼이 아직 없습니다.";
+            case "result_pending"->"마이현대의 이전 요청 안내가 버튼을 가리고 있습니다. 안내를 닫고 다시 선택해 주세요.";
+            case "loading"->"마이현대 위젯을 갱신하는 중입니다.";
+            case "busy"->"마이현대 위젯이 앞선 요청을 처리 중입니다. 잠시 후 다시 눌러 주세요.";
+            case "auth_required"->"마이현대 위젯에 인증 요청이 표시되었습니다. 갤럭시에서 완료해 주세요.";
+            default->"마이현대 위젯의 제어 버튼을 읽지 못했습니다. 위젯을 다시 불러오거나 갤럭시 위젯 화면을 확인해 주세요.";
         };
+        recover.setVisibility("result_pending".equals(bridge.status())?View.VISIBLE:View.GONE);
         status.setText(t(message));AppWidgetHostView hosted=bridge.widgetView();
         if(hosted!=null&&hosted.getParent()!=widget){
             if(hosted.getParent() instanceof ViewGroup parent)parent.removeView(hosted);

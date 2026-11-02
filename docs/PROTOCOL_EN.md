@@ -75,3 +75,7 @@ Use only the existing authenticated encrypted channel.
 | `vehicle_result` | Phone → watch | Request `id`, `status` |
 
 The catalogue contains at most 12 owner-selected labelled official widget controls. The phone requires an enabled current selection and revision, stores the request ID, then invokes the widget once. The last 64 IDs suppress duplicates. Minimum dispatch spacing is 3 seconds. `widget_invoked` reports widget invocation, not vehicle success. Other results are `duplicate`, `invalid`, `not_ready`, `stale`, `busy`, and `unavailable`. The watch marks an unanswered request unknown after 30 seconds without automatic resend. Reconnection does not restore pending vehicle commands.
+
+### Dismiss a result notice (Android 0.6.1 / Watch 0.5.3)
+
+Catalogue statuses distinguish `loading`, `busy`, `auth_required`, `result_pending` and `no_controls`. The observed previous-request-incomplete notice with a unique OK button yields `result_pending`. An explicit recovery tap sends the existing `vehicle_command` envelope with `action:"dismiss_notice"`, the current revision and a new UUID. The phone invokes only that acknowledgement once and returns `notice_dismissed`; the watch requests a fresh catalogue. This does not dispatch a vehicle command. A subsequent vehicle action requires a separate tap.

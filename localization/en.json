@@ -242,5 +242,15 @@
   "각 빠른 버튼에 연결할 마이현대 항목을 한 번 선택하세요. 위젯에서 누르면 바로 전달됩니다.": "Assign each quick button to a MyHyundai action once. Tapping it in the widget sends it directly.",
   "빠른 제어 버튼 연결을 해제했습니다.": "The quick control assignment was removed.",
   "버튼을 지정했습니다. 위젯에서 다시 누르면 전달됩니다.": "Button assigned. Tap the widget again to send the command.",
-  "아래에서 이 버튼에 연결할 마이현대 항목을 선택하세요. 지정 후 위젯을 다시 누르면 전달됩니다.": "Choose the MyHyundai action for this button below. After assigning it, tap the widget again to send the command."
+  "아래에서 이 버튼에 연결할 마이현대 항목을 선택하세요. 지정 후 위젯을 다시 누르면 전달됩니다.": "Choose the MyHyundai action for this button below. After assigning it, tap the widget again to send the command.",
+  "마이현대 위젯을 갱신하는 중입니다.": "Refreshing the MyHyundai widget.",
+  "마이현대 위젯을 갱신하는 중입니다. 잠시 후 다시 눌러 주세요.": "Refreshing the MyHyundai widget. Try the button again shortly.",
+  "마이현대 위젯이 앞선 요청을 처리 중입니다. 잠시 후 다시 눌러 주세요.": "MyHyundai is processing the previous request. Try the button again shortly.",
+  "마이현대 위젯에 인증 요청이 표시되었습니다. 갤럭시에서 완료해 주세요.": "The MyHyundai widget is requesting authentication. Complete it on Galaxy.",
+  "마이현대 위젯의 제어 버튼을 읽지 못했습니다. 갤럭시 위젯 화면을 확인해 주세요.": "Unable to read the MyHyundai controls. Check the widget on Galaxy.",
+  "마이현대 위젯의 제어 버튼을 읽지 못했습니다. 위젯을 다시 불러오거나 갤럭시 위젯 화면을 확인해 주세요.": "Unable to read the MyHyundai controls. Reload the widget or check it on Galaxy.",
+  "마이현대 위젯이 준비됐습니다. 원하는 버튼을 다시 눌러 주세요.": "The MyHyundai widget is ready. Tap the desired button again.",
+  "안내 닫고 버튼 복구": "Dismiss notice and restore controls",
+  "마이현대의 이전 요청 안내가 버튼을 가리고 있습니다. 안내를 닫고 다시 선택해 주세요.": "A MyHyundai notice about the previous request is hiding the controls. Dismiss it, then choose your control again.",
+  "안내를 닫았습니다. 원하는 차량 버튼을 다시 눌러 주세요.": "Notice dismissed. Tap the vehicle control you want again."
 }

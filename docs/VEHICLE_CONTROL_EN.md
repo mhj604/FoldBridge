@@ -35,7 +35,8 @@ Lost BLE responses and the 30-second reply timeout never automatically retry a v
 
 - Disabled: turn on Watch vehicle controls on the phone.
 - Widget needed: bind an official MyHyundai widget.
-- No controls/authentication required: finish widget configuration. Unlabelled controls or changed widget structures may be unsupported.
+- Authentication required: complete the explicit prompt shown by the official widget on Galaxy.
+- No controls: check whether a result notice is hiding the controls. An empty catalogue alone does not imply lost login. Unlabelled controls or a changed widget structure may also be unsupported.
 - Selection required: choose items in the phone's checkbox list.
 - Stale catalogue: refresh the control list on the watch.
 
@@ -72,3 +73,13 @@ Adding a widget does not itself assign the underlying vehicle action. Version 0.
 Ambiguous or changed actions display a picker directly below the quick-control buttons. Choosing an item stores the assignment only; a subsequent widget tap dispatches it. Disabled phone controls and incomplete widget configuration have distinct guidance.
 
 Receiving a valid official catalogue is not a vehicle-success response. MyHyundai still provides the actual outcome.
+
+## Previous-request notice hides controls (Android 0.6.1 / Watch 0.5.3)
+
+Recommended versions: Android **0.6.1-local / code 17**, Watch **0.5.3 / build 27**. After an initial operation, the official Korean MyHyundai widget was observed showing a notice that the previous remote-service request had not completed, with only a **확인** (OK) button. This hid the controls without indicating a lost login. The owner dismissed that notice and the controls returned.
+
+1. In watch quick controls or all vehicle controls, choose **Dismiss notice and restore controls**. It is also available in the Galaxy vehicle settings.
+2. FoldBridge invokes the current official widget's acknowledgement once, only when this specific notice and a unique OK button are recognized. It does not handle generic vehicle-operation confirmations or authentication dialogs.
+3. After receiving the restored catalogue, tap the desired vehicle control again. Dismissal does not repeat the previous command or execute a blocked request later.
+
+Other notices should be read in the official Galaxy widget. Wait while processing, and complete explicit authentication prompts on the phone. Widget invocation remains distinct from actual vehicle success. No vehicle command was executed while developing this correction.

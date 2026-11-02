@@ -68,12 +68,20 @@
   <string name="text_65e168f9dc077c49" formatted="false">"Unpair watch"</string>
   <string name="text_6120b8ead5e4cd43" formatted="false">"Could not open MyHyundai widget settings."</string>
   <string name="text_617dac2b68ed6657" formatted="false">"Connect MyHyundai widget"</string>
+  <string name="text_15a8c2e4e1334de1" formatted="false">"The MyHyundai widget is requesting authentication. Complete it on Galaxy."</string>
   <string name="text_a34b58487d8d0b71" formatted="false">"Invoked the MyHyundai widget. Check MyHyundai notifications for the actual vehicle result."</string>
   <string name="text_41da860e6463524d" formatted="false">"Complete vehicle selection, sign-in, and authentication in the MyHyundai widget. No labeled control buttons are available yet."</string>
+  <string name="text_20ad5e8edfa7b186" formatted="false">"Refreshing the MyHyundai widget."</string>
+  <string name="text_60cce21b425974a0" formatted="false">"Refreshing the MyHyundai widget. Try the button again shortly."</string>
   <string name="text_3661fcbc3b5d0b18" formatted="false">"Loading the MyHyundai widget."</string>
+  <string name="text_6845323fd08dfc3d" formatted="false">"Unable to read the MyHyundai controls. Check the widget on Galaxy."</string>
+  <string name="text_871343a800bddd68" formatted="false">"Unable to read the MyHyundai controls. Reload the widget or check it on Galaxy."</string>
+  <string name="text_471c3cc256eeda0f" formatted="false">"MyHyundai is processing the previous request. Try the button again shortly."</string>
+  <string name="text_28caf1da2522a50c" formatted="false">"The MyHyundai widget is ready. Tap the desired button again."</string>
   <string name="text_47b74466d9c2b3cb" formatted="false">"Connect a MyHyundai control widget."</string>
   <string name="text_0cf3c76d1d3e5843" formatted="false">"MyHyundai vehicle controls"</string>
   <string name="text_9b000d39458735fd" formatted="false">"Complete authentication on the Galaxy if MyHyundai requests it."</string>
+  <string name="text_33c4f922b25eb951" formatted="false">"A MyHyundai notice about the previous request is hiding the controls. Dismiss it, then choose your control again."</string>
   <string name="text_5e0d11f523b95051" formatted="false">"Connect to your Galaxy first."</string>
   <string name="text_382116a060d88c86" formatted="false">"The message is too large or could not be sent."</string>
   <string name="text_6545df1e3504ec29" formatted="false">"All app notifications"</string>
@@ -112,6 +120,8 @@
   <string name="text_a5f02f68f216f03b" formatted="false">"Select the buttons to use below. Tapping controls in the official widget can operate the vehicle."</string>
   <string name="text_dc20bb491cd32fb2" formatted="false">"Choose the MyHyundai action for this button below. After assigning it, tap the widget again to send the command."</string>
   <string name="text_ea254b18045fc705" formatted="false">"None yet"</string>
+  <string name="text_77714350491827fd" formatted="false">"Dismiss notice and restore controls"</string>
+  <string name="text_62a6a4d26db42fa8" formatted="false">"Notice dismissed. Tap the vehicle control you want again."</string>
   <string name="text_12ddd6ca69068faa" formatted="false">"Notifications"</string>
   <string name="text_541f6ceafb3c49bb" formatted="false">"Could not subscribe to notifications."</string>
   <string name="text_079d0758b9d53d6b" formatted="false">"Scheduled"</string>

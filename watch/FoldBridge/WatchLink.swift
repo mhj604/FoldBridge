@@ -506,7 +506,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             vehicleResult = message["status"] as? String ?? "unavailable"
             vehicleRequestID = nil; vehicleBusy = false
             trace("vehicle.result."+vehicleResult)
-            if vehicleResult == "stale" { requestVehicleControls() }
+            if ["stale","notice_dismissed"].contains(vehicleResult) { requestVehicleControls() }
             return
         }
         if event == "refresh" || event == "reconnect" {
@@ -624,6 +624,16 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     func requestVehicleControls() {
         guard connected, profile == .local else { return }
         sendSecure(["type":"vehicle_list"])
+    }
+    func dismissVehicleNotice() {
+        guard connected, profile == .local, !vehicleBusy, vehicleState == "result_pending" else { return }
+        let id = UUID().uuidString, current = epoch
+        vehicleRequestID = id; vehicleBusy = true; vehicleResult = ""
+        sendSecure(["type":"vehicle_command","id":id,"revision":vehicleRevision,"action":"dismiss_notice"])
+        DispatchQueue.main.asyncAfter(deadline:.now()+15) {
+            guard current == self.epoch, self.vehicleRequestID == id else { return }
+            self.vehicleRequestID = nil; self.vehicleBusy = false; self.vehicleResult = "unavailable"
+        }
     }
     func runVehicleAction(_ action: VehicleAction) {
         guard connected, profile == .local, !vehicleBusy, !vehicleRevision.isEmpty,
@@ -798,7 +808,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":26,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":27,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,

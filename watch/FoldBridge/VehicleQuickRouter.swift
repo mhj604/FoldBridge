@@ -9,6 +9,7 @@ final class VehicleQuickRouter: ObservableObject {
     @Published private(set) var message = ""
     @Published private(set) var waiting = false
     @Published private(set) var needsAssignment = false
+    private var waitingForWidget = false
     private var pending: UUID?
     private var catalogueRequested = false
     private var awaitingDispatch = false
@@ -27,9 +28,20 @@ final class VehicleQuickRouter: ObservableObject {
         WatchLink.shared.$vehicleResult.dropFirst().receive(on:DispatchQueue.main).sink { [weak self] value in
             guard let self, self.awaitingDispatch, !value.isEmpty else { return }
             self.awaitingDispatch = false
-            self.message = value == "widget_invoked" ? "마이현대 위젯에 전달했습니다. 실제 차량 제어 결과는 마이현대 알림에서 확인하세요." :
-                value == "unknown" ? "응답을 받지 못했습니다. 다시 실행하기 전에 마이현대 결과를 확인하세요." : "요청을 전달하지 못했습니다. 갤럭시의 위젯 설정과 인증을 확인해 주세요."
+            self.message = value == "notice_dismissed" ? "안내를 닫았습니다. 원하는 차량 버튼을 다시 눌러 주세요." :
+                value == "widget_invoked" ? "마이현대 위젯에 전달했습니다. 실제 차량 제어 결과는 마이현대 알림에서 확인하세요." :
+                value == "unknown" ? "응답을 받지 못했습니다. 다시 실행하기 전에 마이현대 결과를 확인하세요." :
+                value == "busy" ? "마이현대 위젯이 앞선 요청을 처리 중입니다. 잠시 후 다시 눌러 주세요." :
+                value == "loading" ? "마이현대 위젯을 갱신하는 중입니다. 잠시 후 다시 눌러 주세요." :
+                value == "auth_required" ? "마이현대 위젯에 인증 요청이 표시되었습니다. 갤럭시에서 완료해 주세요." :
+                "요청을 전달하지 못했습니다. 갤럭시의 위젯 설정과 인증을 확인해 주세요."
         }.store(in:&observations)
+    }
+    func recoverNotice() {
+        guard !waiting, !WatchLink.shared.vehicleBusy else { return }
+        waitingForWidget = true;awaitingDispatch = true
+        message = "마이현대 위젯을 갱신하는 중입니다."
+        WatchLink.shared.dismissVehicleNotice()
     }
     func title(for control: VehicleQuickControl) -> String? { mappings[control.rawValue]?.label }
     func bind(_ action: VehicleAction?,to control: VehicleQuickControl) {
@@ -47,7 +59,7 @@ final class VehicleQuickRouter: ObservableObject {
     func run(_ control: VehicleQuickControl) {
         presented = true
         guard !waiting, !WatchLink.shared.vehicleBusy else { return }
-        requested = control;needsAssignment = false;message = "갤럭시에 연결하고 제어 목록을 확인하는 중입니다.";waiting = true
+        requested = control;needsAssignment = false;waitingForWidget = false;message = "갤럭시에 연결하고 제어 목록을 확인하는 중입니다.";waiting = true
         catalogueRequested = false;awaitingDispatch = false
         let token = UUID();pending = token
         WatchLink.shared.noteVehicleQuickEvent("tap")
@@ -62,6 +74,9 @@ final class VehicleQuickRouter: ObservableObject {
         catalogueRequested = true;WatchLink.shared.noteVehicleQuickEvent("catalogue.request");WatchLink.shared.requestVehicleControls()
     }
     func catalogueArrived() {
+        if !waiting, waitingForWidget, WatchLink.shared.vehicleState == "ready" {
+            waitingForWidget = false;message = "마이현대 위젯이 준비됐습니다. 원하는 버튼을 다시 눌러 주세요.";return
+        }
         guard waiting, catalogueRequested, let control = requested else { return }
         cancelPending()
         let link = WatchLink.shared
@@ -70,10 +85,14 @@ final class VehicleQuickRouter: ObservableObject {
             case "disabled":message = "갤럭시 FoldBridge에서 워치 차량 제어를 켜 주세요."
             case "needs_widget":message = "갤럭시 FoldBridge의 차량 제어 설정에서 마이현대 위젯을 연결해 주세요."
             case "choose_buttons":message = "갤럭시에서 워치에 표시할 버튼을 선택해 주세요."
-            case "no_controls":message = "갤럭시 마이현대 위젯의 차량·로그인·인증 설정을 완료해 주세요."
-            case "loading":message = "갤럭시의 차량 제어 목록을 불러오는 중입니다."
+            case "no_controls":message = "마이현대 위젯의 제어 버튼을 읽지 못했습니다. 갤럭시 위젯 화면을 확인해 주세요."
+            case "result_pending":message = "마이현대의 이전 요청 안내가 버튼을 가리고 있습니다. 안내를 닫고 다시 선택해 주세요."
+            case "loading":message = "마이현대 위젯을 갱신하는 중입니다. 잠시 후 다시 눌러 주세요."
+            case "busy":message = "마이현대 위젯이 앞선 요청을 처리 중입니다. 잠시 후 다시 눌러 주세요."
+            case "auth_required":message = "마이현대 위젯에 인증 요청이 표시되었습니다. 갤럭시에서 완료해 주세요."
             default:message = "갤럭시의 차량 제어 설정을 확인해 주세요."
             }
+            waitingForWidget = ["loading","busy","no_controls"].contains(link.vehicleState)
             link.noteVehicleQuickEvent("catalogue."+link.vehicleState);return
         }
         var mapping = mappings[control.rawValue]

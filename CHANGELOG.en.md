@@ -4,6 +4,13 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.3 · build 27 / Android 0.6.1-local · code 17
+
+- Stop mislabelling an empty official-widget catalogue as a login/authentication failure. Distinguish processing, refreshing and explicit authentication prompts.
+- Recognize the observed MyHyundai notice that the previous remote-service request has not completed. Add **Dismiss notice and restore controls** to watch quick controls, all controls and phone settings. It dismisses only the notice; tap the desired vehicle control again afterward.
+- Keep disabled controls in the inventory, lay out offscreen hosted widgets and request an official widget refresh for an otherwise empty catalogue.
+- Preserve widget binding, selected controls and quick assignments. [Usage](docs/VEHICLE_CONTROL_EN.md#previous-request-notice-hides-controls-android-061--watch-053)
+
 ## Mac tool: automatic free-account signing renewal
 
 - Add Xcode re-provisioning and in-place watch app/widget installation when expiration is within 72 hours.
