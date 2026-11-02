@@ -18,6 +18,8 @@ python3 android/build_android.py \
 
 Retain the signing key outside the repository and reuse it for updates. A different key cannot update an existing installation in place. The distributed app ID is `dev.foldbridge.local`.
 
+For cable-free deployment from a Mac, see [wireless ADB installation](WIRELESS_INSTALL_EN.md). You can also download and install the APK directly on the Galaxy.
+
 After installation, grant Nearby devices and notifications, then separately enable the **FoldBridge Local notifications** in notification-access settings. Stop the older FoldBridge connection if present. Register the watch once by comparing both codes; use **Connect watch** for normal operation.
 
 ## Watch build and installation

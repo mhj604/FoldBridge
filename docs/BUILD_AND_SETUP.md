@@ -22,6 +22,8 @@ Gradle 구성도 포함하지만 이 배포 APK는 위 스크립트로 빌드했
 
 APK는 `artifacts/android/`에도 포함한다. 설치 후 다음을 설정한다.
 
+Mac에서 케이블 없이 설치·업데이트하려면 [무선 ADB 설치 안내](WIRELESS_INSTALL_KO.md)를 따른다. 갤럭시에서 APK를 직접 내려받아 업데이트하는 방법도 있다.
+
 1. 근처 기기와 일반 알림 권한 허용.
 2. **알림 접근 허용** 또는 **설정 → 알림 접근 설정**에서 **FoldBridge Local 알림 전달**의 알림 접근 허용.
 3. 기존 Android FoldBridge 앱을 실행 중이면 연결 중지.
