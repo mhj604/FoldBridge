@@ -2,7 +2,7 @@ plugins { id 'com.android.application' }
 android {
     namespace 'dev.foldbridge'
     compileSdk 36
-    defaultConfig { applicationId 'dev.foldbridge.local'; minSdk 33; targetSdk 36; versionCode 17; versionName '0.6.1-local' }
+    defaultConfig { applicationId 'dev.foldbridge.local'; minSdk 33; targetSdk 36; versionCode 18; versionName '0.6.2-local' }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
     buildTypes { release { minifyEnabled false } }
 }

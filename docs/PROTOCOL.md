@@ -112,3 +112,7 @@ BLE 특성 변경으로 백그라운드 실행 기회를 받는 것은 watchOS�
 ### 결과 안내 복구 (Android 0.6.1 / Watch 0.5.3)
 
 `vehicle_catalogue.status`는 `loading`, `busy`, `auth_required`, `result_pending`, `no_controls`를 구분합니다. `result_pending`은 관찰된 이전 원격 서비스 미완료 안내와 유일한 확인 버튼이 있는 경우입니다. 사용자가 복구를 누르면 기존 `vehicle_command` 형식에서 `action:"dismiss_notice"`와 현재 `revision`, 새 UUID를 전달합니다. 해당 확인 버튼만 한 번 호출하고 `notice_dismissed`를 반환합니다. 차량 명령은 전송하지 않으며 워치는 새 목록을 요청합니다. 다음 차량 제어는 별도의 사용자 입력이 필요합니다.
+
+### 버튼 식별자 유지 (Android 0.6.2 / Watch 0.5.4)
+
+액션 ID는 `SHA256(widgetID + ":label:" + 정확한 표시 이름)`의 URL-safe Base64 값입니다. 같은 이름의 클릭 대상이 여러 개면 해당 항목을 목록에서 제외합니다. View ID나 화면 순서를 영속 식별자로 사용하지 않습니다. 최신 revision과 현재 선택 여부는 실행 시 계속 확인합니다.

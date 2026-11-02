@@ -4,6 +4,12 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.4 · build 28 / Android 0.6.2-local · code 18
+
+- Fix selected controls disappearing after the official widget rebuilds its button screen with different internal View IDs. Four stored selections could previously match none of the four current controls.
+- Use a unique exact button label within the bound widget as its stable identity. Migrate legacy selections only when their original digest and exact label match; preserve watch quick assignments when exactly one current action has the saved label.
+- Duplicate labels are excluded rather than arbitrarily choosing a target. Renamed actions require reassignment.
+
 ## Watch 0.5.3 · build 27 / Android 0.6.1-local · code 17
 
 - Stop mislabelling an empty official-widget catalogue as a login/authentication failure. Distinguish processing, refreshing and explicit authentication prompts.

@@ -79,3 +79,7 @@ The catalogue contains at most 12 owner-selected labelled official widget contro
 ### Dismiss a result notice (Android 0.6.1 / Watch 0.5.3)
 
 Catalogue statuses distinguish `loading`, `busy`, `auth_required`, `result_pending` and `no_controls`. The observed previous-request-incomplete notice with a unique OK button yields `result_pending`. An explicit recovery tap sends the existing `vehicle_command` envelope with `action:"dismiss_notice"`, the current revision and a new UUID. The phone invokes only that acknowledgement once and returns `notice_dismissed`; the watch requests a fresh catalogue. This does not dispatch a vehicle command. A subsequent vehicle action requires a separate tap.
+
+### Stable control identifiers (Android 0.6.2 / Watch 0.5.4)
+
+Action IDs are URL-safe Base64 of `SHA256(widgetID + ":label:" + exact displayed label)`. Multiple clickable targets with the same label are excluded. Internal View IDs and screen order are not persistent identities. Dispatch still requires the current revision and a currently selected target.

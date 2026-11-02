@@ -26,6 +26,7 @@ final class VehicleBridge {
     private final Set<Runnable> observers=new HashSet<>();
     private final LinkedHashMap<String,Control> controls=new LinkedHashMap<>();
     private final LinkedHashSet<String> handled=new LinkedHashSet<>();
+    private final Set<String> ambiguousControls=new HashSet<>();
     private HostedView view;
     private View noticeDismiss;
     private String revision=UUID.randomUUID().toString(),fingerprint="";
@@ -173,7 +174,8 @@ final class VehicleBridge {
             List<View> matches=new ArrayList<>();findNoticeDismiss(view,matches);
             if(matches.size()==1)noticeDismiss=matches.get(0);
         }
-        LinkedHashMap<String,Control> found=new LinkedHashMap<>();collect(view,found);
+        LinkedHashMap<String,Control> found=new LinkedHashMap<>();ambiguousControls.clear();collect(view,found);
+        migrateSelected(found);
         StringBuilder signature=new StringBuilder();signature.append(authVisible).append(progressVisible).append(refreshPending).append(noticeDismiss!=null);
         for(Control c:found.values())signature.append(c.id()).append(':').append(c.target().isEnabled()).append('\n');
         controls.clear();controls.putAll(found);String next=signature.toString();
@@ -221,9 +223,10 @@ final class VehicleBridge {
         handler.postDelayed(()->{refreshPending=false;scan();changed();},10000);
     }
     private void writeDiagnostics(){
-        int runnable=0;for(Control c:controls.values())if(c.target().isEnabled())runnable++;
+        int runnable=0,currentSelected=0;Set<String> saved=selected();
+        for(Control c:controls.values()){if(c.target().isEnabled())runnable++;if(saved.contains(c.id()))currentSelected++;}
         JSONObject state=BridgeService.object("updatedAt",System.currentTimeMillis(),"status",status(),"bound",provider()!=null,
-            "controls",controls.size(),"runnable",runnable,"selected",selected().size(),"remoteUpdates",remoteUpdates,
+            "controls",controls.size(),"runnable",runnable,"selected",selected().size(),"selectedCurrent",currentSelected,"remoteUpdates",remoteUpdates,
             "refreshRequests",refreshRequests,"authVisible",authVisible,"progressVisible",progressVisible,"noticeDismissAvailable",noticeDismiss!=null,"lastResult",lastResult);
         java.io.File folder=context.getExternalFilesDir(null);if(folder==null)return;
         try(java.io.FileOutputStream out=new java.io.FileOutputStream(new java.io.File(folder,"foldbridge-vehicle-status.json"))){
@@ -238,12 +241,33 @@ final class VehicleBridge {
         if(descendant)return true;
         String label=label(node).replaceAll("\\s+"," ").trim();
         if(node.getId()!=View.NO_ID&&!label.isEmpty()&&label.length()<=80&&CONTROL.matcher(label).find()){
-            String material=widgetID()+":"+node.getId()+":"+label;
-            String id=Base64.getUrlEncoder().withoutPadding().encodeToString(Crypto.digest(material.getBytes(StandardCharsets.UTF_8)));
-            if(result.size()<12)result.put(id,new Control(id,label,node));
+            // Glance assigns different view IDs when its message/control layouts change.
+            // Bind to a unique exact label within this widget, never to a transient view ID.
+            String id=controlID(widgetID()+":label:"+label);
+            if(result.containsKey(id)){result.remove(id);ambiguousControls.add(id);}
+            else if(!ambiguousControls.contains(id)&&result.size()<12)result.put(id,new Control(id,label,node));
             return true;
         }
         return descendant;
+    }
+    private String controlID(String material){
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(Crypto.digest(material.getBytes(StandardCharsets.UTF_8)));
+    }
+    private void migrateSelected(Map<String,Control> current){
+        Set<String> saved=selected();boolean changed=false;
+        if(saved.isEmpty()||current.keySet().containsAll(saved))return;
+        for(Control control:current.values()){
+            if(saved.contains(control.id()))continue;
+            Set<Integer> previousIDs=new HashSet<>();previousIDs.add(control.target().getId());
+            // Earlier Glance layouts used generated child IDs in this range. Match
+            // the original digest and exact current label; never infer from count/order.
+            for(int id=1;id<=1024;id++)previousIDs.add(id);
+            for(int id:previousIDs){
+                String legacy=controlID(widgetID()+":"+id+":"+control.label());
+                if(saved.remove(legacy)){saved.add(control.id());changed=true;}
+            }
+        }
+        if(changed)prefs.edit().putStringSet("selected",saved).apply();
     }
     private String label(View node){
         if(node.getVisibility()!=View.VISIBLE)return "";

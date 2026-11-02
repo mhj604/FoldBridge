@@ -104,6 +104,12 @@ final class VehicleQuickRouter: ObservableObject {
                 bind(matches[0],to:control);mapping = mappings[control.rawValue]
             }
         }
+        if let previous = mapping, !link.vehicleActions.contains(where:{$0.id == previous.id && $0.label == previous.label}) {
+            // Preserve the owner's assignment across the legacy view-ID migration.
+            // Only one exactly matching official label may replace the old ID.
+            let matches = link.vehicleActions.filter { $0.label == previous.label }
+            if matches.count == 1 { bind(matches[0],to:control);mapping = mappings[control.rawValue] }
+        }
         guard let mapping, let action = link.vehicleActions.first(where:{$0.id == mapping.id && $0.label == mapping.label}) else {
             needsAssignment = true
             message = "아래에서 이 버튼에 연결할 마이현대 항목을 선택하세요. 지정 후 위젯을 다시 누르면 전달됩니다."

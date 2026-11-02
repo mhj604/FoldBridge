@@ -83,3 +83,9 @@ Recommended versions: Android **0.6.1-local / code 17**, Watch **0.5.3 / build 2
 3. After receiving the restored catalogue, tap the desired vehicle control again. Dismissal does not repeat the previous command or execute a blocked request later.
 
 Other notices should be read in the official Galaxy widget. Wait while processing, and complete explicit authentication prompts on the phone. Widget invocation remains distinct from actual vehicle success. No vehicle command was executed while developing this correction.
+
+## Controls remain unselected after dismissing a notice (Android 0.6.2 / Watch 0.5.4)
+
+Recommended versions: Android **0.6.2-local / code 18**, Watch **0.5.4 / build 28**. Earlier builds included the official widget's internal View ID in each control identifier. Rebuilding the controls after a result notice could change those IDs and break both phone selections and watch quick assignments.
+
+The current build uses a unique exact label within the bound widget as the stable identifier. Legacy phone selections migrate only when their old digest and exact current label match. Watch quick assignments follow a uniquely matching saved label. No new BLE pairing is needed. Renamed or ambiguous actions require reassignment in the phone checklist and watch quick-control settings. Migration itself sends no vehicle command.
