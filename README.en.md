@@ -73,6 +73,9 @@ The current release clears old notifications on every reconnection, restarts pho
 
 watchOS suspension, force-quit, runtime budgets, Bluetooth range, Focus, and notification permission affect delivery. Location keepalive can increase battery use. Development signing may expire and require rebuilding. Replies and bidirectional read/delete synchronization are not implemented. Notification text, private keys, device logs, and location coordinates are not published in this repository; location coordinates are not retained or transmitted by keepalive.
 
+
+The free account's seven-day signing can be refreshed by a scheduled Mac task. See [automatic renewal and connection requirements](docs/AUTO_RENEW_EN.md).
+
 ## Build or contribute
 
 - [Build, signing, and device settings](docs/BUILD_AND_SETUP_EN.md)

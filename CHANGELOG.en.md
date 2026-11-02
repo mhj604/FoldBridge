@@ -4,6 +4,12 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Mac tool: automatic free-account signing renewal
+
+- Add Xcode re-provisioning and in-place watch app/widget installation when expiration is within 72 hours.
+- Retry around watch availability/unlock, require a real expiration extension, preserve registration/settings, and back up matching profiles locally.
+- Initial application renewed, installed and launched Watch 0.5.2 without changing its feature version. [Usage](docs/AUTO_RENEW_EN.md)
+
 ## Watch 0.5.2 · build 26 (Android 0.6.0 unchanged)
 
 - Fix the missing-assignment path that opened the app without dispatching a vehicle command. On first use, assign an official action automatically only when exactly one explicit canonical label matches.
