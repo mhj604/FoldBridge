@@ -4,6 +4,13 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.5 · build 29 (Android 0.6.2 unchanged)
+
+- Replace four direct-action widget buttons with one **Vehicle controls launcher** in every supported widget size. Choose the four controls inside the panel; saved assignments are retained. Opening the widget sends no vehicle command.
+- Register a service-filtered recovery scan immediately alongside a saved-peer connection attempt instead of relying solely on a delayed app timer.
+- Allow background connection-maintenance callbacks to recover disconnected peers. Fresh advertisements can recover a peer despite stale auto-reconnect flags, and transport failure cancellation callbacks submit the next connection.
+- Operation remains subject to watchOS background runtime limits. [Usage](docs/VEHICLE_CONTROL_EN.md)
+
 ## Watch 0.5.4 · build 28 / Android 0.6.2-local · code 18
 
 - Fix selected controls disappearing after the official widget rebuilds its button screen with different internal View IDs. Four stored selections could previously match none of the four current controls.

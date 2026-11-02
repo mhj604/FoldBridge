@@ -32,8 +32,20 @@ struct RunVehicleQuickControl: AppIntent {
     }
 }
 
+/// The widget opens the control panel; opening it never invokes a vehicle button.
+struct OpenVehicleControls: AppIntent {
+    static var title: LocalizedStringResource = "차량 제어 열기"
+    static var description = IntentDescription("FoldBridge 차량 제어 창을 엽니다.")
+    static var openAppWhenRun: Bool = true
+    @MainActor func perform() async throws -> some IntentResult {
+        #if !WIDGET_EXTENSION
+        VehicleQuickRouter.shared.openControls()
+        #endif
+        return .result()
+    }
+}
+
 struct VehicleWidgetConfiguration: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "차량 제어 위젯"
-    static var description = IntentDescription("작은 컴플리케이션에서 사용할 차량 버튼을 선택합니다.")
-    @Parameter(title:"차량 버튼", default:.start) var control: VehicleQuickControl
+    static var description = IntentDescription("위젯을 누르면 차량 제어 창을 엽니다.")
 }

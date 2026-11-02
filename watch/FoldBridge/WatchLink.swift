@@ -161,7 +161,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         if phone.peripheral.state == .connected { beginDiscovery(phone.peripheral) }
         else { manager.connect(phone.peripheral,options:connectionOptions()) }
         // A trusted peripheral's pending connect remains with Core Bluetooth while out of range.
-        if (try? WatchStore.get(peerKey)) != nil { scheduleDiscoveryFallback();return }
+        if (try? WatchStore.get(peerKey)) != nil {
+            // Register discovery now; a delayed fallback may never run after suspension.
+            startRecoveryScan();scheduleDiscoveryFallback();return
+        }
         let current = epoch
         DispatchQueue.main.asyncAfter(deadline:.now()+120) { if current == self.epoch && self.active && !self.connected && Date().timeIntervalSince(self.foregroundSince) >= 120 { self.fail("연결 확인 시간이 만료됐습니다.") } }
     }
@@ -255,7 +258,9 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         startRecoveryScan()
     }
     private func startRecoveryScan() {
-        guard manager.state == .poweredOn, !connected, !manager.isScanning else { return }
+        guard manager.state == .poweredOn, !connected, peripheral?.state != .connected, !manager.isScanning,
+              UserDefaults.standard.string(forKey:phoneIDKey) != nil,
+              (try? WatchStore.get(peerKey)) != nil else { return }
         // A missing OS cache entry must not force the user to register the same phone again.
         // Discovery still authenticates the saved public key before any alert is accepted.
         recoveryScanning = true;scanEpoch += 1
@@ -294,7 +299,19 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         DispatchQueue.main.async { [weak self] in self?.reconnect() }
     }
     func centralManager(_ central: CBCentralManager, didDiscover p: CBPeripheral, advertisementData: [String:Any], rssi RSSI: NSNumber) {
-        if recoveryScanning { connect(PhoneCandidate(peripheral:p));return }
+        if recoveryScanning {
+            if let existing = peripheral, existing.identifier == p.identifier {
+                if switchingFrom == nil, existing.state == .disconnected {
+                    // A fresh advertisement proves proximity even if an old OS
+                    // auto-reconnect flag is still set. Re-submit without cancelling.
+                    autoReconnectPending = false;connectionAttemptAt = Date()
+                    existing.delegate = self;manager.connect(existing,options:connectionOptions())
+                    trace("recovery.advertisement.connect")
+                }
+                return
+            }
+            connect(PhoneCandidate(peripheral:p));return
+        }
         if !candidates.contains(where:{$0.id == p.identifier}) { candidates.append(PhoneCandidate(peripheral:p)) }
     }
     func centralManager(_ central: CBCentralManager, didConnect p: CBPeripheral) {
@@ -689,7 +706,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         if value { refreshNotificationSettings();resumeSavedConnection() }
         if value { backgroundNotice = ""; reconnects = 0 }
         if connected { sendSecure(["type":"state","active":canProcessContinuously]); if value { reconcileDelivered { self.synchronize() } } }
-        else if value { reconnect() }
+        else { reconnect();startRecoveryScan() }
         writeDiagnostics()
     }
     func setContinuousRuntime(_ value: Bool) {
@@ -717,17 +734,20 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         maintenanceTimer?.invalidate(); maintenanceTimer = nil; lastMaintenance = .distantPast
         // A requested location session is not proof that the app was scheduled.
         // Never cancel a retained BLE link because a wall-clock heartbeat expired.
-        guard active else { return }
+        guard active || continuousRuntime else { return }
         maintenanceTimer = Timer.scheduledTimer(withTimeInterval:15,repeats:true) { [weak self] _ in self?.maintainConnection() }
     }
     func maintainConnection() {
         guard Date().timeIntervalSince(lastMaintenance) >= 15 else { return }
         lastMaintenance = Date()
+        // Location callbacks can recover a disconnected peer without opening the UI.
         if peripheral == nil || (peripheral?.state == .connected && stage == "idle") { reconnect() }
-        guard active else { return }
-        if let p = peripheral, p.state == .disconnected, !autoReconnectPending {
-            resetSession(); reconnect()
-        } else if !connected, stage != "idle", (try? WatchStore.get(peerKey)) != nil,
+        if !connected {
+            if let p = peripheral, p.state == .disconnected, !autoReconnectPending { resetSession();reconnect() }
+            startRecoveryScan()
+        }
+        guard active else { writeDiagnostics();return }
+        if !connected, stage != "idle", (try? WatchStore.get(peerKey)) != nil,
                   Date().timeIntervalSince(max(connectionAttemptAt,foregroundSince)) >= 90 {
             restartSavedConnection()
         } else if !connected, stage == "idle", peripheral?.state == .connecting,
@@ -808,7 +828,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":28,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":29,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,
@@ -838,8 +858,30 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func fail(_ text: String,retry: Bool = false) {
         trace("failure.\(text)")
         lastFailure = text; failureCounts[text,default:0] += 1
-        let old = peripheral; manager.stopScan();recoveryScanning = false;resetSession(); if let old { manager.cancelPeripheralConnection(old) }; lastError = text; status = "연결 확인 필요"; completeBackgroundTasks()
-        if retry { retryConnection() }
-        writeDiagnostics()
+        let savedPeer = UserDefaults.standard.string(forKey:phoneIDKey) != nil && (try? WatchStore.get(peerKey)) != nil
+        let shouldResume = retry || savedPeer
+        let old = peripheral
+        reconnectWork?.cancel();reconnectWork = nil
+        manager.stopScan();recoveryScanning = false;resetSession()
+        lastError = text;status = "연결 확인 필요"
+        if shouldResume, let old, old.state != .disconnected {
+            // Keep the cancellation callback identifiable after clearing the protocol.
+            // It submits the next native connect even while the app is backgrounded.
+            switchingFrom = old;refreshAfterDisconnect = false
+            manager.cancelPeripheralConnection(old)
+            let current = epoch
+            DispatchQueue.main.asyncAfter(deadline:.now()+3) { [weak self, weak old] in
+                guard let self, let old, self.epoch == current, self.switchingFrom === old else { return }
+                self.switchingFrom = nil;self.reconnect()
+            }
+        } else {
+            if let old { manager.cancelPeripheralConnection(old) }
+            if shouldResume {
+                if active { retryConnection() } else { reconnect() }
+            }
+        }
+        // The filtered scan is registered synchronously before the background task ends.
+        if savedPeer { startRecoveryScan();scheduleRecoveryRefresh() }
+        completeBackgroundTasks();writeDiagnostics()
     }
 }

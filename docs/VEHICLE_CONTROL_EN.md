@@ -42,37 +42,15 @@ Lost BLE responses and the 30-second reply timeout never automatically retry a v
 
 No automated test operates a vehicle. This implementation provides the official-widget bridge; it is not evidence of successful vehicle actuation or compatibility with every MyHyundai version.
 
-## Smart Stack widget and watch-face buttons (Watch 0.5.1 / build 25)
+## One vehicle control widget (Watch 0.5.5 / build 29)
 
-Requires watchOS 11+. The rectangular widget has **Start, Stop, Lock and Unlock** buttons; smaller complications display one selected action. Tapping a button automatically brings FoldBridge to the foreground and dispatches the command. You do not navigate through the app list or menus; this is not invisible background execution.
+Smart Stack and watch faces now offer one **Vehicle controls** widget. Tap it to open the FoldBridge control panel, then choose **Start, Stop, Lock or Unlock**. Opening the widget alone sends no vehicle command. The widget kind is unchanged, so an existing widget can refresh to this layout. Separate action recommendations and the widget action picker are removed.
 
-### Assign controls once
+1. Open Smart Stack, touch and hold, then choose **+ → FoldBridge → Vehicle controls**. For a watch face, use **Edit → Complications → FoldBridge vehicle controls**.
+2. Tap the widget to open the panel and prepare the Galaxy connection and current catalogue.
+3. Choose the desired vehicle button. Saved quick assignments are retained. A uniquely matching explicit label can be assigned automatically; use **Quick control settings** if an assignment is needed.
 
-1. Open watch **FoldBridge → Vehicle controls → Quick control settings**.
-2. Assign each quick button to its corresponding official MyHyundai action. Assignment itself sends no vehicle command.
-3. Only actions exposed by the phone are available. Complete phone widget setup first if an action is absent.
-
-### Add the widget
-
-1. Turn the Digital Crown from the watch face to open Smart Stack.
-2. Touch and hold the widget area; choose **+ → FoldBridge → Vehicle controls**.
-3. Pin it for convenient access. Tap the desired control once to dispatch through the assigned official widget button.
-
-For a watch-face complication, touch and hold the face, then choose **Edit → Complications → FoldBridge vehicle controls**. Choose Start, Stop, Lock or Unlock for a small slot. Available slots vary by face.
-
-### Dispatch behavior
-
-The app opens, restores the Galaxy connection and requests a fresh catalogue. The saved action ID and label must both match before a single dispatch. Missing assignments or changed actions display setup guidance. Failure to obtain the connection/catalogue within 15 seconds cancels the pending tap; it does not execute later. Lost command replies never trigger automatic resend.
-
-Assignments stay on the watch and are scoped to the registered phone. The widget needs no shared storage capability and creates no separate BLE session. Widget text follows the watch system language; app screens use the FoldBridge language preference. MyHyundai authentication and actual vehicle outcome limitations still apply.
-
-### A widget tap opens the app but sends no command (0.5.2)
-
-Adding a widget does not itself assign the underlying vehicle action. Version 0.5.2 automatically assigns a control when exactly one explicit canonical label (such as Start engine, Stop engine, Lock or Unlock) matches the official catalogue. Existing user assignments are never silently overwritten.
-
-Ambiguous or changed actions display a picker directly below the quick-control buttons. Choosing an item stores the assignment only; a subsequent widget tap dispatches it. Disabled phone controls and incomplete widget configuration have distinct guidance.
-
-Receiving a valid official catalogue is not a vehicle-success response. MyHyundai still provides the actual outcome.
+A command is sent once only when the assigned ID and label match the current catalogue. Connection/catalogue requests time out after 15 seconds without deferred execution. Lost replies never automatically resend a vehicle command. Widget labels follow the watch system language; the panel uses the FoldBridge language setting.
 
 ## Previous-request notice hides controls (Android 0.6.1 / Watch 0.5.3)
 
@@ -89,3 +67,9 @@ Other notices should be read in the official Galaxy widget. Wait while processin
 Recommended versions: Android **0.6.2-local / code 18**, Watch **0.5.4 / build 28**. Earlier builds included the official widget's internal View ID in each control identifier. Rebuilding the controls after a result notice could change those IDs and break both phone selections and watch quick assignments.
 
 The current build uses a unique exact label within the bound widget as the stable identifier. Legacy phone selections migrate only when their old digest and exact current label match. Watch quick assignments follow a uniquely matching saved label. No new BLE pairing is needed. Renamed or ambiguous actions require reassignment in the phone checklist and watch quick-control settings. Migration itself sends no vehicle command.
+
+## Reconnect on return to range (Watch 0.5.5)
+
+A saved-peer connection attempt immediately registers a service-filtered Bluetooth scan as well. After range loss, the system retains the pending connection. A fresh advertisement can resubmit a disconnected peer even if an old auto-reconnect flag remains set. Location-session callbacks and the maintenance timer can recover a disconnected peer without foreground UI. Transport failures also preserve the cancellation callback and register recovery before returning from background runtime.
+
+The Galaxy connection service and Bluetooth must remain enabled. watchOS background Bluetooth runtime limits, force quitting and post-reboot lock conditions still apply; this is not a guarantee of immediate reconnection in every OS state. [Apple background Bluetooth guidance](https://developer.apple.com/videos/play/wwdc2022/10135/)

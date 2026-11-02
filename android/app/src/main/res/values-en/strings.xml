@@ -23,6 +23,7 @@
   <string name="text_e24df1a9d56f340c" formatted="false">"FoldBridge Local is running"</string>
   <string name="text_e5d50dafe36bf172" formatted="false">"FoldBridge Local notifications"</string>
   <string name="text_b001ac3a6a2c90b6" formatted="false">"Could not find the FoldBridge service."</string>
+  <string name="text_012dbc91163c031f" formatted="false">"Open the FoldBridge vehicle control panel."</string>
   <string name="text_36f4140cf55e0caf" formatted="false">"Looking for a FoldBridge phone"</string>
   <string name="text_e9647d1bce13188f" formatted="false">"Remove the widget binding and button selections from FoldBridge."</string>
   <string name="text_3d829d862c44532d" formatted="false">"Run a Galaxy MyHyundai control using the FoldBridge Bluetooth connection."</string>
@@ -54,6 +55,7 @@
   <string name="text_6609ccb10fbda19f" formatted="false">"Off"</string>
   <string name="text_147bc1c4b5346d71" formatted="false">"My notifications"</string>
   <string name="text_4003963e4a0b62a6" formatted="false">"Notification without text"</string>
+  <string name="text_b370820f33473b3f" formatted="false">"Tap to open controls"</string>
   <string name="text_93c7f5eb7dd66961" formatted="false">"Notification access is off"</string>
   <string name="text_363b29c580393281" formatted="false">"Allow access to read other apps’ notifications."</string>
   <string name="text_05a9008de7da085f" formatted="false">"You will need to confirm the code on both devices to pair again."</string>
@@ -183,6 +185,7 @@
   <string name="text_7b1f8de96d9a1277" formatted="false">"Turn on Location Services on your watch."</string>
   <string name="text_11c4a9aca684c3eb" formatted="false">"Confirm if this matches the code on your watch."</string>
   <string name="text_ad6456e1347906ec" formatted="false">"Widget vehicle and authentication settings"</string>
+  <string name="text_4bb0532867054843" formatted="false">"Tap the widget to open the vehicle control panel."</string>
   <string name="text_ecbd8810cc6b6b2a" formatted="false">"Check the location permission status."</string>
   <string name="text_3646aa0a90e8f6b8" formatted="false">"Location permission is required to start keep connection mode."</string>
   <string name="text_c24b1afd588e868d" formatted="false">"Location permission was revoked. Keep connection mode has stopped."</string>
@@ -220,6 +223,7 @@
   <string name="text_7d6e8ce74912828e" formatted="false">"Vehicle controls"</string>
   <string name="text_8240dd0b41e6ac0a" formatted="false">"Vehicle control settings"</string>
   <string name="text_9c77a0008eefc743" formatted="false">"Disconnect vehicle controls"</string>
+  <string name="text_fa21f3627dd675b1" formatted="false">"Open vehicle controls"</string>
   <string name="text_8ae81e81bde031d5" formatted="false">"Vehicle controls widget"</string>
   <string name="text_9b7d7c773e1744cc" formatted="false">"Pairing a watch for the first time?"</string>
   <string name="text_23466026b7f56424" formatted="false">"Charging status alerts"</string>

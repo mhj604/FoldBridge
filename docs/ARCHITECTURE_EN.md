@@ -2,7 +2,7 @@
 
 [한국어](ARCHITECTURE.md) · **English** · [All guides](README.md)
 
-This describes the current Android 0.5.4 / Watch 0.4.9 implementation. The Korean document also preserves older implementation notes; [English milestones](DEVELOPMENT_HISTORY_EN.md) summarize that history.
+This describes the current Android 0.6.2 / Watch 0.5.5 implementation. The Korean document also preserves older implementation notes; [English milestones](DEVELOPMENT_HISTORY_EN.md) summarize that history.
 
 ## Delivery path
 
@@ -76,3 +76,7 @@ The system owns the popup, cards, and header showing FoldBridge. Only the expand
 | `relay/`, `windows/`, `legacy/` | Archived earlier designs, outside Local runtime |
 
 The current Local Android manifest has no `INTERNET` permission. Initial Apple Watch setup/development installation is separate from this offline notification-delivery path.
+
+## Watch 0.5.5 recovery and vehicle launcher
+
+The vehicle widget now opens the quick-control panel; it does not submit an action itself. Saved-peer BLE connection attempts immediately register service-filtered discovery. A fresh advertisement can resubmit a disconnected cached peripheral, while physical connections being authenticated are left alone. Location runtime maintenance can recover disconnected peers in background; authentication/write timeout resets remain foreground-only. Failure recovery retains the pending cancellation callback and registers discovery before completing background work. These mechanisms do not remove watchOS runtime limits.

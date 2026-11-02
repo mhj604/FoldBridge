@@ -37,6 +37,14 @@ final class VehicleQuickRouter: ObservableObject {
                 "요청을 전달하지 못했습니다. 갤럭시의 위젯 설정과 인증을 확인해 주세요."
         }.store(in:&observations)
     }
+    func openControls() {
+        cancelPending();awaitingDispatch = false;requested = nil
+        needsAssignment = false;waitingForWidget = false;message = ""
+        presented = true
+        WatchLink.shared.resumeSavedConnection()
+        if WatchLink.shared.connected { WatchLink.shared.requestVehicleControls() }
+        WatchLink.shared.noteVehicleQuickEvent("panel.open")
+    }
     func recoverNotice() {
         guard !waiting, !WatchLink.shared.vehicleBusy else { return }
         waitingForWidget = true;awaitingDispatch = true

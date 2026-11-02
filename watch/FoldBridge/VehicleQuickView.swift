@@ -9,6 +9,8 @@ struct VehicleQuickView: View {
     var body: some View {
         ScrollView {
             VStack(alignment:.leading,spacing:12) {
+                Label(language.text(link.connected ? "휴대폰 연결됨":"연결 대기 중"),systemImage:link.connected ? "link":"antenna.radiowaves.left.and.right")
+                    .font(.caption2).foregroundStyle(.secondary)
                 LazyVGrid(columns:columns,spacing:8) {
                     ForEach(VehicleQuickControl.allCases) { control in
                         Button { router.run(control) } label: {
@@ -43,6 +45,10 @@ struct VehicleQuickView: View {
             }
         }.navigationTitle(language.text("차량 제어"))
             .toolbar { ToolbarItem(placement:.cancellationAction) { Button { router.dismiss() } label: { Image(systemName:"xmark") } } }
+            .onAppear { link.requestVehicleControls() }
+            .onChange(of:link.connected) { value in
+                if value && !router.waiting { link.requestVehicleControls() }
+            }
             .onDisappear { router.cancelPending() }
     }
 }

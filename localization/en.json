@@ -252,5 +252,9 @@
   "마이현대 위젯이 준비됐습니다. 원하는 버튼을 다시 눌러 주세요.": "The MyHyundai widget is ready. Tap the desired button again.",
   "안내 닫고 버튼 복구": "Dismiss notice and restore controls",
   "마이현대의 이전 요청 안내가 버튼을 가리고 있습니다. 안내를 닫고 다시 선택해 주세요.": "A MyHyundai notice about the previous request is hiding the controls. Dismiss it, then choose your control again.",
-  "안내를 닫았습니다. 원하는 차량 버튼을 다시 눌러 주세요.": "Notice dismissed. Tap the vehicle control you want again."
+  "안내를 닫았습니다. 원하는 차량 버튼을 다시 눌러 주세요.": "Notice dismissed. Tap the vehicle control you want again.",
+  "차량 제어 열기": "Open vehicle controls",
+  "FoldBridge 차량 제어 창을 엽니다.": "Open the FoldBridge vehicle control panel.",
+  "위젯을 누르면 차량 제어 창을 엽니다.": "Tap the widget to open the vehicle control panel.",
+  "눌러서 제어 창 열기": "Tap to open controls"
 }

@@ -3,6 +3,7 @@ import UIKit
 import WatchKit
 import UserNotifications
 import CoreLocation
+import WidgetKit
 
 // Explicitly started on the watch. Coordinates are neither inspected nor retained.
 final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDelegate {
@@ -90,6 +91,11 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
             UNNotificationCategory(identifier:RelayCategory.withSourceIcon,actions:[],intentIdentifiers:[],options:[])
         ])
         WatchLink.shared.resumeSavedConnection()
+        if UserDefaults.standard.string(forKey:"vehicleWidgetLayout") != "panel.v1" {
+            UserDefaults.standard.set("panel.v1",forKey:"vehicleWidgetLayout")
+            WidgetCenter.shared.invalidateConfigurationRecommendations()
+            WidgetCenter.shared.reloadTimelines(ofKind:"FoldBridgeVehicleControls")
+        }
         if ProcessInfo.processInfo.environment["FOLDBRIDGE_RESUME_LOCATION"] == "1" {
             LocationKeepAlive.shared.preserveEnabledIntentForUpdate()
         }
@@ -143,7 +149,7 @@ struct ContentView: View {
     @EnvironmentObject var language: AppLanguage
     @EnvironmentObject var link: WatchLink
     @StateObject private var keepAlive = LocationKeepAlive.shared
-    private func vehicleQuickMenu() { VehicleQuickRouter.shared.presented = true }
+    private func vehicleQuickMenu() { VehicleQuickRouter.shared.openControls() }
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -232,7 +238,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button(language.text("휴대폰 등록 해제"),role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.5.4").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.5.5").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle(language.text("설정"))
             .confirmationDialog(language.text("연결 유지를 시작할까요?"),isPresented:$startingLocation,titleVisibility:.visible) {

@@ -22,6 +22,7 @@
 "FoldBridge Local 실행 중" = "FoldBridge Local is running";
 "FoldBridge Local 알림 전달" = "FoldBridge Local notifications";
 "FoldBridge 서비스를 찾지 못했습니다." = "Could not find the FoldBridge service.";
+"FoldBridge 차량 제어 창을 엽니다." = "Open the FoldBridge vehicle control panel.";
 "FoldBridge 휴대폰 찾는 중" = "Looking for a FoldBridge phone";
 "FoldBridge에 연결한 위젯과 버튼 선택만 제거합니다." = "Remove the widget binding and button selections from FoldBridge.";
 "FoldBridge의 Bluetooth 연결로 갤럭시 마이현대 제어 버튼을 실행합니다." = "Run a Galaxy MyHyundai control using the FoldBridge Bluetooth connection.";
@@ -53,6 +54,7 @@
 "꺼짐" = "Off";
 "내 알림" = "My notifications";
 "내용 없는 알림" = "Notification without text";
+"눌러서 제어 창 열기" = "Tap to open controls";
 "다른 앱 알림을 읽는 권한이 꺼져 있습니다" = "Notification access is off";
 "다른 앱의 알림을 읽을 수 있도록 허용해 주세요." = "Allow access to read other apps’ notifications.";
 "다시 연결할 때 두 기기에서 코드를 확인해야 합니다." = "You will need to confirm the code on both devices to pair again.";
@@ -182,6 +184,7 @@
 "워치의 위치 서비스를 켜 주세요." = "Turn on Location Services on your watch.";
 "워치의 코드와 같으면 확인해 주세요." = "Confirm if this matches the code on your watch.";
 "위젯 차량·인증 설정" = "Widget vehicle and authentication settings";
+"위젯을 누르면 차량 제어 창을 엽니다." = "Tap the widget to open the vehicle control panel.";
 "위치 권한 상태를 확인해 주세요." = "Check the location permission status.";
 "위치 권한이 없어 연결 유지 모드를 시작하지 못했습니다." = "Location permission is required to start keep connection mode.";
 "위치 권한이 해제되어 연결 유지 모드가 종료됐습니다." = "Location permission was revoked. Keep connection mode has stopped.";
@@ -219,6 +222,7 @@
 "차량 제어" = "Vehicle controls";
 "차량 제어 설정" = "Vehicle control settings";
 "차량 제어 연결 해제" = "Disconnect vehicle controls";
+"차량 제어 열기" = "Open vehicle controls";
 "차량 제어 위젯" = "Vehicle controls widget";
 "처음 연결하는 워치인가요?" = "Pairing a watch for the first time?";
 "충전 상태 알림" = "Charging status alerts";
