@@ -44,6 +44,8 @@
   <string name="text_1bafce7586ee0d6b" formatted="false">"갤럭시의 공식 제어 위젯을 워치에 연결합니다."</string>
   <string name="text_63949fcff4278ec5" formatted="false">"갤럭시의 차량 제어 목록을 불러오는 중입니다."</string>
   <string name="text_f4910270405abbef" formatted="false">"갤럭시의 차량 제어 설정을 확인해 주세요."</string>
+  <string name="text_63d0567a722c6039" formatted="false">"결과 안내를 닫고 제어 버튼을 준비하는 중입니다."</string>
+  <string name="text_b8efb71f6ff067ae" formatted="false">"결과 안내를 닫지 못했습니다. 갤럭시 위젯 화면을 확인해 주세요."</string>
   <string name="text_38fb4a1d07bccc8f" formatted="false">"공식 마이현대 위젯의 버튼을 워치에서 실행합니다. 로그인과 차량 인증은 마이현대에서 처리합니다."</string>
   <string name="text_2ccf113d4756de32" formatted="false">"공식 위젯"</string>
   <string name="text_e257f43fe59ee363" formatted="false">"권한을 허용한 뒤 연결 버튼을 다시 누르세요."</string>
@@ -214,6 +216,7 @@
   <string name="text_7a39039ca2ca3a32" formatted="false">"정지"</string>
   <string name="text_ad573a7e4fff31fd" formatted="false">"제어 목록 새로고침"</string>
   <string name="text_a033e8398f8c1834" formatted="false">"제어 목록이 바뀌었습니다. 새 목록에서 다시 선택해 주세요."</string>
+  <string name="text_fdf487e0898ffa61" formatted="false">"제어 버튼을 누르면 결과 안내를 닫고 선택한 제어를 전달합니다."</string>
   <string name="text_8589f9cade7cef7b" formatted="false">"중간 제어 위젯"</string>
   <string name="text_1398a6b1f8a12d2f" formatted="false">"중복 알림 방지 상태를 저장하지 못했습니다."</string>
   <string name="text_1fc7b158412783a0" formatted="false">"중지됨"</string>

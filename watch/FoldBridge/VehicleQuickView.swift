@@ -23,10 +23,6 @@ struct VehicleQuickView: View {
                 }
                 if router.waiting || link.vehicleBusy { ProgressView() }
                 if !router.message.isEmpty { Text(language.text(router.message)).font(.caption2).foregroundStyle(.secondary) }
-                if link.vehicleState == "result_pending" {
-                    Button(language.text("안내 닫고 버튼 복구")) { router.recoverNotice() }
-                        .disabled(router.waiting || link.vehicleBusy)
-                }
                 if router.needsAssignment, let requested = router.requested {
                     VStack(alignment:.leading,spacing:6) {
                         Text(language.text(requested.title)).font(.headline)

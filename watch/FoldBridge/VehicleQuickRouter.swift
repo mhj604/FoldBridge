@@ -10,7 +10,12 @@ final class VehicleQuickRouter: ObservableObject {
     @Published private(set) var waiting = false
     @Published private(set) var needsAssignment = false
     private var waitingForWidget = false
+    private var recoveringNotice = false
+    private var noticeAttempted = false
+    private var noticeAcknowledged = false
+    private var noticePollScheduled = false
     private var pending: UUID?
+    private var preparationDeadline = Date.distantPast
     private var catalogueRequested = false
     private var awaitingDispatch = false
     private var observations = Set<AnyCancellable>()
@@ -26,9 +31,24 @@ final class VehicleQuickRouter: ObservableObject {
             if value && !self.catalogueRequested { self.requestCatalogue() }
         }.store(in:&observations)
         WatchLink.shared.$vehicleResult.dropFirst().receive(on:DispatchQueue.main).sink { [weak self] value in
-            guard let self, self.awaitingDispatch, !value.isEmpty else { return }
+            guard let self, !value.isEmpty else { return }
+            if self.waiting && self.recoveringNotice {
+                guard Date() < self.preparationDeadline else {
+                    self.cancelPending();self.message = "갤럭시 연결 또는 제어 목록을 받지 못했습니다. 명령은 보내지 않았습니다.";return
+                }
+                if ["notice_dismissed","stale"].contains(value) {
+                    self.noticeAcknowledged = true
+                    self.message = "결과 안내를 닫고 제어 버튼을 준비하는 중입니다."
+                    self.requestCatalogue();self.scheduleNoticePoll()
+                } else {
+                    self.cancelPending()
+                    self.message = "결과 안내를 닫지 못했습니다. 갤럭시 위젯 화면을 확인해 주세요."
+                }
+                return
+            }
+            guard self.awaitingDispatch else { return }
             self.awaitingDispatch = false
-            self.message = value == "notice_dismissed" ? "안내를 닫았습니다. 원하는 차량 버튼을 다시 눌러 주세요." :
+            self.message = value == "notice_dismissed" ? "결과 안내를 닫고 제어 버튼을 준비하는 중입니다." :
                 value == "widget_invoked" ? "마이현대 위젯에 전달했습니다. 실제 차량 제어 결과는 마이현대 알림에서 확인하세요." :
                 value == "unknown" ? "응답을 받지 못했습니다. 다시 실행하기 전에 마이현대 결과를 확인하세요." :
                 value == "busy" ? "마이현대 위젯이 앞선 요청을 처리 중입니다. 잠시 후 다시 눌러 주세요." :
@@ -44,12 +64,6 @@ final class VehicleQuickRouter: ObservableObject {
         WatchLink.shared.resumeSavedConnection()
         if WatchLink.shared.connected { WatchLink.shared.requestVehicleControls() }
         WatchLink.shared.noteVehicleQuickEvent("panel.open")
-    }
-    func recoverNotice() {
-        guard !waiting, !WatchLink.shared.vehicleBusy else { return }
-        waitingForWidget = true;awaitingDispatch = true
-        message = "마이현대 위젯을 갱신하는 중입니다."
-        WatchLink.shared.dismissVehicleNotice()
     }
     func title(for control: VehicleQuickControl) -> String? { mappings[control.rawValue]?.label }
     func bind(_ action: VehicleAction?,to control: VehicleQuickControl) {
@@ -67,9 +81,10 @@ final class VehicleQuickRouter: ObservableObject {
     func run(_ control: VehicleQuickControl) {
         presented = true
         guard !waiting, !WatchLink.shared.vehicleBusy else { return }
+        noticeAttempted = false;noticeAcknowledged = false
         requested = control;needsAssignment = false;waitingForWidget = false;message = "갤럭시에 연결하고 제어 목록을 확인하는 중입니다.";waiting = true
         catalogueRequested = false;awaitingDispatch = false
-        let token = UUID();pending = token
+        let token = UUID();pending = token;preparationDeadline = Date().addingTimeInterval(15)
         WatchLink.shared.noteVehicleQuickEvent("tap")
         WatchLink.shared.resumeSavedConnection()
         if WatchLink.shared.connected { requestCatalogue() }
@@ -86,15 +101,31 @@ final class VehicleQuickRouter: ObservableObject {
             waitingForWidget = false;message = "마이현대 위젯이 준비됐습니다. 원하는 버튼을 다시 눌러 주세요.";return
         }
         guard waiting, catalogueRequested, let control = requested else { return }
-        cancelPending()
+        guard Date() < preparationDeadline else {
+            cancelPending();message = "갤럭시 연결 또는 제어 목록을 받지 못했습니다. 명령은 보내지 않았습니다.";return
+        }
         let link = WatchLink.shared
+        if link.vehicleState == "result_pending" {
+            if !noticeAttempted && !link.vehicleBusy {
+                noticeAttempted = true;recoveringNotice = true;noticeAcknowledged = false
+                message = "결과 안내를 닫고 제어 버튼을 준비하는 중입니다."
+                link.noteVehicleQuickEvent("notice.auto.dismiss")
+                link.dismissVehicleNotice()
+            }
+            return
+        }
+        if recoveringNotice {
+            guard noticeAcknowledged else { return }
+            if ["loading","no_controls"].contains(link.vehicleState) { scheduleNoticePoll();return }
+        }
+        cancelPending()
         guard link.vehicleState == "ready" else {
             switch link.vehicleState {
             case "disabled":message = "갤럭시 FoldBridge에서 워치 차량 제어를 켜 주세요."
             case "needs_widget":message = "갤럭시 FoldBridge의 차량 제어 설정에서 마이현대 위젯을 연결해 주세요."
             case "choose_buttons":message = "갤럭시에서 워치에 표시할 버튼을 선택해 주세요."
             case "no_controls":message = "마이현대 위젯의 제어 버튼을 읽지 못했습니다. 갤럭시 위젯 화면을 확인해 주세요."
-            case "result_pending":message = "마이현대의 이전 요청 안내가 버튼을 가리고 있습니다. 안내를 닫고 다시 선택해 주세요."
+            case "result_pending":message = "제어 버튼을 누르면 결과 안내를 닫고 선택한 제어를 전달합니다."
             case "loading":message = "마이현대 위젯을 갱신하는 중입니다. 잠시 후 다시 눌러 주세요."
             case "busy":message = "마이현대 위젯이 앞선 요청을 처리 중입니다. 잠시 후 다시 눌러 주세요."
             case "auth_required":message = "마이현대 위젯에 인증 요청이 표시되었습니다. 갤럭시에서 완료해 주세요."
@@ -127,6 +158,15 @@ final class VehicleQuickRouter: ObservableObject {
         link.noteVehicleQuickEvent("command.dispatch")
         link.runVehicleAction(action)
     }
+    private func scheduleNoticePoll() {
+        guard waiting, recoveringNotice, noticeAcknowledged, !noticePollScheduled, let token = pending else { return }
+        noticePollScheduled = true
+        DispatchQueue.main.asyncAfter(deadline:.now()+1) { [weak self] in
+            guard let self, self.pending == token, self.waiting, self.recoveringNotice else { return }
+            self.noticePollScheduled = false
+            self.requestCatalogue();self.scheduleNoticePoll()
+        }
+    }
     private func normalize(_ value: String) -> String {
         value.lowercased().filter { $0.isLetter || $0.isNumber }
     }
@@ -138,6 +178,9 @@ final class VehicleQuickRouter: ObservableObject {
         case .unlock:return ["문열기","문잠금해제","잠금해제","도어잠금해제","차문열기","문열림","doorunlock","unlockdoors","unlock"]
         }
     }
-    func cancelPending() { pending = nil;waiting = false;catalogueRequested = false }
+    func cancelPending() {
+        pending = nil;waiting = false;catalogueRequested = false;preparationDeadline = .distantPast
+        recoveringNotice = false;noticeAcknowledged = false;noticePollScheduled = false
+    }
     func dismiss() { cancelPending();presented = false }
 }

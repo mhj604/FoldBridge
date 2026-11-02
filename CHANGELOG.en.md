@@ -4,6 +4,12 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.6 · build 30 / Android 0.6.3-local · code 19
+
+- Recognize general result acknowledgement screens, including completion, approval and failure, instead of matching only the previous-request-incomplete sentence. Do not collect clickable result-message containers as vehicle controls.
+- A control tap now acknowledges a result notice, waits for a fresh ready catalogue, then submits the selected vehicle action once. Remove the separate watch recovery button.
+- Require both the acknowledgement response and the restored catalogue. Preparation expires 15 seconds after the original tap and is cancelled on leaving the panel. Vehicle commands themselves are not automatically retried.
+
 ## Watch 0.5.5 · build 29 (Android 0.6.2 unchanged)
 
 - Replace four direct-action widget buttons with one **Vehicle controls launcher** in every supported widget size. Choose the four controls inside the panel; saved assignments are retained. Opening the widget sends no vehicle command.

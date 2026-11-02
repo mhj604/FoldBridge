@@ -43,6 +43,8 @@
 "갤럭시의 공식 제어 위젯을 워치에 연결합니다." = "Connect the official Galaxy control widget to your watch.";
 "갤럭시의 차량 제어 목록을 불러오는 중입니다." = "Loading vehicle controls from the Galaxy.";
 "갤럭시의 차량 제어 설정을 확인해 주세요." = "Check vehicle control settings on the Galaxy.";
+"결과 안내를 닫고 제어 버튼을 준비하는 중입니다." = "Dismissing the result notice and preparing vehicle controls.";
+"결과 안내를 닫지 못했습니다. 갤럭시 위젯 화면을 확인해 주세요." = "Could not dismiss the result notice. Check the Galaxy widget.";
 "공식 마이현대 위젯의 버튼을 워치에서 실행합니다. 로그인과 차량 인증은 마이현대에서 처리합니다." = "Use the official MyHyundai widget buttons from your watch. MyHyundai handles sign-in and vehicle authentication.";
 "공식 위젯" = "Official widget";
 "권한을 허용한 뒤 연결 버튼을 다시 누르세요." = "Grant permissions, then tap Connect again.";
@@ -213,6 +215,7 @@
 "정지" = "Stop";
 "제어 목록 새로고침" = "Refresh control list";
 "제어 목록이 바뀌었습니다. 새 목록에서 다시 선택해 주세요." = "The control list changed. Choose again from the updated list.";
+"제어 버튼을 누르면 결과 안내를 닫고 선택한 제어를 전달합니다." = "Tap a vehicle control to dismiss the result notice and send that action.";
 "중간 제어 위젯" = "Medium control widget";
 "중복 알림 방지 상태를 저장하지 못했습니다." = "Could not save duplicate-notification tracking.";
 "중지됨" = "Stopped";

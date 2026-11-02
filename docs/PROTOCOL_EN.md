@@ -76,9 +76,9 @@ Use only the existing authenticated encrypted channel.
 
 The catalogue contains at most 12 owner-selected labelled official widget controls. The phone requires an enabled current selection and revision, stores the request ID, then invokes the widget once. The last 64 IDs suppress duplicates. Minimum dispatch spacing is 3 seconds. `widget_invoked` reports widget invocation, not vehicle success. Other results are `duplicate`, `invalid`, `not_ready`, `stale`, `busy`, and `unavailable`. The watch marks an unanswered request unknown after 30 seconds without automatic resend. Reconnection does not restore pending vehicle commands.
 
-### Dismiss a result notice (Android 0.6.1 / Watch 0.5.3)
+### Automatic result-notice recovery (Android 0.6.3 / Watch 0.5.6)
 
-Catalogue statuses distinguish `loading`, `busy`, `auth_required`, `result_pending` and `no_controls`. The observed previous-request-incomplete notice with a unique OK button yields `result_pending`. An explicit recovery tap sends the existing `vehicle_command` envelope with `action:"dismiss_notice"`, the current revision and a new UUID. The phone invokes only that acknowledgement once and returns `notice_dismissed`; the watch requests a fresh catalogue. This does not dispatch a vehicle command. A subsequent vehicle action requires a separate tap.
+Catalogue statuses distinguish `loading`, `busy`, `auth_required`, `result_pending` and `no_controls`. A unique acknowledgement in the official widget result screen yields `result_pending`. During a control tap, the watch sends `vehicle_command` with `action:"dismiss_notice"`, the current revision and a new UUID. Galaxy invokes that acknowledgement once and returns `notice_dismissed`. Only after this response and a fresh ready catalogue does the watch send the action for the current tap once, with a new UUID. Preparation expires 15 seconds after that tap and is cancelled on leaving the panel. Previous vehicle request IDs are never resent.
 
 ### Stable control identifiers (Android 0.6.2 / Watch 0.5.4)
 

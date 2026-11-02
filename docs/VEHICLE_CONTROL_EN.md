@@ -52,15 +52,15 @@ Smart Stack and watch faces now offer one **Vehicle controls** widget. Tap it to
 
 A command is sent once only when the assigned ID and label match the current catalogue. Connection/catalogue requests time out after 15 seconds without deferred execution. Lost replies never automatically resend a vehicle command. Widget labels follow the watch system language; the panel uses the FoldBridge language setting.
 
-## Previous-request notice hides controls (Android 0.6.1 / Watch 0.5.3)
+## Automatically acknowledge result notices (Android 0.6.3 / Watch 0.5.6)
 
-Recommended versions: Android **0.6.1-local / code 17**, Watch **0.5.3 / build 27**. After an initial operation, the official Korean MyHyundai widget was observed showing a notice that the previous remote-service request had not completed, with only a **확인** (OK) button. This hid the controls without indicating a lost login. The owner dismissed that notice and the controls returned.
+Recommended versions: Android **0.6.3-local / code 19**, Watch **0.5.6 / build 30**. The official widget can replace its controls with an **OK** result notice after incomplete, successful, approved or failed requests. An empty control list alone does not indicate a lost login.
 
-1. In watch quick controls or all vehicle controls, choose **Dismiss notice and restore controls**. It is also available in the Galaxy vehicle settings.
-2. FoldBridge invokes the current official widget's acknowledgement once, only when this specific notice and a unique OK button are recognized. It does not handle generic vehicle-operation confirmations or authentication dialogs.
-3. After receiving the restored catalogue, tap the desired vehicle control again. Dismissal does not repeat the previous command or execute a blocked request later.
+Tap **Start, Stop, Lock or Unlock** in the watch control panel. When a result notice is present, FoldBridge acknowledges it once, fetches a fresh catalogue and sends the action you just chose once the controls are ready. A separate recovery tap or second action tap is no longer required. Merely opening the widget does not start this sequence.
 
-Other notices should be read in the official Galaxy widget. Wait while processing, and complete explicit authentication prompts on the phone. Widget invocation remains distinct from actual vehicle success. No vehicle command was executed while developing this correction.
+Recognition is based on a unique **확인·닫기 / OK·Close** acknowledgement inside the official widget rather than one exact message body. Clickable notice containers containing words such as “engine start” are not treated as vehicle controls. Authentication prompts and questions authorizing vehicle operations are distinguished from result notices.
+
+Preparation lasts at most 15 seconds from the action tap. Leaving the panel or failing to restore the catalogue in that window cancels it. This neither repeats a previous command nor retries a vehicle command whose response was lost. Manual notice dismissal remains available in Galaxy settings. MyHyundai still provides the actual vehicle outcome.
 
 ## Controls remain unselected after dismissing a notice (Android 0.6.2 / Watch 0.5.4)
 

@@ -2,9 +2,9 @@
 
 **[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[다운로드 / Downloads](https://github.com/mhj604/FoldBridge/releases)**
 
-처음 사용하는 분은 **빠른 시작**부터 읽어 주세요. 현재 배포는 **Android 0.6.2-local / 코드 18**, **Watch 0.5.5 / 빌드 29**입니다.
+처음 사용하는 분은 **빠른 시작**부터 읽어 주세요. 현재 배포는 **Android 0.6.3-local / 코드 19**, **Watch 0.5.6 / 빌드 30**입니다.
 
-New users: start with **Install and connect**. Current release: **Android 0.6.2-local / code 18**, **Watch 0.5.5 / build 29**.
+New users: start with **Install and connect**. Current release: **Android 0.6.3-local / code 19**, **Watch 0.5.6 / build 30**.
 
 | 내용 / Topic | 한국어 | English |
 | --- | --- | --- |
@@ -25,7 +25,7 @@ New users: start with **Install and connect**. Current release: **Android 0.6.2-
 | 주요 구축 과정 / Development milestones | [구축 이력](DEVELOPMENT_HISTORY.md) | [Development history](DEVELOPMENT_HISTORY_EN.md) |
 | 수정·번역·문의 / Contributions, translations, help | [기여 방법](../CONTRIBUTING.md) | [Contributing](../CONTRIBUTING.en.md) |
 
-차량 제어 추가 버전은 Android **0.6.2-local / 18**, Watch **0.5.5 / 29**입니다. / Vehicle-control addition: Android **0.6.2-local / 18**, Watch **0.5.5 / 29**.
+차량 제어 추가 버전은 Android **0.6.3-local / 19**, Watch **0.5.6 / 30**입니다. / Vehicle-control addition: Android **0.6.3-local / 19**, Watch **0.5.6 / 30**.
 
 ## 먼저 알아둘 점 / Before starting
 

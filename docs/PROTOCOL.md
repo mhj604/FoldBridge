@@ -109,9 +109,9 @@ BLE 특성 변경으로 백그라운드 실행 기회를 받는 것은 watchOS�
 
 목록은 최대 12개이며 사용자가 선택한 공식 위젯의 이름 있는 버튼만 제공합니다. 폰은 활성 상태·현재 리비전·선택 여부를 확인하고 요청 ID를 저장한 뒤 위젯을 한 번 호출합니다. 최근 64개 ID를 중복 억제에 사용합니다. 실행 간격은 최소 3초입니다. `widget_invoked`는 위젯 호출이며 차량 성공을 뜻하지 않습니다. `duplicate`, `invalid`, `not_ready`, `stale`, `busy`, `unavailable`은 실행/전달 상태입니다. 워치는 30초 후 응답 미확인을 표시하지만 자동 재전송하지 않습니다. 재연결은 대기 차량 명령을 복원하지 않습니다.
 
-### 결과 안내 복구 (Android 0.6.1 / Watch 0.5.3)
+### 결과 안내 자동 복구 (Android 0.6.3 / Watch 0.5.6)
 
-`vehicle_catalogue.status`는 `loading`, `busy`, `auth_required`, `result_pending`, `no_controls`를 구분합니다. `result_pending`은 관찰된 이전 원격 서비스 미완료 안내와 유일한 확인 버튼이 있는 경우입니다. 사용자가 복구를 누르면 기존 `vehicle_command` 형식에서 `action:"dismiss_notice"`와 현재 `revision`, 새 UUID를 전달합니다. 해당 확인 버튼만 한 번 호출하고 `notice_dismissed`를 반환합니다. 차량 명령은 전송하지 않으며 워치는 새 목록을 요청합니다. 다음 차량 제어는 별도의 사용자 입력이 필요합니다.
+`vehicle_catalogue.status`는 `loading`, `busy`, `auth_required`, `result_pending`, `no_controls`를 구분합니다. `result_pending`은 공식 위젯 결과 화면의 유일한 확인/닫기 버튼이 있는 경우입니다. 제어 탭을 처리하는 워치는 `vehicle_command` 형식에서 `action:"dismiss_notice"`와 현재 `revision`, 새 UUID를 전달합니다. 갤럭시는 안내 확인을 한 번 호출하고 `notice_dismissed`를 반환합니다. 워치는 이 응답과 복구된 최신 목록을 모두 받은 뒤 현재 탭에 대응하는 차량 명령을 새 UUID로 한 번 전달합니다. 이 준비는 원래 탭의 15초 이내로 제한되고 화면 종료 시 취소됩니다. 이전 차량 요청 ID를 재전송하지 않습니다.
 
 ### 버튼 식별자 유지 (Android 0.6.2 / Watch 0.5.4)
 

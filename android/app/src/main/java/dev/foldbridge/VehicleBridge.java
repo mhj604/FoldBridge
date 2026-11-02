@@ -17,6 +17,8 @@ final class VehicleBridge {
     private static final Pattern CONTROL=Pattern.compile("시동|공조|잠금|잠그|열림|문 열|문열|문 닫|문닫|비상등|경적|충전|창문|트렁크|새로|상태|engine|start|stop|climate|lock|unlock|horn|light|charg|window|trunk|refresh|status",Pattern.CASE_INSENSITIVE);
     private static final Pattern AUTH=Pattern.compile("로그인.{0,40}(필요|해주세요|해 주세요)|인증.{0,40}(필요|해주세요|해 주세요)|비밀번호.{0,20}입력|PIN.{0,20}(입력|enter)|sign in to|log in to|authentication required",Pattern.CASE_INSENSITIVE);
     private static final Pattern PROGRESS=Pattern.compile("(처리|실행|제어|요청|불러오는|업데이트) ?중|please wait|in progress|loading",Pattern.CASE_INSENSITIVE);
+    private static final Pattern RESULT=Pattern.compile("완료|승인|성공|실패|오류|접수|거절|complete|approved|success|fail|error|accepted|rejected",Pattern.CASE_INSENSITIVE);
+    private static final Pattern QUESTION=Pattern.compile("하시겠|할까요|습니까[?？]|are you sure|do you want to|confirm (the )?(start|stop|lock|unlock)",Pattern.CASE_INSENSITIVE);
     private static VehicleBridge shared;
     static VehicleBridge get(Context context){if(shared==null)shared=new VehicleBridge(context.getApplicationContext());return shared;}
     private final Context context;
@@ -94,8 +96,8 @@ final class VehicleBridge {
         if(!hostAvailable)return "unavailable";
         if(updating)return "loading";
         if(authVisible)return "auth_required";
-        if(progressVisible)return "busy";
         if(noticeDismiss!=null)return "result_pending";
+        if(progressVisible)return "busy";
         if(controls.isEmpty())return refreshPending?"loading":"no_controls";
         Set<String> selected=selected();boolean disabled=false;
         for(Control c:controls.values())if(selected.contains(c.id())){
@@ -167,14 +169,18 @@ final class VehicleBridge {
             view.layout(0,0,width,height);
         }
         authVisible=false;progressVisible=false;inspectState(view);
-        // Only this observed, non-actuating result notice can be dismissed remotely.
-        // A generic confirmation or authentication screen is never a recovery control.
+        // The official widget uses the same acknowledgement screen for success,
+        // approval and failure. Find its unique acknowledgement, not one body string.
         noticeDismiss=null;
-        if(visibleText(view).contains("이전에 요청한 원격 서비스가 완료되지 않았습니다. 잠시 후 다시 실행해 주세요.")){
+        String text=visibleText(view);
+        if(!authVisible&&!QUESTION.matcher(text).find()&&(!progressVisible||RESULT.matcher(text).find())){
             List<View> matches=new ArrayList<>();findNoticeDismiss(view,matches);
             if(matches.size()==1)noticeDismiss=matches.get(0);
         }
-        LinkedHashMap<String,Control> found=new LinkedHashMap<>();ambiguousControls.clear();collect(view,found);
+        LinkedHashMap<String,Control> found=new LinkedHashMap<>();ambiguousControls.clear();
+        // Message containers may themselves be clickable and contain words such as
+        // "engine start". They are not vehicle controls while the notice is shown.
+        if(noticeDismiss==null)collect(view,found);
         migrateSelected(found);
         StringBuilder signature=new StringBuilder();signature.append(authVisible).append(progressVisible).append(refreshPending).append(noticeDismiss!=null);
         for(Control c:found.values())signature.append(c.id()).append(':').append(c.target().isEnabled()).append('\n');
@@ -210,7 +216,7 @@ final class VehicleBridge {
         if(node.getVisibility()!=View.VISIBLE)return false;
         boolean descendant=false;
         if(node instanceof ViewGroup group)for(int i=0;i<group.getChildCount();i++)descendant|=findNoticeDismiss(group.getChildAt(i),matches);
-        if(!descendant&&node.isEnabled()&&node.hasOnClickListeners()&&"확인".equals(visibleText(node))){matches.add(node);return true;}
+        if(!descendant&&node.isEnabled()&&node.hasOnClickListeners()&&Set.of("확인","닫기","ok","close").contains(visibleText(node).toLowerCase(Locale.ROOT))){matches.add(node);return true;}
         return descendant;
     }
     private void requestWidgetUpdate(){

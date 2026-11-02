@@ -8,6 +8,7 @@ struct VehicleAction: Identifiable, Equatable {
 struct VehicleControlView: View {
     @EnvironmentObject var language: AppLanguage
     @EnvironmentObject var link: WatchLink
+    @ObservedObject private var router = VehicleQuickRouter.shared
     @State private var selected: VehicleAction?
     @State private var confirming = false
     private var statusText: String {
@@ -18,7 +19,7 @@ struct VehicleControlView: View {
         case "needs_widget": return "갤럭시 FoldBridge의 차량 제어 설정에서 마이현대 위젯을 연결해 주세요."
         case "choose_buttons": return "갤럭시에서 워치에 표시할 버튼을 선택해 주세요."
         case "no_controls": return "마이현대 위젯의 제어 버튼을 읽지 못했습니다. 갤럭시 위젯 화면을 확인해 주세요."
-        case "result_pending": return "마이현대의 이전 요청 안내가 버튼을 가리고 있습니다. 안내를 닫고 다시 선택해 주세요."
+        case "result_pending": return "제어 버튼을 누르면 결과 안내를 닫고 선택한 제어를 전달합니다."
         case "loading": return "마이현대 위젯을 갱신하는 중입니다."
         case "busy": return "마이현대 위젯이 앞선 요청을 처리 중입니다. 잠시 후 다시 눌러 주세요."
         case "auth_required": return "마이현대 위젯에 인증 요청이 표시되었습니다. 갤럭시에서 완료해 주세요."
@@ -27,8 +28,8 @@ struct VehicleControlView: View {
     }
     private var resultText: String {
         switch link.vehicleResult {
-        case "notice_dismissed": return "안내를 닫았습니다. 원하는 차량 버튼을 다시 눌러 주세요."
-        case "result_pending": return "마이현대의 이전 요청 안내가 버튼을 가리고 있습니다. 안내를 닫고 다시 선택해 주세요."
+        case "notice_dismissed": return "결과 안내를 닫고 제어 버튼을 준비하는 중입니다."
+        case "result_pending": return "제어 버튼을 누르면 결과 안내를 닫고 선택한 제어를 전달합니다."
         case "widget_invoked": return "마이현대 위젯에 전달했습니다. 실제 차량 제어 결과는 마이현대 알림에서 확인하세요."
         case "duplicate": return "이미 전달한 요청입니다. 마이현대 알림을 확인하세요."
         case "stale": return "제어 목록이 바뀌었습니다. 새 목록에서 다시 선택해 주세요."
@@ -49,7 +50,11 @@ struct VehicleControlView: View {
             if link.connected {
                 Section {
                     if link.vehicleState == "result_pending" {
-                        Button(language.text("안내 닫고 버튼 복구")) { link.dismissVehicleNotice() }.disabled(link.vehicleBusy)
+                        ForEach(VehicleQuickControl.allCases) { control in
+                            Button(language.text(control.title)) { router.run(control) }
+                                .disabled(link.vehicleBusy || router.waiting)
+                        }
+                        if !router.message.isEmpty { Text(language.text(router.message)).font(.caption2) }
                     }
                     ForEach(link.vehicleActions) { action in
                         Button(action.label) { selected = action; confirming = true }

@@ -95,7 +95,7 @@ public final class VehicleSettingsActivity extends Activity {
             case "disabled"->"워치 차량 제어가 꺼져 있습니다.";
             case "needs_widget"->"마이현대 제어 위젯을 연결해 주세요.";
             case "choose_buttons"->"워치에서 사용할 버튼을 선택해 주세요.";
-            case "result_pending"->"마이현대의 이전 요청 안내가 버튼을 가리고 있습니다. 안내를 닫고 다시 선택해 주세요.";
+            case "result_pending"->"제어 버튼을 누르면 결과 안내를 닫고 선택한 제어를 전달합니다.";
             case "loading"->"마이현대 위젯을 갱신하는 중입니다.";
             case "busy"->"마이현대 위젯이 앞선 요청을 처리 중입니다. 잠시 후 다시 눌러 주세요.";
             case "auth_required"->"마이현대 위젯에 인증 요청이 표시되었습니다. 갤럭시에서 완료해 주세요.";
