@@ -4,6 +4,12 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Android 0.6.6-local · code 22 (Watch 0.5.8 unchanged)
+
+Galaxy records showed a real bring&T device-response notification with a title, plus an Android-generated `GROUP_SUMMARY` / `AUTOGROUP_SUMMARY` shell without title or body. Forwarding that empty shell caused FoldBridge's empty-notification fallback.
+
+Exclude textless group summaries from initial collection, active-notification replay and forwarding, before recording first-post state. Summaries with text, text lines, custom layouts or action buttons, and individual notifications, are not excluded by this filter. Keep the existing bring&T numeric-update and charging-alert policies. Previously delivered watch Notification Center entries are not removed by the update.
+
 ## Android 0.6.5-local · code 21 (Watch 0.5.8 unchanged)
 
 Forward Samsung System UI charging alerts (`charging_state` / `CHR`) and System UI notifications marked `ONLY_ALERT_ONCE` only once per active Android notification key. Even with charging alerts enabled, changes to battery percentage or time remaining do not alert the watch again. Charging alerts remain excluded when their setting is off. Existing indicators are baselined rather than replayed on listener reconnect or refresh. Removal followed by a new post can alert once again. Update the setting description in Korean and English; retain the existing Wattz/bring&T first-post policy.

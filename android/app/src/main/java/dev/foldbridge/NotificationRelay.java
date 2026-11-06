@@ -31,7 +31,7 @@ public final class NotificationRelay extends NotificationListenerService {
             StatusBarNotification[] active=getActiveNotifications();
             if(active!=null) {
                 Set<String> keys=new HashSet<>();
-                for(StatusBarNotification sbn:active)if(firstPostOnly(sbn))keys.add(sbn.getKey());
+                for(StatusBarNotification sbn:active)if(!emptyGroupSummary(sbn)&&firstPostOnly(sbn))keys.add(sbn.getKey());
                 activeFirstPostIds.keySet().retainAll(keys);
                 for(String key:keys)activeFirstPostIds.putIfAbsent(key,"");
             }
@@ -50,6 +50,7 @@ public final class NotificationRelay extends NotificationListenerService {
         if(listener==null||BridgeService.instance==null)return;
         try {
             for(StatusBarNotification sbn:listener.getActiveNotifications()) {
+                if(emptyGroupSummary(sbn))continue;
                 // Rebinding, refreshing or reconnecting must not replay a live meter.
                 if(firstPostOnly(sbn)){listener.activeFirstPostIds.putIfAbsent(sbn.getKey(),"");continue;}
                 if(System.currentTimeMillis()-sbn.getPostTime()<24L*60*60*1000)listener.forward(sbn,sbn.getPostTime());
@@ -60,6 +61,10 @@ public final class NotificationRelay extends NotificationListenerService {
         if(!sbn.getPackageName().equals(getPackageName())&&!sbn.getPackageName().equals("dev.foldbridge")) {
             received++;android.util.Log.i("FoldBridge","notification_received count="+received);
         }
+        // Android can synthesize a textless grouping shell alongside the real
+        // child notification. Do not turn that shell into "내용 없는 알림" or
+        // consume a first-post slot for it.
+        if(emptyGroupSummary(sbn))return;
         // Observe even while disconnected so a later numeric update does not turn
         // an old notification into a fresh alert after the BLE connection returns.
         if(firstPostOnly(sbn)) {
@@ -78,6 +83,23 @@ public final class NotificationRelay extends NotificationListenerService {
             if(id!=null&&!id.isEmpty())BridgeService.discardPending(id);
         }
     }
+    private static boolean emptyGroupSummary(StatusBarNotification sbn) {
+        Notification n=sbn.getNotification();
+        if((n.flags&Notification.FLAG_GROUP_SUMMARY)==0)return false;
+        // Keep meaningful summaries, custom layouts and actionable notifications.
+        if(n.contentView!=null||n.bigContentView!=null||n.headsUpContentView!=null||
+           (n.actions!=null&&n.actions.length>0))return false;
+        for(String key:new String[]{Notification.EXTRA_TITLE,Notification.EXTRA_TITLE_BIG,
+                Notification.EXTRA_TEXT,Notification.EXTRA_BIG_TEXT,Notification.EXTRA_SUB_TEXT,
+                Notification.EXTRA_SUMMARY_TEXT}) {
+            CharSequence value=n.extras.getCharSequence(key);
+            if(value!=null&&!value.toString().trim().isEmpty())return false;
+        }
+        CharSequence[] lines=n.extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES);
+        if(lines!=null)for(CharSequence line:lines)
+            if(line!=null&&!line.toString().trim().isEmpty())return false;
+        return true;
+    }
     private static boolean firstPostOnly(StatusBarNotification sbn) {
         return FIRST_POST_ONLY_APPS.contains(sbn.getPackageName()) ||
             ("com.android.systemui".equals(sbn.getPackageName()) &&
@@ -91,7 +113,7 @@ public final class NotificationRelay extends NotificationListenerService {
               (n.flags&Notification.FLAG_ONGOING_EVENT)!=0));
     }
     private void forward(StatusBarNotification sbn,long postedAt) {
-        if(BridgeService.instance==null||sbn.getPackageName().equals(getPackageName())||sbn.getPackageName().equals("dev.foldbridge"))return;
+        if(emptyGroupSummary(sbn)||BridgeService.instance==null||sbn.getPackageName().equals(getPackageName())||sbn.getPackageName().equals("dev.foldbridge"))return;
         Notification n=sbn.getNotification();
         String id=firstPostOnly(sbn)?activeFirstPostIds.get(sbn.getKey()):hex(Crypto.digest(sbn.getKey().getBytes(StandardCharsets.UTF_8))).substring(0,32);
         if(id==null||id.isEmpty())return;
