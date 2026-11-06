@@ -2,9 +2,9 @@
 
 **[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[다운로드 / Downloads](https://github.com/mhj604/FoldBridge/releases)**
 
-처음 사용하는 분은 **빠른 시작**부터 읽어 주세요. 현재 배포는 **Android 0.6.3-local / 코드 19**, **Watch 0.5.7 / 빌드 31**입니다.
+처음 사용하는 분은 **빠른 시작**부터 읽어 주세요. 현재 배포는 **Android 0.6.4-local / 코드 20**, **Watch 0.5.8 / 빌드 32**입니다.
 
-New users: start with **Install and connect**. Current release: **Android 0.6.3-local / code 19**, **Watch 0.5.7 / build 31**.
+New users: start with **Install and connect**. Current release: **Android 0.6.4-local / code 20**, **Watch 0.5.8 / build 32**.
 
 | 내용 / Topic | 한국어 | English |
 | --- | --- | --- |
@@ -20,12 +20,12 @@ New users: start with **Install and connect**. Current release: **Android 0.6.3-
 | 암호화·BLE·복원 / Encryption, BLE, restoration | [프로토콜](PROTOCOL.md) | [Protocol](PROTOCOL_EN.md) |
 | 시스템 아이콘과 본문 / System icons and custom content | [알림 표시 범위](NOTIFICATION_DISPLAY_LIMITS_KO.md) | [Notification display](NOTIFICATION_DISPLAY_LIMITS_EN.md) |
 | 알림 화면·배치 이력 / Notification screenshots and layout | [화면 비교](NOTIFICATION_LAYOUT_COMPARISON_KO.md) | [Layout examples](NOTIFICATION_LAYOUT_COMPARISON_EN.md) |
-| 최신 배포 변경 / Current release changes | [0.5.7 안내](RELEASE_WATCH_v0.5.7_KO.md) | [0.5.7 notes](RELEASE_WATCH_v0.5.7_EN.md) |
+| 최신 배포 변경 / Current release changes | [0.5.8 안내](RELEASE_WATCH_v0.5.8_KO.md) | [0.5.8 notes](RELEASE_WATCH_v0.5.8_EN.md) |
 | 버전별 변경 / Changes by version | [변경 이력](../CHANGELOG.md) | [Changelog](../CHANGELOG.en.md) |
 | 주요 구축 과정 / Development milestones | [구축 이력](DEVELOPMENT_HISTORY.md) | [Development history](DEVELOPMENT_HISTORY_EN.md) |
 | 수정·번역·문의 / Contributions, translations, help | [기여 방법](../CONTRIBUTING.md) | [Contributing](../CONTRIBUTING.en.md) |
 
-현재 차량 제어 권장 버전은 Android **0.6.3-local / 19**, Watch **0.5.7 / 31**입니다. / Recommended vehicle-control versions: Android **0.6.3-local / 19**, Watch **0.5.7 / 31**.
+현재 차량 제어 권장 버전은 Android **0.6.4-local / 20**, Watch **0.5.8 / 32**입니다. / Recommended vehicle-control versions: Android **0.6.4-local / 20**, Watch **0.5.8 / 32**.
 
 ## 먼저 알아둘 점 / Before starting
 

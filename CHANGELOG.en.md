@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.8 · build 32 (Android remains at 0.6.4)
+
+Record every app cancellation request and connection callback/error details to distinguish causes of background link termination. Rename the misleading `manual` disconnect event to `ended`. Connection policy is unchanged; this is not a claim of a permanent reconnection fix. [Investigation and scope](docs/RELEASE_WATCH_v0.5.8_EN.md)
+
 ## Android 0.6.4-local · code 20 (Watch 0.5.7 unchanged)
 
 For Wattz (`dubrowgn.wattz`) and bring&T (`com.bring.bringnt`), only the first post of an active Android notification key is forwarded to the watch. Updated numbers or text do not alert again; the watch retains the initial content. Removal of the phone notification allows a subsequent new post to be forwarded once again. Existing indicators are baselined during listener reconnects and are not replayed by refresh. Other apps and the original phone notifications are unchanged.

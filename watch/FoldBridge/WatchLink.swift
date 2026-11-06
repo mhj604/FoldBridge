@@ -88,6 +88,9 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var recoveryScanning = false
     private var autoReconnectPending = false
     private var refreshingServices = false
+    private var cancellationCount = 0
+    private var lastCancellation = ""
+    private var lastDisconnect = ""
     private var nextRecoveryRefresh = Date.distantPast
     private var lastIncomingFrame: Data?, lastSync = Date.distantPast
     private var pendingReceipts: [(alert: WatchAlert, revision: String)] = []
@@ -154,7 +157,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         let old = peripheral
         reconnectWork?.cancel(); reconnectWork = nil
         resetSession()
-        if let old { manager.cancelPeripheralConnection(old) }
+        if let old { cancelConnection(old,reason:"replace") }
         recoveryScanning = false
         connectionAttemptAt = Date()
         peripheral = phone.peripheral; phone.peripheral.delegate = self; manager.stopScan(); status = "휴대폰 연결 대기 중"
@@ -205,7 +208,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         lastError = "";backgroundNotice = "";status = "연결 새로고침 중"
         if let old, old.state != .disconnected {
             switchingFrom = old;refreshAfterDisconnect = false
-            manager.cancelPeripheralConnection(old)
+            cancelConnection(old,reason:"refresh")
             let current = epoch
             DispatchQueue.main.asyncAfter(deadline:.now()+3) {
                 guard self.epoch == current, self.switchingFrom === old else { return }
@@ -315,7 +318,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         if !candidates.contains(where:{$0.id == p.identifier}) { candidates.append(PhoneCandidate(peripheral:p)) }
     }
     func centralManager(_ central: CBCentralManager, didConnect p: CBPeripheral) {
-        guard p.identifier == peripheral?.identifier else { central.cancelPeripheralConnection(p); return }
+        trace("connect.callback.\(p === peripheral ? "current" : "other").\(p.state.rawValue)")
+        guard p.identifier == peripheral?.identifier else { cancelConnection(p,reason:"unexpected-connect"); return }
         central.stopScan();recoveryScanning = false;scanEpoch += 1
         reconnectWork?.cancel();reconnectWork = nil
         autoReconnectPending = false
@@ -350,7 +354,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         handleDisconnect(p,error:error,isReconnecting:isReconnecting)
     }
     private func handleDisconnect(_ p: CBPeripheral, error: Error?, isReconnecting: Bool) {
-        trace("disconnect.\(isReconnecting ? "reconnecting" : "manual").\((error as NSError?)?.code ?? 0)")
+        lastDisconnect = error.map { "\(($0 as NSError).domain):\(($0 as NSError).code):\($0.localizedDescription)" } ?? "none"
+        trace("disconnect.\(isReconnecting ? "reconnecting" : "ended").\((error as NSError?)?.code ?? 0).\(p === peripheral ? "current" : "other").\(p.state.rawValue)")
         if p === switchingFrom {
             switchingFrom = nil
             if refreshAfterDisconnect { refreshAfterDisconnect = false;startRecoveryScan() }
@@ -723,7 +728,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         profile = value; UserDefaults.standard.set(value.rawValue,forKey:"phoneProfile")
         candidates.removeAll(); lastError = ""; status = "\(value.title) 연결을 선택했습니다"
         if let old, old.state != .disconnected {
-            switchingFrom = old; manager.cancelPeripheralConnection(old)
+            switchingFrom = old; cancelConnection(old,reason:"profile")
             DispatchQueue.main.asyncAfter(deadline:.now()+3) { [weak self, weak old] in
                 guard let self, let old, self.switchingFrom === old else { return }
                 self.switchingFrom = nil; self.reconnect()
@@ -808,8 +813,13 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         let old = peripheral; resetSession(); reconnectWork?.cancel(); reconnectWork = nil
         manager.stopScan();recoveryScanning = false;nextRecoveryRefresh = .distantPast
         UserDefaults.standard.removeObject(forKey:phoneIDKey); WatchStore.remove(peerKey); WatchStore.remove("seen"); WatchStore.remove("inbox"); WatchStore.remove("receipts"); seen = [:]; seenOrder = []; pendingReceipts.removeAll()
-        if let old { manager.cancelPeripheralConnection(old) }
+        if let old { cancelConnection(old,reason:"forget") }
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests();UNUserNotificationCenter.current().removeAllDeliveredNotifications(); completeBackgroundTasks(); status = "등록을 해제했습니다"
+    }
+    private func cancelConnection(_ p: CBPeripheral, reason: String) {
+        cancellationCount += 1; lastCancellation = reason
+        trace("cancel."+reason)
+        manager.cancelPeripheralConnection(p)
     }
     private func resetSession(keeping retainedPeripheral: CBPeripheral? = nil) {
         peripheral?.delegate = nil
@@ -828,7 +838,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":31,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":32,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,
@@ -868,14 +878,14 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             // Keep the cancellation callback identifiable after clearing the protocol.
             // It submits the next native connect even while the app is backgrounded.
             switchingFrom = old;refreshAfterDisconnect = false
-            manager.cancelPeripheralConnection(old)
+            cancelConnection(old,reason:"failure")
             let current = epoch
             DispatchQueue.main.asyncAfter(deadline:.now()+3) { [weak self, weak old] in
                 guard let self, let old, self.epoch == current, self.switchingFrom === old else { return }
                 self.switchingFrom = nil;self.reconnect()
             }
         } else {
-            if let old { manager.cancelPeripheralConnection(old) }
+            if let old { cancelConnection(old,reason:"failure-disconnected") }
             if shouldResume {
                 if active { retryConnection() } else { reconnect() }
             }
