@@ -1,4 +1,4 @@
-# Watch 0.5.8 · build 32 / Android 0.6.4
+# Watch 0.5.8 · build 32 / Android 0.6.5
 
 [한국어](RELEASE_WATCH_v0.5.8_KO.md) · **English** · [Full usage guide](RELEASE_WATCH_v0.5.7_EN.md)
 
@@ -19,6 +19,11 @@ This version improves diagnostics. **It does not claim a confirmed cause or perm
 
 The watch app stores diagnostics in `Documents/foldbridge-status.json` and `Documents/foldbridge-events.json`. Events are capped at 128. These additions do not record message bodies or vehicle credentials. Diagnostics do not execute vehicle commands.
 
-Android remains at 0.6.4. Notification layout, vehicle controls, peer keys and control mappings are outside this change. [Build and install](BUILD_AND_SETUP_EN.md)
+The watch diagnostic update originally used Android 0.6.4. The current Android 0.6.5 changes are listed below. Notification layout, vehicle controls, peer keys and control mappings are outside this change. [Build and install](BUILD_AND_SETUP_EN.md)
 
 Apple explains background link retention, reconnection on return to range and runtime limits in [Get timely alerts from Bluetooth devices on watchOS](https://developer.apple.com/videos/play/wwdc2022/10135/). The specific watchOS 9 limit described in that presentation is not assumed to be a fixed limit on current OS versions.
+
+## Android 0.6.5-local · code 21 (Watch 0.5.8 unchanged)
+
+Forward Samsung System UI charging alerts (`charging_state` / `CHR`) and System UI notifications marked `ONLY_ALERT_ONCE` only once per active Android notification key. Even with charging alerts enabled, changes to battery percentage or time remaining do not alert the watch again. Charging alerts remain excluded when their setting is off. Existing indicators are baselined rather than replayed on listener reconnect or refresh. Removal followed by a new post can alert once again. Update the setting description in Korean and English; retain the existing Wattz/bring&T first-post policy.
+

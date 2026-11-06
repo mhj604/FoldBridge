@@ -13,8 +13,8 @@ public final class NotificationRelay extends NotificationListenerService {
     static volatile NotificationRelay instance;
     static volatile long received=0, forwarded=0;
     private static long lastRebind=-15000;
-    // These apps update live measurements inside one Android notification. An update
-    // is not a new event to alert on the watch. Store keys only, never message text.
+    // Live measurement updates and System UI alerts marked ONLY_ALERT_ONCE must
+    // not become new watch alerts. Store keys only, never message text.
     private static final Set<String> FIRST_POST_ONLY_APPS=Set.of("dubrowgn.wattz","com.bring.bringnt");
     private final Map<String,String> activeFirstPostIds=new HashMap<>();
     static boolean hasAccess(Context context) {
@@ -78,15 +78,24 @@ public final class NotificationRelay extends NotificationListenerService {
             if(id!=null&&!id.isEmpty())BridgeService.discardPending(id);
         }
     }
-    private static boolean firstPostOnly(StatusBarNotification sbn) {return FIRST_POST_ONLY_APPS.contains(sbn.getPackageName());}
+    private static boolean firstPostOnly(StatusBarNotification sbn) {
+        return FIRST_POST_ONLY_APPS.contains(sbn.getPackageName()) ||
+            ("com.android.systemui".equals(sbn.getPackageName()) &&
+             (chargingStatus(sbn) || (sbn.getNotification().flags&Notification.FLAG_ONLY_ALERT_ONCE)!=0));
+    }
+    private static boolean chargingStatus(StatusBarNotification sbn) {
+        Notification n=sbn.getNotification();
+        return "com.android.systemui".equals(sbn.getPackageName()) &&
+            ("charging_state".equals(sbn.getTag()) ||
+             ("CHR".equals(n.getChannelId()) && Notification.CATEGORY_SYSTEM.equals(n.category) &&
+              (n.flags&Notification.FLAG_ONGOING_EVENT)!=0));
+    }
     private void forward(StatusBarNotification sbn,long postedAt) {
         if(BridgeService.instance==null||sbn.getPackageName().equals(getPackageName())||sbn.getPackageName().equals("dev.foldbridge"))return;
         Notification n=sbn.getNotification();
         String id=firstPostOnly(sbn)?activeFirstPostIds.get(sbn.getKey()):hex(Crypto.digest(sbn.getKey().getBytes(StandardCharsets.UTF_8))).substring(0,32);
         if(id==null||id.isEmpty())return;
-        boolean chargingStatus=sbn.getPackageName().equals("com.android.systemui")&&
-            ("charging_state".equals(sbn.getTag())||("CHR".equals(n.getChannelId())&&Notification.CATEGORY_SYSTEM.equals(n.category)&&(n.flags&Notification.FLAG_ONGOING_EVENT)!=0));
-        if(chargingStatus&&!getSharedPreferences("settings",MODE_PRIVATE).getBoolean("forward_charging_status",false)) {
+        if(chargingStatus(sbn)&&!getSharedPreferences("settings",MODE_PRIVATE).getBoolean("forward_charging_status",false)) {
             BridgeService.discardPending(id);return;
         }
         Set<String> allowed=getSharedPreferences("settings",MODE_PRIVATE).getStringSet("apps",Collections.emptySet());

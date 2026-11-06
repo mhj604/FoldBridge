@@ -238,7 +238,7 @@ final class I18n {
         Map.entry("차량 제어 위젯","text_8ae81e81bde031d5"),
         Map.entry("처음 연결하는 워치인가요?","text_9b7d7c773e1744cc"),
         Map.entry("충전 상태 알림","text_23466026b7f56424"),
-        Map.entry("충전율이 바뀔 때도 알려줍니다","text_6b725729acdad283"),
+        Map.entry("충전 시작만 한 번 알리고 수치 갱신은 제외합니다","text_6b725729acdad283"),
         Map.entry("취소","text_be876433993ab7ba"),
         Map.entry("코드가 같아요","text_749a1aa6edfad5eb"),
         Map.entry("통신 채널을 열지 못했습니다.","text_c3c997b250b4d898"),

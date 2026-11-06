@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Android 0.6.5-local · code 21 (Watch 0.5.8 unchanged)
+
+Forward Samsung System UI charging alerts (`charging_state` / `CHR`) and System UI notifications marked `ONLY_ALERT_ONCE` only once per active Android notification key. Even with charging alerts enabled, changes to battery percentage or time remaining do not alert the watch again. Charging alerts remain excluded when their setting is off. Existing indicators are baselined rather than replayed on listener reconnect or refresh. Removal followed by a new post can alert once again. Update the setting description in Korean and English; retain the existing Wattz/bring&T first-post policy.
+
 ## Watch 0.5.8 · build 32 (Android remains at 0.6.4)
 
 Record every app cancellation request and connection callback/error details to distinguish causes of background link termination. Rename the misleading `manual` disconnect event to `ended`. Connection policy is unchanged; this is not a claim of a permanent reconnection fix. [Investigation and scope](docs/RELEASE_WATCH_v0.5.8_EN.md)

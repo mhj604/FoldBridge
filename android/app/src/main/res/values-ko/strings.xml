@@ -234,7 +234,7 @@
   <string name="text_8ae81e81bde031d5" formatted="false">"차량 제어 위젯"</string>
   <string name="text_9b7d7c773e1744cc" formatted="false">"처음 연결하는 워치인가요?"</string>
   <string name="text_23466026b7f56424" formatted="false">"충전 상태 알림"</string>
-  <string name="text_6b725729acdad283" formatted="false">"충전율이 바뀔 때도 알려줍니다"</string>
+  <string name="text_6b725729acdad283" formatted="false">"충전 시작만 한 번 알리고 수치 갱신은 제외합니다"</string>
   <string name="text_be876433993ab7ba" formatted="false">"취소"</string>
   <string name="text_749a1aa6edfad5eb" formatted="false">"코드가 같아요"</string>
   <string name="text_c3c997b250b4d898" formatted="false">"통신 채널을 열지 못했습니다."</string>

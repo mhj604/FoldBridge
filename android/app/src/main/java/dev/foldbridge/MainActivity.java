@@ -71,7 +71,7 @@ public final class MainActivity extends Activity {
         allApps=toggle(preferences,L("모든 앱 알림"),L("앱을 선택하지 않고 모두 전달합니다"),getSharedPreferences("settings",MODE_PRIVATE).getBoolean("all_apps",true));
         allApps.setOnCheckedChangeListener((button,checked)->{getSharedPreferences("settings",MODE_PRIVATE).edit().putBoolean("all_apps",checked).apply();if(checked)NotificationRelay.replayActive();renderState();});
         View divider=new View(this);divider.setBackgroundColor(line);LinearLayout.LayoutParams dividerParams=new LinearLayout.LayoutParams(-1,dp(1));dividerParams.setMargins(0,dp(15),0,dp(15));preferences.addView(divider,dividerParams);
-        Switch charging=toggle(preferences,L("충전 상태 알림"),L("충전율이 바뀔 때도 알려줍니다"),getSharedPreferences("settings",MODE_PRIVATE).getBoolean("forward_charging_status",false));
+        Switch charging=toggle(preferences,L("충전 상태 알림"),L("충전 시작만 한 번 알리고 수치 갱신은 제외합니다"),getSharedPreferences("settings",MODE_PRIVATE).getBoolean("forward_charging_status",false));
         charging.setOnCheckedChangeListener((button,checked)->{getSharedPreferences("settings",MODE_PRIVATE).edit().putBoolean("forward_charging_status",checked).apply();NotificationRelay.replayActive();});
         selectedAppsButton=action(L("전달할 앱 선택"),this::selectApps,false);preferences.addView(selectedAppsButton,buttonParams());root.addView(preferences);
         LinearLayout vehicle=card();addText(vehicle,L("마이현대 차량 제어"),18,ink,true);
@@ -128,7 +128,7 @@ public final class MainActivity extends Activity {
     }
     private void showDiagnostics(){
         String timing=BridgeService.lastRtt<0?L("아직 없음"):BridgeService.lastRtt+" ms";
-        new AlertDialog.Builder(this).setTitle(L("연결 진단")).setMessage(L("연결: ")+L(BridgeService.status)+L("\n알림 접근: ")+(NotificationRelay.hasAccess(this)?L("허용됨"):L("꺼짐"))+L("\n알림 수집: ")+(NotificationRelay.instance!=null?L("연결됨"):L("대기 중"))+L("\n수집 ")+NotificationRelay.received+L(" · 전달 요청 ")+NotificationRelay.forwarded+L("\n최근 전달 확인: ")+timing+"\n\nFoldBridge Local 0.6.4").setPositiveButton(L("닫기"),null).show();
+        new AlertDialog.Builder(this).setTitle(L("연결 진단")).setMessage(L("연결: ")+L(BridgeService.status)+L("\n알림 접근: ")+(NotificationRelay.hasAccess(this)?L("허용됨"):L("꺼짐"))+L("\n알림 수집: ")+(NotificationRelay.instance!=null?L("연결됨"):L("대기 중"))+L("\n수집 ")+NotificationRelay.received+L(" · 전달 요청 ")+NotificationRelay.forwarded+L("\n최근 전달 확인: ")+timing+"\n\nFoldBridge Local 0.6.5").setPositiveButton(L("닫기"),null).show();
     }
     private void start(boolean pair) {
         if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED||checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE)!=PackageManager.PERMISSION_GRANTED) {requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_ADVERTISE,Manifest.permission.POST_NOTIFICATIONS},7);toast(L("권한을 허용한 뒤 연결 버튼을 다시 누르세요."));return;}

@@ -234,7 +234,7 @@
   <string name="text_8ae81e81bde031d5" formatted="false">"Vehicle controls widget"</string>
   <string name="text_9b7d7c773e1744cc" formatted="false">"Pairing a watch for the first time?"</string>
   <string name="text_23466026b7f56424" formatted="false">"Charging status alerts"</string>
-  <string name="text_6b725729acdad283" formatted="false">"Include battery charging updates"</string>
+  <string name="text_6b725729acdad283" formatted="false">"Alert once when charging starts; ignore changing values"</string>
   <string name="text_be876433993ab7ba" formatted="false">"Cancel"</string>
   <string name="text_749a1aa6edfad5eb" formatted="false">"Codes match"</string>
   <string name="text_c3c997b250b4d898" formatted="false">"Could not open the communication channel."</string>
