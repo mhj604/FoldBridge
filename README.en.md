@@ -14,7 +14,7 @@ Initial Apple Watch setup still requires a paired iPhone. Installing the watch a
 
 | What you need | Download or guide |
 | --- | --- |
-| Android **0.6.3-local · code 19** | [Download APK](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.3.apk) |
+| Android **0.6.4-local · code 20** | [Download APK](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.4.apk) |
 | Apple Watch **0.5.7 · build 31** | [Current source](https://github.com/mhj604/FoldBridge/archive/refs/heads/local-ble.zip) · [Xcode project](watch/FoldBridge.xcodeproj) |
 | First installation | **[Step-by-step setup](docs/QUICK_START_EN.md)** |
 | Common questions | [FAQ](docs/FAQ_EN.md) |
@@ -38,7 +38,7 @@ open watch/FoldBridge.xcodeproj
 
 ## MyHyundai through Galaxy
 
-Android **0.6.3-local** / Watch **0.5.7** adds **FoldBridge watch → BLE → Galaxy official MyHyundai widget**. It does not redirect the original MyHyundai watch app. Bind the widget, choose controls on Galaxy, then open **Vehicle controls** in FoldBridge on the watch. A single **Vehicle controls widget** in Smart Stack or on a watch face opens the control panel. Choose Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors inside the panel. Actual vehicle service requires internet and MyHyundai authentication; widget invocation is not vehicle success. **[Setup and scope](docs/VEHICLE_CONTROL_EN.md)** · [0.6.3 APK](artifacts/android/FoldBridge-Local-0.6.3.apk)
+Android **0.6.4-local** / Watch **0.5.7** adds **FoldBridge watch → BLE → Galaxy official MyHyundai widget**. It does not redirect the original MyHyundai watch app. Bind the widget, choose controls on Galaxy, then open **Vehicle controls** in FoldBridge on the watch. A single **Vehicle controls widget** in Smart Stack or on a watch face opens the control panel. Choose Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors inside the panel. Actual vehicle service requires internet and MyHyundai authentication; widget invocation is not vehicle success. **[Setup and scope](docs/VEHICLE_CONTROL_EN.md)** · [0.6.4 APK](artifacts/android/FoldBridge-Local-0.6.4.apk)
 
 ## Everyday use
 
@@ -86,3 +86,8 @@ The free account's seven-day signing can be refreshed by a scheduled Mac task. S
 - [Contributing](CONTRIBUTING.en.md) · [All documentation](docs/README.md)
 
 The Android APK is available in Releases and `artifacts/android/`. To update an existing installation, keep the same Android signing key or the same watch Bundle ID and team. A self-built APK with a different key cannot update the distributed APK in place. [Updating without losing registration](docs/QUICK_START_EN.md#updating)
+
+
+## Repeated live-status updates
+
+For Wattz (`dubrowgn.wattz`) and bring&T (`com.bring.bringnt`), only the first post of an active Android notification key is forwarded to the watch. Updated numbers or text do not alert again; the watch retains the initial content. Removal of the phone notification allows a subsequent new post to be forwarded once again. Existing indicators are baselined during listener reconnects and are not replayed by refresh. Other apps and the original phone notifications are unchanged.

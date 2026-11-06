@@ -13,6 +13,10 @@ public final class NotificationRelay extends NotificationListenerService {
     static volatile NotificationRelay instance;
     static volatile long received=0, forwarded=0;
     private static long lastRebind=-15000;
+    // These apps update live measurements inside one Android notification. An update
+    // is not a new event to alert on the watch. Store keys only, never message text.
+    private static final Set<String> FIRST_POST_ONLY_APPS=Set.of("dubrowgn.wattz","com.bring.bringnt");
+    private final Map<String,String> activeFirstPostIds=new HashMap<>();
     static boolean hasAccess(Context context) {
         return context.getSystemService(NotificationManager.class).isNotificationListenerAccessGranted(new ComponentName(context,NotificationRelay.class));
     }
@@ -20,7 +24,20 @@ public final class NotificationRelay extends NotificationListenerService {
         if(instance!=null||!hasAccess(context)||SystemClock.elapsedRealtime()-lastRebind<15000)return;
         lastRebind=SystemClock.elapsedRealtime();requestRebind(new ComponentName(context,NotificationRelay.class));
     }
-    @Override public void onListenerConnected() {instance=this;android.util.Log.i("FoldBridge","notification_listener_connected");ConnectionReceiver.resumeIfEnabled(this);replayActive();BridgeService.recordState(this);}
+    @Override public void onListenerConnected() {
+        instance=this;
+        // Existing live indicators are baseline state, not newly arrived alerts.
+        try {
+            StatusBarNotification[] active=getActiveNotifications();
+            if(active!=null) {
+                Set<String> keys=new HashSet<>();
+                for(StatusBarNotification sbn:active)if(firstPostOnly(sbn))keys.add(sbn.getKey());
+                activeFirstPostIds.keySet().retainAll(keys);
+                for(String key:keys)activeFirstPostIds.putIfAbsent(key,"");
+            }
+        } catch(RuntimeException ignored) {}
+        android.util.Log.i("FoldBridge","notification_listener_connected");ConnectionReceiver.resumeIfEnabled(this);replayActive();BridgeService.recordState(this);
+    }
     @Override public void onListenerDisconnected() {
         instance=null;
         android.util.Log.i("FoldBridge","notification_listener_disconnected");
@@ -33,6 +50,8 @@ public final class NotificationRelay extends NotificationListenerService {
         if(listener==null||BridgeService.instance==null)return;
         try {
             for(StatusBarNotification sbn:listener.getActiveNotifications()) {
+                // Rebinding, refreshing or reconnecting must not replay a live meter.
+                if(firstPostOnly(sbn)){listener.activeFirstPostIds.putIfAbsent(sbn.getKey(),"");continue;}
                 if(System.currentTimeMillis()-sbn.getPostTime()<24L*60*60*1000)listener.forward(sbn,sbn.getPostTime());
             }
         } catch(RuntimeException error){BridgeService.error="현재 알림을 읽지 못했습니다. Local 앱의 알림 접근 권한을 확인하세요.";}
@@ -41,13 +60,30 @@ public final class NotificationRelay extends NotificationListenerService {
         if(!sbn.getPackageName().equals(getPackageName())&&!sbn.getPackageName().equals("dev.foldbridge")) {
             received++;android.util.Log.i("FoldBridge","notification_received count="+received);
         }
+        // Observe even while disconnected so a later numeric update does not turn
+        // an old notification into a fresh alert after the BLE connection returns.
+        if(firstPostOnly(sbn)) {
+            if(activeFirstPostIds.containsKey(sbn.getKey()))return;
+            // A later removal/repost is a genuinely new episode, even if the
+            // app reuses the same Android id and starts with identical text.
+            activeFirstPostIds.put(sbn.getKey(),UUID.randomUUID().toString());
+        }
         long postedAt=sbn.getPostTime();
         forward(sbn,postedAt>0?postedAt:System.currentTimeMillis());
     }
+    @Override public void onNotificationRemoved(StatusBarNotification sbn) {
+        if(firstPostOnly(sbn)) {
+            String id=activeFirstPostIds.remove(sbn.getKey());
+            // An undelivered status must not pop up after its phone notification ends.
+            if(id!=null&&!id.isEmpty())BridgeService.discardPending(id);
+        }
+    }
+    private static boolean firstPostOnly(StatusBarNotification sbn) {return FIRST_POST_ONLY_APPS.contains(sbn.getPackageName());}
     private void forward(StatusBarNotification sbn,long postedAt) {
         if(BridgeService.instance==null||sbn.getPackageName().equals(getPackageName())||sbn.getPackageName().equals("dev.foldbridge"))return;
         Notification n=sbn.getNotification();
-        String id=hex(Crypto.digest(sbn.getKey().getBytes(StandardCharsets.UTF_8))).substring(0,32);
+        String id=firstPostOnly(sbn)?activeFirstPostIds.get(sbn.getKey()):hex(Crypto.digest(sbn.getKey().getBytes(StandardCharsets.UTF_8))).substring(0,32);
+        if(id==null||id.isEmpty())return;
         boolean chargingStatus=sbn.getPackageName().equals("com.android.systemui")&&
             ("charging_state".equals(sbn.getTag())||("CHR".equals(n.getChannelId())&&Notification.CATEGORY_SYSTEM.equals(n.category)&&(n.flags&Notification.FLAG_ONGOING_EVENT)!=0));
         if(chargingStatus&&!getSharedPreferences("settings",MODE_PRIVATE).getBoolean("forward_charging_status",false)) {

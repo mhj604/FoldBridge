@@ -1,10 +1,10 @@
-# 현재 배포 안내 · Watch 0.5.7 / Android 0.6.3
+# 현재 배포 안내 · Watch 0.5.7 / Android 0.6.4
 
 **한국어** · [English](RELEASE_WATCH_v0.5.7_EN.md) · [전체 문서](README.md)
 
 ## 버전과 다운로드
 
-- Android: **0.6.3-local / 코드 19** — [APK 다운로드](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.3.apk)
+- Android: **0.6.4-local / 코드 20** — [APK 다운로드](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.4.apk)
 - Apple Watch: **0.5.7 / 빌드 31** — [소스와 Xcode 프로젝트](https://github.com/mhj604/FoldBridge/tree/local-ble/watch)
 - 같은 최신 소스와 문서를 `main`, `local-ble` 양쪽 브랜치에서 제공합니다.
 - 처음 사용하는 분은 [빠른 시작](QUICK_START_KO.md), 직접 빌드하는 분은 [빌드와 설치](BUILD_AND_SETUP.md)를 따릅니다. 워치는 자신의 Apple Team으로 서명해야 합니다.
@@ -56,3 +56,6 @@
 ## 변경 이력
 
 [한국어 변경 이력](../CHANGELOG.md)에 알림 배치·원본 아이콘·재연결·위젯·결과 안내 자동 확인·공식 버튼 구성 수정 내용을 버전별로 기록했습니다. 과거 버전 안내는 당시 동작의 기록이며 현재 사용법은 이 문서와 최신 차량 제어 안내를 따릅니다.
+
+
+Wattz(`dubrowgn.wattz`)와 브링앤티(`com.bring.bringnt`)는 같은 Android 알림 키가 유지되는 동안 최초 게시만 워치로 전달합니다. 전력·거리 등 수치나 본문이 바뀌어도 다시 전달하지 않으며, 워치에는 최초 내용이 남습니다. 폰에서 해당 알림이 제거된 뒤 새로 게시되면 다시 한 번 전달할 수 있습니다. 수집 서비스 재연결·새로고침 때 이미 떠 있는 알림은 기준 상태로만 등록하므로 다시 울리지 않습니다. 다른 앱의 알림 처리와 폰 자체 알림은 변경하지 않습니다.

@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Android 0.6.4-local · code 20 (Watch 0.5.7 unchanged)
+
+For Wattz (`dubrowgn.wattz`) and bring&T (`com.bring.bringnt`), only the first post of an active Android notification key is forwarded to the watch. Updated numbers or text do not alert again; the watch retains the initial content. Removal of the phone notification allows a subsequent new post to be forwarded once again. Existing indicators are baselined during listener reconnects and are not replayed by refresh. Other apps and the original phone notifications are unchanged.
+
 ## Current-release documentation
 
 - Add a [Watch 0.5.7 / Android 0.6.3 release guide](docs/RELEASE_WATCH_v0.5.7_EN.md) covering notifications, reconnection, supported vehicle controls and execution intervals.

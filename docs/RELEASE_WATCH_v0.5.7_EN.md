@@ -1,10 +1,10 @@
-# Current release · Watch 0.5.7 / Android 0.6.3
+# Current release · Watch 0.5.7 / Android 0.6.4
 
 [한국어](RELEASE_WATCH_v0.5.7_KO.md) · **English** · [All guides](README.md)
 
 ## Versions and downloads
 
-- Android: **0.6.3-local / code 19** — [Download APK](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.3.apk)
+- Android: **0.6.4-local / code 20** — [Download APK](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.4.apk)
 - Apple Watch: **0.5.7 / build 31** — [Source and Xcode project](https://github.com/mhj604/FoldBridge/tree/local-ble/watch)
 - Both `main` and `local-ble` contain the latest source and guides.
 - Start with [Install and connect](QUICK_START_EN.md) or [Build and settings](BUILD_AND_SETUP_EN.md). Sign the watch app using your own Apple team.
@@ -48,3 +48,6 @@ The phone and watch independently offer Korean, English and system language sett
 Free-account signing renewal is separate from vehicle controls. Existing conditions and setup are documented in [Automatic renewal](AUTO_RENEW_EN.md). This release does not change the renewal schedule.
 
 See the [changelog](../CHANGELOG.en.md) for layout, source icons, reconnection, widget, acknowledgement and control-matching changes. Older release notes describe historical behavior; use this guide and the current vehicle guide for everyday operation.
+
+
+For Wattz (`dubrowgn.wattz`) and bring&T (`com.bring.bringnt`), only the first post of an active Android notification key is forwarded to the watch. Updated numbers or text do not alert again; the watch retains the initial content. Removal of the phone notification allows a subsequent new post to be forwarded once again. Existing indicators are baselined during listener reconnects and are not replayed by refresh. Other apps and the original phone notifications are unchanged.

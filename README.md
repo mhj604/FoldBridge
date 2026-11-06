@@ -15,7 +15,7 @@
 | 항목 | 현재 버전 / 링크 |
 | --- | --- |
 | 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) — 서버 없는 BLE 구성 |
-| Android | **0.6.3-local · 코드 19** / [APK 바로 다운로드](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.3.apk) |
+| Android | **0.6.4-local · 코드 20** / [APK 바로 다운로드](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.4.apk) |
 | Apple Watch | **0.5.7 · 빌드 31** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
 | 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) · [이전 0.4.9 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
 | 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
@@ -38,7 +38,7 @@ open watch/FoldBridge.xcodeproj
 
 ## 갤럭시를 통한 마이현대 차량 제어
 
-Android **0.6.3-local** / Watch **0.5.7**에는 **FoldBridge 워치 → BLE → 갤럭시 공식 마이현대 위젯** 연결 기능이 추가되었습니다. 기존 워치 마이현대의 아이폰 연동을 변경하지 않습니다. 갤럭시에서 위젯을 연결하고 표시할 버튼을 선택한 후 워치의 **차량 제어**를 사용합니다. **스마트 스택·시계 페이스의 차량 제어 위젯 하나**를 누르면 제어 창이 열립니다. 열린 창에서 시동/공조 켜기·문 잠금·비상등 켜기·문 잠금 해제를 선택합니다. 실제 차량 서비스에는 인터넷과 마이현대 인증이 필요하며 위젯 호출은 차량 성공 응답과 다릅니다. **[설정과 동작 범위](docs/VEHICLE_CONTROL_KO.md)** · [0.6.3 APK](artifacts/android/FoldBridge-Local-0.6.3.apk)
+Android **0.6.4-local** / Watch **0.5.7**에는 **FoldBridge 워치 → BLE → 갤럭시 공식 마이현대 위젯** 연결 기능이 추가되었습니다. 기존 워치 마이현대의 아이폰 연동을 변경하지 않습니다. 갤럭시에서 위젯을 연결하고 표시할 버튼을 선택한 후 워치의 **차량 제어**를 사용합니다. **스마트 스택·시계 페이스의 차량 제어 위젯 하나**를 누르면 제어 창이 열립니다. 열린 창에서 시동/공조 켜기·문 잠금·비상등 켜기·문 잠금 해제를 선택합니다. 실제 차량 서비스에는 인터넷과 마이현대 인증이 필요하며 위젯 호출은 차량 성공 응답과 다릅니다. **[설정과 동작 범위](docs/VEHICLE_CONTROL_KO.md)** · [0.6.4 APK](artifacts/android/FoldBridge-Local-0.6.4.apk)
 
 ## 한국어 / English 전환
 
@@ -92,3 +92,8 @@ Android가 민감한 본문을 가리면 워치에도 가림 문구가 전달됩
 - [기여 방법](CONTRIBUTING.md)
 
 Android APK는 저장소와 Releases에서 내려받을 수 있습니다. Apple 서명 프로파일·Android 서명 키·기기 로그는 공개하지 않습니다. 자기 키로 빌드한 Android 앱은 배포 APK와 서명이 달라 같은 앱 위에 업데이트할 수 없습니다. **[서명과 업데이트 안내](docs/QUICK_START_KO.md#업데이트할-때)**를 먼저 읽어 주세요.
+
+
+## 반복 갱신 알림
+
+Wattz(`dubrowgn.wattz`)와 브링앤티(`com.bring.bringnt`)는 같은 Android 알림 키가 유지되는 동안 최초 게시만 워치로 전달합니다. 전력·거리 등 수치나 본문이 바뀌어도 다시 전달하지 않으며, 워치에는 최초 내용이 남습니다. 폰에서 해당 알림이 제거된 뒤 새로 게시되면 다시 한 번 전달할 수 있습니다. 수집 서비스 재연결·새로고침 때 이미 떠 있는 알림은 기준 상태로만 등록하므로 다시 울리지 않습니다. 다른 앱의 알림 처리와 폰 자체 알림은 변경하지 않습니다.
