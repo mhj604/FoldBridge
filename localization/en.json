@@ -263,5 +263,6 @@
   "시동/공조 켜기": "Start engine / climate",
   "비상등 켜기": "Turn on hazard lights",
   "문 잠금 해제": "Unlock doors",
-  "갤럭시 위젯에 해당 제어 버튼이 없습니다.": "This control is not available in the Galaxy widget."
+  "갤럭시 위젯에 해당 제어 버튼이 없습니다.": "This control is not available in the Galaxy widget.",
+  "휴대폰 연결 서비스 대기 중": "Waiting for the phone connection service"
 }

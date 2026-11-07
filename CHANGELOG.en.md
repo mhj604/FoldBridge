@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Android 0.6.8 / Watch 0.5.10 reconnection candidate
+
+Retries missing-service discovery without cancelling the link, handles restored subscriptions and stale crypto state after phone restart, and backs off repeated connection failures. Registration and keys are retained. [Changes and observation limits](docs/WATCH_0.5.10_CANDIDATE_EN.md). Not declared fully resolved.
+
 ## Android 0.6.7-local · code 23 (Watch 0.5.8 unchanged)
 
 Android GATT server connection callbacks can include links used by other BLE traffic. Previously the first physical link claimed the watch slot and stopped advertising, allowing an unrelated device to occupy connection waiting. Select the peer only when it subscribes to FoldBridge's own TX CCC descriptor. Existing pinned-key encrypted authentication remains required. Retain MTU values per device until subscription; unrelated connections and disconnections no longer reset the watch session or trigger cancellation of the other device.

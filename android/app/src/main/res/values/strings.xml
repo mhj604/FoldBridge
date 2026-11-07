@@ -250,6 +250,7 @@
   <string name="text_1773447ca7baf4a6" formatted="false">"Unpair this phone?"</string>
   <string name="text_7b43c1a42b3f8fc1" formatted="false">"Connect phone"</string>
   <string name="text_d4c18c6d5bc27596" formatted="false">"Waiting for phone connection"</string>
+  <string name="text_b5a59d9f7b8175c0" formatted="false">"Waiting for the phone connection service"</string>
   <string name="text_9d021cf3b93990c4" formatted="false">"Phone connected"</string>
   <string name="text_4448f2791ba3d0a9" formatted="false">"Connect your phone to get started"</string>
   <string name="text_b267988f78988563" formatted="false">"Could not save the phone connection."</string>

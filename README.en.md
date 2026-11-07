@@ -2,6 +2,8 @@
 
 [한국어](README.md) · **English** · [Documentation / 문서](docs/README.md)
 
+The current reconnection candidate is **Android 0.6.8 / Watch 0.5.10** on `fix/watch-background-reconnect`. See [changes and device observation limits](docs/WATCH_0.5.10_CANDIDATE_EN.md). Unlock-only recovery is not declared fully resolved.
+
 Forward notifications **directly from a Galaxy phone to Apple Watch over Bluetooth LE**. Notification delivery uses the two devices: no server, internet connection, iPhone relay, root access, or workout/audio session is needed.
 
 Initial Apple Watch setup still requires a paired iPhone. Installing the watch app requires a Mac, Xcode, and your own Apple signing team. Background delivery depends on watchOS runtime availability; the optional location keepalive mode is experimental.

@@ -2,6 +2,8 @@
 
 **한국어** · [English](README.en.md) · [전체 문서](docs/README.md)
 
+현재 재연결 수정 후보는 **Android 0.6.8 / Watch 0.5.10**이며 `fix/watch-background-reconnect` 브랜치에 있습니다. [수정 내용과 실제 기기 관찰 범위](docs/WATCH_0.5.10_CANDIDATE_KO.md)를 참고하세요. 모든 잠금 해제 조건에서의 해결을 보장하는 배포는 아닙니다.
+
 갤럭시에 도착한 알림을 **Apple Watch로 직접 전달**하는 Android·watchOS 앱입니다. 두 기기는 Bluetooth LE로 통신하며, 알림 전달에 서버·인터넷·페어링된 아이폰을 사용하지 않습니다. 루팅·운동·오디오 세션도 사용하지 않습니다.
 
 워치의 최초 설정과 개발용 앱 설치에는 Apple의 기기 등록과 Mac/Xcode가 필요합니다. 위치 세션을 이용하는 백그라운드 수신은 실험 기능이며, watchOS가 앱을 중단할 수 있어 모든 알림의 상시·즉시 수신을 보장하지는 않습니다.

@@ -249,6 +249,7 @@
 "휴대폰 등록을 해제할까요?" = "Unpair this phone?";
 "휴대폰 연결" = "Connect phone";
 "휴대폰 연결 대기 중" = "Waiting for phone connection";
+"휴대폰 연결 서비스 대기 중" = "Waiting for the phone connection service";
 "휴대폰 연결됨" = "Phone connected";
 "휴대폰 연결을 시작하세요" = "Connect your phone to get started";
 "휴대폰 연결을 저장하지 못했습니다." = "Could not save the phone connection.";

@@ -250,6 +250,7 @@
   <string name="text_1773447ca7baf4a6" formatted="false">"휴대폰 등록을 해제할까요?"</string>
   <string name="text_7b43c1a42b3f8fc1" formatted="false">"휴대폰 연결"</string>
   <string name="text_d4c18c6d5bc27596" formatted="false">"휴대폰 연결 대기 중"</string>
+  <string name="text_b5a59d9f7b8175c0" formatted="false">"휴대폰 연결 서비스 대기 중"</string>
   <string name="text_9d021cf3b93990c4" formatted="false">"휴대폰 연결됨"</string>
   <string name="text_4448f2791ba3d0a9" formatted="false">"휴대폰 연결을 시작하세요"</string>
   <string name="text_b267988f78988563" formatted="false">"휴대폰 연결을 저장하지 못했습니다."</string>

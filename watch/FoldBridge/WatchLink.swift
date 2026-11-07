@@ -89,6 +89,13 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var recoveryScanning = false
     private var autoReconnectPending = false
     private var refreshingServices = false
+    private var serviceDiscoveryWork: DispatchWorkItem?
+    private var serviceDiscoveryAttempts = 0
+    private var serviceWaitCount = 0
+    private var nextServiceDiscovery = Date.distantPast
+    private var lastServiceDiscoveryError = ""
+    private var nextConnectAttempt = Date.distantPast
+    private var lastConnectError = ""
     private var cancellationCount = 0
     private var lastCancellation = ""
     private var lastDisconnect = ""
@@ -204,7 +211,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         guard UserDefaults.standard.string(forKey:phoneIDKey) != nil, (try? WatchStore.get(peerKey)) != nil else { scan();return }
         refreshCount += 1
         let old = peripheral ?? switchingFrom
-        reconnectWork?.cancel();reconnectWork = nil;reconnects = 0
+        reconnectWork?.cancel();reconnectWork = nil;reconnects = 0;nextConnectAttempt = .distantPast
         manager.stopScan();recoveryScanning = false;resetSession()
         lastError = "";backgroundNotice = "";status = "연결 새로고침 중"
         if let old, old.state != .disconnected {
@@ -244,7 +251,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // The preferred date is a request, not a boot hook or a guaranteed execution time.
     }
     private func reconnect() {
-        guard switchingFrom == nil, manager.state == .poweredOn else { return }
+        guard switchingFrom == nil, manager.state == .poweredOn, Date() >= nextConnectAttempt else { return }
         if let existing = peripheral {
             if existing.state == .connected, stage == "idle" { beginDiscovery(existing) }
             // A disconnected cached object without an OS-owned reconnect used to
@@ -262,7 +269,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         startRecoveryScan()
     }
     private func startRecoveryScan() {
-        guard manager.state == .poweredOn, !connected, peripheral?.state != .connected, !manager.isScanning,
+        guard manager.state == .poweredOn, !connected,
+              peripheral?.state != .connected || stage == "waitingForService", !manager.isScanning,
               UserDefaults.standard.string(forKey:phoneIDKey) != nil,
               (try? WatchStore.get(peerKey)) != nil else { return }
         // A missing OS cache entry must not force the user to register the same phone again.
@@ -276,9 +284,11 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func retryConnection() {
         guard reconnectWork == nil, UserDefaults.standard.string(forKey:phoneIDKey) != nil else { return }
         reconnects += 1
+        let delay = min(30.0,pow(2.0,Double(min(reconnects,5))))
+        nextConnectAttempt = Date().addingTimeInterval(delay)
         let work = DispatchWorkItem { [weak self] in self?.reconnectWork = nil; self?.reconnect() }
         reconnectWork = work
-        DispatchQueue.main.asyncAfter(deadline:.now()+min(30,pow(2,Double(min(reconnects,5)))),execute:work)
+        DispatchQueue.main.asyncAfter(deadline:.now()+delay,execute:work)
     }
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String:Any]) {
         guard let id = UserDefaults.standard.string(forKey:phoneIDKey),
@@ -304,8 +314,11 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     func centralManager(_ central: CBCentralManager, didDiscover p: CBPeripheral, advertisementData: [String:Any], rssi RSSI: NSNumber) {
         if recoveryScanning {
+            guard Date() >= nextConnectAttempt else { return }
             if let existing = peripheral, existing.identifier == p.identifier {
-                if switchingFrom == nil, existing.state == .disconnected {
+                if switchingFrom == nil, existing.state == .connected, stage == "waitingForService" {
+                    trace("service.advertisement.retry");retryServiceDiscovery(existing)
+                } else if switchingFrom == nil, existing.state == .disconnected, Date() >= nextConnectAttempt {
                     // A fresh advertisement proves proximity even if an old OS
                     // auto-reconnect flag is still set. Re-submit without cancelling.
                     autoReconnectPending = false;connectionAttemptAt = Date()
@@ -344,6 +357,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     func centralManager(_ central: CBCentralManager, didFailToConnect p: CBPeripheral, error: Error?) {
         guard p === peripheral else { return }
+        lastConnectError = error.map { "\(($0 as NSError).domain):\(($0 as NSError).code):\($0.localizedDescription)" } ?? "none"
         trace("connect.failed.\((error as NSError?)?.code ?? 0)")
         fail("휴대폰에 연결하지 못했습니다.",retry:true)
     }
@@ -380,13 +394,16 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // hammering Core Bluetooth every second after a system service change.
         // Submit a native pending connect before a background callback returns;
         // a delayed app timer may not run once watchOS suspends the process.
-        if !active || reconnects <= 1 { reconnect() } else { retryConnection() }
+        if reconnects <= 1 { reconnect() } else { retryConnection() }
     }
     func peripheral(_ p: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
-        guard p === peripheral,
-              invalidatedServices.contains(where:{$0.uuid == CBUUID(string:profile.service)}) else { return }
+        guard p === peripheral else { return }
+        if stage == "waitingForService" {
+            trace("service.changed.retry");retryServiceDiscovery(p);return
+        }
+        guard invalidatedServices.contains(where:{$0.uuid == CBUUID(string:profile.service)}) else { return }
         trace("services.invalidated")
-        guard !refreshingServices, stage != "discovering", stage != "resubscribing" else { return }
+        guard !refreshingServices, stage != "discovering", stage != "discoveringAllServices", stage != "resubscribing" else { return }
         if connected, session != nil {
             // Android's GATT database is shared with other system services. A
             // Service Changed indication does not mean our peer process/key changed.
@@ -405,8 +422,50 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     func peripheral(_ p: CBPeripheral, didDiscoverServices error: Error?) {
         guard p === peripheral else { return }
         trace("discover.services.\((error as NSError?)?.code ?? 0)")
-        guard error == nil, let service = p.services?.first(where:{$0.uuid == CBUUID(string:profile.service)}) else { fail("FoldBridge 서비스를 찾지 못했습니다.",retry:true); return }
+        lastServiceDiscoveryError = error.map { "\(($0 as NSError).domain):\(($0 as NSError).code)" } ?? ""
+        guard error == nil else { waitForService(p);return }
+        guard let service = p.services?.first(where:{$0.uuid == CBUUID(string:profile.service)}) else {
+            if stage != "discoveringAllServices" {
+                // A filtered lookup can return an empty shared Android GATT
+                // cache after its app server restarts. Refresh the service list
+                // before deciding the trusted phone is unavailable.
+                stage = "discoveringAllServices";trace("service.full.discovery")
+                p.discoverServices(nil)
+            } else { waitForService(p) }
+            return
+        }
+        serviceDiscoveryWork?.cancel();serviceDiscoveryWork = nil;serviceDiscoveryAttempts = 0
+        if !refreshingServices { stage = "discovering" }
         p.discoverCharacteristics([CBUUID(string:profile.tx),CBUUID(string:profile.rx)],for:service)
+    }
+    private func waitForService(_ p: CBPeripheral) {
+        guard p === peripheral else { return }
+        guard (try? WatchStore.get(peerKey)) != nil else {
+            fail("FoldBridge 서비스를 찾지 못했습니다.",retry:true);return
+        }
+        // The phone can keep its shared LE link while FoldBridge's own service
+        // is temporarily absent. Cancelling here created a tight connect/cancel
+        // loop even in background, without making the service appear sooner.
+        let attempts = serviceDiscoveryAttempts+1
+        resetSession(keeping:p);serviceDiscoveryAttempts = attempts;serviceWaitCount += 1
+        stage = "waitingForService";status = "휴대폰 연결 서비스 대기 중";lastError = ""
+        let delay = min(30.0,pow(2.0,Double(min(attempts,5))))
+        nextServiceDiscovery = Date().addingTimeInterval(delay)
+        trace("service.wait.\(attempts)");startRecoveryScan();scheduleRecoveryRefresh()
+        let current = epoch
+        let work = DispatchWorkItem { [weak self, weak p] in
+            guard let self, let p, self.epoch == current, self.stage == "waitingForService" else { return }
+            self.retryServiceDiscovery(p)
+        }
+        serviceDiscoveryWork = work
+        DispatchQueue.main.asyncAfter(deadline:.now()+delay,execute:work)
+    }
+    private func retryServiceDiscovery(_ p: CBPeripheral) {
+        guard p === peripheral, stage == "waitingForService", p.state == .connected,
+              manager.state == .poweredOn else { return }
+        serviceDiscoveryWork?.cancel();serviceDiscoveryWork = nil
+        stage = "discoveringAllServices";trace("service.wait.retry")
+        p.discoverServices(nil)
     }
     func peripheral(_ p: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard p === peripheral else { return }
@@ -457,8 +516,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         guard p === peripheral, characteristic === tx else { return }
         if let warning = error as? CBError, warning.code == .leGattNearBackgroundNotificationLimit {
             backgroundNotice = "백그라운드 수신 한도에 가까워졌습니다. 앱을 직접 열면 수신 기회가 갱신됩니다."
+            trace("background.budget.near")
         } else if let warning = error as? CBError, warning.code == .leGattExceededBackgroundNotificationLimit {
             backgroundNotice = "watchOS 백그라운드 수신 한도에 도달했습니다. 앱을 직접 열어 알림을 동기화하세요."
+            trace("background.budget.exceeded")
             completeBackgroundTasks(); return
         } else if error != nil { fail("BLE 수신이 중단되어 다시 연결합니다.",retry:true); return }
         guard characteristic.uuid == CBUUID(string:profile.tx), let frame = characteristic.value else { finishBackgroundWhenIdle(); return }
@@ -568,7 +629,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func finishAuthentication() throws {
         guard !connected, localConfirmed, remoteConfirmed else { return }
         try WatchStore.put(peerKey,phonePublic); UserDefaults.standard.set(peripheral?.identifier.uuidString,forKey:phoneIDKey)
-        connected = true; code = ""; reconnects = 0; lastError = ""; status = "휴대폰 연결됨"
+        connected = true; code = ""; reconnects = 0; nextConnectAttempt = .distantPast; lastError = ""; status = "휴대폰 연결됨"
         trace("authenticated")
         scheduleRecoveryRefresh()
         writeDiagnostics()
@@ -764,12 +825,15 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             if let p = peripheral, p.state == .disconnected, !autoReconnectPending { resetSession();reconnect() }
             startRecoveryScan()
         }
+        if stage == "waitingForService", now >= nextServiceDiscovery, let p = peripheral {
+            retryServiceDiscovery(p)
+        }
         // This method is already executing in an OS-granted callback/timer.
         // A running location keepalive callback must also recover stalled auth,
         // rather than waiting for the user to bring the app into foreground.
         guard canProcessContinuously else { writeDiagnostics();return }
         let recoveryFloor = max(foregroundSince,runtimeWindowStart)
-        if !connected, stage != "idle", (try? WatchStore.get(peerKey)) != nil,
+        if !connected, stage != "idle", stage != "waitingForService", (try? WatchStore.get(peerKey)) != nil,
                   now.timeIntervalSince(max(connectionAttemptAt,recoveryFloor)) >= 90 {
             restartSavedConnection()
         } else if !connected, stage == "idle", peripheral?.state == .connecting,
@@ -839,6 +903,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         manager.cancelPeripheralConnection(p)
     }
     private func resetSession(keeping retainedPeripheral: CBPeripheral? = nil) {
+        serviceDiscoveryWork?.cancel();serviceDiscoveryWork = nil;serviceDiscoveryAttempts = 0
+        nextServiceDiscovery = .distantPast
         peripheral?.delegate = nil
         epoch += 1; scanEpoch += 1; connected = false; peripheral = retainedPeripheral; retainedPeripheral?.delegate = self; autoReconnectPending = false; tx = nil; rx = nil; session = nil; stage = "idle"; code = ""; localConfirmed = false; remoteConfirmed = false; writing = false; writingFrame = nil; outgoing.removeAll(); assembler.reset()
         lastIncomingFrame = nil; lastSync = .distantPast
@@ -855,7 +921,9 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":33,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":34,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "serviceWaitCount":serviceWaitCount,"serviceDiscoveryAttempts":serviceDiscoveryAttempts,"lastServiceDiscoveryError":lastServiceDiscoveryError,
+            "lastConnectError":lastConnectError,
             "identityAvailable":identity != nil,"applicationState":WKApplication.shared().applicationState.rawValue,
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
@@ -903,9 +971,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
                 self.switchingFrom = nil;self.reconnect()
             }
         } else {
-            if let old { cancelConnection(old,reason:"failure-disconnected") }
             if shouldResume {
-                if active { retryConnection() } else { reconnect() }
+                retryConnection()
             }
         }
         // The filtered scan is registered synchronously before the background task ends.

@@ -6,6 +6,8 @@
 
 New users: start with **Install and connect**. Current release: **Android 0.6.7-local / code 23**, **Watch 0.5.8 / build 32**.
 
+재연결 수정 후보 / Reconnection candidate: [Android 0.6.8 · Watch 0.5.10 한국어](WATCH_0.5.10_CANDIDATE_KO.md) · [English](WATCH_0.5.10_CANDIDATE_EN.md).
+
 | 내용 / Topic | 한국어 | English |
 | --- | --- | --- |
 | 개요·다운로드 / Overview and downloads | [시작 화면](../README.md) | [Overview](../README.en.md) |

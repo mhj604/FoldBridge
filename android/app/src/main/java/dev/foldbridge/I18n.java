@@ -254,6 +254,7 @@ final class I18n {
         Map.entry("휴대폰 등록을 해제할까요?","text_1773447ca7baf4a6"),
         Map.entry("휴대폰 연결","text_7b43c1a42b3f8fc1"),
         Map.entry("휴대폰 연결 대기 중","text_d4c18c6d5bc27596"),
+        Map.entry("휴대폰 연결 서비스 대기 중","text_b5a59d9f7b8175c0"),
         Map.entry("휴대폰 연결됨","text_9d021cf3b93990c4"),
         Map.entry("휴대폰 연결을 시작하세요","text_4448f2791ba3d0a9"),
         Map.entry("휴대폰 연결을 저장하지 못했습니다.","text_b267988f78988563"),
