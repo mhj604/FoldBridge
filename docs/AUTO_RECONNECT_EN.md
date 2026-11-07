@@ -1,5 +1,7 @@
 # Reconnection without buttons: changes and remaining conditions
 
+> Latest installed candidate: [Android 0.6.10 / Watch 0.5.13](WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md). Actual range return and process restoration succeeded. Earlier candidate descriptions below are historical; use the latest notes for prolonged locking and reboot scope.
+
 [한국어](AUTO_RECONNECT_KO.md) · **English**
 
 See the **[Android 0.6.8 / Watch 0.5.10 record](WATCH_0.5.10_CANDIDATE_EN.md)** for the latest candidate and unfinished work. Next goals are to fully resolve interrupted background authentication, recovery after prolonged locking, and automatic reconnection after physical range loss/return. All remain unfinished.

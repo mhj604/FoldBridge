@@ -12,6 +12,9 @@ final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDele
     @Published private(set) var status = "위치 기반 연결 유지 꺼짐"
     @Published private(set) var lastUpdate: Date?
     private var manager: CLLocationManager?
+    private var backgroundActivity: CLBackgroundActivitySession?
+    private var activityDiagnostics: Task<Void,Never>?
+    private var activityBlocked = false
     private let intentKey = "locationKeepAliveEnabled"
 
     func preserveEnabledIntentForUpdate() {
@@ -21,12 +24,25 @@ final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDele
     }
 
     func resumeIfRequested() {
-        guard !requested, UserDefaults.standard.bool(forKey:intentKey) else { return }
-        start()
+        if requested {
+            if activityBlocked, WKApplication.shared().applicationState == .active {
+                activityDiagnostics?.cancel();backgroundActivity?.invalidate();backgroundActivity = nil
+                manager?.allowsBackgroundLocationUpdates = false
+                updateAuthorization()
+            }
+            return
+        }
+        guard UserDefaults.standard.bool(forKey:intentKey) else { return }
+        start(restoring:true)
     }
 
-    func start() {
-        guard WKApplication.shared().applicationState == .active else { return }
+    func start(restoring: Bool = false) {
+        let foreground = WKApplication.shared().applicationState == .active
+        let authorization = CLLocationManager().authorizationStatus
+        // Restore only the already-enabled, already-authorized session. Permission
+        // prompts and a genuinely new session still start from direct app use.
+        guard foreground || (restoring && UserDefaults.standard.bool(forKey:intentKey)
+                && (authorization == .authorizedWhenInUse || authorization == .authorizedAlways)) else { return }
         guard CLLocationManager.locationServicesEnabled() else { status = "워치의 위치 서비스를 켜 주세요."; return }
         if manager == nil {
             let locationManager = CLLocationManager()
@@ -45,6 +61,8 @@ final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDele
         UserDefaults.standard.set(false,forKey:intentKey)
         manager?.stopUpdatingLocation()
         manager?.allowsBackgroundLocationUpdates = false
+        backgroundActivity?.invalidate();backgroundActivity = nil
+        activityDiagnostics?.cancel();activityDiagnostics = nil;activityBlocked = false
         WatchLink.shared.setContinuousRuntime(false)
         status = "위치 기반 연결 유지 꺼짐"; lastUpdate = nil
     }
@@ -54,8 +72,28 @@ final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDele
         switch manager.authorizationStatus {
         case .notDetermined:
             status = "워치에서 위치 권한을 선택해 주세요."
-            manager.requestWhenInUseAuthorization()
+            if WKApplication.shared().applicationState == .active { manager.requestWhenInUseAuthorization() }
         case .authorizedWhenInUse, .authorizedAlways:
+            // Core Location requires this retained session to be recreated
+            // immediately on background relaunch to preserve its in-use state.
+            if backgroundActivity == nil {
+                let activity = CLBackgroundActivitySession();backgroundActivity = activity
+                if #available(watchOS 11.0, *) {
+                    activityDiagnostics = Task { [weak self] in
+                        do {
+                            for try await diagnostic in activity.diagnostics {
+                                let blocked = diagnostic.authorizationDenied || diagnostic.authorizationDeniedGlobally
+                                    || diagnostic.authorizationRestricted || diagnostic.insufficientlyInUse
+                                await MainActor.run {
+                                    guard let self, self.requested, self.backgroundActivity === activity else { return }
+                                    self.activityBlocked = blocked
+                                    WatchLink.shared.setContinuousRuntime(!blocked)
+                                }
+                            }
+                        } catch { /* Location delegate reports service failures. */ }
+                    }
+                }
+            }
             guard !manager.allowsBackgroundLocationUpdates else { return }
             manager.allowsBackgroundLocationUpdates = true
             manager.startUpdatingLocation()
@@ -85,6 +123,10 @@ final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDele
 
 final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDelegate {
     func applicationDidFinishLaunching() {
+        if ProcessInfo.processInfo.environment["FOLDBRIDGE_RESUME_LOCATION"] == "1" {
+            LocationKeepAlive.shared.preserveEnabledIntentForUpdate()
+        }
+        LocationKeepAlive.shared.resumeIfRequested()
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().setNotificationCategories([
             UNNotificationCategory(identifier:RelayCategory.textOnly,actions:[],intentIdentifiers:[],options:[]),
@@ -95,9 +137,6 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
             UserDefaults.standard.set("panel.v1",forKey:"vehicleWidgetLayout")
             WidgetCenter.shared.invalidateConfigurationRecommendations()
             WidgetCenter.shared.reloadTimelines(ofKind:"FoldBridgeVehicleControls")
-        }
-        if ProcessInfo.processInfo.environment["FOLDBRIDGE_RESUME_LOCATION"] == "1" {
-            LocationKeepAlive.shared.preserveEnabledIntentForUpdate()
         }
         if Bundle.main.object(forInfoDictionaryKey:"FoldBridgePushEnabled") as? Bool == true { WKApplication.shared().registerForRemoteNotifications() }
     }
@@ -238,7 +277,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button(language.text("휴대폰 등록 해제"),role:.destructive) { forgetting = true }
-                Text("FoldBridge 0.5.12").font(.caption2).foregroundStyle(.secondary)
+                Text("FoldBridge 0.5.13").font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle(language.text("설정"))
             .confirmationDialog(language.text("연결 유지를 시작할까요?"),isPresented:$startingLocation,titleVisibility:.visible) {

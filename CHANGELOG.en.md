@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Android 0.6.10 / Watch 0.5.13 automatic recovery
+
+Submit native connection requests and filtered discovery after background failure/restoration without relying solely on app timers. Restore phone advertising when the monitor is disabled. Final watch build 38 also restores an enabled location activity session immediately on background relaunch; locked-process restoration and authentication were recorded. Automatic authentication was recorded after actual Bluetooth loss and range departure/return, and after background watch process restoration. A later locked-state disconnect remains under investigation; sustained locked operation, hours-long locking and full device reboot recovery are not declared complete. [Changes and observations](docs/WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md).
+
 ## Android 0.6.9 / Watch 0.5.12 background authentication recovery
 
 Send bootstrap after subscription and resume background authentication from its receive callback. Restart discovery advertising on phone refresh and submit background reconnection requests promptly. Physical-device recovery succeeded without reopening the watch app after phone service restart and stop/start. Prolonged lock, actual range return and all phone-only refresh cases after physical-link loss remain open. [Changes and observed scope](docs/WATCH_0.5.12_BACKGROUND_AUTH_EN.md).

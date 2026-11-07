@@ -6,6 +6,8 @@
 
 New users: start with **Install and connect**. Current release: **Android 0.6.7-local / code 23**, **Watch 0.5.8 / build 32**.
 
+자동 연결·거리 복귀·프로세스 복원 / Automatic connection, range return and process recovery: [Android 0.6.10 · Watch 0.5.13 한국어](WATCH_0.5.13_AUTOMATIC_RECOVERY_KO.md) · [English](WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md).
+
 백그라운드 인증 재개 수정 / Background authentication recovery: [Android 0.6.9 · Watch 0.5.12 한국어](WATCH_0.5.12_BACKGROUND_AUTH_KO.md) · [English](WATCH_0.5.12_BACKGROUND_AUTH_EN.md).
 
 앱 실행 후 연결 지연 퇴행 수정 / Foreground reconnection regression fix: [Watch 0.5.11 한국어](WATCH_0.5.11_FOREGROUND_FIX_KO.md) · [English](WATCH_0.5.11_FOREGROUND_FIX_EN.md).
@@ -26,7 +28,7 @@ New users: start with **Install and connect**. Current release: **Android 0.6.7-
 | 암호화·BLE·복원 / Encryption, BLE, restoration | [프로토콜](PROTOCOL.md) | [Protocol](PROTOCOL_EN.md) |
 | 시스템 아이콘과 본문 / System icons and custom content | [알림 표시 범위](NOTIFICATION_DISPLAY_LIMITS_KO.md) | [Notification display](NOTIFICATION_DISPLAY_LIMITS_EN.md) |
 | 알림 화면·배치 이력 / Notification screenshots and layout | [화면 비교](NOTIFICATION_LAYOUT_COMPARISON_KO.md) | [Layout examples](NOTIFICATION_LAYOUT_COMPARISON_EN.md) |
-| 미완료 재연결·다음 수정 / Unfinished reconnection work | [현재 문제·장시간 잠금·거리 복귀](WATCH_0.5.10_CANDIDATE_KO.md#미완료-작업과-다음-수정-목표--2026-11-07) | [Current issue, prolonged locking, range return](WATCH_0.5.10_CANDIDATE_EN.md#unfinished-work-and-next-implementation-goals--2026-11-07) |
+| 미완료 재연결·다음 수정 / Unfinished reconnection work | [최신 복구 결과와 남은 조건](WATCH_0.5.13_AUTOMATIC_RECOVERY_KO.md) | [Latest recovery results and remaining conditions](WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md) |
 | 최신 배포 변경 / Current release changes | [0.5.8 안내](RELEASE_WATCH_v0.5.8_KO.md) | [0.5.8 notes](RELEASE_WATCH_v0.5.8_EN.md) |
 | 버전별 변경 / Changes by version | [변경 이력](../CHANGELOG.md) | [Changelog](../CHANGELOG.en.md) |
 | 주요 구축 과정 / Development milestones | [구축 이력](DEVELOPMENT_HISTORY.md) | [Development history](DEVELOPMENT_HISTORY_EN.md) |

@@ -25,7 +25,7 @@ public final class BridgeService extends Service {
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",25,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",26,"bridgeRunning",s!=null,"status",status,"error",error,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
             "softRefreshCount",s==null?0:s.softRefreshCount,"disconnectCount",s==null?0:s.disconnectCount,"lastDisconnectReason",s==null?"":s.lastDisconnectReason,
@@ -35,6 +35,7 @@ public final class BridgeService extends Service {
             "observedLinks",s==null?0:s.observedLinks,"subscriptionClaims",s==null?0:s.subscriptionClaims,
             "retainedSubscriptionClaims",s==null?0:s.retainedSubscriptionClaims,
             "bootstrapSent",s==null?0:s.bootstrapSent,"discoveryRefreshes",s==null?0:s.discoveryRefreshes,
+            "subscriptionReleases",s==null?0:s.subscriptionReleases,
             "rejectedCharacteristicWrites",s==null?0:s.rejectedCharacteristicWrites,
             "staleLinkRecoveries",s==null?0:s.staleLinkRecoveries,"maintenanceAt",s==null?0:s.maintenanceAt,
             "connectionStartedAt",s==null?0:s.connectionStartedAt,
@@ -69,6 +70,7 @@ public final class BridgeService extends Service {
     private int observedLinks=0, subscriptionClaims=0, staleLinkRecoveries=0;
     private int retainedSubscriptionClaims=0, rejectedCharacteristicWrites=0;
     private int bootstrapSent=0, discoveryRefreshes=0;
+    private int subscriptionReleases=0;
     private long maintenanceAt=0;
     private volatile long indicationTicket=0;
     private int indicationGeneration;
@@ -278,6 +280,13 @@ public final class BridgeService extends Service {
                 valid=valid&&(matches(device)||(central==null&&disable));
                 if(valid)subscribed=enable;
                 if(response)server.sendResponse(device,requestId,valid?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,0,null);
+                if(valid&&disable&&matches(device)) {
+                    // If the watch is suspended between disabling and restoring
+                    // its monitor, retaining central would suppress advertising
+                    // forever on an otherwise live shared Android LE connection.
+                    // Release our transport only, without cancelling that link.
+                    subscriptionReleases++;clearSession();status="워치 연결 대기 중";startAdvertising();
+                }
                 recordState(BridgeService.this);
             });
         }

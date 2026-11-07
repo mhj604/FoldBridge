@@ -95,6 +95,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var nextServiceDiscovery = Date.distantPast
     private var lastServiceDiscoveryError = ""
     private var nextConnectAttempt = Date.distantPast
+    private var backgroundRecoveryRequests = 0
     private var lastConnectError = ""
     private var cancellationCount = 0
     private var lastCancellation = ""
@@ -231,14 +232,28 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         trace("bluetooth.\(central.state.rawValue)")
         if central.state == .poweredOn {
             if peripheral?.state == .disconnected { autoReconnectPending = false }
-            reconnect()
+            resumeSavedConnection()
         }
         else { switchingFrom = nil;refreshAfterDisconnect = false;resetSession();status = "블루투스를 켜세요" }
     }
     func resumeSavedConnection() {
         if identity == nil { identity = try? WatchStore.identity() }
         scheduleRecoveryRefresh()
+        // A cancellation can finish while the process is suspended. Do not leave
+        // recovery gated on a fallback timer that has not been scheduled again.
+        if let previous = switchingFrom, previous.state == .disconnected {
+            switchingFrom = nil;refreshAfterDisconnect = false
+        }
+        if !active { clearReconnectDelay() }
         reconnect()
+        if stage == "waitingForService", let p = peripheral { retryServiceDiscovery(p) }
+        // Restored .connecting links used to register this only in a 20s timer.
+        // Keep a service-filtered scan with the OS before this callback returns.
+        if !connected { startRecoveryScan() }
+    }
+    private func clearReconnectDelay() {
+        reconnectWork?.cancel();reconnectWork = nil
+        nextConnectAttempt = .distantPast
     }
     private func scheduleRecoveryRefresh() {
         guard UserDefaults.standard.string(forKey:phoneIDKey) != nil,
@@ -282,6 +297,13 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // of range. A foreground-only timeout must not remove background discovery.
     }
     private func retryConnection() {
+        if !active {
+            // didFailToConnect also reaches this path. A delayed app retry can
+            // disappear into suspension even though no native connect is pending.
+            clearReconnectDelay();backgroundRecoveryRequests += 1
+            reconnect();startRecoveryScan();scheduleRecoveryRefresh()
+            writeDiagnostics();return
+        }
         guard reconnectWork == nil, UserDefaults.standard.string(forKey:phoneIDKey) != nil else { return }
         reconnects += 1
         let delay = min(30.0,pow(2.0,Double(min(reconnects,5))))
@@ -310,7 +332,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         scheduleRecoveryRefresh()
         // Restoration may arrive after poweredOn/onAppear. Resume explicitly rather
         // than waiting for a second state callback or a foreground timer.
-        DispatchQueue.main.async { [weak self] in self?.reconnect() }
+        resumeSavedConnection()
     }
     func centralManager(_ central: CBCentralManager, didDiscover p: CBPeripheral, advertisementData: [String:Any], rssi RSSI: NSNumber) {
         if recoveryScanning {
@@ -334,6 +356,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     func centralManager(_ central: CBCentralManager, didConnect p: CBPeripheral) {
         trace("connect.callback.\(p === peripheral ? "current" : "other").\(p.state.rawValue)")
         guard p.identifier == peripheral?.identifier else { cancelConnection(p,reason:"unexpected-connect"); return }
+        if p !== peripheral { peripheral?.delegate = nil;peripheral = p }
+        p.delegate = self
         central.stopScan();recoveryScanning = false;scanEpoch += 1
         reconnectWork?.cancel();reconnectWork = nil
         autoReconnectPending = false
@@ -655,6 +679,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         guard !connected, localConfirmed, remoteConfirmed else { return }
         try WatchStore.put(peerKey,phonePublic); UserDefaults.standard.set(peripheral?.identifier.uuidString,forKey:phoneIDKey)
         connected = true; code = ""; reconnects = 0; nextConnectAttempt = .distantPast; lastError = ""; status = "휴대폰 연결됨"
+        clearReconnectDelay();manager.stopScan();recoveryScanning = false;scanEpoch += 1
         trace("authenticated")
         scheduleRecoveryRefresh()
         writeDiagnostics()
@@ -809,6 +834,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         }
         active = value
         if changed { trace(value ? "lifecycle.foreground" : "lifecycle.background") }
+        if !value, !connected {
+            // A foreground backoff must not be inherited by a suspended app.
+            clearReconnectDelay()
+        }
         updateMaintenanceTimer()
         if value {
             backgroundNotice = ""
@@ -821,7 +850,9 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         writeDiagnostics()
     }
     func setContinuousRuntime(_ value: Bool) {
+        guard continuousRuntime != value else { return }
         continuousRuntime = value
+        trace(value ? "location.runtime.available" : "location.runtime.unavailable")
         updateMaintenanceTimer()
         if connected { sendSecure(["type":"state","active":canProcessContinuously]); if value { synchronize() } }
         else if value { reconnect() }
@@ -855,6 +886,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // preceding wall-clock interval was available to finish BLE work.
         if now.timeIntervalSince(lastMaintenance) > 45 { runtimeWindowStart = now }
         lastMaintenance = now
+        if !active { clearReconnectDelay() }
+        if let previous = switchingFrom, previous.state == .disconnected {
+            switchingFrom = nil;refreshAfterDisconnect = false
+        }
         // Location callbacks can recover a disconnected peer without opening the UI.
         if peripheral == nil || (peripheral?.state == .connected && stage == "idle") { reconnect() }
         if !connected {
@@ -957,7 +992,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":36,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":38,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "backgroundRecoveryRequests":backgroundRecoveryRequests,
             "serviceWaitCount":serviceWaitCount,"serviceDiscoveryAttempts":serviceDiscoveryAttempts,"lastServiceDiscoveryError":lastServiceDiscoveryError,
             "lastConnectError":lastConnectError,
             "retryDelaySeconds":max(0,nextConnectAttempt.timeIntervalSinceNow),
