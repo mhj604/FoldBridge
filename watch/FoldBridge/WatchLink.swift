@@ -420,6 +420,12 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             return
         }
         if tx.isNotifying {
+            if !active {
+                // Core Bluetooth retained this monitor for background delivery.
+                // Removing the last subscription here can remove the very wake
+                // source needed to finish restoration. Authenticate over it.
+                trace("subscribe.retained.background");beginHandshake();return
+            }
             // A restored Core Bluetooth subscription can outlive the phone's process.
             // Re-write CCC explicitly so both applications agree on indication state.
             stage = "resubscribing"; p.setNotifyValue(false,for:tx)
@@ -705,8 +711,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         }
     }
     func setActive(_ value: Bool) {
+        let changed = active != value
         if value && !active { foregroundSince = Date() }
         active = value
+        if changed { trace(value ? "lifecycle.foreground" : "lifecycle.background") }
         updateMaintenanceTimer()
         if value { refreshNotificationSettings();resumeSavedConnection() }
         if value { backgroundNotice = ""; reconnects = 0 }
@@ -751,7 +759,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             if let p = peripheral, p.state == .disconnected, !autoReconnectPending { resetSession();reconnect() }
             startRecoveryScan()
         }
-        guard active else { writeDiagnostics();return }
+        // This method is already executing in an OS-granted callback/timer.
+        // A running location keepalive callback must also recover stalled auth,
+        // rather than waiting for the user to bring the app into foreground.
+        guard canProcessContinuously else { writeDiagnostics();return }
         if !connected, stage != "idle", (try? WatchStore.get(peerKey)) != nil,
                   Date().timeIntervalSince(max(connectionAttemptAt,foregroundSince)) >= 90 {
             restartSavedConnection()
@@ -838,7 +849,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":32,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":33,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "identityAvailable":identity != nil,"applicationState":WKApplication.shared().applicationState.rawValue,
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,
