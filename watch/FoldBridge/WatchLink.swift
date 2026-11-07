@@ -394,7 +394,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // hammering Core Bluetooth every second after a system service change.
         // Submit a native pending connect before a background callback returns;
         // a delayed app timer may not run once watchOS suspends the process.
-        if reconnects <= 1 { reconnect() } else { retryConnection() }
+        if !active || reconnects <= 1 {
+            nextConnectAttempt = .distantPast
+            reconnect()
+        } else { retryConnection() }
     }
     func peripheral(_ p: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
         guard p === peripheral else { return }
@@ -500,7 +503,22 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             stage = "discovering"; p.setNotifyValue(true,for:characteristic); return
         }
         guard characteristic.isNotifying else { fail("알림 구독을 시작하지 못했습니다.",retry:true); return }
+        if !active, (try? WatchStore.get(peerKey)) != nil {
+            // Retain the monitor first. The phone's bootstrap indication grants
+            // the background receive opportunity used for the handshake.
+            stage = "awaitingBootstrap";trace("handshake.await.bootstrap")
+            let current = epoch
+            DispatchQueue.main.asyncAfter(deadline:.now()+2) { [weak self] in
+                guard let self, self.epoch == current else { return }
+                self.beginAfterBootstrap()
+            }
+            return
+        }
         beginHandshake()
+    }
+    private func beginAfterBootstrap() {
+        guard stage == "awaitingBootstrap", peripheral?.state == .connected else { return }
+        stage = "discovering";beginHandshake()
     }
     private func finishServiceRefresh() {
         refreshingServices = false; stage = "confirm"; status = "휴대폰 연결됨"
@@ -549,6 +567,13 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         guard let identity, let type = object["type"] as? String else { throw Wire.Failure.state }
         if type == "wake", (object["v"] as? Int) == 1 {
             trace("remote.wake")
+            if stage == "awaitingBootstrap" { beginAfterBootstrap();return }
+            if (object["bootstrap"] as? Bool) == true, !connected,
+               ["commit","reveal","confirm"].contains(stage) {
+                // The first write can race the bootstrap indication. Do not
+                // discard a handshake already in flight for this same link.
+                trace("bootstrap.handshake.inflight");return
+            }
             if let p = peripheral { reauthenticate(p) }
             return
         }
@@ -788,6 +813,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         if value {
             backgroundNotice = ""
             refreshNotificationSettings();resumeSavedConnection()
+            beginAfterBootstrap()
             if stage == "waitingForService", let p = peripheral { retryServiceDiscovery(p) }
         }
         if connected { sendSecure(["type":"state","active":canProcessContinuously]); if value { reconcileDelivered { self.synchronize() } } }
@@ -931,7 +957,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":35,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":36,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "serviceWaitCount":serviceWaitCount,"serviceDiscoveryAttempts":serviceDiscoveryAttempts,"lastServiceDiscoveryError":lastServiceDiscoveryError,
             "lastConnectError":lastConnectError,
             "retryDelaySeconds":max(0,nextConnectAttempt.timeIntervalSinceNow),

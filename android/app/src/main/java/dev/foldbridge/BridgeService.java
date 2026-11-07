@@ -25,7 +25,7 @@ public final class BridgeService extends Service {
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",24,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",25,"bridgeRunning",s!=null,"status",status,"error",error,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
             "softRefreshCount",s==null?0:s.softRefreshCount,"disconnectCount",s==null?0:s.disconnectCount,"lastDisconnectReason",s==null?"":s.lastDisconnectReason,
@@ -34,6 +34,7 @@ public final class BridgeService extends Service {
             "advertising",s!=null&&s.advertisements!=null,
             "observedLinks",s==null?0:s.observedLinks,"subscriptionClaims",s==null?0:s.subscriptionClaims,
             "retainedSubscriptionClaims",s==null?0:s.retainedSubscriptionClaims,
+            "bootstrapSent",s==null?0:s.bootstrapSent,"discoveryRefreshes",s==null?0:s.discoveryRefreshes,
             "rejectedCharacteristicWrites",s==null?0:s.rejectedCharacteristicWrites,
             "staleLinkRecoveries",s==null?0:s.staleLinkRecoveries,"maintenanceAt",s==null?0:s.maintenanceAt,
             "connectionStartedAt",s==null?0:s.connectionStartedAt,
@@ -67,6 +68,7 @@ public final class BridgeService extends Service {
     private final Map<String,ResumeProbe> resumeProbes=new LinkedHashMap<>();
     private int observedLinks=0, subscriptionClaims=0, staleLinkRecoveries=0;
     private int retainedSubscriptionClaims=0, rejectedCharacteristicWrites=0;
+    private int bootstrapSent=0, discoveryRefreshes=0;
     private long maintenanceAt=0;
     private volatile long indicationTicket=0;
     private int indicationGeneration;
@@ -168,6 +170,9 @@ public final class BridgeService extends Service {
         refreshCount++;bluetoothRetries=0;blockedUntil=0;failures=0;pairUntil=0;
         error="";
         if(server==null){status="연결 새로고침 중";startBluetooth();return;}
+        if(central!=null&&getSystemService(BluetoothManager.class).getConnectionState(central,BluetoothProfile.GATT)==BluetoothProfile.STATE_DISCONNECTED) {
+            clearSession();
+        }
         if(authenticated&&subscribed) {
             softRefreshCount++;
             sendSecure(object("type","refresh"));
@@ -177,7 +182,14 @@ public final class BridgeService extends Service {
             // until the existing peer-key check succeeds.
             sendPlain(object("type","wake","v",1));
             status="워치 인증 중";
-        } else {status=central==null?"워치 연결 대기 중":"워치 인증 중";if(central==null)startAdvertising();}
+        } else {
+            // A refresh with no subscriber previously did nothing when the same
+            // advertisement was already running. Re-announce without rebuilding
+            // the GATT database or touching saved registration.
+            if(central!=null&&!subscribed)clearSession();
+            status="워치 연결 대기 중";discoveryRefreshes++;
+            stopAdvertising();startAdvertising();
+        }
         recordState(this);
     }
     private void retryBluetooth(String reason) {
@@ -302,16 +314,15 @@ public final class BridgeService extends Service {
         clearSession();central=device;subscribed=true;mtu=linkMtus.getOrDefault(device.getAddress(),23);
         stopAdvertising();error="";status="워치 인증 중";schedulePairingDeadline();
         int epoch=generation;
-        // Rebinding an invalidated service can preserve the watch's old crypto
-        // session even though this phone process has a new one. Give the normal
-        // commit a chance first, then request authentication once, over the
-        // restored indication monitor. No periodic idle wakeups are needed.
-        handler.postDelayed(()->{
+        // Send an indication as soon as the descriptor write is answered. A
+        // background watch needs the characteristic event's runtime to finish
+        // authentication; the old 750ms delay could outlive its connect callback.
+        handler.post(()->{
             if(instance==this&&epoch==generation&&matches(device)&&subscribed
                     &&!authenticated&&"idle".equals(stage)&&!vault.get("peer").isEmpty()) {
-                sendPlain(object("type","wake","v",1));recordState(this);
+                bootstrapSent++;sendPlain(object("type","wake","v",1,"bootstrap",true));recordState(this);
             }
-        },750);
+        });
     }
     private void resumeRetainedSubscription(BluetoothDevice device,int requestId,boolean response,byte[] value) {
         // watchOS can retain its indication monitor across a phone process restart.

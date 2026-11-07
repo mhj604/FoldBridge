@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Android 0.6.9 / Watch 0.5.12 background authentication recovery
+
+Send bootstrap after subscription and resume background authentication from its receive callback. Restart discovery advertising on phone refresh and submit background reconnection requests promptly. Physical-device recovery succeeded without reopening the watch app after phone service restart and stop/start. Prolonged lock, actual range return and all phone-only refresh cases after physical-link loss remain open. [Changes and observed scope](docs/WATCH_0.5.12_BACKGROUND_AUTH_EN.md).
+
 ## Watch 0.5.11 · build 35 (Android 0.6.8 unchanged)
 
 Remove inherited retry backoff on foreground entry before resuming the saved connection, and resume waiting service discovery immediately. This addresses the 0.5.10 regression between opening the watch app and manually refreshing, while retaining registration. [Cause and scope](docs/WATCH_0.5.11_FOREGROUND_FIX_EN.md). Prolonged locking and physical range return remain unfinished.

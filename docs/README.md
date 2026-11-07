@@ -6,6 +6,8 @@
 
 New users: start with **Install and connect**. Current release: **Android 0.6.7-local / code 23**, **Watch 0.5.8 / build 32**.
 
+백그라운드 인증 재개 수정 / Background authentication recovery: [Android 0.6.9 · Watch 0.5.12 한국어](WATCH_0.5.12_BACKGROUND_AUTH_KO.md) · [English](WATCH_0.5.12_BACKGROUND_AUTH_EN.md).
+
 앱 실행 후 연결 지연 퇴행 수정 / Foreground reconnection regression fix: [Watch 0.5.11 한국어](WATCH_0.5.11_FOREGROUND_FIX_KO.md) · [English](WATCH_0.5.11_FOREGROUND_FIX_EN.md).
 
 이전 재연결 수정 후보와 미완료 목표 / Previous candidate and unfinished goals: [Android 0.6.8 · Watch 0.5.10 한국어](WATCH_0.5.10_CANDIDATE_KO.md) · [English](WATCH_0.5.10_CANDIDATE_EN.md).
