@@ -10,6 +10,22 @@ The user reported needing to open the watch app to connect after installing 0.5.
 
 The watch recorded zero app cancellations and no counted app failures. The new Android 0.6.10 subscription-release path also had zero executions in that phone process, so it is not established as the direct cause. Whether a 0.5.13 change in reconnection resumption, scan cleanup or location-session restoration directly caused the behavior remains unresolved. Restoring previous code is a mitigation and an isolation step, not a claim of sustained connection being fixed.
 
+## Post-rollback cause analysis — November 8, 2026
+
+The user reported that phone-only connect/refresh still fails while the watch is locked after rollback. Restoring source code does not restore the previously running location keepalive session.
+
+The restored app has these concrete recovery-path defects:
+
+- `LocationKeepAlive.start()` returns unless the app is foreground `.active`. A saved enabled intent therefore does not resume the location keepalive session on background relaunch. Starting the restored app once from the Mac without activating its screen was insufficient preparation for this code path.
+- For a restored `.connecting` peripheral, `willRestoreState` schedules discovery in a 20-second app timer. `reconnect()` returns for that same `.connecting` object. This restoration path omits immediate native recovery-scan registration, and a delayed app timer cannot wake a suspended app.
+- Opening the app runs recovery discovery and pending authentication resumption through `setActive(true)`, and resumes location keepalive through the SwiftUI foreground handler. App entry therefore combines several recovery operations.
+
+The last saved watch record read on build 39 had `active=false`, `continuousRequested=false`, `recoveryScanning=false`, and a `.connecting` peripheral, with no newer execution events. This is a saved record, not a live process-state measurement. Subsequent events reached subscription/authentication immediately after a foreground transition. The user confirmed direct app-entry or connection-stop interaction, so this interval is not evidence of recovery without interaction.
+
+A separate diagnostic defect can leave a stale phone record reporting a running bridge after the service has stopped. `BridgeService.onDestroy()` changes the in-memory state but does not rewrite its status file. Actual service enumeration was used to distinguish saved state from the running service. No spontaneous phone-service termination is established from this observation.
+
+These findings explain **specific app-entry-dependent paths in the restored code**. The individual change responsible for the initial repeated disconnects on 0.5.13 remains unresolved; prolonged locking and repeated range-return recovery are not declared fixed.
+
 ## Data retention and installation
 
 Install over the existing apps with the same application IDs and signing keys. Retain registration, encryption keys and vehicle button settings. Do not uninstall or create a new pairing.
