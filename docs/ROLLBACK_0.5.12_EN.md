@@ -43,6 +43,26 @@ The original and new APKs have byte-identical `classes.dex`, SHA-256 `0b6a5afd85
 - Per the standing cleanup request, phone **Settings → Stop connection** was selected. Its screen returned to **Connect watch**. Registration, keys and vehicle settings were retained. Use phone **Connect watch** to enable the service next time.
 - Mac watch screen sharing and Galaxy mirroring were closed. No system logs were collected or included. No actual vehicle commands were executed.
 
+## Additional original-app comparison — November 8, 2026
+
+The APK actually installed on the phone was retrieved and compared. Its executable code (`classes.dex`) and resources match the original. Only the Manifest installation number and the resulting signature files differ; the signing certificate is unchanged. The installed APK is byte-identical to the original-code restoration APK. Repository Android/watch app source matches `c3f3f53`; only the two Android build files specifying the installation number differ.
+
+A separate, uncommitted Xcode launch-scheme difference remains in the Mac work folder: updated scheme formatting and launch/test/profile metadata. The restored watch app was installed from the preserved original artifact, without rebuilding through that scheme. This user-owned work file is neither modified nor committed. This does not represent a fresh hash comparison of the installed watch executable extracted from the device.
+
+The previous phone-button-only success and the current failed restoration records differ as follows:
+
+| Item | Previous success | Failure after original restoration |
+| --- | --- | --- |
+| Watch UI state | Background | Background |
+| Keepalive request | Enabled | Enabled |
+| Recovery scanning state | Enabled | Disabled |
+| Phone bootstrap receipt | `remote.wake` recorded | Absent in the compared repeated-failure interval |
+| Authentication | `handshake.commit` → `authenticated` | Repeated disconnects at `awaitingBootstrap` |
+
+Phone records show repeated subscription claims and bootstrap-send-path execution. Watch subscription completes, but the link ends before bootstrap reception is recorded. A disabled keepalive toggle or different installed app code therefore does not explain the observations. `bootstrapSent` counts entry into the phone send path, not proof of watch delivery. The scanning-state difference is observational, not an established cause. Why bootstrap is not delivered/processed on the watch, and which component initiates termination, remain unresolved. No complete historical settings snapshot exists, so full settings equivalence is not established either.
+
+This additional comparison did not open the watch app, refresh, unregister or change settings, and used no system logs.
+
 ## Still unfinished
 
 1. Finish connection/authentication without opening the watch app, including recovery after another locked-state drop.
