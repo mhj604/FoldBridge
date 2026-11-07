@@ -2,7 +2,7 @@
 
 [한국어](README.md) · **English** · [Documentation / 문서](docs/README.md)
 
-This branch restores the **preceding connection code**: Android **0.6.9-local / code 27** and Watch **0.5.12 / build 39**. See the [reason, deployment state and unfinished items](docs/ROLLBACK_0.5.12_EN.md). Sustained automatic connection is not declared fixed.
+This branch restores the **preceding connection code**: Android **0.6.9-local / installation code 28** and Watch **0.5.12 / original build 36** are installed. Android executable code and resources match the original; only the in-place installation number differs. See the [reason, deployment state and unfinished items](docs/ROLLBACK_0.5.12_EN.md). Sustained automatic connection is not declared fixed.
 
 Forward notifications **directly from a Galaxy phone to Apple Watch over Bluetooth LE**. Notification delivery uses the two devices: no server, internet connection, iPhone relay, root access, or workout/audio session is needed.
 
