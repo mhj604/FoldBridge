@@ -6,7 +6,7 @@ The previous documentation update paired current setup, FAQ, build, architecture
 
 ## Restore preceding connection code — Android 0.6.9 / Watch 0.5.12
 
-Restore connection behavior from `c3f3f53` after the reported foreground-only connection on 0.5.13. Advance only installation numbers to Android 27 and Watch 39 for an in-place update without data deletion. Watch installation is complete; phone installation is pending. The exact causal change and sustained connection remain unresolved. [Scope and deployment state](docs/ROLLBACK_0.5.12_EN.md).
+Restore connection behavior from `c3f3f53` after the reported foreground-only connection on 0.5.13. Advance only installation numbers to Android 27 and Watch 39 for an in-place update without data deletion. Both apps were installed in place. The phone connection service reported a stopped state; the exact causal change and sustained connection remain unresolved. [Scope and deployment state](docs/ROLLBACK_0.5.12_EN.md).
 
 ## Android 0.6.10 / Watch 0.5.13 automatic recovery
 

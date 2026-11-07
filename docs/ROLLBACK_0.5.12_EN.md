@@ -19,7 +19,9 @@ Android rejected installation of the previous code-25 APK over code 26. The prev
 ## Deployment state — November 8, 2026
 
 - Watch 0.5.12 / build 39: installed over the existing app.
-- Android 0.6.9-local / code 27: built; installation is pending because the phone's wireless diagnostic connection disconnected.
+- Android 0.6.9-local / code 27: installed over the existing app; installed display version and code match.
+- The phone app's post-install state reported its connection service stopped and advertising disabled. Use phone **Connect watch** to enable the service again. This state establishes neither a connection failure nor successful automatic recovery after rollback.
+- The restored watch app was started once from the Mac without foreground activation for installation preparation. This is distinct from a system-initiated background relaunch.
 - No system logs are collected or included in this change. No actual vehicle commands are executed.
 
 ## Still unfinished
