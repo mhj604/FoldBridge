@@ -63,6 +63,12 @@ Phone records show repeated subscription claims and bootstrap-send-path executio
 
 This additional comparison did not open the watch app, refresh, unregister or change settings, and used no system logs.
 
+## Phone reboot timing — November 8, 2026
+
+Using the phone clock and `/proc/uptime`, without system logs, the latest boot is estimated at **03:14 KST on November 8, 2026**. The preceding phone-button-only background authentication succeeded at **01:50 KST**, and repeated failures after original-app restoration were recorded from **04:44 KST**. A phone reboot occurred between those observations; this establishes timing, not direct causation. These records also do not establish whether failures had already started before that reboot.
+
+The current phone bridge service is actually running; advertising, subscription claiming and bootstrap-send-path execution occur. A phone service that failed to start at boot therefore does not explain the current failure. Retained-link state versus fresh-authentication state after phone/Bluetooth-stack restart is a recovery path to investigate. The original boot receiver resumes the service when saved enablement, unlock and permission conditions allow; that alone does not guarantee watch authentication. No additional reboot or settings reset was performed.
+
 ## Still unfinished
 
 1. Finish connection/authentication without opening the watch app, including recovery after another locked-state drop.
