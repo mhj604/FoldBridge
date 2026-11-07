@@ -37,15 +37,17 @@ Core Bluetooth retains the saved peripheral connection when the OS permits. A ch
 
 Healthy manual refresh sends encrypted `refresh` without replacing the link or session. The phone replies with `refreshed`; the watch replies with state/synchronization. There is no generated periodic ping and no short disconnect deadline based only on time spent suspended.
 
-If an Android system service changes the shared GATT database, an authenticated watch re-discovers characteristics/subscription while retaining its crypto session. Actual watch process restoration uses saved peer identity and fresh nonces, with explicit CCC re-subscription. Previous ATT completion callbacks cannot consume the first packet of a replacement session.
+If an Android system service changes the shared GATT database, an authenticated watch re-discovers characteristics/subscription while retaining its crypto session. Actual watch process restoration uses saved peer identity and fresh nonces. A retained CCC monitor is preserved in background; foreground restoration can explicitly re-subscribe. Previous ATT completion callbacks cannot consume the first packet of a replacement session.
 
 Pending connections remain with Core Bluetooth when possible. Missing-cache/foreground-stall discovery and repeated-disconnect backoff support recovery. A requested background refresh after 30 minutes is an opportunity, not a guaranteed schedule. [Protocol details](PROTOCOL_EN.md)
 
 ## Optional location keepalive
 
-The user can explicitly request background location updates. The app records only callback time; it does not inspect, store, or transmit coordinates. Location callbacks may perform connection maintenance. The current maintenance timer runs every 15 seconds **only in the foreground**; it cannot wake the app. A location-session request is not proof that watchOS is continuously scheduling the app.
+The user can explicitly request background location updates. The app records only callback time; it does not inspect, store, or transmit coordinates. Location callbacks may perform connection maintenance. The maintenance timer is registered every 15 seconds while foregrounded or location keepalive is requested; it cannot wake a suspended app. Authentication/write stalls are handled only in actual execution opportunities, without treating suspended wall-clock time as available runtime. A location-session request is not proof that watchOS is continuously scheduling the app.
 
 Location keepalive can increase battery consumption. No workout/audio session, root access, or APNs wake path is used in Local. Suspension, termination, runtime budgets, and Bluetooth range remain relevant. [Apple background tasks](https://developer.apple.com/documentation/watchkit/using-background-tasks)
+
+Candidate 0.5.13 restores the already-enabled location activity session on background relaunch. A later disconnect after locked reauthentication remains unresolved. [Current observations and scope](WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md).
 
 ## Filters and local storage
 
