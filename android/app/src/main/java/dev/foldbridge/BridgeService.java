@@ -25,12 +25,15 @@ public final class BridgeService extends Service {
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",22,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",23,"bridgeRunning",s!=null,"status",status,"error",error,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
             "softRefreshCount",s==null?0:s.softRefreshCount,"disconnectCount",s==null?0:s.disconnectCount,"lastDisconnectReason",s==null?"":s.lastDisconnectReason,
             "sessionGeneration",s==null?0:s.generation,"refreshCount",s==null?0:s.refreshCount,"stage",s==null?"idle":s.stage,
             "authenticated",s!=null&&s.authenticated,"watchActive",s!=null&&s.watchActive,
+            "advertising",s!=null&&s.advertisements!=null,
+            "observedLinks",s==null?0:s.observedLinks,"subscriptionClaims",s==null?0:s.subscriptionClaims,
+            "staleLinkRecoveries",s==null?0:s.staleLinkRecoveries,"maintenanceAt",s==null?0:s.maintenanceAt,
             "connectionStartedAt",s==null?0:s.connectionStartedAt,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
             "received",NotificationRelay.received,"forwarded",NotificationRelay.forwarded,
@@ -53,6 +56,9 @@ public final class BridgeService extends Service {
     private final Set<String> acknowledgedIcons=new HashSet<>();
     private BluetoothGattServer server; private BluetoothGattCharacteristic tx;
     private BluetoothLeAdvertiser advertiser; private BluetoothDevice central;
+    private final Map<String,Integer> linkMtus=new HashMap<>();
+    private int observedLinks=0, subscriptionClaims=0, staleLinkRecoveries=0;
+    private long maintenanceAt=0;
     private volatile long indicationTicket=0;
     private int indicationGeneration;
     private byte[] indicationPacket;
@@ -63,6 +69,27 @@ public final class BridgeService extends Service {
     private AdvertiseCallback advertisements;
     private final Runnable bluetoothRetry=()->{if(server==null)startBluetooth();};
     private final Runnable advertisingRetry=()->startAdvertising();
+    private final Runnable connectionMaintenance=new Runnable(){@Override public void run(){
+        if(instance!=BridgeService.this)return;
+        try {
+            BluetoothManager manager=getSystemService(BluetoothManager.class);
+            BluetoothAdapter adapter=manager.getAdapter();
+            if(adapter!=null&&adapter.isEnabled()) {
+                if(server==null)startBluetooth();
+                else {
+                    // Inspect local stack state only: no heartbeat indications or
+                    // extra watch background wakeups for a healthy idle link.
+                    if(central!=null&&manager.getConnectionState(central,BluetoothProfile.GATT)==BluetoothProfile.STATE_DISCONNECTED) {
+                        staleLinkRecoveries++;clearSession();status="워치 연결 대기 중";
+                    }
+                    if(central==null)startAdvertising();
+                }
+            }
+        } catch(SecurityException ignored) {
+        } catch(RuntimeException error) {android.util.Log.i("FoldBridgeConnection","local_connection_check_failed");}
+        maintenanceAt=System.currentTimeMillis();recordState(BridgeService.this);
+        handler.postDelayed(this,15000);
+    }};
     private Vault vault; private KeyPair identity; private Crypto.Session session;
     private long connectionStartedAt=0;
     private Delivery activeDelivery;
@@ -97,6 +124,7 @@ public final class BridgeService extends Service {
         if("pair".equals(intent==null?null:intent.getAction())) { pairUntil=SystemClock.elapsedRealtime()+120000; error=""; }
         if("refresh".equals(intent==null?null:intent.getAction()))refreshBluetooth();
         else if(server==null)startBluetooth();
+        handler.removeCallbacks(connectionMaintenance);handler.postDelayed(connectionMaintenance,15000);
         flush();
         handler.post(NotificationRelay::replayActive);
         NotificationRelay.reconnectIfAllowed(this);
@@ -119,6 +147,7 @@ public final class BridgeService extends Service {
         handler.removeCallbacks(advertisingRetry);
         BluetoothDevice previous=central;
         clearSession();
+        linkMtus.clear();
         stopAdvertising();
         if(server!=null){
             if(previous!=null)try{server.cancelConnection(previous);}catch(RuntimeException ignored){}
@@ -202,13 +231,16 @@ public final class BridgeService extends Service {
         @Override public void onConnectionStateChange(BluetoothDevice device,int result,int state) { handler.post(()->{if(token!=bluetoothEpoch)return;
             if(server==null) return;
             if(state==BluetoothProfile.STATE_CONNECTED) {
-                if(central!=null&&device.getAddress().equals(central.getAddress()))return;
-                if(central!=null || SystemClock.elapsedRealtime()<blockedUntil) { server.cancelConnection(device); return; }
-                clearSession();central=device;stopAdvertising();error="";status="워치 인증 중";recordState(BridgeService.this);
-                schedulePairingDeadline();
-            } else if(state==BluetoothProfile.STATE_DISCONNECTED&&central!=null&&device.getAddress().equals(central.getAddress())) { clearSession(); status="연결 끊김, 워치 재연결 대기";startAdvertising();recordState(BridgeService.this); }
+                // Android reports shared LE connections, including clients using
+                // another app's service. A link alone does not select our watch.
+                // Claim only a client subscribing to our own TX characteristic.
+                observedLinks++;recordState(BridgeService.this);
+            } else if(state==BluetoothProfile.STATE_DISCONNECTED) {
+                linkMtus.remove(device.getAddress());
+                if(matches(device)) {clearSession();status="연결 끊김, 워치 재연결 대기";startAdvertising();recordState(BridgeService.this);}
+            }
         }); }
-        @Override public void onMtuChanged(BluetoothDevice device,int value) { handler.post(()->{if(token!=bluetoothEpoch)return;if(matches(device))mtu=Math.max(23,value);}); }
+        @Override public void onMtuChanged(BluetoothDevice device,int value) { handler.post(()->{if(token!=bluetoothEpoch)return;int size=Math.max(23,value);linkMtus.put(device.getAddress(),size);if(matches(device))mtu=size;}); }
         @Override public void onDescriptorReadRequest(BluetoothDevice device,int requestId,int offset,BluetoothGattDescriptor descriptor) {
             handler.post(()->{if(token!=bluetoothEpoch)return;if(server!=null)server.sendResponse(device,requestId,offset==0?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_INVALID_OFFSET,offset,subscribed?BluetoothGattDescriptor.ENABLE_INDICATION_VALUE:BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);});
         }
@@ -217,9 +249,15 @@ public final class BridgeService extends Service {
                 if(server==null)return;
                 boolean enable=Arrays.equals(value,BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
                 boolean disable=Arrays.equals(value,BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
-                boolean valid=matches(device)&&CCC.equals(descriptor.getUuid())&&!prepared&&offset==0&&(enable||disable);
+                boolean valid=CCC.equals(descriptor.getUuid())&&TX.equals(descriptor.getCharacteristic().getUuid())&&!prepared&&offset==0&&(enable||disable);
+                if(valid&&enable&&central==null&&SystemClock.elapsedRealtime()>=blockedUntil) {
+                    clearSession();central=device;mtu=linkMtus.getOrDefault(device.getAddress(),23);
+                    subscriptionClaims++;stopAdvertising();error="";status="워치 인증 중";schedulePairingDeadline();
+                }
+                valid=valid&&(matches(device)||(central==null&&disable));
                 if(valid)subscribed=enable;
                 if(response)server.sendResponse(device,requestId,valid?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,0,null);
+                recordState(BridgeService.this);
             });
         }
         @Override public void onCharacteristicWriteRequest(BluetoothDevice device,int requestId,BluetoothGattCharacteristic characteristic,boolean prepared,boolean response,int offset,byte[] value) {

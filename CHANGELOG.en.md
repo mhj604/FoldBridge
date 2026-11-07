@@ -4,6 +4,14 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Android 0.6.7-local · code 23 (Watch 0.5.8 unchanged)
+
+Android GATT server connection callbacks can include links used by other BLE traffic. Previously the first physical link claimed the watch slot and stopped advertising, allowing an unrelated device to occupy connection waiting. Select the peer only when it subscribes to FoldBridge's own TX CCC descriptor. Existing pinned-key encrypted authentication remains required. Retain MTU values per device until subscription; unrelated connections and disconnections no longer reset the watch session or trigger cancellation of the other device.
+
+While running, the phone service checks the local Bluetooth stack every 15 seconds. Clear a stale app connection and resume advertising when the physical link is gone. This check sends no periodic heartbeat to the watch. Add advertising, observed-link, subscription-claim and local-check fields to diagnostics.
+
+Device records showed authentication without refresh after APK replacement, and again after stopping the phone process and explicitly reopening only the phone app. The agent did not launch FoldBridge on the watch. The Mac–watch developer tunnel remained unavailable, so the watch screen and a physical lock/unlock cycle could not be checked directly. This does not establish reliable automatic recovery after every unlock or extended idle period. [Scope and remaining investigation](AUTO_RECONNECT_EN.md)
+
 ## Android 0.6.6-local · code 22 (Watch 0.5.8 unchanged)
 
 Galaxy records showed a real bring&T device-response notification with a title, plus an Android-generated `GROUP_SUMMARY` / `AUTOGROUP_SUMMARY` shell without title or body. Forwarding that empty shell caused FoldBridge's empty-notification fallback.
