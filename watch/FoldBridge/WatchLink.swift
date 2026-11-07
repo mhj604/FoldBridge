@@ -54,6 +54,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var lastManualRefresh = Date.distantPast
     private var maintenanceTimer: Timer?
     private var lastMaintenance = Date.distantPast
+    private var runtimeWindowStart = Date()
     private var connectionAttemptAt = Date.distantPast
     private var lastPeerActivity = Date.distantPast
     private var foregroundSince = Date()
@@ -751,8 +752,12 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         maintenanceTimer = Timer.scheduledTimer(withTimeInterval:15,repeats:true) { [weak self] _ in self?.maintainConnection() }
     }
     func maintainConnection() {
-        guard Date().timeIntervalSince(lastMaintenance) >= 15 else { return }
-        lastMaintenance = Date()
+        let now = Date()
+        guard now.timeIntervalSince(lastMaintenance) >= 15 else { return }
+        // A timer/location callback after suspension does not prove that the
+        // preceding wall-clock interval was available to finish BLE work.
+        if now.timeIntervalSince(lastMaintenance) > 45 { runtimeWindowStart = now }
+        lastMaintenance = now
         // Location callbacks can recover a disconnected peer without opening the UI.
         if peripheral == nil || (peripheral?.state == .connected && stage == "idle") { reconnect() }
         if !connected {
@@ -763,14 +768,15 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // A running location keepalive callback must also recover stalled auth,
         // rather than waiting for the user to bring the app into foreground.
         guard canProcessContinuously else { writeDiagnostics();return }
+        let recoveryFloor = max(foregroundSince,runtimeWindowStart)
         if !connected, stage != "idle", (try? WatchStore.get(peerKey)) != nil,
-                  Date().timeIntervalSince(max(connectionAttemptAt,foregroundSince)) >= 90 {
+                  now.timeIntervalSince(max(connectionAttemptAt,recoveryFloor)) >= 90 {
             restartSavedConnection()
         } else if !connected, stage == "idle", peripheral?.state == .connecting,
-                  Date().timeIntervalSince(max(connectionAttemptAt,foregroundSince)) >= 30 {
+                  now.timeIntervalSince(max(connectionAttemptAt,recoveryFloor)) >= 30 {
             startRecoveryScan()
         }
-        if connected, writing, Date().timeIntervalSince(max(lastWriteAt,foregroundSince)) >= 45 {
+        if connected, writing, now.timeIntervalSince(max(lastWriteAt,recoveryFloor)) >= 45 {
             fail("휴대폰 전송 확인 시간 초과",retry:true)
         }
         writeDiagnostics()

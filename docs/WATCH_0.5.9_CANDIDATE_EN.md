@@ -8,6 +8,7 @@ This branch adds watch background-restoration changes on top of Android 0.6.7. T
 
 - Preserve an already active TX characteristic subscription when restoring in background, and authenticate over it. Avoid disabling the last monitoring source merely to re-enable it. Retain explicit resubscription in foreground.
 - Allow stalled-authentication and transfer recovery while the OS is actually executing a connection-keepalive callback. Previously the foreground guard returned before those timeouts despite the callback already running.
+- Start a new recovery-time window after callback gaps longer than 45 seconds. Time spent suspended must not immediately become an authentication/transfer timeout on resume.
 - Record actual application state, whether the in-memory identity is available, and foreground/background transitions. These additions do not record keys or message bodies.
 
 This does not remove watchOS runtime/BLE budgets or arbitrarily launch a suspended app. The foreground requirement for initially starting the location session is unchanged. Reliable immediate recovery on unlock has not been established before installing and observing that condition.
