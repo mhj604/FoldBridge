@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.11 · build 35 (Android 0.6.8 unchanged)
+
+Remove inherited retry backoff on foreground entry before resuming the saved connection, and resume waiting service discovery immediately. This addresses the 0.5.10 regression between opening the watch app and manually refreshing, while retaining registration. [Cause and scope](docs/WATCH_0.5.11_FOREGROUND_FIX_EN.md). Prolonged locking and physical range return remain unfinished.
+
 ## Android 0.6.8 / Watch 0.5.10 reconnection candidate
 
 Retries missing-service discovery without cancelling the link, handles restored subscriptions and stale crypto state after phone restart, and backs off repeated connection failures. Registration and keys are retained. [Changes and observation limits](docs/WATCH_0.5.10_CANDIDATE_EN.md). Not declared fully resolved.

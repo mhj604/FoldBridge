@@ -774,12 +774,22 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     func setActive(_ value: Bool) {
         let changed = active != value
-        if value && !active { foregroundSince = Date() }
+        if value && changed {
+            foregroundSince = Date()
+            // A user opening the app must not inherit the background retry
+            // delay. Clear it before resumeSavedConnection() reaches reconnect.
+            reconnectWork?.cancel();reconnectWork = nil
+            nextConnectAttempt = .distantPast;reconnects = 0
+            if peripheral?.state == .disconnected { autoReconnectPending = false }
+        }
         active = value
         if changed { trace(value ? "lifecycle.foreground" : "lifecycle.background") }
         updateMaintenanceTimer()
-        if value { refreshNotificationSettings();resumeSavedConnection() }
-        if value { backgroundNotice = ""; reconnects = 0 }
+        if value {
+            backgroundNotice = ""
+            refreshNotificationSettings();resumeSavedConnection()
+            if stage == "waitingForService", let p = peripheral { retryServiceDiscovery(p) }
+        }
         if connected { sendSecure(["type":"state","active":canProcessContinuously]); if value { reconcileDelivered { self.synchronize() } } }
         else { reconnect();startRecoveryScan() }
         writeDiagnostics()
@@ -921,9 +931,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":34,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":35,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "serviceWaitCount":serviceWaitCount,"serviceDiscoveryAttempts":serviceDiscoveryAttempts,"lastServiceDiscoveryError":lastServiceDiscoveryError,
             "lastConnectError":lastConnectError,
+            "retryDelaySeconds":max(0,nextConnectAttempt.timeIntervalSinceNow),
             "identityAvailable":identity != nil,"applicationState":WKApplication.shared().applicationState.rawValue,
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",

@@ -2,7 +2,7 @@
 
 [한국어](README.md) · **English** · [Documentation / 문서](docs/README.md)
 
-The current reconnection candidate is **Android 0.6.8 / Watch 0.5.10** on `fix/watch-background-reconnect`. See [changes and device observation limits](docs/WATCH_0.5.10_CANDIDATE_EN.md). Unlock-only recovery is not declared fully resolved.
+The current reconnection candidate is **Android 0.6.8 / Watch 0.5.11** on `fix/watch-background-reconnect`. See the [foreground reconnection regression fix](docs/WATCH_0.5.11_FOREGROUND_FIX_EN.md) and [unfinished background, prolonged-lock and range-return goals](docs/WATCH_0.5.10_CANDIDATE_EN.md). Unlock-only recovery is not declared fully resolved.
 
 Forward notifications **directly from a Galaxy phone to Apple Watch over Bluetooth LE**. Notification delivery uses the two devices: no server, internet connection, iPhone relay, root access, or workout/audio session is needed.
 
