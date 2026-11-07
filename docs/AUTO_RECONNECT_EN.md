@@ -2,6 +2,8 @@
 
 [한국어](AUTO_RECONNECT_KO.md) · **English**
 
+See the **[Android 0.6.8 / Watch 0.5.10 record](WATCH_0.5.10_CANDIDATE_EN.md)** for the latest candidate and unfinished work. Next goals are to fully resolve interrupted background authentication, recovery after prolonged locking, and automatic reconnection after physical range loss/return. All remain unfinished.
+
 The goal is reconnection after unlocking the watch, without refreshing either device or opening FoldBridge on the watch. Current versions: Android **0.6.7 / code 23**, Watch **0.5.8 / build 32**.
 
 ## Android 0.6.7-local · code 23 (Watch 0.5.8 unchanged)

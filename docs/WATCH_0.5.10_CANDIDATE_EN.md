@@ -25,3 +25,17 @@ With the final candidate showing the watch face, the phone process was stopped a
 **Refresh connection** means the phone connection service is enabled. **Connect watch** appears when that service is stopped; the labels describe different states.
 
 At the end of device work, **Settings → Stop connection** stops the actual link while retaining registration. Do not use either app's unregister command. Explicit stop disables automatic connection until **Connect watch** is tapped once on the phone. This differs from normal range loss.
+
+## Unfinished work and next implementation goals — 2026-11-07
+
+All items below are **unfinished**. “Fully resolve” describes the next implementation goal, not an achieved result.
+
+| Priority | Remaining problem | Intended behavior |
+| --- | --- | --- |
+| 1 | Connections end during authentication while the watch app is in the background | Retain registration and automatically authenticate/connect when the watch is merely unlocked, without launching either app or refreshing. Also recover after restarting the phone service. |
+| 2 | Connection maintenance/recovery after a prolonged locked state remains unresolved | Maintain or restore the link and notification delivery when runtime is available during prolonged locking; automatically reconnect after unlocking without opening the app or refreshing. |
+| 3 | Automatic recovery after physically leaving and returning to Bluetooth range remains unresolved | Reconnect to the saved peer on return without launching apps, refreshing, or registering again. Resolve repeated disconnects and prolonged authentication stalls. |
+
+After recovery, preserve the existing policy: forward only new notifications posted **after fresh authentication completes**; do not replay the disconnected backlog. Continue with the interrupted-authentication cause first, then resolve prolonged locking and physical range return. Existing evidence does not establish that watchOS runtime limits caused the issue or have been removed.
+
+The installed versions are Android 0.6.8-local / code 24 and Watch 0.5.10 / build 34. At the last session end, registration, keys, and vehicle mappings were retained; only **Settings → Stop connection** on the phone and Mac device connections were stopped. Explicit stop requires **Connect watch** on the phone to enable the service again. Distinguish this from failure to reconnect during ordinary use. Do not unregister or reset either app as a recovery step in the next change.
