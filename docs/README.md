@@ -6,7 +6,9 @@
 
 New users: start with **Install and connect**. Current release: **Android 0.6.7-local / code 23**, **Watch 0.5.8 / build 32**.
 
-자동 연결·거리 복귀·프로세스 복원 / Automatic connection, range return and process recovery: [Android 0.6.10 · Watch 0.5.13 한국어](WATCH_0.5.13_AUTOMATIC_RECOVERY_KO.md) · [English](WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md).
+직전 연결 코드 복원 / Restore the preceding connection code: [Android 0.6.9 / Watch 0.5.12 한국어](ROLLBACK_0.5.12_KO.md) · [English](ROLLBACK_0.5.12_EN.md).
+
+이전 후보의 자동 연결·거리 복귀·프로세스 복원 / Previous candidate automatic connection, range return and process recovery: [Android 0.6.10 · Watch 0.5.13 한국어](WATCH_0.5.13_AUTOMATIC_RECOVERY_KO.md) · [English](WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md).
 
 백그라운드 인증 재개 수정 / Background authentication recovery: [Android 0.6.9 · Watch 0.5.12 한국어](WATCH_0.5.12_BACKGROUND_AUTH_KO.md) · [English](WATCH_0.5.12_BACKGROUND_AUTH_EN.md).
 

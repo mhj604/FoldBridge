@@ -2,6 +2,8 @@
 
 [한국어](WATCH_0.5.13_AUTOMATIC_RECOVERY_KO.md) · **English**
 
+This rollback branch restores preceding code after the reported need to open the watch app on 0.5.13. See [reason and deployment state](ROLLBACK_0.5.12_EN.md). The content below records the previous candidate.
+
 Candidate branch: `fix/watch-background-reconnect`. Android **0.6.10-local / code 26**, Watch **0.5.13 / build 38**. [APK](../artifacts/android/FoldBridge-Local-0.6.10.apk). Registration, encryption keys and vehicle button settings are retained.
 
 ## Changes

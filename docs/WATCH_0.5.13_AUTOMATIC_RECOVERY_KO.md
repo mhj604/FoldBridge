@@ -2,6 +2,8 @@
 
 **한국어** · [English](WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md)
 
+현재 복원 브랜치에서는 0.5.13 이후 앱을 열어야 연결되는 현상에 대응해 직전 코드를 복원했습니다. [복원 이유와 적용 상태](ROLLBACK_0.5.12_KO.md). 아래 내용은 이전 후보의 기록입니다.
+
 수정 후보 브랜치: `fix/watch-background-reconnect`. Android **0.6.10-local / 코드 26**, Watch **0.5.13 / 빌드 38**. [APK](../artifacts/android/FoldBridge-Local-0.6.10.apk). 기존 등록·암호화 키·차량 버튼 설정을 유지합니다.
 
 ## 이번 변경

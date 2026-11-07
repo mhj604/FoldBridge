@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Restore preceding connection code — Android 0.6.9 / Watch 0.5.12
+
+Restore connection behavior from `c3f3f53` after the reported foreground-only connection on 0.5.13. Advance only installation numbers to Android 27 and Watch 39 for an in-place update without data deletion. Watch installation is complete; phone installation is pending. The exact causal change and sustained connection remain unresolved. [Scope and deployment state](docs/ROLLBACK_0.5.12_EN.md).
+
 ## Android 0.6.10 / Watch 0.5.13 automatic recovery
 
 Submit native connection requests and filtered discovery after background failure/restoration without relying solely on app timers. Restore phone advertising when the monitor is disabled. Final watch build 38 also restores an enabled location activity session immediately on background relaunch; locked-process restoration and authentication were recorded. Automatic authentication was recorded after actual Bluetooth loss and range departure/return, and after background watch process restoration. A later locked-state disconnect remains under investigation; sustained locked operation, hours-long locking and full device reboot recovery are not declared complete. [Changes and observations](docs/WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md).

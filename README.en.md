@@ -2,7 +2,7 @@
 
 [한국어](README.md) · **English** · [Documentation / 문서](docs/README.md)
 
-The current reconnection candidate is **Android 0.6.10 / Watch 0.5.13** on `fix/watch-background-reconnect`. See the [automatic recovery changes and range-return observations](docs/WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md) and [prolonged-lock and reboot scope](docs/WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md#prolonged-locking-and-reboot-scope). Unlock-only recovery is not declared fully resolved.
+This branch restores the **preceding connection code**: Android **0.6.9-local / code 27** and Watch **0.5.12 / build 39**. See the [reason, deployment state and unfinished items](docs/ROLLBACK_0.5.12_EN.md). Sustained automatic connection is not declared fixed.
 
 Forward notifications **directly from a Galaxy phone to Apple Watch over Bluetooth LE**. Notification delivery uses the two devices: no server, internet connection, iPhone relay, root access, or workout/audio session is needed.
 
