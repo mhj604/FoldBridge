@@ -254,9 +254,13 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         guard switchingFrom == nil, manager.state == .poweredOn, Date() >= nextConnectAttempt else { return }
         if let existing = peripheral {
             if existing.state == .connected, stage == "idle" { beginDiscovery(existing) }
+            if existing.state == .connected { beginAfterBootstrap() }
             // A disconnected cached object without an OS-owned reconnect used to
             // make every resume return early, leaving no native pending connection.
-            if existing.state != .disconnected || autoReconnectPending { return }
+            if existing.state != .disconnected || autoReconnectPending {
+                if !connected { startRecoveryScan() }
+                return
+            }
             resetSession()
             connect(PhoneCandidate(peripheral:existing));return
         }
@@ -270,9 +274,12 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     private func startRecoveryScan() {
         guard manager.state == .poweredOn, !connected,
-              peripheral?.state != .connected || stage == "waitingForService", !manager.isScanning,
+              peripheral?.state != .connected || stage == "waitingForService",
               UserDefaults.standard.string(forKey:phoneIDKey) != nil,
               (try? WatchStore.get(peerKey)) != nil else { return }
+        // Core Bluetooth can restore an already-running scan before this
+        // process has restored its own routing flag. Keep using that scan.
+        if manager.isScanning { recoveryScanning = true;return }
         // A missing OS cache entry must not force the user to register the same phone again.
         // Discovery still authenticates the saved public key before any alert is accepted.
         recoveryScanning = true;scanEpoch += 1
@@ -302,7 +309,9 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // pinned-key handshake after poweredOn; process-lost keys are never reused.
         switch restored.state {
         case .connected: status = "저장된 휴대폰 연결 복원 중"
-        case .connecting: status = "저장된 휴대폰 연결 복원 중";scheduleDiscoveryFallback()
+        case .connecting:
+            status = "저장된 휴대폰 연결 복원 중"
+            startRecoveryScan();scheduleDiscoveryFallback()
         case .disconnected: resetSession();reconnect()
         case .disconnecting: break
         @unknown default: resetSession();reconnect()
@@ -503,17 +512,13 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             stage = "discovering"; p.setNotifyValue(true,for:characteristic); return
         }
         guard characteristic.isNotifying else { fail("알림 구독을 시작하지 못했습니다.",retry:true); return }
-        if !active, (try? WatchStore.get(peerKey)) != nil {
-            // Retain the monitor first. The phone's bootstrap indication grants
-            // the background receive opportunity used for the handshake.
-            stage = "awaitingBootstrap";trace("handshake.await.bootstrap")
-            let current = epoch
-            DispatchQueue.main.asyncAfter(deadline:.now()+2) { [weak self] in
-                guard let self, self.epoch == current else { return }
-                self.beginAfterBootstrap()
-            }
-            return
-        }
+        // This native callback is already executing, including while the watch
+        // is locked. Submit the first ATT write now instead of depending on a
+        // later bootstrap indication, foreground transition or app timer.
+        // Repeated subscription callbacks must not replace an in-flight nonce.
+        if stage == "awaitingBootstrap" { beginAfterBootstrap();return }
+        guard !connected, stage == "discovering" else { return }
+        trace(active ? "handshake.subscription.foreground" : "handshake.subscription.background")
         beginHandshake()
     }
     private func beginAfterBootstrap() {
@@ -957,7 +962,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":36,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":40,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "serviceWaitCount":serviceWaitCount,"serviceDiscoveryAttempts":serviceDiscoveryAttempts,"lastServiceDiscoveryError":lastServiceDiscoveryError,
             "lastConnectError":lastConnectError,
             "retryDelaySeconds":max(0,nextConnectAttempt.timeIntervalSinceNow),

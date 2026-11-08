@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.14 · build 40 (retain Android 0.6.9)
+
+Start authentication writes immediately from subscription completion instead of waiting for bootstrap or an app timer. Retain in-flight authentication on duplicate callbacks, and register native recovery discovery for restored pending connections. [Changes and deployment state](docs/WATCH_0.5.14_SUBSCRIPTION_AUTH_EN.md).
+
 ## Restore preceding connection code — Android 0.6.9 / Watch 0.5.12
 
 Restore the original apps from `c3f3f53` after the reported foreground-only connection on 0.5.13. Replace the earlier Android 27 / Watch 39 rollback with the original watch build-36 artifact and Android original executable code and resources with installation number 28 only. Android app-owned diagnostics intentionally retain the original build value 25. Both apps were installed in place, preserving registration, keys and vehicle settings. Foreground authentication completed during setup; full recovery without watch app entry and sustained connection remain unresolved. [Scope and deployment state](docs/ROLLBACK_0.5.12_EN.md).

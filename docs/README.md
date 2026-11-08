@@ -57,3 +57,5 @@ New users: start with **Install and connect**. Current release: **Android 0.6.7-
 이전 버전의 `RELEASE_*_KO.md`와 초기 `legacy/` 문서는 한국어 원문으로 보존합니다. 현재 사용법은 위 표의 문서를 따릅니다. 중요한 과거 변경은 두 언어의 변경·구축 이력에 정리했습니다.
 
 Older `RELEASE_*_KO.md` and initial `legacy/` documents remain archived in their original language. Use the guides above for current operation. Significant earlier changes are summarized in both languages' changelog and development history.
+
+- [Watch 0.5.14: 구독 콜백에서 백그라운드 인증 시작](WATCH_0.5.14_SUBSCRIPTION_AUTH_KO.md) · [English](WATCH_0.5.14_SUBSCRIPTION_AUTH_EN.md)
