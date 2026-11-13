@@ -20,9 +20,15 @@ Retain saved-peer pinning, encrypted authentication and explicit Stop connection
 
 ## Deployment state
 
-- Signed physical-watch build completed.
-- Device installation in progress. Successful phone-button-only connection while locked is not declared complete.
+- **November 13, 2026:** installed Watch 0.5.14 / build 40 in place with fresh signing.
+- The Mac development tunnel timed out again immediately after installation, so remote launch/screen observation is incomplete. Direct watch app-entry feedback is pending. Successful phone-button-only connection while locked is not declared complete.
 - No replacement phone APK is needed; retain Android 0.6.9.
 - No system-log collection, vehicle-command execution, extra reboot or physical-range procedure is performed.
 
 The preceding original-app restoration remains documented in the [0.5.12 restoration notes](ROLLBACK_0.5.12_EN.md), separately from this behavioral change.
+
+## November 13, 2026: app-entry failure and fresh signing
+
+The original 0.5.12 installation artifact and the 0.5.14 artifact prepared on November 8 both had app/widget development-profile expiration at approximately **19:33 KST on November 9, 2026**. They were expired when the app-entry failure was reported on November 13, making expired signing the leading explanation. This issue is separate from the earlier Bluetooth background-authentication problem. A fresh query of the then-installed app could not complete because the Mac connection timed out.
+
+Rebuilt with the same app ID/team and received successful in-place installation for 0.5.14 build 40. The fresh app/widget profiles expire at approximately **17:10 KST on November 20, 2026**. No app deletion, unregistration or storage reset was performed. The canceled renewal schedule was not recreated or enabled. Successful installation is distinct from confirmed app entry; any remaining app-entry error must be addressed from the direct result.
