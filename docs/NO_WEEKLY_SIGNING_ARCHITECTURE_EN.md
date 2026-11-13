@@ -2,6 +2,8 @@
 
 [한국어](NO_WEEKLY_SIGNING_ARCHITECTURE_KO.md) · **English** · Research date: **2026-11-13**
 
+Further research: [signing bypass on the current watchOS target](WATCHOS_27_SIGNING_BYPASS_RESEARCH_EN.md), covering historical permasigning, Calif's original posts, the Brotli PoC, virtual Watch execution, and missing implementation stages.
+
 ## Follow-up decision: no permanently attached USB adapter
 
 The user selected the system-protocol direction, then excluded the USB option after clarification that the adapter must remain attached during normal operation, not just initial setup. The no-root USB PR below is therefore research history, not an adopted implementation plan.
