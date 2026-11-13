@@ -20,6 +20,8 @@ After the phone update, the service-reappearance event at **17:31:18 KST** prece
 
 The preceding 20-second case and this 7-second case are not same-condition repeated averages. This case used post-update service restoration and a retained BLE link; a Mac no-activation launch command was also used during installation preparation. It does not guarantee a seven-second connection, one-second authentication, or all OS-initiated relaunches after full termination.
 
-The new process did not yet have the location keepalive session running. A one-time foreground setup after updating was requested to resume the saved preference; that setup result is pending. This is distinct from requiring app entry for every normal connection.
+The new process did not yet have the location keepalive session running. A one-time foreground setup after updating was requested to resume the saved preference. The user reported completion; the app record at **17:37:28 KST** showed `continuousRequested=true`, `connected=true` and `active=false`. This is installation preparation, distinct from requiring app entry for every normal connection.
+
+At handoff, **Stop connection** was selected in phone settings. The screen returned to **Connect watch**, and the actual `BridgeService` was absent. Registration and settings were retained. Mac phone mirroring and ADB connections were closed; Device Hub was also closed.
 
 No system logs, vehicle commands, extra reboot or physical-range procedure are used. Scheduled signing renewal is not re-enabled. The expired-signing app-entry recovery remains in the [0.5.14 notes](WATCH_0.5.14_SUBSCRIPTION_AUTH_EN.md).
