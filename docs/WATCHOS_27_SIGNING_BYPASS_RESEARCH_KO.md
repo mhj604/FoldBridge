@@ -78,3 +78,46 @@ FoldBridge는 앱 `dev.foldbridge.watch`와 확장 `dev.foldbridge.watch.widgets
 이번 조사로 **관련 연구의 구체적인 후보와 누락된 구현 구간**은 정리했습니다. 그러나 기존 앱·페어링을 유지하는 무료 무갱신 기능은 아직 구현되지 않았습니다. 빌드 설정만 바꾸거나 오래된 우회 코드를 가져다 붙이는 작업으로 해결될 상태가 아닙니다.
 
 새 자료가 나온다면 우선 볼 것은 현재 물리 Watch 빌드의 공개 진입 코드, 서명/만료 처리 코드, 재부팅 이후 유지 방식입니다. 이를 확보하기 전에는 무료 영구 실행을 약속하거나 기존 설치를 교체하지 않습니다. 이번 요청을 자동 갱신 예약 재개나 외장 어댑터 도입으로 대체하지 않았습니다.
+
+## 추가 조사: 기존 앱·페어링 유지 조건의 오픈소스 목록
+
+사용자의 후속 요청에 따라 Exa로 **18회 추가 검색, 결과 90개(중복 포함), 서로 다른 URL 68개**를 조사했습니다. 이는 앞선 95개 결과와 별도의 검색 집계이며, 두 집계를 더한 수가 독립된 출처 수라는 뜻은 아닙니다. 네 주제는 Watch 설치기, 만료·신뢰 우회, 기존 서명 호스트 재사용, 갱신·페어링 도구의 기능 경계입니다.
+
+**쉽게 말하면: 앱의 만료를 없애거나 만료 검사를 바꾸는 관련 소스는 있습니다. 하지만 현재 Ultra 2 / watchOS 27.2에서 기존 설치와 페어링을 유지하는 완성품은 이번에도 확보하지 못했습니다.** 추가 검색에서도 기기 변경이나 코드 실행은 하지 않았습니다.
+
+| 프로젝트·소스 | 실제 기능 | 현재 조건에서 제외되는 이유 |
+| --- | --- | --- |
+| [AppSync Unified](https://github.com/akemin-dayo/AppSync) | 설치 서명 검사와 실행 시 만료 검사를 후킹 | 탈옥 iOS용 시스템 프로세스 주입 환경이 선행됨. 현재 Watch 포트 없음 |
+| [TrollStore](https://github.com/opa334/TrollStore) / [ChOma](https://github.com/opa334/ChOma) | 구버전 CoreTrust 결함을 이용한 영구 설치·서명 조작 | 지원 목록과 구현은 특정 iOS 대상. 현재 Watch 지원을 제공하지 않음 |
+| [Permasigner](https://github.com/permasigner/permasigner) | 구버전 iOS의 CoreTrust 기반 패키지 생성 | 대상 기기의 초기 탈옥과 취약한 iOS가 필요. Windows에서 실행 가능해도 Watch OS 지원이 생기지 않음 |
+| [MissedRevoke](https://gist.github.com/khanhduytran0/e3ae92673a1acfe85ce5a50b59d28361) | `mis.db`의 신뢰·만료 기록을 다루는 공개 SQL·샘플 | iOS 26 계열 설명이며 만료 앱 실행에는 날짜 되돌리기가 남음. 현재 Watch용 적용 경로 없음 |
+| [Omega](https://github.com/jailbreakdotparty/Omega) | iOS 인증서 차단 기록을 partial restore로 변경 | 원저자가 iOS 27 미지원·데이터 유지 불가를 명시. Watch 포트도 아님 |
+| [NoMoreExpire 소스](https://github.com/antiquedev/Tweaks/blob/e6d6b80cea02a27863f445b24d57516fecd5e986/NoMoreExpire/Tweak.xm) | `SBApplication`의 프로파일 관련 응답을 후킹하는 짧은 코드 | Watch용 실행·설치·재부팅 처리 없음. 현재 기기의 만료 우회 성공 근거 아님 |
+| [Anti-Apple-Revoke](https://github.com/utsur0/Anti-Apple-Revoke) | 기업용 인증서의 온라인 폐기 확인을 차단하는 목록 | 현재 Personal Team 프로파일의 로컬 7일 만료를 없애는 구현이 아님 |
+| [SideStore](https://github.com/SideStore/SideStore) / [Splice](https://github.com/franklintra/splice) | 서명·프로파일 갱신 자동화. Splice에는 구버전 CoreTrust 분기도 있음 | 일반 사용은 갱신을 계속함. 영구 설치 분기도 현재 Watch 대상이 아님 |
+| [ReProvision Reborn](https://github.com/sohsatoh/ReProvision-Reborn) | 탈옥 iPhone에서 Watch 앱 재서명 지원 | Watch 지원 문구는 있지만 무갱신이 아닌 재서명이며 iPhone 실행 환경 필요 |
+| [iLoader Watch 포크](https://github.com/AndreySemjonov/iloader) | iPhone을 통한 Watch companion 설치 | 설치와 무갱신은 다름. 자동 Watch 갱신도 명시적으로 미지원 |
+| [LiveContainer](https://github.com/LiveContainer/LiveContainer) | 서명된 iOS 호스트 안에서 앱 실행 | watchOS 호스트가 아니며 게스트 위젯·확장도 일반적으로 미지원 |
+| [WatchBox](https://github.com/34306/WatchBox) / [WatchFix](https://github.com/577fkj/WatchFix) / [watched](https://github.com/34306/watched) | iPhone–Watch 버전·페어링 호환성 변경 | FoldBridge 만료를 없애지 않으며 일부 절차는 재페어링을 요구 |
+
+### 새로 찾은 핵심 자료: MissedRevoke
+
+원저자 Gist 고정점은 [`3d15c8d63f7b6f2e71b9086f4cb9e099c786fe16`](https://gist.github.com/khanhduytran0/e3ae92673a1acfe85ce5a50b59d28361/3d15c8d63f7b6f2e71b9086f4cb9e099c786fe16)입니다. 공개 파일은 `_MissedRevoke.md`와 `misdb.sql` 두 개입니다. 별도 라이선스 파일이나 완성된 Watch 앱이 제공되는 자료로 분류하지 않습니다.
+
+이 자료는 만료 기록의 수정을 막는 SQL trigger를 제시하므로 목표와 직접 관련됩니다. 하지만 원문은 다음 한계를 남깁니다.
+
+- 설치·실행 시의 시간 검사가 별도로 남아 **날짜를 과거로 바꾸는 조작**이 필요합니다. 날짜 조작 없이 계속 자동 실행된다는 의미가 아닙니다.
+- 예시는 새 데이터베이스를 만들고 iOS의 `MobileDeviceDomain` partial restore 경로로 전달합니다. 현재 워치의 기존 데이터베이스를 보존하는 마이그레이션·적용 코드는 없습니다.
+- 원저자는 iOS 27에서 partial restore 경로가 막혔다고 설명합니다. 해당 설명을 watchOS의 동일 경로나 지원 증거로 보지 않습니다.
+
+따라서 이 소스는 **만료 데이터 처리의 연구 참고 자료**이지, 현재 워치에 적용할 수 있는 무료 무갱신 기능은 아닙니다. 시스템 날짜나 데이터베이스를 바꾸지 않았습니다.
+
+### 소스 수준에서 확인한 구분
+
+- AppSync 고정점 [`235aca6cddfbdc9fa87fcb5b2aec2df37ed6d65a`](https://github.com/akemin-dayo/AppSync/blob/235aca6cddfbdc9fa87fcb5b2aec2df37ed6d65a/AppSyncUnified-FrontBoard/AppSyncUnified-FrontBoard.x)의 실행 시 후킹은 신뢰 상태 응답을 바꿉니다. 이는 운영체제 프로세스에 주입되는 코드이며 일반 FoldBridge 앱 내부의 함수로 대체할 수 없습니다.
+- Splice 고정점 [`7968bb190ffe4f1aa0bac1b8da6fd3003af072be`](https://github.com/franklintra/splice/blob/7968bb190ffe4f1aa0bac1b8da6fd3003af072be/frontends/cli/source/trollstore.d)의 영구 설치 상태 판단은 iOS 취약 버전에 관한 것입니다. `--permanent` 옵션 이름이 현재 watchOS 지원을 뜻하지 않습니다.
+- [LiveContainer FAQ](https://livecontainer.github.io/docs/faq)는 게스트 위젯·확장을 일반적으로 지원하지 않는다고 명시합니다. 현재 차량 제어 WidgetKit 확장을 유지하는 해결책으로 제시하지 않습니다.
+- [SideStore FAQ](https://docs.sidestore.io/docs/faq)는 7일 기간을 갱신한다고 명시합니다. [NoFreeAppLimit](https://havoc.app/package/nofreeapplimit)의 3개 앱 제한 해제는 시간 제한 해제와 다른 기능입니다.
+- Netskao/AntiProfilesRevoke는 검색 색인에 남아 있지만 이번 직접 GitHub API 접근은 404였습니다. 색인만으로 지금 받을 수 있는 유지보수 중 소스라고 표시하지 않습니다. 별도 Anti-Revoke 2도 무료 패키지 소개만으로 공개 소스·Watch 지원을 인정하지 않습니다.
+
+자료를 검토한 결과, **원하는 기능의 연구 재료는 존재하지만 현재 요구를 충족하는 Watch용 오픈소스 제품은 미확보**라는 결론입니다. 기존 설치·페어링은 그대로이며 무갱신 기능을 구현·설치한 것으로 보고하지 않습니다.
