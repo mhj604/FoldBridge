@@ -7,8 +7,8 @@ settings:
   base:
     SWIFT_VERSION: "5.0"
     CODE_SIGN_STYLE: Automatic
-    CURRENT_PROJECT_VERSION: 40
-    MARKETING_VERSION: 0.5.14
+    CURRENT_PROJECT_VERSION: 41
+    MARKETING_VERSION: 0.5.15
 targets:
   FoldBridge:
     type: application
@@ -27,8 +27,8 @@ targets:
       path: FoldBridge/Info.plist
       properties:
         CFBundleDisplayName: FoldBridge
-        CFBundleShortVersionString: "0.5.14"
-        CFBundleVersion: "40"
+        CFBundleShortVersionString: "0.5.15"
+        CFBundleVersion: "41"
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, ko]
         WKApplication: true
@@ -59,7 +59,7 @@ targets:
       path: FoldBridgeWidgets/Info.plist
       properties:
         CFBundleDisplayName: FoldBridge
-        CFBundleShortVersionString: "0.5.14"
-        CFBundleVersion: "40"
+        CFBundleShortVersionString: "0.5.15"
+        CFBundleVersion: "41"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension

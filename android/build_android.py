@@ -91,7 +91,7 @@ def main():
         if name.startswith('.'):element.set(android_name,'dev.foldbridge'+name)
     manifest.write(work/'AndroidManifest.xml',encoding='utf-8',xml_declaration=True)
     run(tools.aapt2,'compile','--dir',root/'app/src/main/res','-o',work/'compiled-res.zip')
-    run(tools.aapt2,'link','-I',jar,'--manifest',work/'AndroidManifest.xml','--java',work/'generated','--min-sdk-version','33','--target-sdk-version','36','--version-code','28','--version-name','0.6.9-local','-o',work/'base.apk',work/'compiled-res.zip')
+    run(tools.aapt2,'link','-I',jar,'--manifest',work/'AndroidManifest.xml','--java',work/'generated','--min-sdk-version','33','--target-sdk-version','36','--version-code','29','--version-name','0.6.11-local','-o',work/'base.apk',work/'compiled-res.zip')
     sources=sorted((root/'app/src/main/java').rglob('*.java'))+sorted((work/'generated').rglob('*.java'))
     run(tools.javac,'-encoding','UTF-8','--release','17','-classpath',jar,'-d',work/'classes',*sources)
     run(*tools.dex_command('--lib',jar,'--min-api','33','--output',work/'dex',*sorted((work/'classes').rglob('*.class'))))

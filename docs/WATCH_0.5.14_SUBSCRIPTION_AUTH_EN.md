@@ -21,7 +21,7 @@ Retain saved-peer pinning, encrypted authentication and explicit Stop connection
 ## Deployment state
 
 - **November 13, 2026:** installed Watch 0.5.14 / build 40 in place with fresh signing.
-- The Mac development tunnel timed out again immediately after installation, so remote launch/screen observation is incomplete. Direct watch app-entry feedback is pending. Successful phone-button-only connection while locked is not declared complete.
+- The user confirmed that the watch app opens after fresh signing. App-owned records show build 40, completed authentication and enabled keepalive intent; the phone reports Android 0.6.9 / installation code 28 and authenticated state. Subsequently the user locked the watch and phone-only interaction completed reauthentication; the user also confirmed connection. Device state was `passcodeRequired=true`, with `active=false` authentication events. Phone records include service start and one refresh. This short locked-state success does not establish hours-long locking, range-return or reboot recovery.
 - No replacement phone APK is needed; retain Android 0.6.9.
 - No system-log collection, vehicle-command execution, extra reboot or physical-range procedure is performed.
 
@@ -31,4 +31,4 @@ The preceding original-app restoration remains documented in the [0.5.12 restora
 
 The original 0.5.12 installation artifact and the 0.5.14 artifact prepared on November 8 both had app/widget development-profile expiration at approximately **19:33 KST on November 9, 2026**. They were expired when the app-entry failure was reported on November 13, making expired signing the leading explanation. This issue is separate from the earlier Bluetooth background-authentication problem. A fresh query of the then-installed app could not complete because the Mac connection timed out.
 
-Rebuilt with the same app ID/team and received successful in-place installation for 0.5.14 build 40. The fresh app/widget profiles expire at approximately **17:10 KST on November 20, 2026**. No app deletion, unregistration or storage reset was performed. The canceled renewal schedule was not recreated or enabled. Successful installation is distinct from confirmed app entry; any remaining app-entry error must be addressed from the direct result.
+Rebuilt with the same app ID/team and received successful in-place installation for 0.5.14 build 40. The fresh app/widget profiles expire at approximately **17:10 KST on November 20, 2026**. No app deletion, unregistration or storage reset was performed. The canceled renewal schedule was not recreated or enabled. The user confirmed app entry after fresh signing, establishing execution recovery. App-owned records show a new process authenticating in the foreground and a subsequent background connected state. Execution recovery is separate from completion of locked-state reconnection.

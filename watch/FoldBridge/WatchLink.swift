@@ -78,6 +78,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private let processID = UUID().uuidString
     private var identity: P256.KeyAgreement.PrivateKey?, session: Wire.Session?
     private var ownNonce = Data(), phonePublic = Data(), phoneCommit = Data()
+    private var authenticationProgressAt = Date.distantPast
     private var stage = "idle", localConfirmed = false, remoteConfirmed = false
     private var active = WKApplication.shared().applicationState == .active
     private var continuousRuntime = false
@@ -532,6 +533,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func beginHandshake() {
         guard stage == "discovering", let identity else { return }
         ownNonce = Data((0..<32).map { _ in UInt8.random(in:0...255) }); stage = "commit"
+        authenticationProgressAt = Date()
         trace("handshake.commit")
         sendPlain(["type":"commit","v":1,"commit":Data(SHA256.hash(data:identity.publicKey.derRepresentation+ownNonce)).base64EncodedString()])
     }
@@ -573,11 +575,12 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         if type == "wake", (object["v"] as? Int) == 1 {
             trace("remote.wake")
             if stage == "awaitingBootstrap" { beginAfterBootstrap();return }
-            if (object["bootstrap"] as? Bool) == true, !connected,
-               ["commit","reveal","confirm"].contains(stage) {
-                // The first write can race the bootstrap indication. Do not
-                // discard a handshake already in flight for this same link.
-                trace("bootstrap.handshake.inflight");return
+            if !connected, ["commit","reveal","confirm"].contains(stage),
+               Date().timeIntervalSince(authenticationProgressAt) < 15 {
+                // Both initial bootstrap and a phone refresh may arrive while
+                // the same link is authenticating. Keep that nonce/progress;
+                // a refresh can still restart an exchange stalled for 15s.
+                trace((object["bootstrap"] as? Bool) == true ? "bootstrap.handshake.inflight" : "refresh.handshake.inflight");return
             }
             if let p = peripheral { reauthenticate(p) }
             return
@@ -586,6 +589,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         if type == "commit" {
             guard stage == "commit", (object["v"] as? Int) == 1 else { throw Wire.Failure.state }
             phoneCommit = try Wire.base64(object["commit"]); guard phoneCommit.count == 32 else { throw Wire.Failure.bounds }
+            authenticationProgressAt = Date()
             stage = "reveal"
             sendPlain(["type":"reveal","public":identity.publicKey.derRepresentation.base64EncodedString(),"nonce":ownNonce.base64EncodedString()]); return
         }
@@ -595,6 +599,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             guard nonce.count == 32, Data(SHA256.hash(data:phonePublic+nonce)) == phoneCommit else { throw Wire.Failure.authentication }
             let pinned = try WatchStore.get(peerKey)
             guard pinned == nil || pinned == phonePublic else { throw Wire.Failure.authentication }
+            authenticationProgressAt = Date()
             let peer = try P256.KeyAgreement.PublicKey(derRepresentation:phonePublic)
             session = Wire.Session(shared:try identity.sharedSecretFromKeyAgreement(with:peer), watchNonce:ownNonce, phoneNonce:nonce)
             stage = "confirm"; localConfirmed = pinned != nil; remoteConfirmed = false
@@ -949,6 +954,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         peripheral?.delegate = nil
         epoch += 1; scanEpoch += 1; connected = false; peripheral = retainedPeripheral; retainedPeripheral?.delegate = self; autoReconnectPending = false; tx = nil; rx = nil; session = nil; stage = "idle"; code = ""; localConfirmed = false; remoteConfirmed = false; writing = false; writingFrame = nil; outgoing.removeAll(); assembler.reset()
         lastIncomingFrame = nil; lastSync = .distantPast
+        authenticationProgressAt = .distantPast
         pendingPing = nil; pingSentAt = .distantPast; lastPeerActivity = .distantPast
         peerSupportsLiveness = false; connectionAttemptAt = Date(); lastIncomingActivity = .distantPast
         refreshingServices = false
@@ -962,7 +968,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":40,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":41,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "serviceWaitCount":serviceWaitCount,"serviceDiscoveryAttempts":serviceDiscoveryAttempts,"lastServiceDiscoveryError":lastServiceDiscoveryError,
             "lastConnectError":lastConnectError,
             "retryDelaySeconds":max(0,nextConnectAttempt.timeIntervalSinceNow),

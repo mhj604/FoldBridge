@@ -2,7 +2,7 @@
 
 [한국어](README.md) · **English** · [Documentation / 문서](docs/README.md)
 
-This branch contains Watch **0.5.14 / build 40**, starting background authentication directly from subscription completion. Retain Android **0.6.9-local / installation code 28**. See [changes and deployment state](docs/WATCH_0.5.14_SUBSCRIPTION_AUTH_EN.md). Successful phone-button-only connection while locked is not declared complete.
+This branch contains Android **0.6.11-local / code 29** and Watch **0.5.15 / build 41**, reducing authentication restarts on refresh and obsolete bootstrap transmission. See [changes and deployment state](docs/FAST_RECONNECT_0.5.15_EN.md).
 
 Forward notifications **directly from a Galaxy phone to Apple Watch over Bluetooth LE**. Notification delivery uses the two devices: no server, internet connection, iPhone relay, root access, or workout/audio session is needed.
 

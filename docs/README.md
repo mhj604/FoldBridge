@@ -59,3 +59,5 @@ New users: start with **Install and connect**. Current release: **Android 0.6.7-
 Older `RELEASE_*_KO.md` and initial `legacy/` documents remain archived in their original language. Use the guides above for current operation. Significant earlier changes are summarized in both languages' changelog and development history.
 
 - [Watch 0.5.14: 구독 콜백에서 백그라운드 인증 시작](WATCH_0.5.14_SUBSCRIPTION_AUTH_KO.md) · [English](WATCH_0.5.14_SUBSCRIPTION_AUTH_EN.md)
+
+- [0.6.11 / 0.5.15: 재연결 지연 줄이기](FAST_RECONNECT_0.5.15_KO.md) · [English](FAST_RECONNECT_0.5.15_EN.md)

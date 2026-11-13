@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Android 0.6.11 / Watch 0.5.15 reconnection latency
+
+Coalesce refresh requests during progressing authentication instead of restarting it. Once the phone receives the first authentication request, replace queued obsolete bootstrap data with the authentication reply. [Changes and deployment state](docs/FAST_RECONNECT_0.5.15_EN.md).
+
 ## Watch 0.5.14 · build 40 (retain Android 0.6.9)
 
 Start authentication writes immediately from subscription completion instead of waiting for bootstrap or an app timer. Retain in-flight authentication on duplicate callbacks, and register native recovery discovery for restored pending connections. [Changes and deployment state](docs/WATCH_0.5.14_SUBSCRIPTION_AUTH_EN.md).
