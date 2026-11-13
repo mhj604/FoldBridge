@@ -6,6 +6,8 @@ This automates re-provisioning, signing and in-place installation from a Mac. It
 
 ## Requirements and stopped schedule as of November 13, 2026
 
+Follow-up [Windows and profile-only renewal research](SIGNING_WINDOWS_RESEARCH_EN.md) found free Windows Watch installation code, but its automatic renewal excludes Watch. Direct application without an iPhone remains unresolved. SideStore's iOS refresh can replace profiles without a full reinstall, so a full reinstall must not be described as universal across platforms. The procedure below describes this repository's Mac/Xcode tool.
+
 The owner requires **free automatic renewal first, no Watch–Mac connection during renewal, internet on the watch only, and no manual renewal**. The Xcode tool below requires a development connection to a Mac and does not meet those requirements. The previous schedule has not been resumed.
 
 Installed Watch **0.5.15 / build 41** profiles expire on **November 20, 2026 at 17:10:56 KST** for the app and **17:10:54 KST** for its vehicle widget. The local renewal record, previously left at version 0.5.2, was backed up and updated from this installed build's signed artifact. Recording these dates does not renew the app or enable a schedule.
