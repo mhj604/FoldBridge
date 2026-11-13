@@ -4,11 +4,11 @@
 
 무료 Personal Team의 7일 유효기간을 없애는 기능이 아닙니다. Mac에서 기존 Xcode 계정으로 새 프로파일을 요청하고 같은 앱·위젯을 다시 서명해 덮어 설치하는 작업을 자동화합니다. 앱 등록과 설정은 유지하며 앱을 삭제하지 않습니다.
 
-## 2026-11-13 현재 조건과 중지 상태
+## 2026-11-13: 일주일마다 macOS 기본 예약으로 갱신
 
 후속 [Windows·프로파일 전용 갱신 심층 조사](SIGNING_WINDOWS_RESEARCH_KO.md)에서 무료 Windows Watch 설치 코드를 확인했습니다. 해당 도구의 자동 갱신은 Watch를 제외하며, 아이폰 없는 직접 적용 경로는 미해결입니다. SideStore의 iOS 갱신은 전체 재설치 없이 프로파일만 교체하므로, 모든 플랫폼의 갱신에 전체 재설치가 필수라고 일반화하지 않습니다. 아래 설명은 이 저장소의 Mac/Xcode 도구에 해당합니다.
 
-사용자 요구는 **무료 자동 갱신 우선, 갱신 시 워치–Mac 연결 없음, 워치 인터넷만 사용, 수동 갱신 제외**입니다. 아래 Xcode 도구는 개발용 Mac 연결이 필요하므로 이 조건을 충족하지 않습니다. 이전 예약은 재개하지 않았습니다.
+최신 요청에 따라 **Mac 기본 예약 기능으로 7일마다 한 번** 갱신하는 구성을 사용합니다. 기본 시간은 **매주 금요일 16:00, Mac의 현지 시간**입니다. 2026-11-13 설정 시 첫 실행은 **11월 20일 16:00 KST**이며, 기록된 현재 만료일보다 앞섭니다. 이전 Codex 예약은 재개하지 않으며 Codex 앱이 켜져 있을 필요도 없습니다. 기존에 요청했던 워치 인터넷만의 방식과 달리, 이번에 선택한 방식은 갱신 시 Mac과의 개발용 무선 연결을 사용합니다.
 
 현재 설치한 Watch **0.5.15 / 빌드 41**의 앱 프로파일은 **2026-11-20 17:10:56 KST**, 차량 위젯은 **17:10:54 KST**에 만료됩니다. 과거 0.5.2 설치본에 머물러 있던 로컬 갱신 기록은 백업 후 최신 설치본의 만료일로 맞췄습니다. 이 기록 갱신은 실제 재서명이나 예약 실행을 의미하지 않습니다.
 
@@ -16,15 +16,16 @@
 
 [한국 Apple Developer 앱](https://apps.apple.com/kr/app/apple-developer/id640199958)의 멤버십 가격은 **129,000원**, [공식 등록 안내](https://developer.apple.com/kr/programs/enroll/)의 갱신 주기는 연간입니다. 결제 시 표시되는 최종 금액이 기준입니다. 가입만으로 기존 개발용 설치본이 자동 갱신되거나 App Store 설치본으로 바뀌지는 않습니다.
 
-워치가 Mac에 연결하지 않고 인터넷으로 설치·업데이트하는 공식 경로는 [독립형 watchOS 앱의 App Store 배포](https://developer.apple.com/documentation/watchos-apps/creating-independent-watchos-apps)입니다. 멤버십·배포 준비·Apple 심사가 필요하며 이 프로젝트의 승인이 확보된 상태는 아닙니다. [TestFlight](https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview/)도 빌드당 최대 90일로, 만료 없는 정식 배포와 다릅니다. 계정 결제·심사 제출·새 예약 생성은 수행하지 않았습니다.
+워치가 Mac에 연결하지 않고 인터넷으로 설치·업데이트하는 공식 경로는 [독립형 watchOS 앱의 App Store 배포](https://developer.apple.com/documentation/watchos-apps/creating-independent-watchos-apps)입니다. 멤버십·배포 준비·Apple 심사가 필요하며 이 프로젝트의 승인이 확보된 상태는 아닙니다. [TestFlight](https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview/)도 빌드당 최대 90일로, 만료 없는 정식 배포와 다릅니다. 이번 설정은 계정 결제나 심사 제출을 하지 않습니다.
 
 ## Mac 연결을 허용할 때의 도구 구성
 
 - 실행 도구: [`tools/watch-auto-renew.py`](../tools/watch-auto-renew.py), Python 표준 라이브러리와 Xcode만 사용합니다.
-- 예약: 아래는 **6시간마다** 실행하도록 구성할 때의 설명입니다. 현재 사용자의 예약은 중지되어 있으며, 저장소를 복제해도 예약이 설치되지 않습니다.
-- 갱신 조건: 앱·포함된 확장 중 가장 이른 만료까지 **72시간 이내**일 때만 빌드합니다.
-- Mac과 Codex 앱이 켜져 있고, Xcode가 로그인되어 있어야 합니다. 갱신할 때 워치가 Mac과 개발용 무선 연결이 가능하고 잠금 해제 상태여야 합니다.
-- 워치가 없거나 잠겼으면 기존 앱을 유지하고 다음 실행에서 재시도합니다. Mac 전원이 꺼져 있거나 장기간 워치와 떨어져 있으면 만료를 막을 수 없습니다.
+- 예약 설치 도구: [`tools/install-watch-weekly-renew.py`](../tools/install-watch-weekly-renew.py). macOS `launchd`의 사용자 LaunchAgent를 등록합니다. 기본 예약은 **매주 금요일 16:00**이며 6시간 주기의 확인·재시도 작업은 만들지 않습니다.
+- 예약 설치 시 갱신 판단 범위를 168시간으로 설정합니다. 이는 실행 간격이 아니라, 주 1회 실행이 갱신을 건너뛰지 않게 하는 조건입니다. 정기 실행에 `--force`는 사용하지 않습니다.
+- Mac에 로그인한 상태로 Mac이 깨어 있고 Xcode가 로그인되어 있어야 합니다. 갱신할 때 워치가 같은 Wi-Fi에서 Mac과 개발용 무선 연결이 가능하고 잠금 해제 상태여야 합니다. 케이블과 Codex는 필요 없습니다.
+- 워치가 없거나 잠겼으면 기존 앱을 유지하고 상태를 기록합니다. 짧은 주기의 별도 재시도 예약은 없습니다. 7일 간격은 사용자가 명시적으로 선택한 주기이며, 예정된 갱신에 실패하면 만료 전에 추가 실행이 보장되지 않습니다.
+- 실행 중에만 `caffeinate -i`로 Mac의 유휴 잠자기를 막습니다. 상시 실행하거나 전원·잠자기 설정을 변경하지 않습니다.
 
 ## 실제 갱신 처리
 
@@ -49,13 +50,17 @@ python3 tools/watch-auto-renew.py \
 
 기본 설정·상태 경로는 `~/Library/Application Support/FoldBridge/AutoRenew/`입니다. `config.json`에는 저장소·Xcode 경로, Team·기기·Bundle ID, 설치본의 만료일만 기록합니다. 비밀번호나 인증서는 저장하지 않습니다. 프로파일 백업과 빌드 로그도 이 로컬 폴더에 보관하며 공개 저장소에 올리지 않습니다.
 
-예약할 실행 명령:
+주간 예약 등록은 아래 명령을 **한 번** 실행합니다. 등록 즉시 갱신하거나 기기에 연결하지 않습니다.
 
 ```sh
-/usr/bin/python3 /absolute/path/to/FoldBridge/tools/watch-auto-renew.py
+python3 tools/install-watch-weekly-renew.py --weekday 5 --hour 16 --minute 0
 ```
 
-Codex에 위 명령을 6시간마다 실행하도록 요청하면 됩니다. 예약에는 유효기간이 충분하면 조용히 종료하고, 실제 갱신 완료·인증 조작 필요·만료 임박 때만 알려 달라는 조건을 포함합니다. 예약은 Mac과 Codex가 실행 중일 때 동작합니다. [OpenAI 예약 실행 안내](https://learn.chatgpt.com/docs/scheduled-tasks)
+요일은 월요일 1부터 일요일 7까지입니다. 실행 파일과 커밋된 소스의 독립 Git 사본은 로컬 상태 폴더에 배치합니다. 예약 실행은 Documents 작업 폴더를 직접 읽지 않습니다. 같은 Bundle ID·Team·등록 정보와 만료 기록을 유지하며, 개인 설정이나 기기 식별자를 저장소에 추가하지 않습니다. 앱을 새 버전으로 업데이트하면 그 버전의 커밋에서 이 설치 명령을 다시 실행해 소스 사본도 갱신합니다.
+
+LaunchAgent는 `~/Library/LaunchAgents/dev.foldbridge.weekly-renew.plist`입니다. 이 예약만 제거하려면 `python3 tools/install-watch-weekly-renew.py --remove`를 실행합니다. 앱·등록·로컬 설정은 삭제하지 않습니다. [Apple launchd 문서](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html)
+
+실행 결과는 로컬 `state.json`, `weekly.stdout.log`, `weekly.stderr.log`에 남습니다. 이는 갱신 작업의 출력이며 워치 시스템 로그를 수집하지 않습니다. 이 LaunchAgent는 Codex 알림을 생성하지 않습니다.
 
 `--force`는 최초 적용 등 즉시 새 프로파일을 요청할 때만 사용합니다. 정기 실행에는 붙이지 않습니다.
 

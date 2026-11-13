@@ -4,11 +4,11 @@
 
 This automates re-provisioning, signing and in-place installation from a Mac. It does not remove the seven-day Personal Team limit. Existing registration/settings are retained; the app is never uninstalled.
 
-## Requirements and stopped schedule as of November 13, 2026
+## November 13, 2026: once-weekly native macOS scheduling
 
 Follow-up [Windows and profile-only renewal research](SIGNING_WINDOWS_RESEARCH_EN.md) found free Windows Watch installation code, but its automatic renewal excludes Watch. Direct application without an iPhone remains unresolved. SideStore's iOS refresh can replace profiles without a full reinstall, so a full reinstall must not be described as universal across platforms. The procedure below describes this repository's Mac/Xcode tool.
 
-The owner requires **free automatic renewal first, no Watch–Mac connection during renewal, internet on the watch only, and no manual renewal**. The Xcode tool below requires a development connection to a Mac and does not meet those requirements. The previous schedule has not been resumed.
+The latest request explicitly selects **one renewal every seven days using macOS native scheduling**. The default is **Friday at 16:00 in the Mac's local time zone**. With the November 13 setup, the first run is **November 20 at 16:00 KST**, before the recorded current expiry. The old Codex schedule stays stopped; Codex does not need to be running. Unlike the previously requested watch-internet-only approach, this selected method uses the Watch's wireless development connection to the Mac during renewal.
 
 Installed Watch **0.5.15 / build 41** profiles expire on **November 20, 2026 at 17:10:56 KST** for the app and **17:10:54 KST** for its vehicle widget. The local renewal record, previously left at version 0.5.2, was backed up and updated from this installed build's signed artifact. Recording these dates does not renew the app or enable a schedule.
 
@@ -16,15 +16,16 @@ This investigation did not establish an available free, watch-only, internet-bas
 
 The [Korean Apple Developer app](https://apps.apple.com/kr/app/apple-developer/id640199958) lists **KRW 129,000** for membership; [Apple's enrollment page](https://developer.apple.com/kr/programs/enroll/) specifies an annual term. The checkout price controls. Membership alone does not automatically refresh the existing development installation or convert it to an App Store app.
 
-The official route for internet installation and updates without a Watch–Mac connection is [App Store distribution of an independent watchOS app](https://developer.apple.com/documentation/watchos-apps/creating-independent-watchos-apps). It requires membership, distribution preparation and Apple review; this project has not received approval. [TestFlight](https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview/) builds last up to 90 days and are not permanent releases. No purchase, review submission or new schedule was performed.
+The official route for internet installation and updates without a Watch–Mac connection is [App Store distribution of an independent watchOS app](https://developer.apple.com/documentation/watchos-apps/creating-independent-watchos-apps). It requires membership, distribution preparation and Apple review; this project has not received approval. [TestFlight](https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview/) builds last up to 90 days and are not permanent releases. This setup makes no purchase or review submission.
 
 ## Operation when a Mac connection is acceptable
 
 - Tool: [`tools/watch-auto-renew.py`](../tools/watch-auto-renew.py), using Python's standard library and Xcode.
-- **Six-hour** scheduling below is an optional configuration; the owner's previous schedule remains stopped. Cloning this repository does not install a schedule.
-- Rebuild only when the earliest app/extension expiration is within **72 hours**.
-- The Mac and Codex app must be running, Xcode signed in, and the watch available through its paired development connection. The tool waits until the watch is unlocked before starting installation.
-- An unavailable/locked watch is retried on a later run. A powered-off Mac or prolonged separation from the watch can still result in expiration.
+- Schedule installer: [`tools/install-watch-weekly-renew.py`](../tools/install-watch-weekly-renew.py), registering a per-user macOS LaunchAgent. The default is **Friday at 16:00**; no six-hour polling or retry job is created.
+- Installation sets the renewal threshold to 168 hours. This is not a polling interval: it lets the one weekly run renew without skipping the week. Recurring runs do not use `--force`.
+- The Mac must be awake with its user logged in and Xcode signed in; the unlocked watch must be on the same Wi-Fi and reachable through its paired wireless development connection. No cable or running Codex app is required.
+- An unavailable/locked watch leaves the app intact and records a waiting status. There is no separate short-interval retry schedule. Seven days is the owner's explicitly selected interval; if a scheduled renewal fails, another pre-expiration attempt is not guaranteed.
+- `caffeinate -i` prevents idle sleep only while renewal runs. No permanent process or power-setting change is installed.
 
 The tool compares the installed build number with committed source, extracts committed `watch/` files into a separate folder, backs up only the matching FoldBridge profiles, and requests new profiles through `xcodebuild -allowProvisioningUpdates`. Uncommitted changes are not built. It never automatically replaces an installed app with a different source version.
 
@@ -44,13 +45,17 @@ python3 tools/watch-auto-renew.py \
 
 Team and Bundle ID are read from the signed app. Configuration, state, profile backups and logs stay in `~/Library/Application Support/FoldBridge/AutoRenew/`. The configuration records paths, Team/device/Bundle IDs and expiration dates, not account passwords or certificates. Do not publish the local state directory.
 
-Ask Codex to schedule this command every six hours:
+Run this command **once** to register the weekly schedule. Registration does not immediately renew or connect to the watch:
 
 ```sh
-/usr/bin/python3 /absolute/path/to/FoldBridge/tools/watch-auto-renew.py
+python3 tools/install-watch-weekly-renew.py --weekday 5 --hour 16 --minute 0
 ```
 
-The schedule should stay quiet while nothing needs action, report completed renewal or required authentication, and notify if expiration is imminent and installation still cannot finish. The Mac and Codex must remain running. [OpenAI scheduled-task documentation](https://learn.chatgpt.com/docs/scheduled-tasks)
+Weekdays run from Monday=1 to Sunday=7. The runner and an independent Git copy of committed source are staged in the local state folder, so scheduled runs do not read the Documents worktree. Bundle ID, Team, registration and expiration records are retained; personal settings and device identifiers are not added to this repository. When deploying a new app version, rerun the installer from its committed source to update the staged copy too.
+
+The agent is `~/Library/LaunchAgents/dev.foldbridge.weekly-renew.plist`. Run `python3 tools/install-watch-weekly-renew.py --remove` to remove only this schedule, retaining apps, registration and local settings. [Apple launchd documentation](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html)
+
+Results stay in local `state.json`, `weekly.stdout.log` and `weekly.stderr.log`. These are renewal task outputs, not collected Watch system logs. This LaunchAgent does not create Codex notifications.
 
 Use `--force` only for initial application or an intentional immediate renewal, not on recurring runs. Use `--config PATH` for an alternative local configuration.
 
