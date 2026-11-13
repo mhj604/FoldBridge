@@ -2,6 +2,8 @@
 
 [한국어](SIGNING_WINDOWS_RESEARCH_KO.md) · **English** · Researched **November 13, 2026**
 
+Follow-up: [distribution and Watch-client alternatives](NO_WEEKLY_SIGNING_ARCHITECTURE_EN.md), covering no-root USB system-protocol work, App Store publishers, and built-in Shortcuts for vehicle control. The Windows development sequence below is not a committed implementation plan; structural alternatives are now the priority under consideration.
+
 ## Finding
 
 **A free Windows renewal application has concrete implementation building blocks. No complete path was established for keeping all FoldBridge functionality on watchOS 27.2 through internet-only, watch-only automatic renewal, or permanent signing.** Replacing macOS with Windows does not remove the free Personal Team profile's seven-day validity. [Apple limits](https://developer.apple.com/help/account/basics/about-your-developer-account)

@@ -2,6 +2,8 @@
 
 **한국어** · [English](SIGNING_WINDOWS_RESEARCH_EN.md) · 조사일 **2026-11-13**
 
+후속 조사: [배포 변경과 자체 Watch 앱 대체](NO_WEEKLY_SIGNING_ARCHITECTURE_KO.md). 미루팅 USB 시스템 프로토콜 변경안, App Store 배포 주체, 차량 제어용 기본 단축어를 정리했습니다. 아래 Windows 개발 순서는 구현 확정 사항이 아니며 현재 우선 검토 대상은 후속 문서의 구조 변경입니다.
+
 ## 결론
 
 **Mac을 대체하는 Windows용 무료 갱신 프로그램은 개발 후보가 있습니다. 하지만 현재 FoldBridge 전체를 watchOS 27.2에서 아이폰·컴퓨터 연결 없이 인터넷만으로 자동 갱신하거나 영구 실행하는 완성된 경로는 찾지 못했습니다.** Windows로 서명해도 Personal Team의 7일 프로파일 유효기간은 그대로입니다. Windows 갱신 프로그램은 그 기한 전에 갱신을 반복하는 역할입니다. [Apple Personal Team 안내](https://developer.apple.com/help/account/basics/about-your-developer-account)

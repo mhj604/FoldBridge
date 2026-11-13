@@ -25,6 +25,7 @@ New users: start with **Install and connect**. Current release: **Android 0.6.7-
 | 빌드·서명·민감한 본문 / Build, signing, sensitive content | [빌드와 설치](BUILD_AND_SETUP.md) | [Build and settings](BUILD_AND_SETUP_EN.md) |
 | 무료 계정 워치 서명 갱신 / Free-account watch renewal | [자동 갱신](AUTO_RENEW_KO.md) | [Automatic renewal](AUTO_RENEW_EN.md) |
 | Windows·무갱신 무료 경로 조사 / Windows and free permanent-signing research | [심층 조사와 개발 후보](SIGNING_WINDOWS_RESEARCH_KO.md) | [Research and development candidates](SIGNING_WINDOWS_RESEARCH_EN.md) |
+| 배포 변경·자체 Watch 앱 대체 / Distribution and Watch-client alternatives | [매주 갱신 없는 구조 조사](NO_WEEKLY_SIGNING_ARCHITECTURE_KO.md) | [Architecture without weekly user renewal](NO_WEEKLY_SIGNING_ARCHITECTURE_EN.md) |
 | 케이블 없는 APK 업데이트 / Wireless APK updates | [무선 설치](WIRELESS_INSTALL_KO.md) | [Wireless installation](WIRELESS_INSTALL_EN.md) |
 | 마이현대 차량 제어 / MyHyundai vehicle controls | [위젯 연결과 사용](VEHICLE_CONTROL_KO.md) | [Widget setup and use](VEHICLE_CONTROL_EN.md) |
 | 현재 앱 구조 / Current architecture | [구조](ARCHITECTURE.md) | [Architecture](ARCHITECTURE_EN.md) |
