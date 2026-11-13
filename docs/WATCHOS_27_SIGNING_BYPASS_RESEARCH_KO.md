@@ -121,3 +121,38 @@ FoldBridge는 앱 `dev.foldbridge.watch`와 확장 `dev.foldbridge.watch.widgets
 - Netskao/AntiProfilesRevoke는 검색 색인에 남아 있지만 이번 직접 GitHub API 접근은 404였습니다. 색인만으로 지금 받을 수 있는 유지보수 중 소스라고 표시하지 않습니다. 별도 Anti-Revoke 2도 무료 패키지 소개만으로 공개 소스·Watch 지원을 인정하지 않습니다.
 
 자료를 검토한 결과, **원하는 기능의 연구 재료는 존재하지만 현재 요구를 충족하는 Watch용 오픈소스 제품은 미확보**라는 결론입니다. 기존 설치·페어링은 그대로이며 무갱신 기능을 구현·설치한 것으로 보고하지 않습니다.
+
+## MissedRevoke를 직접 watchOS로 이식할 수 있는가
+
+후속 요청에 따라 2026-11-13에 원본·포크, 적용 경로, 별도 실행 만료 검사라는 세 축을 조사했습니다. Exa 9회 검색의 결과는 **45개(중복 포함), 서로 다른 URL 40개**입니다. 별도로 GitHub Gist API에서 원본 변경 이력·댓글·직접 포크 12개의 파일을 읽었습니다. 이는 소스 조사이며 기기에서의 작동 실험이 아닙니다. 대상 OS는 기존 기록의 Ultra 2 / watchOS 27.2(24S118)이며 새로 읽지 않았습니다.
+
+**판단: SQL 일부를 수정하는 작업과 현재 워치에서 무갱신 실행을 구현하는 작업은 다릅니다. 전자는 코드 작성 범위지만, 후자를 가능하게 하는 현재 Watch의 접근·실행 경로는 확보하지 못했습니다.** 이 조사를 이유로 기존 설치본을 수정하거나 교체하지 않았습니다.
+
+### 원본과 포크에서 새로 확인한 점
+
+[원본](https://gist.github.com/khanhduytran0/e3ae92673a1acfe85ce5a50b59d28361)의 최신 코드 리비전은 `3d15c8d63f7b6f2e71b9086f4cb9e099c786fe16`, 코드 변경 시각은 **2026-08-08**입니다. Gist 메타데이터의 `updated_at`인 11월 6일을 watchOS용 코드 업데이트로 해석하지 않습니다. API가 반환한 직접 포크 12개는 모두 원본과 같은 두 파일·같은 내용이었습니다. 이 범위에서는 후속 Watch 이식이나 날짜 검사 제거 코드가 없습니다. 전체 인터넷의 모든 파생 코드를 확인했다는 의미는 아닙니다. [변경 이력](https://api.github.com/gists/e3ae92673a1acfe85ce5a50b59d28361) · [직접 포크 목록](https://api.github.com/gists/e3ae92673a1acfe85ce5a50b59d28361/forks?per_page=100)
+
+### 코드에서 분리되는 네 부분
+
+| 부분 | 원본이 하는 일 | 현재 워치에 추가로 필요한 것 |
+| --- | --- | --- |
+| 데이터 형식 | iOS의 스키마 버전 9 데이터베이스를 새로 생성 | 현재 watchOS의 실제 경로·스키마·서비스 동작 자료. iOS와 같다고 가정할 수 없음 |
+| 기존 데이터 유지 | 샘플은 기존 로컬 출력 DB를 지우고 새 DB를 만듦. 프로파일 trigger는 삽입 시 동작 | 기존 시스템 DB의 행과 관계를 보존하는 마이그레이션. 이미 있는 행은 trigger를 추가하는 것만으로 바뀌지 않음 |
+| 워치에 전달 | iOS `MobileDeviceDomain` partial restore 샘플 | 현재 Watch에서 등록·키·설정을 보존하며 적용할 접근 경로. 샘플에는 없음 |
+| 만료 뒤 실행 | 만료 기록과 삭제 동작을 변경하나 `cms_blob`은 그대로 유지 | 원문에 남은 설치·실행 시 시간 검사 처리. 앱과 위젯의 재실행도 포함해야 함 |
+
+위 표의 SQL 동작은 원본 정적 분석입니다. 기기의 실제 시스템 DB를 읽거나 trigger를 실행하지 않았습니다. 원본 샘플은 FoldBridge만 대상으로 하는 범위 제한도 제공하지 않습니다. 이를 그대로 복사해 기존 앱을 보존하는 전용 수정본이라고 부를 수 없습니다.
+
+Apple [TN3125](https://developer.apple.com/documentation/technotes/tn3125-inside-code-signing-provisioning-profiles)는 프로파일 자체가 Apple이 서명한 CMS 데이터이며 실행 가능 기간을 포함한다고 설명합니다. 또한 **watchOS 8부터 DER 프로파일이 필요**하다고 명시합니다. 따라서 DB의 `expires`나 사람이 읽는 plist를 바꾸는 것으로 Apple 서명이 있는 프로파일의 기간이 연장되는 것은 아닙니다. 이 점과 원저자가 명시한 날짜 되돌리기 요구를 함께 보면, SQL 이식만으로 날짜 조작 없는 영구 실행을 달성할 수 없다는 판단입니다. 현재 Watch의 정확한 검사 함수나 우회 지점을 확보한 것은 아닙니다.
+
+### 일반 개발 연결과 복원 도구가 해결하지 못하는 부분
+
+[pymobiledevice3의 MisagentService](https://github.com/doronz88/pymobiledevice3/blob/master/pymobiledevice3/services/misagent.py)는 프로파일 설치·조회·삭제 요청을 구현합니다. DB 파일 업로드나 임의 SQL 실행 메서드는 없습니다. RSD용 서비스 이름이 존재하는 것과 현재 Watch에서 보호된 DB를 쓸 수 있는 것은 다른 문제입니다. 이 클라이언트의 기능 범위에서 그런 쓰기 경로를 확보하지 못했습니다.
+
+Apple의 [Watch 복원 문서](https://support.apple.com/guide/watch/restore-applewatch-from-a-backup-apdaa8cc32e8/watchos)는 재페어링할 때 백업을 선택하는 흐름을 설명합니다. 기존 페어링을 유지하며 시스템 DB 하나만 바꾸는 인터페이스를 제공하는 문서가 아닙니다. iOS 27 복원 문제의 [원 보고](https://github.com/libimobiledevice/libimobiledevice/issues/1746)와 [Nugget27](https://github.com/idkwhatt0d0dev/Nugget27)의 전체 백업→변경→복원 우회도 Watch용 무갱신·페어링 보존 구현을 제공하지 않습니다. iOS의 문제를 현재 watchOS에서도 발생한다고 단정하지 않습니다.
+
+현재 FoldBridge는 `dev.foldbridge.watch`와 `dev.foldbridge.watch.widgets` 두 실행 대상을 사용합니다. `WatchStore.swift`는 등록 신원 키를 Keychain에 저장하며 신규 항목에 `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`를 설정합니다. 따라서 앱 설정 파일만 복사하면 등록이 유지된다고 가정할 수 없습니다. 이 코드와 등록 정보를 변경하지 않았습니다.
+
+### 이번 작업의 결과
+
+이식에 필요한 부분을 **DB 형식·데이터 보존·시스템 적용·실행 만료 처리**로 구체화했습니다. 현재 빠진 핵심은 SQL 문법이 아니라 **현 Watch 빌드에서의 적용 경로와 만료 후 실행을 허용할 수단**입니다. 어느 하나라도 없는 상태에서 기능 없는 설치기나 가짜 성공 표시를 추가하지 않았습니다. 기존 앱·페어링·차량 설정은 그대로이며 시스템 로그, 기기 연결, 날짜 변경, 복원, 재서명, 자동 갱신 예약은 실행하지 않았습니다. 무료 무갱신 목표는 아직 달성되지 않았습니다.

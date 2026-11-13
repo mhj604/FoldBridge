@@ -100,3 +100,38 @@ Its SQL triggers address expiry records, making it relevant research. However, t
 - Netskao/AntiProfilesRevoke remains in search indexes, but direct GitHub API access returned 404 in this investigation. It is not presented as currently retrievable, maintained source. Free binary descriptions of Anti-Revoke 2 likewise do not establish source availability or Watch support.
 
 Research ingredients exist, but a Watch implementation satisfying the full request remains unavailable in the material obtained. Existing apps and pairing remain intact; no no-renewal feature was installed or implemented.
+
+## Can MissedRevoke be ported directly to current watchOS?
+
+The follow-up on 2026-11-13 examined three areas: upstream/forks, deployment access, and independent launch-time expiry. Nine Exa searches returned **45 results including duplicates, with 40 distinct URLs**. Separately, the GitHub Gist API supplied upstream history, comments, and the files of 12 direct forks. This was source research, not an on-device experiment. Ultra 2 / watchOS 27.2 (24S118) is the previously recorded target, not a freshly read device version.
+
+**Assessment: editing SQL and implementing no-renewal execution on this Watch are different tasks. SQL can be written, but the current Watch access and execution paths needed to make it effective have not been obtained.** No installed application was replaced or modified on the basis of this research.
+
+### New upstream and fork findings
+
+The [upstream Gist](https://gist.github.com/khanhduytran0/e3ae92673a1acfe85ce5a50b59d28361) has latest code revision `3d15c8d63f7b6f2e71b9086f4cb9e099c786fe16`, committed **2026-08-08**. Its November 6 `updated_at` metadata is not evidence of a new Watch implementation. All 12 direct forks returned by the API contained the same two files with the same contents. No Watch port or removal of the clock workaround was present in that set; this does not establish the contents of every derivative elsewhere. [History API](https://api.github.com/gists/e3ae92673a1acfe85ce5a50b59d28361) · [Direct forks API](https://api.github.com/gists/e3ae92673a1acfe85ce5a50b59d28361/forks?per_page=100)
+
+### Four distinct implementation areas
+
+| Area | Upstream implementation | Additional requirement on this Watch |
+| --- | --- | --- |
+| Database format | Creates an iOS schema-version-9 database | Actual current watchOS path, schema and service behavior; iOS equivalence cannot be assumed |
+| Existing data | Recreates the local output DB; profile trigger acts on insertion | Migration preserving existing rows and relationships; adding an insert trigger does not retroactively change existing rows |
+| Delivery | iOS MobileDeviceDomain partial-restore sample | A current Watch access path retaining registration, keys and settings; none is provided |
+| Expired execution | Changes expiry/deletion bookkeeping but retains the original cms_blob | Handling the separate install/launch clock checks described by the author, including app and widget relaunch |
+
+These SQL observations are static analysis. No device database was read and no trigger was executed. The sample also lacks a FoldBridge-only scope; copying it does not produce a targeted modification that preserves the existing installation.
+
+Apple's [TN3125](https://developer.apple.com/documentation/technotes/tn3125-inside-code-signing-provisioning-profiles) explains that a profile is Apple-signed CMS data containing execution validity, and that **watchOS 8 and later require the DER profile representation**. Changing a database timestamp or readable plist does not extend the Apple-signed profile. Combined with the author's remaining clock workaround, this supports the assessment that an SQL port alone does not deliver indefinite execution with the correct system clock. The exact current Watch enforcement functions or a bypass for them have not been obtained.
+
+### Why ordinary developer connections and restore clients do not fill the gap
+
+[pymobiledevice3's MisagentService](https://github.com/doronz88/pymobiledevice3/blob/master/pymobiledevice3/services/misagent.py) implements profile installation, enumeration and removal. It has no database-upload or arbitrary-SQL method. Having an RSD service name does not establish permission to write the protected database on this Watch; no such path was found in this client's functionality.
+
+Apple's [Watch restore documentation](https://support.apple.com/guide/watch/restore-applewatch-from-a-backup-apdaa8cc32e8/watchos) describes selecting a backup during pairing. It does not document in-place replacement of a system database while retaining pairing. The [iOS 27 restore report](https://github.com/libimobiledevice/libimobiledevice/issues/1746) and [Nugget27](https://github.com/idkwhatt0d0dev/Nugget27)'s full backup/change/restore workaround do not provide a Watch no-renewal implementation preserving its current pairing. Their iOS behavior is not asserted to occur on this watchOS build.
+
+FoldBridge has two executables: `dev.foldbridge.watch` and `dev.foldbridge.watch.widgets`. `WatchStore.swift` stores the registration identity in Keychain and sets newly inserted items to `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`. Copying app preference files alone therefore cannot establish registration preservation. Neither that code nor the registration was changed.
+
+### Outcome
+
+The required port is now separated into database format, data preservation, system deployment, and runtime expiry handling. The missing foundation is **a deployment path on this physical Watch build and a means of permitting execution after expiry**, rather than SQL syntax. No nonfunctional installer or success placeholder was added. Existing apps, pairing and vehicle settings remain intact. No system logs, device connections, clock changes, restores, re-signing, or renewal automation were performed. The free no-renewal objective remains unachieved.
