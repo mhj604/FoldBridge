@@ -4,10 +4,22 @@
 
 무료 Personal Team의 7일 유효기간을 없애는 기능이 아닙니다. Mac에서 기존 Xcode 계정으로 새 프로파일을 요청하고 같은 앱·위젯을 다시 서명해 덮어 설치하는 작업을 자동화합니다. 앱 등록과 설정은 유지하며 앱을 삭제하지 않습니다.
 
-## 구성
+## 2026-11-13 현재 조건과 중지 상태
+
+사용자 요구는 **무료 자동 갱신 우선, 갱신 시 워치–Mac 연결 없음, 워치 인터넷만 사용, 수동 갱신 제외**입니다. 아래 Xcode 도구는 개발용 Mac 연결이 필요하므로 이 조건을 충족하지 않습니다. 이전 예약은 재개하지 않았습니다.
+
+현재 설치한 Watch **0.5.15 / 빌드 41**의 앱 프로파일은 **2026-11-20 17:10:56 KST**, 차량 위젯은 **17:10:54 KST**에 만료됩니다. 과거 0.5.2 설치본에 머물러 있던 로컬 갱신 기록은 백업 후 최신 설치본의 만료일로 맞췄습니다. 이 기록 갱신은 실제 재서명이나 예약 실행을 의미하지 않습니다.
+
+인터넷만으로 워치의 무료 서명을 자동 갱신하고 설치하는 사용 가능한 경로는 현재 조사에서 확인하지 못했습니다. [SideStore](https://github.com/SideStore/SideStore)는 iOS 앱과 로컬 VPN을 사용합니다. [Sideloadly 변경 기록](https://sideloadly.io/changelog)의 v0.71.0은 유료 계정의 Watch 처리를 지원하며 무료 지원은 후속 버전 예정이라고 설명합니다. [Windows 기반 Watch 설치 실험](https://github.com/pookjw/HermesEnabler/issues/54)도 PC와 USB로 연결한 iPhone을 요구합니다. 이 자료들은 워치 단독 자동 갱신의 근거가 아닙니다.
+
+[한국 Apple Developer 앱](https://apps.apple.com/kr/app/apple-developer/id640199958)의 멤버십 가격은 **129,000원**, [공식 등록 안내](https://developer.apple.com/kr/programs/enroll/)의 갱신 주기는 연간입니다. 결제 시 표시되는 최종 금액이 기준입니다. 가입만으로 기존 개발용 설치본이 자동 갱신되거나 App Store 설치본으로 바뀌지는 않습니다.
+
+워치가 Mac에 연결하지 않고 인터넷으로 설치·업데이트하는 공식 경로는 [독립형 watchOS 앱의 App Store 배포](https://developer.apple.com/documentation/watchos-apps/creating-independent-watchos-apps)입니다. 멤버십·배포 준비·Apple 심사가 필요하며 이 프로젝트의 승인이 확보된 상태는 아닙니다. [TestFlight](https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview/)도 빌드당 최대 90일로, 만료 없는 정식 배포와 다릅니다. 계정 결제·심사 제출·새 예약 생성은 수행하지 않았습니다.
+
+## Mac 연결을 허용할 때의 도구 구성
 
 - 실행 도구: [`tools/watch-auto-renew.py`](../tools/watch-auto-renew.py), Python 표준 라이브러리와 Xcode만 사용합니다.
-- 예약: 이 채팅의 Codex 자동 실행이 **6시간마다** 도구를 실행합니다. 다른 사용자에게 이 예약이 함께 설치되지는 않습니다.
+- 예약: 아래는 **6시간마다** 실행하도록 구성할 때의 설명입니다. 현재 사용자의 예약은 중지되어 있으며, 저장소를 복제해도 예약이 설치되지 않습니다.
 - 갱신 조건: 앱·포함된 확장 중 가장 이른 만료까지 **72시간 이내**일 때만 빌드합니다.
 - Mac과 Codex 앱이 켜져 있고, Xcode가 로그인되어 있어야 합니다. 갱신할 때 워치가 Mac과 개발용 무선 연결이 가능하고 잠금 해제 상태여야 합니다.
 - 워치가 없거나 잠겼으면 기존 앱을 유지하고 다음 실행에서 재시도합니다. Mac 전원이 꺼져 있거나 장기간 워치와 떨어져 있으면 만료를 막을 수 없습니다.

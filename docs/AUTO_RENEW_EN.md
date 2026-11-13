@@ -4,10 +4,22 @@
 
 This automates re-provisioning, signing and in-place installation from a Mac. It does not remove the seven-day Personal Team limit. Existing registration/settings are retained; the app is never uninstalled.
 
-## Operation
+## Requirements and stopped schedule as of November 13, 2026
+
+The owner requires **free automatic renewal first, no Watch–Mac connection during renewal, internet on the watch only, and no manual renewal**. The Xcode tool below requires a development connection to a Mac and does not meet those requirements. The previous schedule has not been resumed.
+
+Installed Watch **0.5.15 / build 41** profiles expire on **November 20, 2026 at 17:10:56 KST** for the app and **17:10:54 KST** for its vehicle widget. The local renewal record, previously left at version 0.5.2, was backed up and updated from this installed build's signed artifact. Recording these dates does not renew the app or enable a schedule.
+
+This investigation did not establish an available free, watch-only, internet-based automatic renewal and installation path. [SideStore](https://github.com/SideStore/SideStore) uses an iOS app and local VPN. [Sideloadly v0.71.0](https://sideloadly.io/changelog) documents Watch processing for paid accounts, with free-account support planned. A [Windows Watch installation experiment](https://github.com/pookjw/HermesEnabler/issues/54) still requires a PC and USB-connected iPhone. None establishes watch-only automatic renewal.
+
+The [Korean Apple Developer app](https://apps.apple.com/kr/app/apple-developer/id640199958) lists **KRW 129,000** for membership; [Apple's enrollment page](https://developer.apple.com/kr/programs/enroll/) specifies an annual term. The checkout price controls. Membership alone does not automatically refresh the existing development installation or convert it to an App Store app.
+
+The official route for internet installation and updates without a Watch–Mac connection is [App Store distribution of an independent watchOS app](https://developer.apple.com/documentation/watchos-apps/creating-independent-watchos-apps). It requires membership, distribution preparation and Apple review; this project has not received approval. [TestFlight](https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview/) builds last up to 90 days and are not permanent releases. No purchase, review submission or new schedule was performed.
+
+## Operation when a Mac connection is acceptable
 
 - Tool: [`tools/watch-auto-renew.py`](../tools/watch-auto-renew.py), using Python's standard library and Xcode.
-- The owner's Codex chat automation runs every **six hours**. That schedule is not installed for people who clone this repository.
+- **Six-hour** scheduling below is an optional configuration; the owner's previous schedule remains stopped. Cloning this repository does not install a schedule.
 - Rebuild only when the earliest app/extension expiration is within **72 hours**.
 - The Mac and Codex app must be running, Xcode signed in, and the watch available through its paired development connection. The tool waits until the watch is unlocked before starting installation.
 - An unavailable/locked watch is retried on a later run. A powered-off Mac or prolonged separation from the watch can still result in expiration.
