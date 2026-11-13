@@ -2,6 +2,16 @@
 
 [한국어](NO_WEEKLY_SIGNING_ARCHITECTURE_KO.md) · **English** · Research date: **2026-11-13**
 
+## Follow-up decision: no permanently attached USB adapter
+
+The user selected the system-protocol direction, then excluded the USB option after clarification that the adapter must remain attached during normal operation, not just initial setup. The no-root USB PR below is therefore research history, not an adopted implementation plan.
+
+Upstream source and PR #8/#12 were fetched locally for source inspection. The main source revision is `3af14e0226113d465d3ab84a9d30a16f84c968c0`. [`RootBluetoothHalHost`](https://github.com/LordixDemon/apple_watch_connector/blob/3af14e0226113d465d3ab84a9d30a16f84c968c0/apple-watch-bridge/hal/src/main/java/dev/applewatchandroid/bridge/RootBluetoothHalHost.java) requires UID 0 and OnePlus CPH2653. [`AndroidBluetoothController`](https://github.com/LordixDemon/apple_watch_connector/blob/3af14e0226113d465d3ab84a9d30a16f84c968c0/apple-watch-bridge/hal/src/main/java/dev/applewatchandroid/bridge/AndroidBluetoothController.java) exchanges raw HCI commands and ACL packets through `IBluetoothHci`. Removing the model restriction does not grant ordinary-app access, nor establish rooted Fold7 support.
+
+No implementation replacing this transport with ordinary Android Bluetooth APIs or CompanionDeviceManager was established. In particular, companion association does not itself create the communication link. [Android documentation](https://developer.android.com/develop/connectivity/bluetooth/companion-device-pairing)
+
+**A native transport meeting the selected conditions—unrooted Fold7 built-in Bluetooth, no custom Watch app, and no permanently attached external device—has not been obtained.** No APK build, installation, or protocol integration was performed. Existing apps and registrations remain intact. Progress would first require another implementation or a new transport providing Apple protocol access under those conditions. Weekly renewal is not solved, and USB development is not proceeding.
+
 ## Result
 
 Moving development to Windows or VS Code does not remove watchOS signing requirements. This investigation considers changing distribution or eliminating the custom Watch executable. No ready-to-use replacement was established that satisfies every condition: free, no manual renewal, no iPhone during normal use, local Bluetooth notifications without an external server, and vehicle control.

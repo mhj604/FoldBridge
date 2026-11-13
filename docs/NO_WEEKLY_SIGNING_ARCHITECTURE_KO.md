@@ -2,6 +2,16 @@
 
 **한국어** · [English](NO_WEEKLY_SIGNING_ARCHITECTURE_EN.md) · 조사일 **2026-11-13**
 
+## 후속 결정: 상시 USB 어댑터 제외
+
+사용자는 시스템 프로토콜 방향을 선택했지만, 외장 어댑터가 최초 작업 때만 필요한 것이 아니라 **평소 통신 중에도 계속 연결돼 있어야 한다는 설명을 들은 뒤 상시 어댑터 방식을 제외**했습니다. 따라서 아래의 미루팅 USB PR은 채택된 구현 계획이 아닌 조사 이력입니다.
+
+공개 소스를 로컬에 내려받고 PR #8·#12를 가져와 구조를 읽었습니다. 메인 소스 고정점은 `3af14e0226113d465d3ab84a9d30a16f84c968c0`입니다. [`RootBluetoothHalHost`](https://github.com/LordixDemon/apple_watch_connector/blob/3af14e0226113d465d3ab84a9d30a16f84c968c0/apple-watch-bridge/hal/src/main/java/dev/applewatchandroid/bridge/RootBluetoothHalHost.java)는 UID 0과 OnePlus CPH2653을 요구하고, [`AndroidBluetoothController`](https://github.com/LordixDemon/apple_watch_connector/blob/3af14e0226113d465d3ab84a9d30a16f84c968c0/apple-watch-bridge/hal/src/main/java/dev/applewatchandroid/bridge/AndroidBluetoothController.java)는 `IBluetoothHci`로 HCI 명령·ACL 패킷을 직접 주고받습니다. 모델명 제한만 제거해도 일반 앱의 접근 권한이 생기지는 않습니다. 루팅된 Fold7 지원도 이 소스의 지원 결과가 아닙니다.
+
+Android의 일반 Bluetooth 연결 API나 CompanionDeviceManager를 이 전송부의 직접 대체로 삼을 구현 근거는 확보하지 못했습니다. 특히 CompanionDeviceManager의 기기 연결 등록은 통신 자체를 만들어 주는 기능이 아닙니다. [Android 공식 설명](https://developer.android.com/develop/connectivity/bluetooth/companion-device-pairing)
+
+**현재 선택 조건인 미루팅 Fold7 내장 Bluetooth + 자체 Watch 앱 없음 + 상시 외장 장치 없음에 적용할 수 있는 네이티브 전송부는 미확보입니다.** APK 빌드·설치·프로토콜 결합은 진행하지 않았으며 기존 앱과 등록 정보를 유지했습니다. 이 방향을 구현 가능 상태로 만들려면 먼저 해당 조건에서 HCI/Apple 전송을 제공하는 다른 구현 또는 새로운 전송부가 필요합니다. 갱신 문제를 해결했다고 보거나 USB 개발을 계속하지 않습니다.
+
 ## 결론
 
 Windows나 VS Code로 개발 장소를 옮겨도 watchOS 앱의 서명 요구는 사라지지 않습니다. 이번에는 **배포 경로를 바꾸거나 자체 Watch 실행 파일을 없애는 방법**을 조사했습니다. 무료·수동 갱신 없음·평소 아이폰 없음·외부 서버 없이 Bluetooth 알림·차량 제어라는 조건을 모두 만족하는 완성된 대체품은 찾지 못했습니다.
