@@ -18,14 +18,15 @@ public final class BridgeService extends Service {
     private static final int MAX_PENDING=1024;
     public static final UUID SERVICE=UUID.fromString("c62d0200-7de5-4c34-a432-7c838e687a40"), TX=UUID.fromString("c62d0201-7de5-4c34-a432-7c838e687a40"), RX=UUID.fromString("c62d0202-7de5-4c34-a432-7c838e687a40"), CCC=UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
     static volatile BridgeService instance;
-    static boolean isConnected(){BridgeService service=instance;return service!=null&&service.authenticated;}
+    static boolean isConnected(){BridgeService service=instance;return service!=null&&service.authenticated&&service.subscribed&&service.central!=null;}
     static volatile String status="중지됨", pairingCode="", error="";
     static volatile long acknowledged=0, apnsAccepted=0, lastRtt=-1;
     static volatile int waiting=0;
     private static String recordedState="";
     static void recordState(Context context) {
         BridgeService s=instance;
-        JSONObject state=object("build",29,"bridgeRunning",s!=null,"status",status,"error",error,
+        if(s!=null)s.updateConnectionNotification();
+        JSONObject state=object("build",30,"bridgeRunning",s!=null,"status",status,"error",error,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
             "softRefreshCount",s==null?0:s.softRefreshCount,"disconnectCount",s==null?0:s.disconnectCount,"lastDisconnectReason",s==null?"":s.lastDisconnectReason,
@@ -37,6 +38,8 @@ public final class BridgeService extends Service {
             "bootstrapSent",s==null?0:s.bootstrapSent,"discoveryRefreshes",s==null?0:s.discoveryRefreshes,
             "rejectedCharacteristicWrites",s==null?0:s.rejectedCharacteristicWrites,
             "staleLinkRecoveries",s==null?0:s.staleLinkRecoveries,"maintenanceAt",s==null?0:s.maintenanceAt,
+            "discardedFrames",s==null?0:s.discardedFrames,"indicationWaits",s==null?0:s.indicationWaits,
+            "busySendRetries",s==null?0:s.busySendRetries,
             "connectionStartedAt",s==null?0:s.connectionStartedAt,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
             "received",NotificationRelay.received,"forwarded",NotificationRelay.forwarded,
@@ -74,6 +77,9 @@ public final class BridgeService extends Service {
     private int indicationGeneration;
     private byte[] indicationPacket;
     private int softRefreshCount=0;
+    private int discardedFrames=0, indicationWaits=0, busySendRetries=0;
+    private boolean foregroundStarted=false;
+    private String notificationState="";
     private String lastDisconnectReason="";
     private int disconnectCount=0;
     private int bluetoothRetries=0, bluetoothEpoch=0, refreshCount=0;
@@ -88,11 +94,8 @@ public final class BridgeService extends Service {
             if(adapter!=null&&adapter.isEnabled()) {
                 if(server==null)startBluetooth();
                 else {
-                    // Inspect local stack state only: no heartbeat indications or
-                    // extra watch background wakeups for a healthy idle link.
-                    if(central!=null&&manager.getConnectionState(central,BluetoothProfile.GATT)==BluetoothProfile.STATE_DISCONNECTED) {
-                        staleLinkRecoveries++;clearSession();status="워치 연결 대기 중";
-                    }
+                    // Adapter-wide snapshots are not this server subscription's
+                    // state. Our disconnect callback owns a claimed peer's loss.
                     if(central==null)startAdvertising();
                 }
             }
@@ -131,7 +134,7 @@ public final class BridgeService extends Service {
         if(vault==null) return START_NOT_STICKY;
         if(!getSharedPreferences("settings",MODE_PRIVATE).getBoolean("connection_enabled",false)) {stopSelf();return START_NOT_STICKY;}
         if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE)!=PackageManager.PERMISSION_GRANTED) { fail("근처 기기 권한이 필요합니다."); stopSelf(); return START_NOT_STICKY; }
-        updateConnectionNotification();
+        updateConnectionNotification(true);
         if("pair".equals(intent==null?null:intent.getAction())) { pairUntil=SystemClock.elapsedRealtime()+120000; error=""; }
         if("refresh".equals(intent==null?null:intent.getAction()))refreshBluetooth();
         else if(server==null)startBluetooth();
@@ -142,11 +145,23 @@ public final class BridgeService extends Service {
         handler.post(()->recordState(this));
         return START_STICKY;
     }
-    private void updateConnectionNotification() {
+    private void updateConnectionNotification() {if(foregroundStarted)updateConnectionNotification(false);}
+    private void updateConnectionNotification(boolean force) {
+        boolean linked=authenticated&&subscribed&&central!=null;
+        String key=linked+":"+getResources().getConfiguration().getLocales().toLanguageTags();
+        if(!force&&key.equals(notificationState))return;
         NotificationManager manager=getSystemService(NotificationManager.class);
         manager.createNotificationChannel(new NotificationChannel("connection",I18n.t(this,"워치 연결 상태"),NotificationManager.IMPORTANCE_LOW));
         PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_IMMUTABLE);
-        startForeground(10,new Notification.Builder(this,"connection").setSmallIcon(android.R.drawable.stat_sys_data_bluetooth).setContentTitle(I18n.t(this,"FoldBridge Local 실행 중")).setContentText(I18n.t(this,"Bluetooth로 애플워치 알림을 전달합니다")).setOngoing(true).setContentIntent(open).build());
+        Notification notification=new Notification.Builder(this,"connection")
+            .setSmallIcon(android.R.drawable.stat_sys_data_bluetooth)
+            .setContentTitle("FoldBridge Local · "+I18n.t(this,linked?"워치 연결됨":"워치 연결 대기 중"))
+            .setContentText(I18n.t(this,linked?"Bluetooth로 애플워치 알림을 전달합니다":"휴대폰과 워치가 가까이 있으면 연결을 이어갑니다."))
+            .setCategory(Notification.CATEGORY_SERVICE).setOnlyAlertOnce(true)
+            .setOngoing(true).setShowWhen(false).setContentIntent(open).build();
+        if(foregroundStarted)manager.notify(10,notification);
+        else {startForeground(10,notification);foregroundStarted=true;}
+        notificationState=key;
     }
     @Override public void onConfigurationChanged(android.content.res.Configuration configuration) {
         super.onConfigurationChanged(configuration);updateConnectionNotification();
@@ -170,9 +185,6 @@ public final class BridgeService extends Service {
         refreshCount++;bluetoothRetries=0;blockedUntil=0;failures=0;pairUntil=0;
         error="";
         if(server==null){status="연결 새로고침 중";startBluetooth();return;}
-        if(central!=null&&getSystemService(BluetoothManager.class).getConnectionState(central,BluetoothProfile.GATT)==BluetoothProfile.STATE_DISCONNECTED) {
-            clearSession();
-        }
         if(authenticated&&subscribed) {
             softRefreshCount++;
             sendSecure(object("type","refresh"));
@@ -294,7 +306,14 @@ public final class BridgeService extends Service {
                 // A normal accepted ATT write proves this payload fits the link MTU,
                 // even if Android delivered onMtuChanged before STATE_CONNECTED.
                 mtu=Math.max(mtu,value.length+3);
-                try { byte[] message=assembler.accept(value,SystemClock.elapsedRealtime()); if(message!=null)receive(new JSONObject(new String(message,StandardCharsets.UTF_8))); }
+                byte[] message;
+                try {message=assembler.accept(value,SystemClock.elapsedRealtime());}
+                catch(IllegalArgumentException incomplete) {
+                    // A fragment may expire during watch suspension. Discard the
+                    // partial envelope without cancelling the authenticated link.
+                    assembler.reset();discardedFrames++;recordState(BridgeService.this);return;
+                }
+                try {if(message!=null)receive(new JSONObject(new String(message,StandardCharsets.UTF_8)));}
                 catch(Exception e) { disconnect("인증 또는 데이터 검증 실패"); }
             });
         }
@@ -453,8 +472,22 @@ public final class BridgeService extends Service {
         inFlight=true;indicationGeneration=generation;indicationPacket=outgoing.peekFirst();
         long ticket=++indicationTicket;
         int result=server.notifyCharacteristicChanged(central,tx,true,indicationPacket);
-        if(result!=BluetoothStatusCodes.SUCCESS) { inFlight=false; disconnect("BLE 전송을 시작하지 못했습니다: "+result); return; }
-        handler.postDelayed(()->{if(ticket==indicationTicket&&inFlight)disconnect("BLE 전송 확인 시간 초과");},30000);
+        if(result!=BluetoothStatusCodes.SUCCESS) {
+            inFlight=false;indicationPacket=null;
+            if(result==BluetoothStatusCodes.ERROR_GATT_WRITE_REQUEST_BUSY) {
+                // Retry only a frame the stack did not accept; keep its bytes.
+                busySendRetries++;int current=generation;
+                handler.postDelayed(()->{if(instance==this&&current==generation&&ticket==indicationTicket)drain();},500);
+                recordState(this);return;
+            }
+            disconnect("BLE 전송을 시작하지 못했습니다: "+result);return;
+        }
+        handler.postDelayed(()->{
+            if(ticket==indicationTicket&&inFlight) {
+                // Retain the ATT slot until completion or an actual disconnect.
+                indicationWaits++;recordState(this);
+            }
+        },30000);
     }
     static void enqueue(JSONObject notification) {
         BridgeService s=instance; if(s==null)return;
@@ -523,6 +556,7 @@ public final class BridgeService extends Service {
         generation++; acknowledgedIcons.clear(); session=null; peerPublic=null; ownNonce=null; peerCommit=null; stage="idle";
         activeDelivery=null;pending.clear();waiting=0;connectionStartedAt=0;
         authenticated=false;localConfirmed=false;remoteConfirmed=false;watchActive=false;pairingCode="";
+        updateConnectionNotification();
         outgoing.clear();messages.clear();assembler.reset();
         // Keep the old ATT indication slot until its callback. Its old-generation
         // callback must not remove the first packet of the replacement session.

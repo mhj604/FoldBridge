@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Android 0.6.12 / Watch 0.5.16 connection maintenance candidate
+
+Reduce physical-link cancellations caused by adapter-state inference, partial-message errors and local transmission timers. The foreground-service notification distinguishes authenticated connection from waiting. Watch installation/launch completed; Galaxy APK installation remains pending. Sustained connection is not declared fully resolved. [Changes, remaining work and signing research](docs/CONNECTION_STABILITY_0.5.16_EN.md).
+
 ## Android 0.6.11 / Watch 0.5.15 reconnection latency
 
 Coalesce refresh requests during progressing authentication instead of restarting it. Once the phone receives the first authentication request, replace queued obsolete bootstrap data with the authentication reply. [Changes and deployment state](docs/FAST_RECONNECT_0.5.15_EN.md).
