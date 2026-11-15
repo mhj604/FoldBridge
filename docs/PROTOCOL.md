@@ -144,3 +144,11 @@ BLE 특성 변경으로 백그라운드 실행 기회를 받는 것은 watchOS�
 ### 버튼 식별자 유지 (Android 0.6.2 / Watch 0.5.4)
 
 액션 ID는 `SHA256(widgetID + ":label:" + 정확한 표시 이름)`의 URL-safe Base64 값입니다. 같은 이름의 클릭 대상이 여러 개면 해당 항목을 목록에서 제외합니다. View ID나 화면 순서를 영속 식별자로 사용하지 않습니다. 최신 revision과 현재 선택 여부는 실행 시 계속 확인합니다.
+
+## 읽기 우선 재인증 (Android 0.6.16 / Watch 0.5.22)
+
+새 TX는 `READ | INDICATE`입니다. 등록 상대의 compact resume은 알림 구독 전에 시작하고 현재 peer의 응답을 읽습니다. 형식은 `46 42 52 02`, kind 1(`resume`)/2(`resumed`), nonce 32, proof 32바이트입니다. 기존 프레이밍·키·암호 문맥은 유지합니다. JSON 요청의 `accepts_compact:2`도 짧은 응답을 받을 수 있습니다. 암호화된 `ready`의 `compact_resume:2`로 다음 연결의 형식도 알립니다.
+
+공유 GATT의 이전 CCC가 남아 있어도 compact 요청의 proof가 유효하면 현재 구독 전송을 내려 읽기부터 시작합니다. 암호화 confirm·ready 뒤 CCC를 다시 받으며, 실제 연결 알림은 인증과 구독 모두를 요구합니다. read mailbox는 현재 인증 응답/암호화 ready만 담고 새 인증/종료에서 지웁니다. 읽기 offset은 실제 ATT 스택이 처리할 나머지 값을 돌려주며 indication용 보수적 MTU 추정치로 자르지 않습니다. 동일 read/indication 응답은 한 번만 처리하고, 읽기·ready·구독 준비가 남으면 background task를 먼저 완료하지 않습니다.
+
+단순 native 종료로 빠른 인증 기능을 끄지 않습니다. 재연결은 캐시 특성만으로 탐색 완료를 만들지 않습니다. 이 경로에서 잠금 중 인증은 기록됐으나 지속 연결은 미완료입니다. [실제 결과](LOCKED_AUTH_0.5.22_KO.md).

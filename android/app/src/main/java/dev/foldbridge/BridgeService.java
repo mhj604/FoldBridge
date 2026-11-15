@@ -28,7 +28,7 @@ public final class BridgeService extends Service {
         BridgeService s=instance;
         if(s!=null)s.updateConnectionNotification();
         NotificationChannel waitingChannel=context.getSystemService(NotificationManager.class).getNotificationChannel(WAITING_CHANNEL);
-        JSONObject state=object("build",33,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",38,"bridgeRunning",s!=null,"status",status,"error",error,
             "waitingNotificationHidden",waitingChannel!=null&&waitingChannel.getImportance()==NotificationManager.IMPORTANCE_NONE,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
@@ -45,6 +45,7 @@ public final class BridgeService extends Service {
             "discardedFrames",s==null?0:s.discardedFrames,"indicationWaits",s==null?0:s.indicationWaits,
             "busySendRetries",s==null?0:s.busySendRetries,
             "fastResumeAttempts",s==null?0:s.fastResumeAttempts,"fastResumeCompleted",s==null?0:s.fastResumeCompleted,
+            "authenticationReads",s==null?0:s.authenticationReads,
             "authenticationMillis",s==null?-1:s.authenticationMillis,
             "connectionStartedAt",s==null?0:s.connectionStartedAt,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
@@ -81,6 +82,8 @@ public final class BridgeService extends Service {
     private int subscriptionReleases=0;
     private int fastResumeAttempts=0, fastResumeCompleted=0;
     private boolean fastAuthentication=false;
+    private byte[] authenticationReply;
+    private int authenticationReads=0;
     private final LinkedHashSet<String> recentResumeNonces=new LinkedHashSet<>();
     private long authenticationStartedAt=0,authenticationMillis=-1;
     private long maintenanceAt=0;
@@ -130,6 +133,24 @@ public final class BridgeService extends Service {
     }
     private static String b64(byte[] b) { return Base64.getEncoder().encodeToString(b); }
     private static byte[] unb64(String s) { return Base64.getDecoder().decode(s); }
+    private static JSONObject decodeMessage(byte[] data) throws Exception {
+        if(data.length>=4&&data[0]==0x46&&data[1]==0x42&&data[2]==0x52&&data[3]==2) {
+            if(data.length!=69||(data[4]!=1&&data[4]!=2))throw new GeneralSecurityException("Resume envelope");
+            return object("type",data[4]==1?"resume":"resumed","v",1,"compact",2,
+                "nonce",b64(Arrays.copyOfRange(data,5,37)),"proof",b64(Arrays.copyOfRange(data,37,69)));
+        }
+        return new JSONObject(new String(data,StandardCharsets.UTF_8));
+    }
+    private static byte[] encodeMessage(JSONObject message) {
+        String type=message.optString("type");
+        if(message.optInt("compact")==2&&("resume".equals(type)||"resumed".equals(type))) {
+            byte[] nonce=unb64(message.optString("nonce")),proof=unb64(message.optString("proof"));
+            if(nonce.length!=32||proof.length!=32)throw new IllegalArgumentException("Resume bounds");
+            byte[] data=new byte[69];data[0]=0x46;data[1]=0x42;data[2]=0x52;data[3]=2;data[4]=(byte)("resume".equals(type)?1:2);
+            System.arraycopy(nonce,0,data,5,32);System.arraycopy(proof,0,data,37,32);return data;
+        }
+        return message.toString().getBytes(StandardCharsets.UTF_8);
+    }
     static JSONObject object(Object... pairs) { JSONObject o=new JSONObject(); try { for(int i=0;i<pairs.length;i+=2)o.put((String)pairs[i],pairs[i+1]); } catch(JSONException e) { throw new IllegalArgumentException(e); } return o; }
     @Override public void onCreate() {
         super.onCreate(); instance=this;
@@ -246,7 +267,7 @@ public final class BridgeService extends Service {
         server=manager.openGattServer(this,callbacks(token));
         if(server==null) {retryBluetooth("Bluetooth 서버 준비를 다시 시도합니다.");return;}
         BluetoothGattService service=new BluetoothGattService(SERVICE,BluetoothGattService.SERVICE_TYPE_PRIMARY);
-        tx=new BluetoothGattCharacteristic(TX,BluetoothGattCharacteristic.PROPERTY_INDICATE,0);
+        tx=new BluetoothGattCharacteristic(TX,BluetoothGattCharacteristic.PROPERTY_INDICATE|BluetoothGattCharacteristic.PROPERTY_READ,BluetoothGattCharacteristic.PERMISSION_READ);
         tx.addDescriptor(new BluetoothGattDescriptor(CCC,BluetoothGattDescriptor.PERMISSION_READ|BluetoothGattDescriptor.PERMISSION_WRITE));
         service.addCharacteristic(tx);
         service.addCharacteristic(new BluetoothGattCharacteristic(RX,BluetoothGattCharacteristic.PROPERTY_WRITE,BluetoothGattCharacteristic.PERMISSION_WRITE));
@@ -277,6 +298,22 @@ public final class BridgeService extends Service {
         @Override public void onStartFailure(int code) { handler.post(()->{if(token!=bluetoothEpoch||advertisements!=this)return;advertisements=null;retryAdvertising();}); }
     };}
     private BluetoothGattServerCallback callbacks(int token) {return new BluetoothGattServerCallback() {
+        @Override public void onCharacteristicReadRequest(BluetoothDevice device,int requestId,int offset,BluetoothGattCharacteristic characteristic) {
+            handler.post(()->{if(token!=bluetoothEpoch||server==null)return;
+                boolean allowed=TX.equals(characteristic.getUuid())&&matches(device)&&authenticationReply!=null;
+                if(!allowed){server.sendResponse(device,requestId,BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,offset,null);return;}
+                if(offset<0||offset>authenticationReply.length){server.sendResponse(device,requestId,BluetoothGatt.GATT_INVALID_OFFSET,offset,null);return;}
+                // ATT long-read offsets expose only this peer's current auth
+                // response. No command or retained notification is executed.
+                // mtu is also a conservative indication-fragment estimate. It
+                // must not truncate a read below the real negotiated ATT MTU:
+                // the client would treat that short chunk as end-of-value.
+                // Android's ATT stack caps each reply to its real MTU; a long
+                // read returns with the next offset for the remaining bytes.
+                server.sendResponse(device,requestId,BluetoothGatt.GATT_SUCCESS,offset,Arrays.copyOfRange(authenticationReply,offset,authenticationReply.length));
+                if(offset==0){authenticationReads++;recordState(BridgeService.this);}
+            });
+        }
         @Override public void onServiceAdded(int result,BluetoothGattService service) { handler.post(()->{if(token!=bluetoothEpoch)return;
             if(server==null||instance!=BridgeService.this)return;
             if(result!=BluetoothGatt.GATT_SUCCESS) {retryBluetooth("BLE 서비스 등록을 다시 시도합니다: "+result);return;}
@@ -310,6 +347,7 @@ public final class BridgeService extends Service {
                 }
                 valid=valid&&(matches(device)||(central==null&&disable));
                 if(valid)subscribed=enable;
+                if(valid&&enable&&authenticated)status="워치 연결됨";
                 if(response)server.sendResponse(device,requestId,valid?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,0,null);
                 if(valid&&disable&&matches(device)) {
                     // CCC removal ends this app's subscription, not necessarily
@@ -327,7 +365,7 @@ public final class BridgeService extends Service {
                 if(ownWrite&&central==null) {
                     resumeRetainedSubscription(device,requestId,response,value);return;
                 }
-                boolean valid=ownWrite&&matches(device)&&subscribed;
+                boolean valid=ownWrite&&matches(device)&&(subscribed||authenticationReply!=null);
                 if(response)server.sendResponse(device,requestId,valid?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,0,null);
                 if(!valid){rejectedCharacteristicWrites++;recordState(BridgeService.this);return;}
                 // A normal accepted ATT write proves this payload fits the link MTU,
@@ -340,7 +378,7 @@ public final class BridgeService extends Service {
                     // partial envelope without cancelling the authenticated link.
                     assembler.reset();discardedFrames++;recordState(BridgeService.this);return;
                 }
-                try {if(message!=null)receive(new JSONObject(new String(message,StandardCharsets.UTF_8)));}
+                try {if(message!=null)receive(decodeMessage(message));}
                 catch(Exception e) { disconnect("인증 또는 데이터 검증 실패"); }
             });
         }
@@ -391,11 +429,20 @@ public final class BridgeService extends Service {
             byte[] message=probe.frames.accept(value,now);
             if(message!=null) {
                 resumeProbes.remove(address);
-                commit=new JSONObject(new String(message,StandardCharsets.UTF_8));
+                commit=decodeMessage(message);
                 boolean legacy="commit".equals(commit.optString("type"))&&unb64(commit.getString("commit")).length==32;
                 boolean fast="resume".equals(commit.optString("type"))&&unb64(commit.getString("nonce")).length==32&&unb64(commit.getString("proof")).length==32;
                 if((!legacy&&!fast)||commit.optInt("v")!=1)throw new GeneralSecurityException("Resume handshake");
-                claimSubscription(device);retainedSubscriptionClaims++;
+                if(commit.optInt("compact")==2) {
+                    // Authenticate by request/read before enabling indications.
+                    // A random shared LE client cannot claim this mailbox.
+                    byte[] pinned=unb64(vault.get("peer")),shared=Crypto.agree(identity.getPrivate(),pinned);
+                    try {if(!MessageDigest.isEqual(unb64(commit.getString("proof")),Crypto.resumeRequestProof(shared,unb64(commit.getString("nonce")))))throw new GeneralSecurityException("Resume peer proof");}
+                    finally {Arrays.fill(shared,(byte)0);}
+                    clearSession();central=device;stopAdvertising();status="워치 인증 중";
+                    authenticationStartedAt=SystemClock.elapsedRealtime();
+                } else { claimSubscription(device); }
+                retainedSubscriptionClaims++;
                 mtu=Math.max(mtu,value.length+3);
             }
             accepted=true;
@@ -422,6 +469,12 @@ public final class BridgeService extends Service {
             byte[] peer=unb64(pinned),shared=Crypto.agree(identity.getPrivate(),peer);
             try {
                 if(!MessageDigest.isEqual(proof,Crypto.resumeRequestProof(shared,nonce)))throw new GeneralSecurityException("Resume peer proof");
+                // The phone's shared GATT server can retain CCC while the Watch
+                // app's logical connection has ended. Compact resume explicitly
+                // starts with reads, even on that retained physical connection.
+                // Sending the response through the old CCC re-enters background
+                // monitoring before the new handshake can finish.
+                if(message.optInt("compact")==2)subscribed=false;
                 clearProtocol();authenticationStartedAt=SystemClock.elapsedRealtime();
                 peerPublic=peer;ownNonce=Crypto.random(32);
                 byte[] key=Crypto.hkdf(shared,Crypto.join(nonce,ownNonce),Crypto.INFO,32);
@@ -429,7 +482,9 @@ public final class BridgeService extends Service {
                 fastAuthentication=true;fastResumeAttempts++;
                 recentResumeNonces.add(b64(nonce));
                 if(recentResumeNonces.size()>64)recentResumeNonces.remove(recentResumeNonces.iterator().next());
-                sendPlain(object("type","resumed","v",1,"nonce",b64(ownNonce),"proof",b64(Crypto.resumeResponseProof(key,nonce,ownNonce))));
+                JSONObject reply=object("type","resumed","v",1,"nonce",b64(ownNonce),"proof",b64(Crypto.resumeResponseProof(key,nonce,ownNonce)));
+                if(message.optInt("compact")==2||message.optInt("accepts_compact")==2)reply.put("compact",2);
+                sendPlain(reply);
                 Arrays.fill(key,(byte)0);recordState(this);return;
             } finally {Arrays.fill(shared,(byte)0);}
         }
@@ -499,27 +554,30 @@ public final class BridgeService extends Service {
         // Late listener callbacks keep Android's post time and cannot replay old alerts.
         connectionStartedAt=System.currentTimeMillis();
         pending.clear();activeDelivery=null;waiting=0;
-        vault.put("peer",b64(peerPublic)); authenticated=true;pairingCode="";failures=0;blockedUntil=0;error="";status="워치 연결됨";
+        vault.put("peer",b64(peerPublic)); authenticated=true;pairingCode="";failures=0;blockedUntil=0;error="";status=subscribed?"워치 연결됨":"워치 인증 중";
         authenticationMillis=SystemClock.elapsedRealtime()-authenticationStartedAt;
         if(fastAuthentication)fastResumeCompleted++;
-        sendSecure(object("type","ready","liveness",0,"fast_resume",1));
+        sendSecure(object("type","ready","liveness",0,"fast_resume",1,"compact_resume",2));
         recordState(this);
     }
     private void sendPlain(JSONObject object) {
+        byte[] data=encodeMessage(object);
+        if("resumed".equals(object.optString("type")))authenticationReply=data;
         if(central==null||!subscribed)return;
-        byte[] data=object.toString().getBytes(StandardCharsets.UTF_8);
         if(data.length>Frames.MAX_BYTES){disconnect("전송 메시지가 너무 큽니다.");return;}
         if(messages.size()>=256)messages.pollFirst();
         messages.addLast(data); drain();
     }
     private void sendSecure(JSONObject message) {
-        try { if(session==null)return; long seq=session.next(); byte[] data=session.seal(message.toString().getBytes(StandardCharsets.UTF_8),seq); sendPlain(object("type","sealed","seq",seq,"data",b64(data))); }
+        try { if(session==null)return; long seq=session.next(); byte[] data=session.seal(message.toString().getBytes(StandardCharsets.UTF_8),seq);JSONObject envelope=object("type","sealed","seq",seq,"data",b64(data));
+            if("ready".equals(message.optString("type")))authenticationReply=encodeMessage(envelope);
+            sendPlain(envelope); }
         catch(Exception e) { disconnect("보안 전송 실패"); }
     }
     private void sendVehicleCatalogue(){if(authenticated)sendSecure(VehicleBridge.get(this).catalogue());}
     static void vehicleChanged(){BridgeService s=instance;if(s!=null)s.handler.post(s::sendVehicleCatalogue);}
     private void drain() {
-        if(server==null||central==null||inFlight)return;
+        if(server==null||central==null||!subscribed||inFlight)return;
         if(outgoing.isEmpty()&&!messages.isEmpty())outgoing.addAll(frames.split(messages.removeFirst(),Math.max(20,mtu-3)));
         if(outgoing.isEmpty())return;
         inFlight=true;indicationGeneration=generation;indicationPacket=outgoing.peekFirst();
@@ -606,9 +664,11 @@ public final class BridgeService extends Service {
         drainPending();
     }
     private void clearProtocol() {
+        authenticationReply=null;
         generation++; acknowledgedIcons.clear(); session=null; peerPublic=null; ownNonce=null; peerCommit=null; stage="idle";
         activeDelivery=null;pending.clear();waiting=0;connectionStartedAt=0;
         authenticated=false;localConfirmed=false;remoteConfirmed=false;watchActive=false;pairingCode="";
+        status=central==null?"워치 연결 대기 중":"워치 인증 중";
         fastAuthentication=false;authenticationStartedAt=0;
         updateConnectionNotification();
         outgoing.clear();messages.clear();assembler.reset();

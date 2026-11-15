@@ -7,8 +7,24 @@ enum Wire {
     static let rx = "C62D0102-7DE5-4C34-A432-7C838E687A40"
     static let info = Data("FoldBridge/v1".utf8)
     enum Failure: Error { case bounds, order, authentication, replay, state }
-    static func encode(_ object: [String: Any]) throws -> Data { try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys]) }
+    // Compact resume changes only the envelope, not the nonce/proof or session key.
+    private static let resumeHeader = Data([0x46,0x42,0x52,0x02])
+    static func encode(_ object: [String: Any]) throws -> Data {
+        if (object["compact"] as? Int) == 2,
+           let type = object["type"] as? String, ["resume","resumed"].contains(type) {
+            let nonce = try base64(object["nonce"]), proof = try base64(object["proof"])
+            guard nonce.count == 32, proof.count == 32 else { throw Failure.bounds }
+            return resumeHeader + Data([type == "resume" ? 1:2]) + nonce + proof
+        }
+        return try JSONSerialization.data(withJSONObject:object,options:[.sortedKeys])
+    }
     static func decode(_ data: Data) throws -> [String: Any] {
+        if data.starts(with:resumeHeader) {
+            guard data.count == 69, [UInt8(1),2].contains(data[4]) else { throw Failure.bounds }
+            return ["type":data[4] == 1 ? "resume":"resumed","v":1,"compact":2,
+                    "nonce":data.subdata(in:5..<37).base64EncodedString(),
+                    "proof":data.subdata(in:37..<69).base64EncodedString()]
+        }
         guard data.count <= 16384, let value = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw Failure.bounds }
         return value
     }

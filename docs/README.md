@@ -2,9 +2,9 @@
 
 **[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[다운로드 / Downloads](https://github.com/mhj604/FoldBridge/releases)**
 
-최신 재연결 수정 후보 / Current reconnection candidate: **Android 0.6.15 / 33 · Watch 0.5.21 / 47** — [한국어](LOCATION_RESTORATION_0.5.21_KO.md) · [English](LOCATION_RESTORATION_0.5.21_EN.md). 아래 이전 배포 표와 구분합니다. / The older release table below is retained separately.
+최신 재연결 수정 후보 / Current reconnection candidate: **Android 0.6.16 / 38 · Watch 0.5.22 / 53** — [한국어](LOCKED_AUTH_0.5.22_KO.md) · [English](LOCKED_AUTH_0.5.22_EN.md). 아래 이전 배포 표와 구분합니다. / The older release table below is retained separately.
 
-**후속 잠금 확인 / Locked-state follow-up:** 0.5.21은 위치 활동을 유지하지만 폰 단독 인증이 반복 종료되어 잠금 상태 연결은 미해결입니다. / Location activity continued, but phone-only authentication repeatedly ended; locked-state connection remains unresolved. [한국어](LOCATION_RESTORATION_0.5.21_KO.md) · [English](LOCATION_RESTORATION_0.5.21_EN.md).
+**잠금 결과 / Locked-state result:** 0.5.22는 폰 단독 인증·구독이 기록됐지만 재시도와 지속 연결 문제는 남습니다. / Phone-only authentication and subscription were recorded, but retries and sustained-connection issues remain. [한국어](LOCKED_AUTH_0.5.22_KO.md) · [English](LOCKED_AUTH_0.5.22_EN.md).
 
 처음 사용하는 분은 **빠른 시작**부터 읽어 주세요. 현재 배포는 **Android 0.6.7-local / 코드 23**, **Watch 0.5.8 / 빌드 32**입니다.
 

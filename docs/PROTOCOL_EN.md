@@ -111,3 +111,11 @@ Catalogue statuses distinguish `loading`, `busy`, `auth_required`, `result_pendi
 ### Stable control identifiers (Android 0.6.2 / Watch 0.5.4)
 
 Action IDs are URL-safe Base64 of `SHA256(widgetID + ":label:" + exact displayed label)`. Multiple clickable targets with the same label are excluded. Internal View IDs and screen order are not persistent identities. Dispatch still requires the current revision and a currently selected target.
+
+## Read-first authentication (Android 0.6.16 / Watch 0.5.22)
+
+Updated TX exposes `READ | INDICATE`. A saved peer starts compact resume before subscription and reads its peer-specific response. Format: `46 42 52 02`, kind 1 (`resume`)/2 (`resumed`), 32-byte nonce and 32-byte proof. Existing framing, keys and cryptographic contexts remain. A JSON request with `accepts_compact:2` can also receive a compact response. Encrypted `ready` advertises `compact_resume:2` for later requests.
+
+After validating the compact request proof, suspend the old shared-GATT CCC delivery and start with reads. Accept a fresh CCC after encrypted confirm/ready; the connected notification requires both authentication and subscription. The read mailbox contains only the current authentication response/encrypted ready and is cleared on new authentication or teardown. Return the remainder at the requested read offset for the ATT stack rather than truncating to the conservative indication MTU estimate. Deduplicate read/indication responses and retain background tasks through pending reads, ready and subscription setup.
+
+Transport termination alone no longer disables fast authentication. Reconnection does not synthesize discovery completion from cached characteristic objects. Locked authentication was recorded, but sustained connection remains unresolved. [Actual result](LOCKED_AUTH_0.5.22_EN.md).

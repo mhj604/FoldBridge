@@ -2,7 +2,9 @@
 
 **한국어** · [English](README.en.md) · [전체 문서](docs/README.md)
 
-현재 브랜치는 Android **0.6.15-local / 코드 33**, Watch **0.5.21 / 빌드 47**의 자동 복구·빠른 재인증 수정 후보입니다. 기존 등록을 유지합니다. [수정·설치 결과와 남은 조건](docs/LOCATION_RESTORATION_0.5.21_KO.md).
+현재 브랜치는 Android **0.6.16-local / 코드 38**, Watch **0.5.22 / 빌드 53**의 자동 복구·빠른 재인증 수정 후보입니다. 기존 등록을 유지합니다. [수정·설치 결과와 남은 조건](docs/LOCKED_AUTH_0.5.22_KO.md).
+
+**잠금 상태의 폰 단독 인증은 기록됐지만, 반복 종료와 지속 연결은 미해결입니다. 이 버전은 수정 후보입니다.**
 
 갤럭시에 도착한 알림을 **Apple Watch로 직접 전달**하는 Android·watchOS 앱입니다. 두 기기는 Bluetooth LE로 통신하며, 알림 전달에 서버·인터넷·페어링된 아이폰을 사용하지 않습니다. 루팅·운동·오디오 세션도 사용하지 않습니다.
 
@@ -14,7 +16,7 @@
 
 최신 수정 후보 APK와 소스는 위 안내를 사용하세요. 아래 0.6.7/0.5.8 표는 이전 배포 기준입니다.
 
-**[현재 버전 사용 안내](docs/LOCATION_RESTORATION_0.5.21_KO.md)** · **[최신 배포 파일](https://github.com/mhj604/FoldBridge/releases)** · **[자주 묻는 질문](docs/FAQ_KO.md)** · **[English setup](docs/QUICK_START_EN.md)**
+**[현재 버전 사용 안내](docs/LOCKED_AUTH_0.5.22_KO.md)** · **[최신 배포 파일](https://github.com/mhj604/FoldBridge/releases)** · **[자주 묻는 질문](docs/FAQ_KO.md)** · **[English setup](docs/QUICK_START_EN.md)**
 
 | 항목 | 현재 버전 / 링크 |
 | --- | --- |

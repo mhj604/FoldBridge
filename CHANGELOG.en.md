@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Android 0.6.16 / Watch 0.5.22 — read-first locked-state authentication
+
+Android code 38 and Watch build 53 authenticate saved peers through writes/reads before subscription. Handle retained CCC, read length, duplicate responses, early background-task completion and cached discovery shortcuts. Installed both in place, retaining registration. Locked-state phone-only authentication/subscription was recorded; recurring termination and sustained connection remain unresolved. [Changes and actual result](docs/LOCKED_AUTH_0.5.22_EN.md).
+
 ## Watch 0.5.21 / build 47 — rejoin location activity
 
 A subsequent passcode-lock observation retained location activity but phone-only authentication repeatedly ended and restarted approximately every 2–3 seconds. **Locked-state connection remains unresolved.** No app code changed during this observation. [Actual locked-state result](docs/LOCATION_RESTORATION_0.5.21_EN.md#follow-up-user-requested-passcode-lock-observation--connection-failed).
