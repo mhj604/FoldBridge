@@ -2,7 +2,7 @@
 
 [한국어](REA_0.5.24_KO.md) · [Earlier REA investigation](REA_0.5.23_EN.md)
 
-2026-11-15. Candidate: Android **0.6.18-local / code 40**, Watch/widget **0.5.24 / build 58**. Android code 40 and Watch build 57 were installed in place, retaining registration, keys and vehicle settings. Build 58 has built successfully and is awaiting device installation. [Download APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24-build58/WatchBridge-0.6.18.apk).
+2026-11-15. Candidate: Android **0.6.18-local / code 40**, Watch/widget **0.5.24 / build 58**. Android code 40 and Watch build 57 were installed in place, retaining registration, keys and vehicle settings. Build 58 was also installed on 2026-11-16 KST, followed by locked phone-only authentication. [Download APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24-build58/WatchBridge-0.6.18.apk).
 
 ## Narrowing the failure
 
@@ -55,3 +55,19 @@ A second physical departure on this build changed the phone to `centralPresent=f
 After the second physical return, the phone remained advertising and unauthenticated. The same background/eligible watch process had started recovery discovery but remained native `connecting` after `CBErrorDomain:6`, without another connection callback. **Physical return on build 58 remains unresolved.** Watch Evidence: `ev_80f641ed29a344e6ee2f9982bfd61ecd47545cfebe4736b1625070eed1fd19ed`; phone: `ev_5e5b12d3361ed659e62f27ac8a965b6e1a5d9a2ce060360934c4239dffa6546f`; app events: `ev_83ec845d7a87db99983fca33ed3dfc608641509179c8cdd157304ecb0d47acf5`.
 
 Build 58 no longer suppresses a fresh native request solely because the peripheral object says `connecting` when the disconnect callback did not report an OS-owned reconnect. A real proximity recovery that stays pending for 45 seconds is re-armed once per episode. This cancels/resubmits the stalled pending request while retaining registration; it never cancels a healthy authenticated link merely for silence. Discovery-callback counts were added to app records. This is an implementation change, not evidence of successful physical return.
+
+
+### Build 58 installation and locked phone-only start
+
+On 2026-11-16 KST, the REA-wrapped Apple install completed successfully. Phone app records first confirmed the owner had stopped its service (`bridgeRunning=false`, no authentication or advertising). After one-time location-session preparation, native state confirmed passcode lock, and watch app records confirmed background/eligible state. Only the phone **Connect watch** button was pressed. Authentication and read delivery completed: **114ms phone / 159ms watch**, measuring authentication rather than total button-to-connection latency.
+
+The installed package has **CFBundleVersion 58**, and the new process exposes the new proximity-rearm fields. The app-owned JSON still contains a hard-coded `build:57` diagnostic value; it must not be treated as proof of a build-57 reinstall. Using actual bundle metadata for this diagnostic is a recorded follow-up item.
+
+Representative Evidence: installation `ev_246507f6d2a640c0d3ad92b4a76841bd2658e4491772953cdbaecffa2f495681`; native lock `ev_798f67e36cabb47d1e63777560a64a9f69b6857370d1ed50285b4c3b38af7b21`; phone start `ev_6f317f0b8092600122ac0ae8cb49ad1de4f27e9030930bff45b2eae97cdbc59f`; watch result `ev_224a62af68a7c82e11b2d93f13ea39e672b4ed31e5ae238e4e999f2244209486`. The Korean report lists phone/service Evidence as well.
+
+The private renewal source was aligned to installed build-58 commit `f33d91e`. No schedule change or signing renewal was run. Physical return and prolonged lock remain separate observations.
+
+
+### Handoff on 2026-11-16 KST
+
+Work stopped at the owner's request. **Build 58 installation and passcode-locked phone-only authentication/read resumption were recorded. Physical departure/return on build 58 has not been performed.** Multi-hour/overnight lock remains unobserved. Continue these two conditions with registration retained. The failed build-57 return must not be presented as a successful build-58 result.
