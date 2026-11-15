@@ -4,6 +4,10 @@
 
 Android **0.6.14-local / code 32** and Watch/widget **0.5.18 / build 44** were installed in place on 2026-11-15. Registration, identity and peer keys, and vehicle settings are retained. [Download APK](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.18/FoldBridge-Local-0.6.14.apk).
 
+## Execution-state correction (2026-11-15)
+
+`active=false` means the app was not active. The accompanying `applicationState=1` is SDK `inactive`, not `background=2`, and does not prove passcode lock. Read background-success wording below as **authentication completed while inactive without a Watch app launch command**. It is not evidence of prolonged-lock or actual range-return completion.
+
 ## Delay paths and changes
 
 Previous Watch events showed service discovery approximately every 31 seconds while the phone service was absent. Version 0.5.17 retained the native pending connection but delayed supplementary background scanning by 30 seconds and limited scan restarts to once per 30 minutes. This reduced opportunities to discover a returning service promptly. A prior authenticated state also retained `recoveryScanning=true`. The session at the start of this task was already connected, so these findings do not establish one cause for every reported disconnect.

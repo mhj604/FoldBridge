@@ -4,6 +4,10 @@
 
 2026-11-15: Watch/widget **0.5.20 / build 46**, retaining Android **0.6.15-local / code 33**. Registration, identity and peer keys, and vehicle settings are retained. [Android APK](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk).
 
+## Execution-state correction (2026-11-15)
+
+`active=false` means the app was not active. The accompanying `applicationState=1` is SDK `inactive`, not `background=2`, and does not prove passcode lock. Read background-success wording below as **authentication completed while inactive without a Watch app launch command**. It is not evidence of prolonged-lock or actual range-return completion.
+
 ## Additional missing paths
 
 An application-refresh callback could return when a peripheral was physically connected without resuming a stalled discovery/authentication stage. Maintenance authentication repair also required uninterrupted runtime: each callback after suspension reset the reference time, so short intermittent opportunities might never reach the threshold.
@@ -25,7 +29,7 @@ New diagnostics: `executionOpportunityRepairs`, `nativeWaitTaskCompletions`. No 
 
 ## Actual records and deployment
 
-At task start, phone 33 and Watch 45 were already authenticated with Watch `active=false`. Watch events showed 37 background service-wait attempts followed by service change, subscription and fast authentication without foreground launch. This is not evidence of physical movement or prolonged passcode lock.
+At task start, phone 33 and Watch 45 were already authenticated with Watch `active=false`. Watch events showed 37 background service-wait attempts followed by service change, subscription and fast authentication without a Watch app launch command. This is not evidence of physical movement or prolonged passcode lock.
 
 Build 46 state: Build and in-place installation succeeded. Without a Watch launch command, a new process reported build 46, `active=false`, `connected=true`, one completed fast authentication and zero errors/discarded fragments. Authentication measured 154ms, not total connection time. `executionOpportunityRepairs=0` and `nativeWaitTaskCompletions=0` do not demonstrate execution of the new recovery branches.
 

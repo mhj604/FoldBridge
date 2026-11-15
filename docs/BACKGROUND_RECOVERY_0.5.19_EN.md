@@ -4,6 +4,10 @@
 
 Candidate dated 2026-11-15: Android **0.6.15-local / code 33**, Watch/widget **0.5.19 / build 45**. [Download APK](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk). Registration, identity and pinned peer keys, and vehicle settings are retained.
 
+## Execution-state correction (2026-11-15)
+
+`active=false` means the app was not active. The accompanying `applicationState=1` is SDK `inactive`, not `background=2`, and does not prove passcode lock. Read background-success wording below as **authentication completed while inactive without a Watch app launch command**. It is not evidence of prolonged-lock or actual range-return completion.
+
 ## Evidence and missing recovery paths
 
 The phone service was stopped at task start as requested at the preceding handoff; registration was retained. Watch events showed a service refresh stuck in `rediscovering`, 29 discarded fragments and a later Bluetooth connection timeout. These do not prove the device was in prolonged lock or physically out of range.
