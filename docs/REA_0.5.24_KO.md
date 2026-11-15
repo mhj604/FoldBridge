@@ -2,7 +2,7 @@
 
 [English](REA_0.5.24_EN.md) · [앞선 REA 조사](REA_0.5.23_KO.md)
 
-2026-11-15. Android **0.6.18-local / 코드 40**, Watch·위젯 **0.5.24 / 빌드 58** 수정 후보입니다. 기존 등록·키·차량 설정을 유지하고 덮어 설치했습니다. [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24-build58/WatchBridge-0.6.18.apk).
+2026-11-15. Android **0.6.18-local / 코드 40**, Watch·위젯 **0.5.24 / 빌드 58** 수정 후보입니다. Android 코드 40과 Watch 빌드 57은 기존 등록·키·차량 설정을 유지하고 덮어 설치했습니다. 빌드 58은 빌드 완료·기기 설치 대기 상태입니다. [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24-build58/WatchBridge-0.6.18.apk).
 
 ## 추가로 좁힌 문제
 
