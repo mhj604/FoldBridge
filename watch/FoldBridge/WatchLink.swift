@@ -89,6 +89,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var stage = "idle", localConfirmed = false, remoteConfirmed = false
     private var active = WKApplication.shared().applicationState == .active
     private var continuousRuntime = false
+    private var locationActivityState = "off"
+    private var locationActivityCallbacks = 0
     private var canProcessContinuously: Bool { active || continuousRuntime }
     private var epoch = 0, scanEpoch = 0, reconnects = 0
     private var seen: [String: String] = [:]
@@ -990,11 +992,18 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         writeDiagnostics()
     }
     func setContinuousRuntime(_ value: Bool) {
+        guard continuousRuntime != value else { return }
         continuousRuntime = value
         updateMaintenanceTimer()
         if connected { sendSecure(["type":"state","active":canProcessContinuously]); if value { synchronize() } }
         else if value { reconnect() }
         writeDiagnostics()
+    }
+    func noteLocationActivity(_ state: String? = nil, callback: Bool = false) {
+        if callback { locationActivityCallbacks += 1 }
+        if let state, state != locationActivityState {
+            locationActivityState = state;trace("location.activity."+state)
+        } else { writeDiagnostics() }
     }
     func selectProfile(_ value: PhoneProfile) {
         guard value != profile else { return }
@@ -1124,10 +1133,18 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         vehicleRequestID = nil;vehicleBusy = false;vehicleRevision = "";vehicleActions = [];vehicleState = "loading"
     }
     func noteVehicleQuickEvent(_ event: String) { trace("vehicle.quick."+event) }
+    private var applicationStateName: String {
+        switch WKApplication.shared().applicationState {
+        case .active: return "active"
+        case .inactive: return "inactive"
+        case .background: return "background"
+        @unknown default: return "unknown"
+        }
+    }
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":46,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":47,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "fastResumeEnabled":fastResumeSupported,"fastResumeAttempts":fastResumeAttempts,"fastResumeCompleted":fastResumeCompleted,"authenticationMillis":authenticationMillis,
             "backgroundRecoveryScans":backgroundRecoveryScans,"backgroundConnectResubmissions":backgroundConnectResubmissions,"scanOnlyRestorations":scanOnlyRestorations,"repeatedServiceChanges":repeatedServiceChanges,"executionOpportunityRepairs":executionOpportunityRepairs,"nativeWaitTaskCompletions":nativeWaitTaskCompletions,
             "discardedFrames":discardedFrames,"writeWaits":writeWaits,
@@ -1135,11 +1152,13 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             "lastConnectError":lastConnectError,
             "retryDelaySeconds":max(0,nextConnectAttempt.timeIntervalSinceNow),
             "identityAvailable":identity != nil,"applicationState":WKApplication.shared().applicationState.rawValue,
+            "applicationStateName":applicationStateName,
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,
             "pongCount":pongCount,"remoteRefreshCount":remoteRefreshCount,
             "continuousRequested":continuousRuntime,"notificationAllowed":notificationAllowed,
+            "locationActivityState":locationActivityState,"locationActivityCallbacks":locationActivityCallbacks,
             "received":receivedCount,"scheduled":scheduledCount,"pendingReceipts":pendingReceipts.count,
             "lastError":lastError,"backgroundNotice":backgroundNotice,
             "vehicleState":vehicleState,"vehicleActions":vehicleActions.count,"vehicleBusy":vehicleBusy,"vehicleResult":vehicleResult]

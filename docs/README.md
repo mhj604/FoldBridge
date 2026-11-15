@@ -2,7 +2,7 @@
 
 **[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[다운로드 / Downloads](https://github.com/mhj604/FoldBridge/releases)**
 
-최신 재연결 수정 후보 / Current reconnection candidate: **Android 0.6.15 / 33 · Watch 0.5.20 / 46** — [한국어](BACKGROUND_OPPORTUNITY_0.5.20_KO.md) · [English](BACKGROUND_OPPORTUNITY_0.5.20_EN.md). 아래 이전 배포 표와 구분합니다. / The older release table below is retained separately.
+최신 재연결 수정 후보 / Current reconnection candidate: **Android 0.6.15 / 33 · Watch 0.5.21 / 47** — [한국어](LOCATION_RESTORATION_0.5.21_KO.md) · [English](LOCATION_RESTORATION_0.5.21_EN.md). 아래 이전 배포 표와 구분합니다. / The older release table below is retained separately.
 
 처음 사용하는 분은 **빠른 시작**부터 읽어 주세요. 현재 배포는 **Android 0.6.7-local / 코드 23**, **Watch 0.5.8 / 빌드 32**입니다.
 

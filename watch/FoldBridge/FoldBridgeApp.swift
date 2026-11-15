@@ -5,14 +5,22 @@ import UserNotifications
 import CoreLocation
 import WidgetKit
 
-// Explicitly started on the watch. Coordinates are neither inspected nor retained.
+// User-enabled location activity. Coordinates are never inspected, retained or sent.
 final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDelegate {
     static let shared = LocationKeepAlive()
     @Published private(set) var requested = false
     @Published private(set) var status = "위치 기반 연결 유지 꺼짐"
     @Published private(set) var lastUpdate: Date?
     private var manager: CLLocationManager?
+    private var activity: CLBackgroundActivitySession?
+    private var updatesTask: Task<Void,Never>?
+    private var diagnosticsTask: Task<Void,Never>?
+    private var generation = 0
+    private var createdInBackground = false
+    private var foregroundRejoined = false
+    private var sessionNeedsForeground = false
     private let intentKey = "locationKeepAliveEnabled"
+    private let preparedKey = "locationActivityPrepared.v1"
 
     func preserveEnabledIntentForUpdate() {
         let authorization = CLLocationManager().authorizationStatus
@@ -20,8 +28,24 @@ final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDele
         UserDefaults.standard.set(true,forKey:intentKey)
     }
 
+    // Must run immediately on launch, before deferred UI/notification setup.
+    // Rejoining an existing native activity is allowed from the background;
+    // a preference alone cannot create a new active background session.
+    func restoreAtLaunch() {
+        guard UserDefaults.standard.bool(forKey:intentKey) else { return }
+        let authorization = CLLocationManager().authorizationStatus
+        guard authorization == .authorizedWhenInUse || authorization == .authorizedAlways else { return }
+        requested = true
+        guard UserDefaults.standard.bool(forKey:preparedKey) else {
+            status = "연결 유지 준비를 위해 앱을 한 번 열어 주세요."
+            WatchLink.shared.noteLocationActivity("needs-foreground-setup")
+            return
+        }
+        beginActivity(restoring:true)
+    }
+
     func resumeIfRequested() {
-        guard !requested, UserDefaults.standard.bool(forKey:intentKey) else { return }
+        guard UserDefaults.standard.bool(forKey:intentKey), WKApplication.shared().applicationState == .active else { return }
         start()
     }
 
@@ -30,61 +54,130 @@ final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDele
         guard CLLocationManager.locationServicesEnabled() else { status = "워치의 위치 서비스를 켜 주세요."; return }
         if manager == nil {
             let locationManager = CLLocationManager()
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-            locationManager.distanceFilter = kCLDistanceFilterNone
-            locationManager.activityType = .other
-            manager = locationManager
+            manager = locationManager;locationManager.delegate = self
         }
-        requested = true; lastUpdate = nil; UserDefaults.standard.set(true,forKey:intentKey)
+        requested = true;UserDefaults.standard.set(true,forKey:intentKey)
         updateAuthorization()
     }
 
     func stop() {
-        requested = false
+        requested = false;generation += 1
         UserDefaults.standard.set(false,forKey:intentKey)
-        manager?.stopUpdatingLocation()
-        manager?.allowsBackgroundLocationUpdates = false
+        UserDefaults.standard.set(false,forKey:preparedKey)
+        updatesTask?.cancel();updatesTask = nil
+        diagnosticsTask?.cancel();diagnosticsTask = nil
+        activity?.invalidate();activity = nil
         WatchLink.shared.setContinuousRuntime(false)
-        status = "위치 기반 연결 유지 꺼짐"; lastUpdate = nil
+        WatchLink.shared.noteLocationActivity("off")
+        status = "위치 기반 연결 유지 꺼짐";lastUpdate = nil
     }
 
     private func updateAuthorization() {
         guard requested, let manager else { return }
         switch manager.authorizationStatus {
         case .notDetermined:
+            guard WKApplication.shared().applicationState == .active else { return }
             status = "워치에서 위치 권한을 선택해 주세요."
             manager.requestWhenInUseAuthorization()
         case .authorizedWhenInUse, .authorizedAlways:
-            guard !manager.allowsBackgroundLocationUpdates else { return }
-            manager.allowsBackgroundLocationUpdates = true
-            manager.startUpdatingLocation()
-            WatchLink.shared.setContinuousRuntime(true)
-            status = "위치 세션 요청됨 · 갱신 대기"
+            guard WKApplication.shared().applicationState == .active else { return }
+            // A pending restoration object can be insufficiently-in-use. Rejoin
+            // once when directly used, without invalidating the native activity.
+            if createdInBackground && !foregroundRejoined {
+                beginActivity(restoring:false,replacing:true);return
+            }
+            if activity == nil { beginActivity(restoring:false) }
+            else { startUpdatesIfNeeded() }
         case .denied, .restricted:
-            stop(); status = "위치 권한이 없어 연결 유지 모드를 시작하지 못했습니다."
+            stop();status = "위치 권한이 없어 연결 유지 모드를 시작하지 못했습니다."
         @unknown default:
-            stop(); status = "위치 권한 상태를 확인해 주세요."
+            stop();status = "위치 권한 상태를 확인해 주세요."
+        }
+    }
+
+    private func beginActivity(restoring: Bool, replacing: Bool = false) {
+        guard activity == nil || replacing else { return }
+        if replacing {
+            generation += 1
+            updatesTask?.cancel();updatesTask = nil
+            diagnosticsTask?.cancel();diagnosticsTask = nil
+        }
+        createdInBackground = WKApplication.shared().applicationState != .active
+        foregroundRejoined = !createdInBackground
+        sessionNeedsForeground = false
+        // Keep this object for the full user-enabled feature span. Never put it
+        // in a local scope whose deallocation would invalidate the activity.
+        activity = CLBackgroundActivitySession()
+        if !createdInBackground { UserDefaults.standard.set(true,forKey:preparedKey) }
+        status = restoring ? "위치 연결 유지 세션 복원 요청됨":"위치 세션 요청됨 · 갱신 대기"
+        WatchLink.shared.noteLocationActivity(restoring ? "restore-requested":"requested")
+        WatchLink.shared.setContinuousRuntime(true)
+        startUpdatesIfNeeded()
+        if #available(watchOS 11.0, *), let activity {
+            let current = generation
+            diagnosticsTask = Task { @MainActor [weak self] in
+                do {
+                    for try await diagnostic in activity.diagnostics {
+                        guard let self, self.requested, self.generation == current, !Task.isCancelled else { return }
+                        if diagnostic.authorizationDenied || diagnostic.authorizationRestricted {
+                            self.stop();self.status = "위치 권한이 없어 연결 유지 모드를 시작하지 못했습니다.";return
+                        }
+                        if diagnostic.authorizationDeniedGlobally || diagnostic.insufficientlyInUse {
+                            self.sessionNeedsForeground = true
+                            self.status = diagnostic.authorizationDeniedGlobally ? "워치의 위치 서비스를 켜 주세요.":"연결 유지 준비를 위해 앱을 한 번 열어 주세요."
+                            WatchLink.shared.setContinuousRuntime(false)
+                            WatchLink.shared.noteLocationActivity(diagnostic.authorizationDeniedGlobally ? "location-disabled":"needs-foreground")
+                        } else {
+                            self.sessionNeedsForeground = false
+                            WatchLink.shared.setContinuousRuntime(true)
+                            WatchLink.shared.noteLocationActivity("eligible")
+                        }
+                    }
+                } catch {
+                    guard let self, self.generation == current, !Task.isCancelled else { return }
+                    WatchLink.shared.noteLocationActivity("diagnostics-ended")
+                }
+            }
+        }
+    }
+
+    private func startUpdatesIfNeeded() {
+        guard updatesTask == nil, activity != nil else { return }
+        let current = generation
+        updatesTask = Task { @MainActor [weak self] in
+            while !Task.isCancelled {
+                do {
+                    // Ignore the entire update value: no coordinates are read.
+                    for try await _ in CLLocationUpdate.liveUpdates() {
+                        guard let self, self.requested, self.generation == current, !Task.isCancelled else { return }
+                        self.lastUpdate = Date()
+                        if !self.sessionNeedsForeground { self.status = "위치 업데이트 수신 중" }
+                        WatchLink.shared.noteLocationActivity(callback:true)
+                        WatchLink.shared.maintainConnection()
+                    }
+                } catch {
+                    guard let self, self.requested, self.generation == current, !Task.isCancelled else { return }
+                    self.status = "위치 업데이트 대기 중 · 계속 수신은 보장되지 않습니다."
+                    WatchLink.shared.noteLocationActivity("updates-waiting")
+                }
+                guard let self, self.requested, self.generation == current, !Task.isCancelled else { return }
+                // A transient stream end must not turn off the saved intent.
+                // This delay only runs while scheduled; it cannot wake watchOS.
+                do { try await Task.sleep(nanoseconds:5_000_000_000) } catch { return }
+            }
         }
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) { updateAuthorization() }
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard requested else { return }
-        // Record callback time only, never the CLLocation objects or coordinates.
-        lastUpdate = Date(); status = "위치 업데이트 수신 중"
-        WatchLink.shared.maintainConnection()
-    }
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        guard requested else { return }
-        if (error as? CLError)?.code == .denied {
-            stop(); status = "위치 권한이 해제되어 연결 유지 모드가 종료됐습니다."
-        } else { status = "위치 업데이트 대기 중 · 계속 수신은 보장되지 않습니다." }
-    }
 }
 
 final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDelegate {
     func applicationDidFinishLaunching() {
+        let location = LocationKeepAlive.shared
+        if ProcessInfo.processInfo.environment["FOLDBRIDGE_RESUME_LOCATION"] == "1" {
+            location.preserveEnabledIntentForUpdate()
+        }
+        location.restoreAtLaunch()
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().setNotificationCategories([
             UNNotificationCategory(identifier:RelayCategory.textOnly,actions:[],intentIdentifiers:[],options:[]),
@@ -95,9 +188,6 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
             UserDefaults.standard.set("panel.v1",forKey:"vehicleWidgetLayout")
             WidgetCenter.shared.invalidateConfigurationRecommendations()
             WidgetCenter.shared.reloadTimelines(ofKind:"FoldBridgeVehicleControls")
-        }
-        if ProcessInfo.processInfo.environment["FOLDBRIDGE_RESUME_LOCATION"] == "1" {
-            LocationKeepAlive.shared.preserveEnabledIntentForUpdate()
         }
         if Bundle.main.object(forInfoDictionaryKey:"FoldBridgePushEnabled") as? Bool == true { WKApplication.shared().registerForRemoteNotifications() }
     }

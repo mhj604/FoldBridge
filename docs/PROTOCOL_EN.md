@@ -4,6 +4,11 @@
 
 Current candidate: Android 0.6.14 / Watch 0.5.18; older versioned sections document their original behavior. Android is the GATT server/peripheral; watchOS is the central/client. Initial registration happens inside FoldBridge rather than through a separate manual Android Bluetooth-settings step.
 
+## Rejoin location activity (Watch 0.5.21)
+
+With an enabled keep-connection preference and location authorization, prepare `CLBackgroundActivitySession` in foreground once and rejoin its existing native activity immediately on relaunch. `CLLocationUpdate.liveUpdates()` callbacks maintain/repair the saved connection without reading or retaining coordinates. A saved preference alone cannot activate a new background activity if the native span is gone; show initial-preparation guidance. BLE messages, keys and registration format remain unchanged. [Conditions and actual records](LOCATION_RESTORATION_0.5.21_EN.md).
+
+
 ## Recovery on actual execution opportunities (Watch 0.5.20)
 
 Application refresh and location/maintenance callbacks resume stalled discovery/unfinished authentication on the same physical link. Ninety seconds without relevant progress is evaluated only when executing; silence on authenticated links is not failure. Bluetooth alert tasks retain the nonce for already-arriving responses. Native-connection-only background waits complete without cancelling the request. Initial cached-service selection excludes invalidated objects. Wire format, keys and registration are unchanged. [Detailed scope](BACKGROUND_OPPORTUNITY_0.5.20_EN.md).

@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.21 / build 47 — rejoin location activity
+
+Retain Android 0.6.15 / 33. Add relaunch restoration with official Core Location activity/update APIs, only for the enabled preference and following one-time foreground preparation. Distinguish native session eligibility and app state. [Deployment, conditions and remaining limits](docs/LOCATION_RESTORATION_0.5.21_EN.md).
+
 ## Watch 0.5.20 / build 46 — execution-opportunity recovery
 
 Retain Android 0.6.15 / 33. Resume stalled discovery/unfinished authentication on application-refresh and location/maintenance opportunities. Exclude invalidated cached services and complete native-wait-only tasks without cancelling requests. Silence does not tear down healthy links. [Deployment, records and OS limits](docs/BACKGROUND_OPPORTUNITY_0.5.20_EN.md).
