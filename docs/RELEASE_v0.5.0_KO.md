@@ -1,9 +1,9 @@
-# FoldBridge Local 0.5.0 — 앱 내 한국어 / English 선택
+# WatchBridge 0.5.0 — 앱 내 한국어 / English 선택
 
 - Galaxy: **0.5.0-local / versionCode 10**
 - Watch: **0.4.0 / build 11**
-- 사용 브랜치: [local-ble](https://github.com/mhj604/FoldBridge/tree/local-ble)
-- 설치 순서: [한국어 빠른 시작](https://github.com/mhj604/FoldBridge/blob/local-ble/docs/QUICK_START_KO.md)
+- 사용 브랜치: [local-ble](https://github.com/mhj604/WatchBridge/tree/local-ble)
+- 설치 순서: [한국어 빠른 시작](https://github.com/mhj604/WatchBridge/blob/local-ble/docs/QUICK_START_KO.md)
 
 ## 언어 변경
 

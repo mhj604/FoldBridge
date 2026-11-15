@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install FoldBridge's once-weekly macOS LaunchAgent without running renewal now."""
+"""Install WatchBridge's once-weekly macOS LaunchAgent without running renewal now."""
 import argparse
 import datetime as dt
 import json

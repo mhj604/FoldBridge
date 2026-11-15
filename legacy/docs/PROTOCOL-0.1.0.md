@@ -1,4 +1,4 @@
-# FoldBridge v1 protocol
+# WatchBridge v1 protocol
 
 Android is the GATT peripheral. watchOS is the central. The user selects the phone inside the watch app; Android system Bluetooth pairing is not a prerequisite.
 

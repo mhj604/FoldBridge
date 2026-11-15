@@ -2,7 +2,7 @@
 
 [English](BACKGROUND_OPPORTUNITY_0.5.20_EN.md) · [문서 목록](README.md)
 
-2026-11-15, Watch·차량 위젯 **0.5.20 / 빌드 46**. Android는 **0.6.15-local / 코드 33**을 유지합니다. 기존 등록·신원 키·상대 키·차량 설정은 유지합니다. [Android APK](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk).
+2026-11-15, Watch·차량 위젯 **0.5.20 / 빌드 46**. Android는 **0.6.15-local / 코드 33**을 유지합니다. 기존 등록·신원 키·상대 키·차량 설정은 유지합니다. [Android APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk).
 
 ## 실행 상태 해석 정정 (2026-11-15)
 

@@ -34,7 +34,7 @@ The sensitive-content investigation found the phone's per-app `RECEIVE_SENSITIVE
 
 Android recovery expanded to package update, listener reconnection, and Bluetooth events while preserving connection intent. Watch recovery handled saved peripherals, Core Bluetooth state restoration, discovery fallback, and requested background-refresh opportunities. These mechanisms do not guarantee boot-time launch.
 
-Both apps gained a refresh action that preserves registration. Old-server callbacks and duplicate authentication starts were separated. The FoldBridge icon was first geometrically recentered, then adjusted for visual balance and given a refreshed watch asset name.
+Both apps gained a refresh action that preserves registration. Old-server callbacks and duplicate authentication starts were separated. The WatchBridge icon was first geometrically recentered, then adjusted for visual balance and given a refreshed watch asset name.
 
 Android 0.5.0 / Watch 0.4.0 added independent Korean/English/system language selection, a shared translation catalog, and generated resources. Language changes preserve the connection and forwarded contents.
 
@@ -50,7 +50,7 @@ Android 0.5.0 / Watch 0.4.0 added independent Korean/English/system language sel
 | 0.4.6 | Move text and icon down together by 3pt following user feedback |
 | 0.4.7 | Keep that placement and trim lower spacing by 4pt |
 
-System popup/card/header branding remains FoldBridge. Earlier research into communication notifications, ANCS/accessory APIs, and a root-dependent native-protocol project did not produce an adopted replacement path for the current setup. REA artifact inspection was distinguished from live system rendering and from source review. [Display scope](NOTIFICATION_DISPLAY_LIMITS_EN.md) · [Example captures](NOTIFICATION_LAYOUT_COMPARISON_EN.md)
+System popup/card/header branding remains WatchBridge. Earlier research into communication notifications, ANCS/accessory APIs, and a root-dependent native-protocol project did not produce an adopted replacement path for the current setup. REA artifact inspection was distinguished from live system rendering and from source review. [Display scope](NOTIFICATION_DISPLAY_LIMITS_EN.md) · [Example captures](NOTIFICATION_LAYOUT_COMPARISON_EN.md)
 
 ## Watch 0.4.7 / Android 0.5.2 connection repair
 

@@ -15,7 +15,7 @@ for folder,english in [('values',True),('values-en',True),('values-ko',False)]:
         text=value if english else key
         text=text.replace('\\','\\\\').replace('"','\\"').replace("'","\\'").replace('\n','\\n')
         ET.SubElement(resources,'string',{'name':name(key),'formatted':'false'}).text='"'+text+'"'
-    ET.SubElement(resources,'string',{'name':'notification_listener_label'}).text='FoldBridge Local notifications' if english else 'FoldBridge Local 알림 전달'
+    ET.SubElement(resources,'string',{'name':'notification_listener_label'}).text='WatchBridge notifications' if english else 'WatchBridge 알림 전달'
     target=ROOT/'android/app/src/main/res'/folder/'strings.xml'
     target.parent.mkdir(parents=True,exist_ok=True);ET.indent(resources)
     ET.ElementTree(resources).write(target,encoding='utf-8',xml_declaration=True)

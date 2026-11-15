@@ -55,7 +55,7 @@ public final class NotificationRelay extends NotificationListenerService {
                 if(firstPostOnly(sbn)){listener.activeFirstPostIds.putIfAbsent(sbn.getKey(),"");continue;}
                 if(System.currentTimeMillis()-sbn.getPostTime()<24L*60*60*1000)listener.forward(sbn,sbn.getPostTime());
             }
-        } catch(RuntimeException error){BridgeService.error="현재 알림을 읽지 못했습니다. Local 앱의 알림 접근 권한을 확인하세요.";}
+        } catch(RuntimeException error){BridgeService.error="현재 알림을 읽지 못했습니다. WatchBridge의 알림 접근 권한을 확인해 주세요.";}
     }
     @Override public void onNotificationPosted(StatusBarNotification sbn) {
         if(!sbn.getPackageName().equals(getPackageName())&&!sbn.getPackageName().equals("dev.foldbridge")) {

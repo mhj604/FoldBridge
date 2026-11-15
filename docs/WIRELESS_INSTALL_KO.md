@@ -6,7 +6,7 @@
 
 ## APK를 직접 설치하는 방법
 
-갤럭시에서 [최신 릴리스](https://github.com/mhj604/FoldBridge/releases/latest)의 APK를 내려받고 **내 파일 → 다운로드**에서 연다. 기존 FoldBridge Local 위에 업데이트한다. Mac 연결이나 개발자 옵션은 필요하지 않다. 기존 설치와 서명 키가 같은 APK를 사용한다.
+갤럭시에서 [최신 릴리스](https://github.com/mhj604/WatchBridge/releases/latest)의 APK를 내려받고 **내 파일 → 다운로드**에서 연다. 기존 WatchBridge 위에 업데이트한다. Mac 연결이나 개발자 옵션은 필요하지 않다. 기존 설치와 서명 키가 같은 APK를 사용한다.
 
 ## Mac에서 무선으로 설치하는 방법
 
@@ -37,6 +37,6 @@ Android 11 이상에서는 USB 없이 ADB 페어링과 설치가 가능하다. M
 
 `install -r`은 기존 앱의 데이터를 유지하는 업데이트다. 서명 불일치 오류가 나면 기존 서명 키로 만든 APK를 사용한다. 연결을 복구하려고 앱을 삭제하면 저장된 워치 등록도 사라진다.
 
-이 Mac 개발용 등록은 FoldBridge 내부의 Galaxy–Watch 코드 확인과 별개다. 공개 안내나 이슈에 자신의 페어링 코드와 ADB 키를 올리지 않는다.
+이 Mac 개발용 등록은 WatchBridge 내부의 Galaxy–Watch 코드 확인과 별개다. 공개 안내나 이슈에 자신의 페어링 코드와 ADB 키를 올리지 않는다.
 
 [Android 공식 무선 ADB 안내](https://developer.android.com/tools/adb#connect-to-a-device-over-wi-fi)

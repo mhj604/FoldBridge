@@ -2,7 +2,7 @@
 
 [한국어](BACKGROUND_RECOVERY_0.5.19_KO.md) · [Documentation](README.md)
 
-Candidate dated 2026-11-15: Android **0.6.15-local / code 33**, Watch/widget **0.5.19 / build 45**. [Download APK](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk). Registration, identity and pinned peer keys, and vehicle settings are retained.
+Candidate dated 2026-11-15: Android **0.6.15-local / code 33**, Watch/widget **0.5.19 / build 45**. [Download APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk). Registration, identity and pinned peer keys, and vehicle settings are retained.
 
 ## Execution-state correction (2026-11-15)
 

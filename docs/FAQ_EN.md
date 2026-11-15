@@ -24,11 +24,11 @@ The apps attempt restoration using saved registration. Refresh on either device 
 
 ## Does the app keep a message inbox?
 
-Read messages in watchOS Notification Center. FoldBridge keeps no separate watch inbox. The phone retries unacknowledged items in memory only during the current authenticated connection and clears them when it disconnects. Pre-connection and offline notifications are not delivered later. Replies and read/delete synchronization are not implemented.
+Read messages in watchOS Notification Center. WatchBridge keeps no separate watch inbox. The phone retries unacknowledged items in memory only during the current authenticated connection and clears them when it disconnects. Pre-connection and offline notifications are not delivered later. Replies and read/delete synchronization are not implemented.
 
-## Why does the system icon show FoldBridge?
+## Why does the system icon show WatchBridge?
 
-FoldBridge is the sending app for the system popup, Notification Center, and system header. An available original app icon appears at 24pt inside the expanded body. [Display scope](NOTIFICATION_DISPLAY_LIMITS_EN.md)
+WatchBridge is the sending app for the system popup, Notification Center, and system header. An available original app icon appears at 24pt inside the expanded body. [Display scope](NOTIFICATION_DISPLAY_LIMITS_EN.md)
 
 ## Why is a message replaced by “Sensitive notification”?
 
@@ -40,4 +40,4 @@ Normally, no. Try refresh on one side for connection problems. Updates need the 
 
 ## How do I ask for help or contribute a translation?
 
-Open a [GitHub issue](https://github.com/mhj604/FoldBridge/issues) in Korean or English. Include app/OS versions, device models, button actions, and whether the watch app was visible or backgrounded. [Contributing](../CONTRIBUTING.en.md) explains code and translation locations.
+Open a [GitHub issue](https://github.com/mhj604/WatchBridge/issues) in Korean or English. Include app/OS versions, device models, button actions, and whether the watch app was visible or backgrounded. [Contributing](../CONTRIBUTING.en.md) explains code and translation locations.

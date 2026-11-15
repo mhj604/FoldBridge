@@ -41,7 +41,7 @@ public final class MainActivity extends Activity {
             return insets;
         });
         LinearLayout header=row();header.setGravity(Gravity.CENTER_VERTICAL);
-        LinearLayout title=column();addText(title,"FOLDBRIDGE",11,accent,true);addText(title,L("가까이, 더 자연스럽게"),25,ink,true);
+        LinearLayout title=column();addText(title,"WATCHBRIDGE",11,accent,true);addText(title,L("가까이, 더 자연스럽게"),25,ink,true);
         header.addView(title,new LinearLayout.LayoutParams(0,-2,1));
         Button settings=action(L("설정"),this::showSettings,false);header.addView(settings,new LinearLayout.LayoutParams(dp(84),dp(42)));root.addView(header);
         TextView intro=addText(root,L("휴대폰의 알림을 손목에서 만나세요."),14,muted,false);intro.setPadding(0,dp(8),0,dp(26));
@@ -78,7 +78,7 @@ public final class MainActivity extends Activity {
         addText(vehicle,L("갤럭시의 공식 제어 위젯을 워치에 연결합니다."),13,muted,false);
         vehicle.addView(action(L("차량 제어 설정"),()->startActivity(new Intent(this,VehicleSettingsActivity.class)),false),buttonParams());
         root.addView(vehicle,sectionParams(14));
-        TextView note=addText(root,L("휴대폰과 워치가 가까이 있으면 연결을 이어갑니다."),12,muted,false);note.setPadding(dp(2),dp(20),dp(2),0);
+        TextView note=addText(root,L("등록된 워치가 가까워지면 자동 재연결을 시도합니다. watchOS 실행 상태에 따라 지연될 수 있습니다."),12,muted,false);note.setPadding(dp(2),dp(20),dp(2),0);
     }
     private LinearLayout column(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);return v;}
     private LinearLayout row(){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.HORIZONTAL);return v;}
@@ -95,9 +95,10 @@ public final class MainActivity extends Activity {
     private void openNotificationAccess(){Intent i=new Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS).putExtra(Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME,new ComponentName(this,NotificationRelay.class).flattenToString());try{startActivity(i);}catch(ActivityNotFoundException error){startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));}}
     private void renderState(){
         boolean access=NotificationRelay.hasAccess(this),bound=NotificationRelay.instance!=null,connected=BridgeService.isConnected(),running=BridgeService.instance!=null;
-        text(state,!access?L("알림 접근이 필요해요"):connected?L("워치와 연결됐어요"):running?L("워치를 기다리고 있어요"):L("연결을 시작해 볼까요?"));
+        boolean saved=BridgeService.hasSavedPeer(this),authenticating=BridgeService.isAuthenticating(),waitingRead=BridgeService.isWaitingForRead();
+        text(state,!access?L("알림 접근이 필요해요"):connected?L("워치와 연결됐어요"):!running?L("연결이 중지됐어요"):waitingRead?L("워치 응답 대기"):authenticating?L("워치 인증 중"):saved?L("등록된 워치 연결 대기"):L("새 워치를 등록해 주세요"));
         statusDot.setTextColor(!access||!BridgeService.error.isEmpty()?Color.rgb(255,192,126):connected?accent:muted);
-        text(subtitle,!access?L("다른 앱의 알림을 읽을 수 있도록 허용해 주세요."):!BridgeService.error.isEmpty()?L(BridgeService.error):!bound?L("알림 수집 서비스에 연결하고 있어요."):connected?L("새 알림을 워치로 전달하고 있어요."):L("워치에서 FoldBridge를 열어 주세요."));
+        text(subtitle,!access?L("다른 앱의 알림을 읽을 수 있도록 허용해 주세요."):!running?L("‘워치 연결’을 누르면 저장된 등록으로 연결을 시작합니다."):!BridgeService.error.isEmpty()?L(BridgeService.error):connected?!bound?L("워치는 연결됐지만 알림 수집 서비스를 기다리고 있어요."):L("새 알림을 워치로 전달하고 있어요."):waitingRead?L("등록은 유지됩니다. 워치 실행 기회가 생기면 수신을 다시 시도합니다."):authenticating?saved?L("저장된 키로 기기를 확인하고 있습니다. 새 등록은 필요하지 않습니다."):L("처음 등록하는 기기입니다. 양쪽 코드가 같으면 확인해 주세요."):saved?L("워치 앱을 열지 않고 자동 재연결을 시도하고 있습니다. 시스템 실행 상태에 따라 지연될 수 있습니다."):L("설정의 ‘새 워치 등록’과 워치의 ‘휴대폰 찾기’로 처음 한 번 코드를 확인해 주세요."));
         permissionButton.setVisibility(access?View.GONE:View.VISIBLE);connectButton.setVisibility(running?View.GONE:View.VISIBLE);
         refreshButton.setVisibility(running?View.VISIBLE:View.GONE);
         pairCard.setVisibility(BridgeService.pairingCode.isEmpty()?View.GONE:View.VISIBLE);text(code,BridgeService.pairingCode);
@@ -138,7 +139,7 @@ public final class MainActivity extends Activity {
     }
     private void showDiagnostics(){
         String timing=BridgeService.lastRtt<0?L("아직 없음"):BridgeService.lastRtt+" ms";
-        new AlertDialog.Builder(this).setTitle(L("연결 진단")).setMessage(L("연결: ")+L(BridgeService.status)+L("\n알림 접근: ")+(NotificationRelay.hasAccess(this)?L("허용됨"):L("꺼짐"))+L("\n알림 수집: ")+(NotificationRelay.instance!=null?L("연결됨"):L("대기 중"))+L("\n수집 ")+NotificationRelay.received+L(" · 전달 요청 ")+NotificationRelay.forwarded+L("\n최근 전달 확인: ")+timing+"\n\nFoldBridge Local 0.6.16").setPositiveButton(L("닫기"),null).show();
+        new AlertDialog.Builder(this).setTitle(L("연결 진단")).setMessage(L("연결: ")+L(BridgeService.status)+L("\n알림 접근: ")+(NotificationRelay.hasAccess(this)?L("허용됨"):L("꺼짐"))+L("\n알림 수집: ")+(NotificationRelay.instance!=null?L("연결됨"):L("대기 중"))+L("\n수집 ")+NotificationRelay.received+L(" · 전달 요청 ")+NotificationRelay.forwarded+L("\n최근 전달 확인: ")+timing+"\n\nWatchBridge 0.6.18").setPositiveButton(L("닫기"),null).show();
     }
     private void start(boolean pair) {
         if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED||checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE)!=PackageManager.PERMISSION_GRANTED) {requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_ADVERTISE,Manifest.permission.POST_NOTIFICATIONS},7);toast(L("권한을 허용한 뒤 연결 버튼을 다시 누르세요."));return;}
@@ -147,7 +148,7 @@ public final class MainActivity extends Activity {
         Intent i=new Intent(this,BridgeService.class);if(pair)i.setAction("pair");startForegroundService(i);
         NotificationRelay.reconnectIfAllowed(this);
         if(!NotificationRelay.hasAccess(this))new AlertDialog.Builder(this).setTitle(L("다른 앱 알림을 읽는 권한이 꺼져 있습니다"))
-            .setMessage(L("Bluetooth 연결만으로는 다른 앱의 알림을 전달할 수 없습니다. 설정에서 ‘FoldBridge Local 알림 전달’의 알림 접근을 허용해 주세요."))
+            .setMessage(L("Bluetooth 연결만으로는 다른 앱의 알림을 전달할 수 없습니다. 설정에서 ‘WatchBridge 알림 전달’의 알림 접근을 허용해 주세요."))
             .setPositiveButton(L("알림 접근 설정"),(d,w)->openNotificationAccess()).setNegativeButton(L("닫기"),null).show();
     }
     private void refreshConnection() {
@@ -157,7 +158,7 @@ public final class MainActivity extends Activity {
         getSharedPreferences("settings",MODE_PRIVATE).edit().putBoolean("connection_enabled",true).apply();
         startForegroundService(new Intent(this,BridgeService.class).setAction("refresh"));
         NotificationRelay.reconnectIfAllowed(this);
-        toast(L("기존 등록을 유지한 채 양쪽 연결을 다시 준비합니다. 상대 기기의 새로고침은 누르지 않아도 됩니다."));
+        toast(L("저장된 등록으로 재연결을 요청했습니다. 연결 결과는 위 상태에서 확인해 주세요."));
     }
     private void selectApps() {
         TreeMap<String,String> names=new TreeMap<>(); Intent launcher=new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);

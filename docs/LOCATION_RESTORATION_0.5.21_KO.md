@@ -2,7 +2,7 @@
 
 [English](LOCATION_RESTORATION_0.5.21_EN.md) · [문서 목록](README.md)
 
-2026-11-15, Watch·차량 위젯 **0.5.21 / 빌드 47**. Android **0.6.15-local / 코드 33**은 유지합니다. 기존 등록·키·차량 설정을 지우지 않습니다. [Android APK](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk).
+2026-11-15, Watch·차량 위젯 **0.5.21 / 빌드 47**. Android **0.6.15-local / 코드 33**은 유지합니다. 기존 등록·키·차량 설정을 지우지 않습니다. [Android APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk).
 
 ## 기존 위치 유지의 누락
 

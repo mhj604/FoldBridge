@@ -4,8 +4,8 @@
 
 ## 버전과 다운로드
 
-- Android: **0.6.4-local / 코드 20** — [APK 다운로드](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.4.apk)
-- Apple Watch: **0.5.7 / 빌드 31** — [소스와 Xcode 프로젝트](https://github.com/mhj604/FoldBridge/tree/local-ble/watch)
+- Android: **0.6.4-local / 코드 20** — [APK 다운로드](https://github.com/mhj604/WatchBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.4.apk)
+- Apple Watch: **0.5.7 / 빌드 31** — [소스와 Xcode 프로젝트](https://github.com/mhj604/WatchBridge/tree/local-ble/watch)
 - 같은 최신 소스와 문서를 `main`, `local-ble` 양쪽 브랜치에서 제공합니다.
 - 처음 사용하는 분은 [빠른 시작](QUICK_START_KO.md), 직접 빌드하는 분은 [빌드와 설치](BUILD_AND_SETUP.md)를 따릅니다. 워치는 자신의 Apple Team으로 서명해야 합니다.
 
@@ -13,7 +13,7 @@
 
 갤럭시와 워치는 암호화된 Bluetooth LE로 직접 통신합니다. 알림 전달에 서버·인터넷·아이폰 중계는 필요하지 않습니다. 최초 워치 설정과 개발용 설치 절차는 별도입니다.
 
-알림 제목·본문·원본 앱 아이콘을 전달하고, 워치에서는 알림 센터에서 읽습니다. 앱 안에 메시지 수신함을 따로 보관하지 않습니다. 원본 아이콘은 펼친 본문에 표시하며, 최초 요약 팝업의 시스템 앱 이름과 아이콘은 FoldBridge입니다. [표시 범위](NOTIFICATION_DISPLAY_LIMITS_KO.md)
+알림 제목·본문·원본 앱 아이콘을 전달하고, 워치에서는 알림 센터에서 읽습니다. 앱 안에 메시지 수신함을 따로 보관하지 않습니다. 원본 아이콘은 펼친 본문에 표시하며, 최초 요약 팝업의 시스템 앱 이름과 아이콘은 WatchBridge입니다. [표시 범위](NOTIFICATION_DISPLAY_LIMITS_KO.md)
 
 충전율 변화로 반복되던 시스템 충전 알림은 기본 제외합니다. 처음 등록하거나 재연결할 때는 인증 완료 이후 게시된 새 알림부터 전달하고, 연결이 끊긴 동안의 알림을 몰아서 보내지 않습니다.
 
@@ -25,7 +25,7 @@
 
 ## 마이현대 차량 제어
 
-동작 경로는 `워치 FoldBridge → BLE → 갤럭시 FoldBridge → 공식 마이현대 위젯`입니다. 원래 마이현대 워치 앱의 아이폰 경로를 바꾸지는 않습니다. 실제 원격 차량 서비스에는 갤럭시 마이현대와 차량의 인터넷 연결이 필요합니다.
+동작 경로는 `워치 WatchBridge → BLE → 갤럭시 WatchBridge → 공식 마이현대 위젯`입니다. 원래 마이현대 워치 앱의 아이폰 경로를 바꾸지는 않습니다. 실제 원격 차량 서비스에는 갤럭시 마이현대와 차량의 인터넷 연결이 필요합니다.
 
 스마트 스택이나 시계 페이스에는 **차량 제어 위젯 하나**를 추가합니다. 위젯을 누르면 제어 창이 열리고, 그 안에서 공식 갤럭시 위젯과 같은 네 항목을 선택합니다.
 

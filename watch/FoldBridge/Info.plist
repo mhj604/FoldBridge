@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>FoldBridge</string>
+	<string>WatchBridge</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -16,13 +16,13 @@
 		<string>ko</string>
 	</array>
 	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>WatchBridge</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.5.22</string>
+	<string>0.5.24</string>
 	<key>CFBundleVersion</key>
-	<string>53</string>
+	<string>57</string>
 	<key>FoldBridgePushEnabled</key>
 	<false/>
 	<key>NSBluetoothAlwaysUsageDescription</key>

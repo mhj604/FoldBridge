@@ -1,4 +1,4 @@
-# FoldBridge Local architecture
+# WatchBridge architecture
 
 [한국어](ARCHITECTURE.md) · **English** · [All guides](README.md)
 
@@ -64,7 +64,7 @@ The original and Local watch profiles have separate saved phone identities. Stop
 
 `AppIcons` extracts source app artwork using Android PackageManager and produces a bounded PNG, starting at 48px and reducing as needed. The PNG is limited to 3,072 bytes, identified by SHA-256, encrypted alongside notification data, and cached on the watch. Once an icon-bearing message is acknowledged during a session, later messages can send only its key.
 
-The system owns the popup, cards, and header showing FoldBridge. Only the expanded body with an available source icon uses the compact SwiftUI layout. It has a 24pt overlay icon, a 16pt base font, zero extra paragraph spacing, and adjusted body line height on watchOS 26+. Watch 0.4.7 trims the lower spacing by 4pt on watchOS 27+ while retaining 0.4.6 text/icon placement. No media attachments or nested scroll views are used. [Presentation scope](NOTIFICATION_DISPLAY_LIMITS_EN.md) · [Layout examples](NOTIFICATION_LAYOUT_COMPARISON_EN.md)
+The system owns the popup, cards, and header showing WatchBridge. Only the expanded body with an available source icon uses the compact SwiftUI layout. It has a 24pt overlay icon, a 16pt base font, zero extra paragraph spacing, and adjusted body line height on watchOS 26+. Watch 0.4.7 trims the lower spacing by 4pt on watchOS 27+ while retaining 0.4.6 text/icon placement. No media attachments or nested scroll views are used. [Presentation scope](NOTIFICATION_DISPLAY_LIMITS_EN.md) · [Layout examples](NOTIFICATION_LAYOUT_COMPARISON_EN.md)
 
 ## Source map
 

@@ -12,8 +12,8 @@ assignees: ""
 
 - Phone model / Android version:
 - Watch model / watchOS version:
-- FoldBridge Android app version:
-- FoldBridge Watch app version/build:
+- WatchBridge Android app version:
+- WatchBridge Watch app version/build:
 
 ## 증상과 재현 순서 / What happened and steps
 

@@ -15,7 +15,7 @@ param(
 )
 $ErrorActionPreference='Stop'
 if ($Action -eq 'Help') {
-    Write-Output 'FoldBridge Windows tools (PowerShell 5.1 or newer, Python 3.11 or newer)'
+    Write-Output 'WatchBridge Windows tools (PowerShell 5.1 or newer, Python 3.11 or newer)'
     Write-Output '.\windows\FoldBridge.ps1 Doctor'
     Write-Output '.\windows\FoldBridge.ps1 Build -SdkRoot "C:\Users\you\AppData\Local\Android\Sdk"'
     Write-Output '.\windows\FoldBridge.ps1 Install'

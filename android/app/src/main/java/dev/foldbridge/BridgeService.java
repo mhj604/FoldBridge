@@ -18,8 +18,12 @@ public final class BridgeService extends Service {
     private static final long DELIVERY_RETENTION_MILLIS=24L*60*60*1000;
     private static final int MAX_PENDING=1024;
     public static final UUID SERVICE=UUID.fromString("c62d0200-7de5-4c34-a432-7c838e687a40"), TX=UUID.fromString("c62d0201-7de5-4c34-a432-7c838e687a40"), RX=UUID.fromString("c62d0202-7de5-4c34-a432-7c838e687a40"), CCC=UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
+    private static final UUID PULL=UUID.fromString("c62d0203-7de5-4c34-a432-7c838e687a40");
     static volatile BridgeService instance;
-    static boolean isConnected(){BridgeService service=instance;return service!=null&&service.authenticated&&service.subscribed&&service.central!=null;}
+    static boolean isConnected(){BridgeService s=instance;return s!=null&&s.authenticated&&s.central!=null&&(s.readDelivery?SystemClock.elapsedRealtime()-s.lastDeliveryRead<10000:s.subscribed);}
+    static boolean hasSavedPeer(Context context){return context.getSharedPreferences("vault",MODE_PRIVATE).contains("peer");}
+    static boolean isAuthenticating(){BridgeService s=instance;return s!=null&&s.central!=null&&!s.authenticated;}
+    static boolean isWaitingForRead(){BridgeService s=instance;return s!=null&&s.authenticated&&s.readDelivery&&!isConnected();}
     static volatile String status="중지됨", pairingCode="", error="";
     static volatile long acknowledged=0, apnsAccepted=0, lastRtt=-1;
     static volatile int waiting=0;
@@ -28,7 +32,7 @@ public final class BridgeService extends Service {
         BridgeService s=instance;
         if(s!=null)s.updateConnectionNotification();
         NotificationChannel waitingChannel=context.getSystemService(NotificationManager.class).getNotificationChannel(WAITING_CHANNEL);
-        JSONObject state=object("build",38,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",40,"bridgeRunning",s!=null,"status",status,"error",error,
             "waitingNotificationHidden",waitingChannel!=null&&waitingChannel.getImportance()==NotificationManager.IMPORTANCE_NONE,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
@@ -46,6 +50,8 @@ public final class BridgeService extends Service {
             "busySendRetries",s==null?0:s.busySendRetries,
             "fastResumeAttempts",s==null?0:s.fastResumeAttempts,"fastResumeCompleted",s==null?0:s.fastResumeCompleted,
             "authenticationReads",s==null?0:s.authenticationReads,
+            "readDelivery",s!=null&&s.readDelivery,"deliveryReads",s==null?0:s.deliveryReads,
+            "deliveryFramesRead",s==null?0:s.deliveryFramesRead,
             "authenticationMillis",s==null?-1:s.authenticationMillis,
             "connectionStartedAt",s==null?0:s.connectionStartedAt,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
@@ -83,6 +89,10 @@ public final class BridgeService extends Service {
     private int fastResumeAttempts=0, fastResumeCompleted=0;
     private boolean fastAuthentication=false;
     private byte[] authenticationReply;
+    private boolean readDelivery=false;
+    private byte[] deliveryReadPacket=new byte[0];
+    private long lastDeliveryRead=0,lastVehicleCatalogueRequest=0;
+    private int deliveryReads=0,deliveryFramesRead=0;
     private int authenticationReads=0;
     private final LinkedHashSet<String> recentResumeNonces=new LinkedHashSet<>();
     private long authenticationStartedAt=0,authenticationMillis=-1;
@@ -115,6 +125,7 @@ public final class BridgeService extends Service {
             }
         } catch(SecurityException ignored) {
         } catch(RuntimeException error) {android.util.Log.i("FoldBridgeConnection","local_connection_check_failed");}
+        if(authenticated&&readDelivery&&!isConnected())status="워치 응답 대기";
         maintenanceAt=System.currentTimeMillis();recordState(BridgeService.this);
         handler.postDelayed(this,15000);
     }};
@@ -187,7 +198,7 @@ public final class BridgeService extends Service {
         manager.createNotificationChannels(Arrays.asList(waiting,online));
     }
     private void updateConnectionNotification(boolean force) {
-        boolean linked=authenticated&&subscribed&&central!=null;
+        boolean linked=isConnected();
         String key=linked+":"+getResources().getConfiguration().getLocales().toLanguageTags();
         if(!force&&key.equals(notificationState))return;
         NotificationManager manager=getSystemService(NotificationManager.class);
@@ -197,8 +208,8 @@ public final class BridgeService extends Service {
         // channel. Actual authenticated connections use their own enabled channel.
         Notification notification=new Notification.Builder(this,linked?ONLINE_CHANNEL:WAITING_CHANNEL)
             .setSmallIcon(android.R.drawable.stat_sys_data_bluetooth)
-            .setContentTitle("FoldBridge Local · "+I18n.t(this,linked?"워치 연결됨":"워치 연결 대기 중"))
-            .setContentText(I18n.t(this,linked?"Bluetooth로 애플워치 알림을 전달합니다":"휴대폰과 워치가 가까이 있으면 연결을 이어갑니다."))
+            .setContentTitle("WatchBridge · "+I18n.t(this,linked?"워치 연결됨":"워치 연결 대기 중"))
+            .setContentText(I18n.t(this,linked?"Bluetooth로 애플워치 알림을 전달합니다":"등록된 워치의 자동 재연결을 기다리고 있습니다."))
             .setCategory(Notification.CATEGORY_SERVICE).setOnlyAlertOnce(true)
             .setOngoing(true).setShowWhen(false).setContentIntent(open).build();
         if(foregroundStarted)manager.notify(10,notification);
@@ -227,7 +238,7 @@ public final class BridgeService extends Service {
         refreshCount++;bluetoothRetries=0;blockedUntil=0;failures=0;pairUntil=0;
         error="";
         if(server==null){status="연결 새로고침 중";startBluetooth();return;}
-        if(authenticated&&subscribed) {
+        if(authenticated&&(subscribed||readDelivery)) {
             softRefreshCount++;
             sendSecure(object("type","refresh"));
             status="워치 연결됨";
@@ -271,6 +282,7 @@ public final class BridgeService extends Service {
         tx.addDescriptor(new BluetoothGattDescriptor(CCC,BluetoothGattDescriptor.PERMISSION_READ|BluetoothGattDescriptor.PERMISSION_WRITE));
         service.addCharacteristic(tx);
         service.addCharacteristic(new BluetoothGattCharacteristic(RX,BluetoothGattCharacteristic.PROPERTY_WRITE,BluetoothGattCharacteristic.PERMISSION_WRITE));
+        service.addCharacteristic(new BluetoothGattCharacteristic(PULL,BluetoothGattCharacteristic.PROPERTY_READ,BluetoothGattCharacteristic.PERMISSION_READ));
         if(!server.addService(service))retryBluetooth("BLE 서비스 등록을 다시 시도합니다.");
     }
     private void stopAdvertising() {
@@ -300,6 +312,26 @@ public final class BridgeService extends Service {
     private BluetoothGattServerCallback callbacks(int token) {return new BluetoothGattServerCallback() {
         @Override public void onCharacteristicReadRequest(BluetoothDevice device,int requestId,int offset,BluetoothGattCharacteristic characteristic) {
             handler.post(()->{if(token!=bluetoothEpoch||server==null)return;
+                if(PULL.equals(characteristic.getUuid())) {
+                    if(!matches(device)||!authenticated||!readDelivery){server.sendResponse(device,requestId,BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,offset,null);return;}
+                    if(offset==0) {
+                        if(lastDeliveryRead>0&&SystemClock.elapsedRealtime()-lastDeliveryRead>=10000) {
+                            // Runtime loss is not an offline message backlog.
+                            pending.clear();activeDelivery=null;waiting=0;outgoing.clear();messages.clear();
+                            connectionStartedAt=System.currentTimeMillis();
+                        }
+                        if(outgoing.isEmpty()&&!messages.isEmpty())outgoing.addAll(frames.split(messages.removeFirst(),200));
+                        deliveryReadPacket=outgoing.isEmpty()?new byte[0]:outgoing.removeFirst();
+                        lastDeliveryRead=SystemClock.elapsedRealtime();deliveryReads++;
+                        status="워치 연결됨";
+                        if(deliveryReadPacket.length>0)deliveryFramesRead++;
+                    }
+                    if(offset<0||offset>deliveryReadPacket.length){server.sendResponse(device,requestId,BluetoothGatt.GATT_INVALID_OFFSET,offset,null);return;}
+                    // A long read's offsets refer to the same immutable frame.
+                    // Only the next explicit offset-zero read advances the queue.
+                    server.sendResponse(device,requestId,BluetoothGatt.GATT_SUCCESS,offset,Arrays.copyOfRange(deliveryReadPacket,offset,deliveryReadPacket.length));
+                    recordState(BridgeService.this);return;
+                }
                 boolean allowed=TX.equals(characteristic.getUuid())&&matches(device)&&authenticationReply!=null;
                 if(!allowed){server.sendResponse(device,requestId,BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,offset,null);return;}
                 if(offset<0||offset>authenticationReply.length){server.sendResponse(device,requestId,BluetoothGatt.GATT_INVALID_OFFSET,offset,null);return;}
@@ -524,20 +556,20 @@ public final class BridgeService extends Service {
         if(!"sealed".equals(type)||session==null)throw new GeneralSecurityException("Encrypted message required");
         byte[] plain=session.open(unb64(message.getString("data")),message.getLong("seq"));
         JSONObject event=new JSONObject(new String(plain,StandardCharsets.UTF_8)); String eventType=event.optString("type");
-        if("confirm".equals(eventType)) { remoteConfirmed=true; finishAuthentication(); return; }
+        if("confirm".equals(eventType)) { if(!authenticated)readDelivery=event.optInt("read_delivery")==1;remoteConfirmed=true; finishAuthentication(); return; }
         if(!authenticated)throw new GeneralSecurityException("Confirm both devices");
         if("ack".equals(eventType)) {
             String id=event.getString("id"), revision=event.getString("rev"); Delivery d=pending.get(id);
             if(d!=null&&d.message.optString("rev").equals(revision)) {
                 String icon=d.message.optString("icon_key");if(d.iconSent&&!icon.isEmpty())acknowledgedIcons.add(icon);
-                pending.remove(id); acknowledged++; lastRtt=SystemClock.elapsedRealtime()-d.queuedAt; waiting=pending.size();  android.util.Log.i("FoldBridge","watch_receipt count="+acknowledged+" pending="+waiting);
+                pending.remove(id); acknowledged++; lastRtt=SystemClock.elapsedRealtime()-d.queuedAt; waiting=pending.size();  android.util.Log.i("WatchBridge","watch_receipt count="+acknowledged+" pending="+waiting);
             }
             if(activeDelivery!=null&&activeDelivery.message.optString("id").equals(id)&&activeDelivery.message.optString("rev").equals(revision))activeDelivery=null;
             drainPending();
             recordState(this);
         } else if("state".equals(eventType)) watchActive=event.optBoolean("active");
         else if("push_token".equals(eventType)) { String token=event.getString("token"); if(!token.matches("[0-9a-f]{64,256}"))throw new GeneralSecurityException("Push token"); vault.put("push_token",token); }
-        else if("vehicle_list".equals(eventType)) sendVehicleCatalogue();
+        else if("vehicle_list".equals(eventType)) {lastVehicleCatalogueRequest=SystemClock.elapsedRealtime();sendVehicleCatalogue();}
         else if("vehicle_command".equals(eventType)) sendSecure(VehicleBridge.get(this).execute(event));
         else if("sync".equals(eventType)) flush();
         else if("refresh".equals(eventType)) {softRefreshCount++;sendSecure(object("type","refreshed"));flush();recordState(this);}
@@ -557,27 +589,27 @@ public final class BridgeService extends Service {
         vault.put("peer",b64(peerPublic)); authenticated=true;pairingCode="";failures=0;blockedUntil=0;error="";status=subscribed?"워치 연결됨":"워치 인증 중";
         authenticationMillis=SystemClock.elapsedRealtime()-authenticationStartedAt;
         if(fastAuthentication)fastResumeCompleted++;
-        sendSecure(object("type","ready","liveness",0,"fast_resume",1,"compact_resume",2));
+        sendSecure(object("type","ready","liveness",0,"fast_resume",1,"compact_resume",2,"read_delivery",readDelivery?1:0));
         recordState(this);
     }
     private void sendPlain(JSONObject object) {
         byte[] data=encodeMessage(object);
         if("resumed".equals(object.optString("type")))authenticationReply=data;
-        if(central==null||!subscribed)return;
+        if(central==null||(!subscribed&&!readDelivery))return;
         if(data.length>Frames.MAX_BYTES){disconnect("전송 메시지가 너무 큽니다.");return;}
         if(messages.size()>=256)messages.pollFirst();
         messages.addLast(data); drain();
     }
     private void sendSecure(JSONObject message) {
         try { if(session==null)return; long seq=session.next(); byte[] data=session.seal(message.toString().getBytes(StandardCharsets.UTF_8),seq);JSONObject envelope=object("type","sealed","seq",seq,"data",b64(data));
-            if("ready".equals(message.optString("type")))authenticationReply=encodeMessage(envelope);
+            if("ready".equals(message.optString("type"))){authenticationReply=encodeMessage(envelope);if(readDelivery)return;}
             sendPlain(envelope); }
         catch(Exception e) { disconnect("보안 전송 실패"); }
     }
     private void sendVehicleCatalogue(){if(authenticated)sendSecure(VehicleBridge.get(this).catalogue());}
-    static void vehicleChanged(){BridgeService s=instance;if(s!=null)s.handler.post(s::sendVehicleCatalogue);}
+    static void vehicleChanged(){BridgeService s=instance;if(s!=null)s.handler.post(()->{if(s.lastVehicleCatalogueRequest>0&&SystemClock.elapsedRealtime()-s.lastVehicleCatalogueRequest<120000)s.sendVehicleCatalogue();});}
     private void drain() {
-        if(server==null||central==null||!subscribed||inFlight)return;
+        if(server==null||central==null||readDelivery||!subscribed||inFlight)return;
         if(outgoing.isEmpty()&&!messages.isEmpty())outgoing.addAll(frames.split(messages.removeFirst(),Math.max(20,mtu-3)));
         if(outgoing.isEmpty())return;
         inFlight=true;indicationGeneration=generation;indicationPacket=outgoing.peekFirst();
@@ -604,7 +636,7 @@ public final class BridgeService extends Service {
         BridgeService s=instance; if(s==null)return;
         s.handler.post(()->{
             long postedAt=notification.optLong("posted_at",0);
-            if(!s.authenticated||postedAt<=s.connectionStartedAt)return;
+            if(!s.authenticated||(s.readDelivery&&!isConnected())||postedAt<=s.connectionStartedAt)return;
             String id=notification.optString("id"); Delivery previous=s.pending.get(id);
             if(previous!=null&&previous.message.optString("rev").equals(notification.optString("rev"))) {
                 if(!previous.message.has("icon_key")&&notification.has("icon_key")) {
@@ -635,7 +667,7 @@ public final class BridgeService extends Service {
     private void deliver(Delivery d) {
         if(instance!=this||!authenticated||pending.get(d.message.optString("id"))!=d)return;
         activeDelivery=d;d.bleAttempts++;
-        android.util.Log.i("FoldBridge","notification_send attempt="+d.bleAttempts+" pending="+pending.size());
+        android.util.Log.i("WatchBridge","notification_send attempt="+d.bleAttempts+" pending="+pending.size());
         int epoch=generation;
         try {
             JSONObject message=new JSONObject(d.message.toString());
@@ -665,6 +697,7 @@ public final class BridgeService extends Service {
     }
     private void clearProtocol() {
         authenticationReply=null;
+        readDelivery=false;deliveryReadPacket=new byte[0];lastDeliveryRead=0;lastVehicleCatalogueRequest=0;
         generation++; acknowledgedIcons.clear(); session=null; peerPublic=null; ownNonce=null; peerCommit=null; stage="idle";
         activeDelivery=null;pending.clear();waiting=0;connectionStartedAt=0;
         authenticated=false;localConfirmed=false;remoteConfirmed=false;watchActive=false;pairingCode="";
@@ -694,7 +727,7 @@ public final class BridgeService extends Service {
         BridgeService s=instance;if(s==null)return;
         s.handler.post(()->{s.stopBluetooth();s.bluetoothRetries=0;error="";status="Bluetooth가 켜지면 다시 연결합니다";recordState(s);});
     }
-    static void test() { String id=UUID.randomUUID().toString(); enqueue(object("type","notification","id",id,"rev",id,"app","FoldBridge","title","연결 테스트","body","이 알림이 워치에 도착하면 전달 경로가 동작합니다.","posted_at",System.currentTimeMillis())); }
+    static void test() { String id=UUID.randomUUID().toString(); enqueue(object("type","notification","id",id,"rev",id,"app","WatchBridge","title","연결 테스트","body","이 알림이 워치에 도착하면 전달 경로가 동작합니다.","posted_at",System.currentTimeMillis())); }
     static void forget(Context context) { BridgeService s=instance; if(s!=null){s.disconnect("연결을 해제했습니다.");s.pending.clear();s.connectionStartedAt=0;waiting=0;}try {Vault v=new Vault(context); v.remove("peer");v.remove("first_pair_cutoff");v.remove("push_token");v.remove("outbox");}catch(Exception ignored){} }
     @Override public IBinder onBind(Intent intent) {return null;}
     @Override public void onDestroy() {

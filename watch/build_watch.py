@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 from generate_project import generate
 
-parser=argparse.ArgumentParser(description='Build FoldBridge with the full Xcode installation on a Mac.')
+parser=argparse.ArgumentParser(description='Build WatchBridge with the full Xcode installation on a Mac.')
 parser.add_argument('--team',help='Apple signing team ID; omit for simulator compilation')
 parser.add_argument('--push',action='store_true',help='Enable APNs (paid Apple Developer membership required)')
 parser.add_argument('--bundle-id',default='dev.foldbridge.watch',help='Your unique watch app bundle identifier; use the same value as APNS_TOPIC')

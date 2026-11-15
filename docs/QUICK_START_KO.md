@@ -13,23 +13,23 @@
 
 ## 2. 소스 받기
 
-[local-ble 브랜치](https://github.com/mhj604/FoldBridge/tree/local-ble)에서 Code → Download ZIP으로 받거나 아래 명령을 실행합니다.
+[local-ble 브랜치](https://github.com/mhj604/WatchBridge/tree/local-ble)에서 Code → Download ZIP으로 받거나 아래 명령을 실행합니다.
 
 ```sh
-git clone --branch local-ble https://github.com/mhj604/FoldBridge.git
-cd FoldBridge
+git clone --branch local-ble https://github.com/mhj604/WatchBridge.git
+cd WatchBridge
 ```
 
 이후 경로는 이 폴더를 기준으로 합니다. 과거 `relay/`, `windows/`, `legacy/` 폴더는 설정하지 않아도 됩니다.
 
 ## 3. 갤럭시 앱 설치
 
-1. [배포 APK 바로 다운로드](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-Local-0.5.4.apk) 또는 [Releases](https://github.com/mhj604/FoldBridge/releases)에서 APK를 받습니다. GitHub 파일 화면에서는 Download raw file로 받습니다.
+1. [배포 APK 바로 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-Local-0.5.4.apk) 또는 [Releases](https://github.com/mhj604/WatchBridge/releases)에서 APK를 받습니다. GitHub 파일 화면에서는 Download raw file로 받습니다.
 2. APK를 연 앱의 ‘이 출처 허용’이 필요하면 기기 안내에 따라 설치를 진행합니다.
-3. **FoldBridge Local**을 열고 근처 기기와 일반 알림 권한을 허용합니다.
-4. 앱의 **알림 접근 허용**을 누르고 **FoldBridge Local 알림 전달**을 켭니다. 이 권한이 실제 다른 앱의 알림 수집에 필요합니다.
+3. **WatchBridge**를 열고 근처 기기와 일반 알림 권한을 허용합니다.
+4. 앱의 **알림 접근 허용**을 누르고 **WatchBridge 알림 전달**을 켭니다. 이 권한이 실제 다른 앱의 알림 수집에 필요합니다.
 5. 기기가 제한된 설정을 안내하면 Android 앱 정보에서 해당 안내를 처리한 뒤 다시 알림 접근을 허용합니다. 메뉴 이름은 기기 버전에 따라 다릅니다.
-6. 과거 FoldBridge 앱도 설치했다면 그 앱의 연결은 중지합니다. 삭제할 필요는 없습니다.
+6. 과거 WatchBridge 앱도 설치했다면 그 앱의 연결은 중지합니다. 삭제할 필요는 없습니다.
 
 알림 접근에는 메시지 본문이 포함될 수 있습니다. 전달을 원하는 앱만 선택할 수도 있습니다.
 
@@ -38,7 +38,7 @@ cd FoldBridge
 1. Xcode에서 **Settings → Accounts**에 서명용 Apple 계정을 등록합니다. Mac에 로그인된 계정이나 워치 계정과 같을 필요는 없습니다.
 2. 워치와 아이폰의 개발자 모드를 켜고, Xcode의 Devices and Simulators에서 기기 등록·개발용 페어링을 완료합니다. 처음 기기가 검색되지 않으면 페어링된 아이폰을 USB로 연결해 준비합니다.
 3. 워치의 **설정 → 개인정보 보호 및 보안 → 개발자 모드**에서 Mac을 선택하고, 요청되는 페어링 코드·신뢰 안내를 직접 처리합니다. 첫 화면의 ‘개발자’ 메뉴와는 다릅니다.
-4. `watch/FoldBridge.xcodeproj`를 열고 FoldBridge 타깃의 **Signing & Capabilities**에서 자신의 Team을 선택합니다.
+4. `watch/FoldBridge.xcodeproj`를 열고 내부 프로젝트 이름인 `FoldBridge` 타깃의 **Signing & Capabilities**에서 자신의 Team을 선택합니다.
 5. 기본 Bundle ID `dev.foldbridge.watch`를 다른 계정이 이미 사용 중이면 자신의 고유 ID(예: `com.yourname.foldbridge.watch`)로 바꿉니다. BLE 서비스 UUID와는 별개여서 갤럭시 앱은 그대로 연결할 수 있습니다.
 6. 실행 대상을 실제 워치로 선택하고 **Run ▶**을 누릅니다. 빌드/설치하는 동안 워치 잠금 해제와 Mac 개발용 연결을 유지합니다.
 
@@ -53,7 +53,7 @@ python3 watch/build_watch.py --team YOUR_TEAM_ID --bundle-id com.yourname.foldbr
 ## 5. 처음 한 번 등록
 
 1. 갤럭시에서 **설정 → 새 워치 등록**을 누릅니다. 등록 창은 2분 동안 열립니다. 최초 등록과 이후 재연결 모두 인증 완료 뒤 새로 게시된 알림부터 전달합니다. 이전 대기 알림과 연결이 끊긴 동안의 알림은 전달하지 않습니다.
-2. 워치 FoldBridge에서 **휴대폰 연결**을 엽니다. 새 설치는 Local 프로필이 기본입니다. 과거 프로필을 사용했다면 **연결할 앱 선택 → FoldBridge Local**로 바꿉니다.
+2. 워치 WatchBridge에서 **휴대폰 연결**을 엽니다. 새 설치는 Local 프로필이 기본입니다. 과거 프로필을 사용했다면 **연결할 앱 선택 → WatchBridge**로 바꿉니다.
 3. **휴대폰 찾기**를 누르고 갤럭시를 선택합니다.
 4. 같은 코드가 보일 때만 양쪽에서 **코드가 같아요**를 누릅니다.
 5. 워치에서 알림 표시 권한을 허용합니다. 양쪽 연결 상태가 연결됨으로 바뀝니다.
@@ -67,13 +67,13 @@ python3 watch/build_watch.py --team YOUR_TEAM_ID --bundle-id com.yourname.foldbr
 - 알림은 워치 알림 센터에서 봅니다. 앱 안에는 이전 메시지 목록이 없습니다.
 - 연결이 끊기면 갤럭시 또는 워치 **한쪽에서만 연결 새로고침**을 누릅니다. 상대 기기에서는 누르지 않아도 됩니다. 정상 연결에서는 세션을 끊지 않고 동기화합니다. watchOS가 백그라운드 실행을 중단했으면 워치 앱을 한 번 열어야 할 수 있습니다.
 - **지금 동기화**는 연결된 상태에서 대기 알림을 가져오는 버튼입니다. 인증이 멈췄을 때는 새로고침을 사용합니다.
-- 재부팅 후 양쪽 잠금을 한 번 해제합니다. 워치가 자동 복원되지 않으면 FoldBridge를 한 번 엽니다.
+- 재부팅 후 양쪽 잠금을 한 번 해제합니다. 워치가 자동 복원되지 않으면 WatchBridge를 한 번 엽니다.
 
 ## 한국어 / English 선택
 
 양쪽 앱의 **설정 → 언어 / Language**를 엽니다. **시스템 설정**, **한국어**, **English** 중 선택합니다. 기기마다 별도로 선택하며 저장한 설정은 재시작 후에도 유지됩니다. 영어를 선택한 뒤 한국어로 돌아오려면 **Settings → Language / 언어 → 한국어**를 선택합니다.
 
-앱 조작 화면과 연결·오류 안내가 바뀌며, 받은 메시지는 번역하지 않습니다. Android는 시스템의 앱 언어 설정과도 연동합니다. 워치의 언어 선택은 FoldBridge 내부에 저장합니다. 언어 변경만으로 등록을 다시 할 필요는 없습니다.
+앱 조작 화면과 연결·오류 안내가 바뀌며, 받은 메시지는 번역하지 않습니다. Android는 시스템의 앱 언어 설정과도 연동합니다. 워치의 언어 선택은 WatchBridge 내부에 저장합니다. 언어 변경만으로 등록을 다시 할 필요는 없습니다.
 
 ## 업데이트할 때
 
@@ -86,4 +86,4 @@ python3 watch/build_watch.py --team YOUR_TEAM_ID --bundle-id com.yourname.foldbr
 
 ## 원본 앱 아이콘이 표시되는 위치
 
-워치 0.4.3부터 첫 팝업/알림 센터의 시스템 아이콘은 FoldBridge로 유지하고, 눌러 펼친 본문에만 원본 앱 아이콘을 24pt로 표시합니다. 새로 받는 알림 중 아이콘 정보가 있는 경우에 적용합니다. 기존 텍스트 알림은 그대로이며, 아이콘이 없으면 기본 텍스트 화면을 사용합니다. 사진 첨부를 사용하지 않습니다.
+워치 0.4.3부터 첫 팝업/알림 센터의 시스템 아이콘은 WatchBridge로 유지하고, 눌러 펼친 본문에만 원본 앱 아이콘을 24pt로 표시합니다. 새로 받는 알림 중 아이콘 정보가 있는 경우에 적용합니다. 기존 텍스트 알림은 그대로이며, 아이콘이 없으면 기본 텍스트 화면을 사용합니다. 사진 첨부를 사용하지 않습니다.

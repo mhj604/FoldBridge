@@ -2,7 +2,7 @@
 
 [한국어](BACKGROUND_OPPORTUNITY_0.5.20_KO.md) · [Documentation](README.md)
 
-2026-11-15: Watch/widget **0.5.20 / build 46**, retaining Android **0.6.15-local / code 33**. Registration, identity and peer keys, and vehicle settings are retained. [Android APK](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk).
+2026-11-15: Watch/widget **0.5.20 / build 46**, retaining Android **0.6.15-local / code 33**. Registration, identity and peer keys, and vehicle settings are retained. [Android APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk).
 
 ## Execution-state correction (2026-11-15)
 

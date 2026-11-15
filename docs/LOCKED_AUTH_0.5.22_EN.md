@@ -2,7 +2,7 @@
 
 [한국어](LOCKED_AUTH_0.5.22_KO.md) · [Documentation](README.md)
 
-November 15, 2026. Candidate: Android **0.6.16-local / code 38**, Watch and vehicle widget **0.5.22 / build 53**. Install in place, preserving registration, pinned keys, identity keys and vehicle settings. [Android APK](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.22/FoldBridge-Local-0.6.16.apk).
+November 15, 2026. Candidate: Android **0.6.16-local / code 38**, Watch and vehicle widget **0.5.22 / build 53**. Install in place, preserving registration, pinned keys, identity keys and vehicle settings. [Android APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.22/FoldBridge-Local-0.6.16.apk).
 
 ## Changed path
 

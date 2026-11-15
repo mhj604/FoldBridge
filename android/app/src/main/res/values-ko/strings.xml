@@ -16,24 +16,25 @@
   <string name="text_d4cfbd5b6f1feb8d" formatted="false">"BLE 전송을 시작하지 못했습니다: "</string>
   <string name="text_1b1ed780c38f5640" formatted="false">"Bluetooth 광고 준비를 기다립니다."</string>
   <string name="text_cc5e92a778c365cd" formatted="false">"Bluetooth 서버 준비를 다시 시도합니다."</string>
-  <string name="text_31fdc892f7527c6c" formatted="false">"Bluetooth 연결만으로는 다른 앱의 알림을 전달할 수 없습니다. 설정에서 ‘FoldBridge Local 알림 전달’의 알림 접근을 허용해 주세요."</string>
+  <string name="text_a69173ca1cb572ff" formatted="false">"Bluetooth 연결만으로는 다른 앱의 알림을 전달할 수 없습니다. 설정에서 ‘WatchBridge 알림 전달’의 알림 접근을 허용해 주세요."</string>
   <string name="text_a4b3bc978835cb01" formatted="false">"Bluetooth 준비를 다시 시도합니다."</string>
   <string name="text_63593f4a1e56faad" formatted="false">"Bluetooth가 켜지면 다시 연결합니다"</string>
   <string name="text_ee99ebc7344137cf" formatted="false">"Bluetooth로 애플워치 알림을 전달합니다"</string>
-  <string name="text_e24df1a9d56f340c" formatted="false">"FoldBridge Local 실행 중"</string>
-  <string name="text_e5d50dafe36bf172" formatted="false">"FoldBridge Local 알림 전달"</string>
-  <string name="text_b001ac3a6a2c90b6" formatted="false">"FoldBridge 서비스를 찾지 못했습니다."</string>
-  <string name="text_012dbc91163c031f" formatted="false">"FoldBridge 차량 제어 창을 엽니다."</string>
-  <string name="text_36f4140cf55e0caf" formatted="false">"FoldBridge 휴대폰 찾는 중"</string>
-  <string name="text_e9647d1bce13188f" formatted="false">"FoldBridge에 연결한 위젯과 버튼 선택만 제거합니다."</string>
-  <string name="text_3d829d862c44532d" formatted="false">"FoldBridge의 Bluetooth 연결로 갤럭시 마이현대 제어 버튼을 실행합니다."</string>
   <string name="text_2d1fb24f511d0c93" formatted="false">"Push 등록 실패. 서명과 Push 설정을 확인하세요."</string>
   <string name="text_ef1b18e8c8833e8c" formatted="false">"Push 토큰 저장 실패"</string>
-  <string name="text_7593672a4f9f8b6c" formatted="false">"watchOS 백그라운드 수신 한도에 도달했습니다. 앱을 직접 열어 알림을 동기화하세요."</string>
+  <string name="text_ff6374ca6da3ae2b" formatted="false">"WatchBridge 서비스를 찾지 못했습니다."</string>
+  <string name="text_3ed9d8cf9e563561" formatted="false">"WatchBridge 실행 중"</string>
+  <string name="text_7727b7fb11e0c726" formatted="false">"WatchBridge 알림 전달"</string>
+  <string name="text_43f32b1e28af69fc" formatted="false">"WatchBridge 차량 제어 창을 엽니다."</string>
+  <string name="text_225283704b2b8f1b" formatted="false">"WatchBridge 휴대폰 찾는 중"</string>
+  <string name="text_18cfd2d584f4087b" formatted="false">"WatchBridge에 연결한 위젯과 버튼 선택만 제거합니다."</string>
+  <string name="text_0a06becf60285713" formatted="false">"WatchBridge의 Bluetooth 연결로 갤럭시 마이현대 제어 버튼을 실행합니다."</string>
+  <string name="text_0d6a2fdbad3acc56" formatted="false">"watchOS 백그라운드 수신 한도에 도달했습니다. 앱을 직접 열면 수신 기회가 초기화됩니다."</string>
+  <string name="text_e2c1bcf50d4597f5" formatted="false">"‘워치 연결’을 누르면 저장된 등록으로 연결을 시작합니다."</string>
   <string name="text_a82fe12979182027" formatted="false">"가까이, 더 자연스럽게"</string>
   <string name="text_8cf6e689229c5f6f" formatted="false">"각 빠른 버튼에 연결할 마이현대 항목을 한 번 선택하세요. 위젯에서 누르면 바로 전달됩니다."</string>
-  <string name="text_e65aaae77963d8c1" formatted="false">"갤럭시 FoldBridge에서 워치 차량 제어를 켜 주세요."</string>
-  <string name="text_25b05c8856847561" formatted="false">"갤럭시 FoldBridge의 차량 제어 설정에서 마이현대 위젯을 연결해 주세요."</string>
+  <string name="text_2f6ffe295094826f" formatted="false">"갤럭시 WatchBridge에서 워치 차량 제어를 켜 주세요."</string>
+  <string name="text_435c2db97238fd7d" formatted="false">"갤럭시 WatchBridge의 차량 제어 설정에서 마이현대 위젯을 연결해 주세요."</string>
   <string name="text_3066355fd9885267" formatted="false">"갤럭시 마이현대 앱을 설치하고 로그인한 뒤 다시 열어 주세요."</string>
   <string name="text_216835d06a6cc0ef" formatted="false">"갤럭시 마이현대 위젯에 연결됐습니다."</string>
   <string name="text_35a25220cde0ec12" formatted="false">"갤럭시 마이현대 위젯에 전달합니다."</string>
@@ -52,7 +53,7 @@
   <string name="text_e257f43fe59ee363" formatted="false">"권한을 허용한 뒤 연결 버튼을 다시 누르세요."</string>
   <string name="text_8e60890e9abe0505" formatted="false">"근처 기기 권한을 다시 허용해 주세요."</string>
   <string name="text_f827e01ee33be15f" formatted="false">"근처 기기 권한이 필요합니다."</string>
-  <string name="text_a95d33f5a937594b" formatted="false">"기존 FoldBridge"</string>
+  <string name="text_a0b454595f4efbeb" formatted="false">"기존 WatchBridge"</string>
   <string name="text_4b38d0f49669d662" formatted="false">"기존 등록을 유지한 채 양쪽 연결을 다시 준비합니다. 상대 기기의 새로고침은 누르지 않아도 됩니다."</string>
   <string name="text_3bdd8d4850572271" formatted="false">"기존 등록을 유지한 채 연결을 다시 준비합니다. 필요하면 워치에서도 ‘연결 새로고침’을 눌러 주세요."</string>
   <string name="text_6609ccb10fbda19f" formatted="false">"꺼짐"</string>
@@ -67,8 +68,12 @@
   <string name="text_8df305a2c03071e0" formatted="false">"두 기기의 코드가 같은지 확인하세요"</string>
   <string name="text_c273dc4b60effa1f" formatted="false">"두 기기의 코드를 비교하세요"</string>
   <string name="text_a09d91cc7b81887e" formatted="false">"등록 해제"</string>
+  <string name="text_74218b1358d6e00a" formatted="false">"등록된 워치 연결 대기"</string>
+  <string name="text_4fa5d23e021dfc28" formatted="false">"등록된 워치가 가까워지면 자동 재연결을 시도합니다. watchOS 실행 상태에 따라 지연될 수 있습니다."</string>
   <string name="text_cb49665692660f6b" formatted="false">"등록된 워치와 보안 키가 다릅니다."</string>
+  <string name="text_7d7112d5ecbd11dc" formatted="false">"등록된 워치의 자동 재연결을 기다리고 있습니다."</string>
   <string name="text_3d77af561453ec21" formatted="false">"등록된 휴대폰을 다시 찾는 중"</string>
+  <string name="text_a7286265282cc334" formatted="false">"등록은 유지됩니다. 워치 실행 기회가 생기면 수신을 다시 시도합니다."</string>
   <string name="text_a5a0dd205ae79394" formatted="false">"등록을 해제했습니다"</string>
   <string name="text_65e168f9dc077c49" formatted="false">"등록한 워치 해제"</string>
   <string name="text_6120b8ead5e4cd43" formatted="false">"마이현대 위젯 설정을 열지 못했습니다."</string>
@@ -106,6 +111,7 @@
   <string name="text_ed312e694cb03b12" formatted="false">"보안 전송 실패"</string>
   <string name="text_e533a1cf9db4f9a4" formatted="false">"보안 키를 준비하지 못했습니다."</string>
   <string name="text_39d8a73d70a2488f" formatted="false">"보안 확인 또는 데이터 검증에 실패했습니다."</string>
+  <string name="text_aacb7cc897bd5099" formatted="false">"보안 확인 완료 · 알림 연결 준비 중"</string>
   <string name="text_06c476edb91361ec" formatted="false">"블루투스를 켜세요"</string>
   <string name="text_cf40d166f5245e11" formatted="false">"블루투스와 앱 권한을 확인하세요."</string>
   <string name="text_0f5fa144600c3f32" formatted="false">"비상등 켜기"</string>
@@ -114,10 +120,12 @@
   <string name="text_ffde243be2c39509" formatted="false">"빠른 제어 설정에서 이 버튼에 연결할 마이현대 항목을 지정해 주세요."</string>
   <string name="text_33fd19cf90df27b2" formatted="false">"새 알림을 워치로 전달하고 있어요."</string>
   <string name="text_5bde3b7f9937aafb" formatted="false">"새 워치 등록"</string>
+  <string name="text_aa2beae0e272b8cb" formatted="false">"새 워치를 등록해 주세요"</string>
   <string name="text_79edb556943a3ab1" formatted="false">"선택한 앱만 전달"</string>
   <string name="text_115bced49291a6a0" formatted="false">"설정"</string>
   <string name="text_3a6b16eab508fe67" formatted="false">"설정 열기"</string>
   <string name="text_291572f8cbcf5bb9" formatted="false">"설정을 확인해 주세요: "</string>
+  <string name="text_b7962d28d4c91800" formatted="false">"설정의 ‘새 워치 등록’과 워치의 ‘휴대폰 찾기’로 처음 한 번 코드를 확인해 주세요."</string>
   <string name="text_cef4d8ab741c76bf" formatted="false">"수신"</string>
   <string name="text_6bbeb44e673fe476" formatted="false">"수신 확인"</string>
   <string name="text_48143d7a01533441" formatted="false">"시동"</string>
@@ -140,7 +148,7 @@
   <string name="text_85612c6822e68ed1" formatted="false">"알림 접근 설정"</string>
   <string name="text_b80d210cef3ef5fe" formatted="false">"알림 접근 허용"</string>
   <string name="text_6cf9e87212ebf3c5" formatted="false">"알림 접근이 필요해요"</string>
-  <string name="text_0d0fb2259ef742c9" formatted="false">"알림 표시 권한이 꺼져 있습니다. ‘알림 표시 허용’을 누르거나 워치 알림 설정을 확인하세요. 미확인 알림은 휴대폰에 보관됩니다."</string>
+  <string name="text_0382f2eb5aa74e13" formatted="false">"알림 표시 권한이 꺼져 있습니다. ‘알림 표시 허용’을 누르거나 워치 알림 설정을 확인하세요. 재연결하면 연결 전 알림은 제외됩니다."</string>
   <string name="text_76cfaf5966dfd35d" formatted="false">"알림 표시 허용"</string>
   <string name="text_9874a067b28f754b" formatted="false">"알림 표시를 요청하지 못했습니다. 다음 동기화 때 다시 요청합니다."</string>
   <string name="text_579e63566e325510" formatted="false">"알림은 알림 센터에서"</string>
@@ -159,7 +167,7 @@
   <string name="text_6cc2a07d63acdcb4" formatted="false">"연결 유지"</string>
   <string name="text_fe8d944f83f238df" formatted="false">"연결 유지 켜짐"</string>
   <string name="text_dd468818314057d5" formatted="false">"연결 유지를 시작할까요?"</string>
-  <string name="text_62701734e12926e4" formatted="false">"연결 자동 시작이 제한됐습니다. Local 앱에서 연결 시작을 눌러 주세요."</string>
+  <string name="text_89ded1329bc2c24f" formatted="false">"연결 자동 시작이 제한됐습니다. WatchBridge에서 워치 연결을 눌러 주세요."</string>
   <string name="text_9475b248bea8b92b" formatted="false">"연결 정보 저장 실패"</string>
   <string name="text_ec3e658f0cace37d" formatted="false">"연결 준비 중"</string>
   <string name="text_18c3cd6787515887" formatted="false">"연결 중지"</string>
@@ -171,6 +179,7 @@
   <string name="text_90704df74930d55b" formatted="false">"연결됨"</string>
   <string name="text_05984d3b319d7c1b" formatted="false">"연결을 시작해 볼까요?"</string>
   <string name="text_96c99f45fb158d5d" formatted="false">"연결을 해제했습니다."</string>
+  <string name="text_135e0b150a3e0827" formatted="false">"연결이 중지됐어요"</string>
   <string name="text_b9f910c796b719be" formatted="false">"연결할 앱 선택"</string>
   <string name="text_cedb0e9c2e394515" formatted="false">"요청 전달 중"</string>
   <string name="text_51215936ab571f36" formatted="false">"요청을 전달하지 못했습니다. 갤럭시의 위젯 설정과 인증을 확인해 주세요."</string>
@@ -178,20 +187,22 @@
   <string name="text_7dfda7077affbfb2" formatted="false">"워치 등록을 해제할까요?"</string>
   <string name="text_d89425460f7aa686" formatted="false">"워치 수신 확인이 없어 다시 연결합니다. 알림은 보관합니다."</string>
   <string name="text_fd5f6938b796335c" formatted="false">"워치 알림 권한을 확인하세요."</string>
+  <string name="text_ff96d44617229454" formatted="false">"워치 앱을 열지 않고 자동 재연결을 시도하고 있습니다. 시스템 실행 상태에 따라 지연될 수 있습니다."</string>
   <string name="text_2bb43d36571e78ca" formatted="false">"워치 연결"</string>
   <string name="text_814aaa2891ff6223" formatted="false">"워치 연결 대기 중"</string>
   <string name="text_abd079bcdb54a184" formatted="false">"워치 연결 상태"</string>
   <string name="text_7102a06081b27fcd" formatted="false">"워치 연결됨"</string>
+  <string name="text_5d4f8b0ce17a1e0e" formatted="false">"워치 응답 대기"</string>
   <string name="text_dba34198441b09a3" formatted="false">"워치 인증 중"</string>
   <string name="text_ee7554329cc4568b" formatted="false">"워치 차량 제어"</string>
   <string name="text_09a22d876a5a3836" formatted="false">"워치 차량 제어가 꺼져 있습니다."</string>
+  <string name="text_956f30b00f873701" formatted="false">"워치는 연결됐지만 알림 수집 서비스를 기다리고 있어요."</string>
   <string name="text_f2ade259db8b69af" formatted="false">"워치를 기다리고 있어요"</string>
   <string name="text_fe57cf8c4aa5ff4f" formatted="false">"워치에 표시할 버튼"</string>
-  <string name="text_b12fa3c96273211c" formatted="false">"워치에서 FoldBridge를 열어 주세요."</string>
   <string name="text_817c582f6d87cdab" formatted="false">"워치에서 사용할 버튼을 선택해 주세요."</string>
   <string name="text_031f391291bb9459" formatted="false">"워치에서 사용할 준비가 됐습니다."</string>
   <string name="text_31122426f4579b3c" formatted="false">"워치에서 위치 권한을 선택해 주세요."</string>
-  <string name="text_6c2e9c9a722bb060" formatted="false">"워치에서는 FoldBridge → 차량 제어를 엽니다. 마이현대가 휴대폰 인증을 요구하면 갤럭시에서 완료하세요. 실제 제어 결과는 마이현대 알림으로 확인합니다."</string>
+  <string name="text_f37bed67f5eb9d2c" formatted="false">"워치에서는 WatchBridge → 차량 제어를 엽니다. 마이현대가 휴대폰 인증을 요구하면 갤럭시에서 완료하세요. 실제 제어 결과는 마이현대 알림으로 확인합니다."</string>
   <string name="text_d43e85b973231e71" formatted="false">"워치와 연결됐어요"</string>
   <string name="text_7b1f8de96d9a1277" formatted="false">"워치의 위치 서비스를 켜 주세요."</string>
   <string name="text_11c4a9aca684c3eb" formatted="false">"워치의 코드와 같으면 확인해 주세요."</string>
@@ -209,14 +220,16 @@
   <string name="text_f3ac1094497cfcd5" formatted="false">"응답을 받지 못했습니다. 다시 실행하기 전에 마이현대 결과를 확인하세요."</string>
   <string name="text_bf2086d375dc0364" formatted="false">"이 알림이 워치에 도착하면 전달 경로가 동작합니다."</string>
   <string name="text_eaba97624b8349ca" formatted="false">"이미 전달한 요청입니다. 마이현대 알림을 확인하세요."</string>
-  <string name="text_8236bb82f2e856e5" formatted="false">"이전 FoldBridge"</string>
+  <string name="text_e5970fc4f7f8dc55" formatted="false">"이전 WatchBridge"</string>
   <string name="text_38cfb48d915d6347" formatted="false">"인증 또는 데이터 검증 실패"</string>
   <string name="text_35d2d9890840a5e3" formatted="false">"인증 시간이 만료됐습니다."</string>
   <string name="text_ca345af930d30407" formatted="false">"작은 제어 위젯"</string>
   <string name="text_c000bd69acd75944" formatted="false">"작은 컴플리케이션에서 사용할 차량 버튼을 선택합니다."</string>
   <string name="text_5fb926229090001c" formatted="false">"저장"</string>
   <string name="text_ae94ec51b2c23b4f" formatted="false">"저장 실패"</string>
+  <string name="text_7894cef421df5d06" formatted="false">"저장된 등록으로 재연결을 요청했습니다. 연결 결과는 위 상태에서 확인해 주세요."</string>
   <string name="text_831a5eceed197cc8" formatted="false">"저장된 연결 정보를 읽을 수 없습니다. 연결을 해제하고 다시 등록하세요."</string>
+  <string name="text_8ebac150999a0b7d" formatted="false">"저장된 키로 기기를 확인하고 있습니다. 새 등록은 필요하지 않습니다."</string>
   <string name="text_7e7725dc285ced0b" formatted="false">"저장된 휴대폰 연결 복원 중"</string>
   <string name="text_fb94c53605980e4d" formatted="false">"전달 대기"</string>
   <string name="text_2fd0e24920c060b9" formatted="false">"전달할 앱 선택"</string>
@@ -237,6 +250,7 @@
   <string name="text_9c77a0008eefc743" formatted="false">"차량 제어 연결 해제"</string>
   <string name="text_fa21f3627dd675b1" formatted="false">"차량 제어 열기"</string>
   <string name="text_8ae81e81bde031d5" formatted="false">"차량 제어 위젯"</string>
+  <string name="text_2b0960c26c541f15" formatted="false">"처음 등록하는 기기입니다. 양쪽 코드가 같으면 확인해 주세요."</string>
   <string name="text_9b7d7c773e1744cc" formatted="false">"처음 연결하는 워치인가요?"</string>
   <string name="text_23466026b7f56424" formatted="false">"충전 상태 알림"</string>
   <string name="text_6b725729acdad283" formatted="false">"충전율이 바뀔 때도 알려줍니다"</string>
@@ -247,7 +261,7 @@
   <string name="text_03890e012a7c2347" formatted="false">"필요한 통신 채널이 없습니다."</string>
   <string name="text_293182ec397e6b89" formatted="false">"해제"</string>
   <string name="text_9b90fe7e0ce3b383" formatted="false">"허용됨"</string>
-  <string name="text_e1fe3188fc34632d" formatted="false">"현재 알림을 읽지 못했습니다. Local 앱의 알림 접근 권한을 확인하세요."</string>
+  <string name="text_440dcd08ac63f057" formatted="false">"현재 알림을 읽지 못했습니다. WatchBridge의 알림 접근 권한을 확인해 주세요."</string>
   <string name="text_dcdbdc9854482ddc" formatted="false">"화면 위에서 아래로 쓸어내려 확인하세요.\n이 앱에는 알림 내용을 보관하지 않아요."</string>
   <string name="text_84dd6e381dca36d8" formatted="false">"확인 필요"</string>
   <string name="text_2a675ee941a2897e" formatted="false">"휴대폰"</string>
@@ -267,9 +281,9 @@
   <string name="text_c06a87ce39e938fc" formatted="false">"휴대폰에 연결하지 못했습니다."</string>
   <string name="text_7656daac0f4cb3b3" formatted="false">"휴대폰에서 ‘새 워치 등록’을 누른 뒤 선택해 주세요."</string>
   <string name="text_e14bc27201f3cb9d" formatted="false">"휴대폰에서 새 워치 등록을 먼저 누르세요."</string>
-  <string name="text_376213a660e50e7e" formatted="false">"휴대폰에서 연결 시작을 누르세요"</string>
+  <string name="text_e0f9eee8c10311f5" formatted="false">"휴대폰에서 새 워치 등록을 시작해 주세요."</string>
   <string name="text_9f2f14c50f3352a7" formatted="false">"휴대폰으로 전송하지 못했습니다."</string>
   <string name="text_d0825c9ecbdf31c5" formatted="false">"휴대폰의 알림을 손목에서 만나세요."</string>
   <string name="text_f255b5077727094b" formatted="false">"휴대폰이 가까워지면 다시 연결합니다"</string>
-  <string name="notification_listener_label">FoldBridge Local 알림 전달</string>
+  <string name="notification_listener_label">WatchBridge 알림 전달</string>
 </resources>

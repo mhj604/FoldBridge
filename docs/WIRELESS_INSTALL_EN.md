@@ -6,7 +6,7 @@ Normal notification delivery uses Galaxy–Watch Bluetooth. The Wi-Fi connection
 
 ## Install the APK directly
 
-Download the APK from the [latest release](https://github.com/mhj604/FoldBridge/releases/latest) on the Galaxy and open it in **My Files → Downloads**. Update the existing FoldBridge Local installation. No Mac connection or developer options are needed. Use an APK signed with the same key as the installed app.
+Download the APK from the [latest release](https://github.com/mhj604/WatchBridge/releases/latest) on the Galaxy and open it in **My Files → Downloads**. Update the existing WatchBridge installation. No Mac connection or developer options are needed. Use an APK signed with the same key as the installed app.
 
 ## Install wirelessly from a Mac
 
@@ -37,6 +37,6 @@ A reboot or network change may require enabling wireless debugging again. If `ad
 
 `install -r` updates the app while retaining its data. For a signature mismatch, use an APK built with the original signing key. Removing the app to resolve a connection issue also removes its saved watch registration.
 
-This Mac development pairing is separate from the code comparison inside FoldBridge for Galaxy–Watch registration. Keep personal pairing codes and ADB keys out of public guides and issues.
+This Mac development pairing is separate from the code comparison inside WatchBridge for Galaxy–Watch registration. Keep personal pairing codes and ADB keys out of public guides and issues.
 
 [Official Android wireless ADB instructions](https://developer.android.com/tools/adb#connect-to-a-device-over-wi-fi)

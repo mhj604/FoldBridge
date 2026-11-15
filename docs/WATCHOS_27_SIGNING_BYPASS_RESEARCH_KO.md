@@ -4,9 +4,9 @@
 
 ## 현재 판단
 
-**Ultra 2 / watchOS 27.2(24S118)에 기존 FoldBridge와 페어링을 유지하면서 적용할 수 있는 무료·무갱신 서명 우회 구현은 확보하지 못했습니다.** 관련 연구가 없다는 뜻은 아닙니다. 과거 실물 워치의 영구 서명 시연, 최근 워치 탈옥 시연, 현재 OS 계열의 메모리 손상 PoC와 가상 워치 실행 코드를 찾았습니다. 그러나 어느 것도 이 기기에 적용할 수 있는 완성된 실행 경로가 아닙니다.
+**Ultra 2 / watchOS 27.2(24S118)에 기존 WatchBridge와 페어링을 유지하면서 적용할 수 있는 무료·무갱신 서명 우회 구현은 확보하지 못했습니다.** 관련 연구가 없다는 뜻은 아닙니다. 과거 실물 워치의 영구 서명 시연, 최근 워치 탈옥 시연, 현재 OS 계열의 메모리 손상 PoC와 가상 워치 실행 코드를 찾았습니다. 그러나 어느 것도 이 기기에 적용할 수 있는 완성된 실행 경로가 아닙니다.
 
-이번 작업은 공개 자료·소스 분석입니다. 기기 연결, 시스템 로그 수집, PoC 실행, 앱 설치·재서명, 시스템 설정 변경, 초기화, 페어링 해제를 수행하지 않았습니다. 차량 명령과 중지된 자동 갱신 예약도 실행하지 않았습니다. FoldBridge 앱 코드는 변경하지 않았으며 우회 기능이 구현됐다고 보고하지 않습니다.
+이번 작업은 공개 자료·소스 분석입니다. 기기 연결, 시스템 로그 수집, PoC 실행, 앱 설치·재서명, 시스템 설정 변경, 초기화, 페어링 해제를 수행하지 않았습니다. 차량 명령과 중지된 자동 갱신 예약도 실행하지 않았습니다. WatchBridge 앱 코드는 변경하지 않았으며 우회 기능이 구현됐다고 보고하지 않습니다.
 
 ## 범위와 근거
 
@@ -52,7 +52,7 @@ Google의 [수정 커밋](https://github.com/google/brotli/commit/0ed4268a4401ab
 
 [`MchinaMd57764/CVE-2026-111497-PoC`](https://github.com/MchinaMd57764/CVE-2026-111497-PoC/tree/0899753a85829472ac4a6e63b75655dd91db6fa0)은 iPhone의 `libcompression`과 네트워크 응답 경로를 조사합니다. 작성자가 명시한 한계는 **코드 실행·제어 흐름 탈취·PAC 우회·커널 침해를 시연하지 않았다는 것**입니다. Watch 전용 결과도 아닙니다.
 
-따라서 이 후보를 직접 활용하려면 먼저 해당 Watch에서의 도달 가능한 처리 경로와 실행 제어를 확보하고, 추가 권한·서명 또는 설치 신뢰 검사 우회·재실행 지속성까지 연결해야 합니다. 그 연결 코드가 이번 공개 자료에는 없습니다. 단순 충돌 PoC를 FoldBridge에 추가해도 프로파일 만료는 해결되지 않습니다. PoC를 실행하거나 기기에 전송하지 않았습니다.
+따라서 이 후보를 직접 활용하려면 먼저 해당 Watch에서의 도달 가능한 처리 경로와 실행 제어를 확보하고, 추가 권한·서명 또는 설치 신뢰 검사 우회·재실행 지속성까지 연결해야 합니다. 그 연결 코드가 이번 공개 자료에는 없습니다. 단순 충돌 PoC를 WatchBridge에 추가해도 프로파일 만료는 해결되지 않습니다. PoC를 실행하거나 기기에 전송하지 않았습니다.
 
 ## 4. 실행 가능한 공개 코드가 있어도 대상이 다름
 
@@ -71,7 +71,7 @@ Google의 [수정 커밋](https://github.com/google/brotli/commit/0ed4268a4401ab
 
 [AppSync](https://github.com/akemin-dayo/AppSync)는 iOS에서 설치 검사와 실행 시 만료 검사를 서로 다른 후킹으로 처리합니다. 먼저 탈옥된 환경의 시스템 프로세스 주입이 필요하므로, 이 코드를 일반 Watch 앱에 링크하는 것으로 같은 효과를 얻을 수 없습니다. [jelbrekTime](https://github.com/tihmstar/jelbrekTime)과 [OverCl0ck](https://github.com/PsychoTea/OverCl0ck)도 구형 버전의 시작 지점과 가정에 의존합니다.
 
-FoldBridge는 앱 `dev.foldbridge.watch`와 확장 `dev.foldbridge.watch.widgets`를 함께 사용합니다. 앱 하나의 실행만 가능해져도 WidgetKit 확장과 재실행까지 해결된 것은 아닙니다. 기존 등록·키·설정을 보존하려면 앱 식별자·키체인 접근 관계·데이터 컨테이너를 유지하는 적용 경로도 있어야 합니다. 이번 후보 중 그 전체를 현재 기기에 제공하는 구현은 없습니다.
+WatchBridge는 앱 `dev.foldbridge.watch`와 확장 `dev.foldbridge.watch.widgets`를 함께 사용합니다. 앱 하나의 실행만 가능해져도 WidgetKit 확장과 재실행까지 해결된 것은 아닙니다. 기존 등록·키·설정을 보존하려면 앱 식별자·키체인 접근 관계·데이터 컨테이너를 유지하는 적용 경로도 있어야 합니다. 이번 후보 중 그 전체를 현재 기기에 제공하는 구현은 없습니다.
 
 ## 결과와 다음에 필요한 자료
 
@@ -98,7 +98,7 @@ FoldBridge는 앱 `dev.foldbridge.watch`와 확장 `dev.foldbridge.watch.widgets
 | [ReProvision Reborn](https://github.com/sohsatoh/ReProvision-Reborn) | 탈옥 iPhone에서 Watch 앱 재서명 지원 | Watch 지원 문구는 있지만 무갱신이 아닌 재서명이며 iPhone 실행 환경 필요 |
 | [iLoader Watch 포크](https://github.com/AndreySemjonov/iloader) | iPhone을 통한 Watch companion 설치 | 설치와 무갱신은 다름. 자동 Watch 갱신도 명시적으로 미지원 |
 | [LiveContainer](https://github.com/LiveContainer/LiveContainer) | 서명된 iOS 호스트 안에서 앱 실행 | watchOS 호스트가 아니며 게스트 위젯·확장도 일반적으로 미지원 |
-| [WatchBox](https://github.com/34306/WatchBox) / [WatchFix](https://github.com/577fkj/WatchFix) / [watched](https://github.com/34306/watched) | iPhone–Watch 버전·페어링 호환성 변경 | FoldBridge 만료를 없애지 않으며 일부 절차는 재페어링을 요구 |
+| [WatchBox](https://github.com/34306/WatchBox) / [WatchFix](https://github.com/577fkj/WatchFix) / [watched](https://github.com/34306/watched) | iPhone–Watch 버전·페어링 호환성 변경 | WatchBridge 만료를 없애지 않으며 일부 절차는 재페어링을 요구 |
 
 ### 새로 찾은 핵심 자료: MissedRevoke
 
@@ -114,7 +114,7 @@ FoldBridge는 앱 `dev.foldbridge.watch`와 확장 `dev.foldbridge.watch.widgets
 
 ### 소스 수준에서 확인한 구분
 
-- AppSync 고정점 [`235aca6cddfbdc9fa87fcb5b2aec2df37ed6d65a`](https://github.com/akemin-dayo/AppSync/blob/235aca6cddfbdc9fa87fcb5b2aec2df37ed6d65a/AppSyncUnified-FrontBoard/AppSyncUnified-FrontBoard.x)의 실행 시 후킹은 신뢰 상태 응답을 바꿉니다. 이는 운영체제 프로세스에 주입되는 코드이며 일반 FoldBridge 앱 내부의 함수로 대체할 수 없습니다.
+- AppSync 고정점 [`235aca6cddfbdc9fa87fcb5b2aec2df37ed6d65a`](https://github.com/akemin-dayo/AppSync/blob/235aca6cddfbdc9fa87fcb5b2aec2df37ed6d65a/AppSyncUnified-FrontBoard/AppSyncUnified-FrontBoard.x)의 실행 시 후킹은 신뢰 상태 응답을 바꿉니다. 이는 운영체제 프로세스에 주입되는 코드이며 일반 WatchBridge 앱 내부의 함수로 대체할 수 없습니다.
 - Splice 고정점 [`7968bb190ffe4f1aa0bac1b8da6fd3003af072be`](https://github.com/franklintra/splice/blob/7968bb190ffe4f1aa0bac1b8da6fd3003af072be/frontends/cli/source/trollstore.d)의 영구 설치 상태 판단은 iOS 취약 버전에 관한 것입니다. `--permanent` 옵션 이름이 현재 watchOS 지원을 뜻하지 않습니다.
 - [LiveContainer FAQ](https://livecontainer.github.io/docs/faq)는 게스트 위젯·확장을 일반적으로 지원하지 않는다고 명시합니다. 현재 차량 제어 WidgetKit 확장을 유지하는 해결책으로 제시하지 않습니다.
 - [SideStore FAQ](https://docs.sidestore.io/docs/faq)는 7일 기간을 갱신한다고 명시합니다. [NoFreeAppLimit](https://havoc.app/package/nofreeapplimit)의 3개 앱 제한 해제는 시간 제한 해제와 다른 기능입니다.
@@ -141,7 +141,7 @@ FoldBridge는 앱 `dev.foldbridge.watch`와 확장 `dev.foldbridge.watch.widgets
 | 워치에 전달 | iOS `MobileDeviceDomain` partial restore 샘플 | 현재 Watch에서 등록·키·설정을 보존하며 적용할 접근 경로. 샘플에는 없음 |
 | 만료 뒤 실행 | 만료 기록과 삭제 동작을 변경하나 `cms_blob`은 그대로 유지 | 원문에 남은 설치·실행 시 시간 검사 처리. 앱과 위젯의 재실행도 포함해야 함 |
 
-위 표의 SQL 동작은 원본 정적 분석입니다. 기기의 실제 시스템 DB를 읽거나 trigger를 실행하지 않았습니다. 원본 샘플은 FoldBridge만 대상으로 하는 범위 제한도 제공하지 않습니다. 이를 그대로 복사해 기존 앱을 보존하는 전용 수정본이라고 부를 수 없습니다.
+위 표의 SQL 동작은 원본 정적 분석입니다. 기기의 실제 시스템 DB를 읽거나 trigger를 실행하지 않았습니다. 원본 샘플은 WatchBridge만 대상으로 하는 범위 제한도 제공하지 않습니다. 이를 그대로 복사해 기존 앱을 보존하는 전용 수정본이라고 부를 수 없습니다.
 
 Apple [TN3125](https://developer.apple.com/documentation/technotes/tn3125-inside-code-signing-provisioning-profiles)는 프로파일 자체가 Apple이 서명한 CMS 데이터이며 실행 가능 기간을 포함한다고 설명합니다. 또한 **watchOS 8부터 DER 프로파일이 필요**하다고 명시합니다. 따라서 DB의 `expires`나 사람이 읽는 plist를 바꾸는 것으로 Apple 서명이 있는 프로파일의 기간이 연장되는 것은 아닙니다. 이 점과 원저자가 명시한 날짜 되돌리기 요구를 함께 보면, SQL 이식만으로 날짜 조작 없는 영구 실행을 달성할 수 없다는 판단입니다. 현재 Watch의 정확한 검사 함수나 우회 지점을 확보한 것은 아닙니다.
 
@@ -151,7 +151,7 @@ Apple [TN3125](https://developer.apple.com/documentation/technotes/tn3125-inside
 
 Apple의 [Watch 복원 문서](https://support.apple.com/guide/watch/restore-applewatch-from-a-backup-apdaa8cc32e8/watchos)는 재페어링할 때 백업을 선택하는 흐름을 설명합니다. 기존 페어링을 유지하며 시스템 DB 하나만 바꾸는 인터페이스를 제공하는 문서가 아닙니다. iOS 27 복원 문제의 [원 보고](https://github.com/libimobiledevice/libimobiledevice/issues/1746)와 [Nugget27](https://github.com/idkwhatt0d0dev/Nugget27)의 전체 백업→변경→복원 우회도 Watch용 무갱신·페어링 보존 구현을 제공하지 않습니다. iOS의 문제를 현재 watchOS에서도 발생한다고 단정하지 않습니다.
 
-현재 FoldBridge는 `dev.foldbridge.watch`와 `dev.foldbridge.watch.widgets` 두 실행 대상을 사용합니다. `WatchStore.swift`는 등록 신원 키를 Keychain에 저장하며 신규 항목에 `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`를 설정합니다. 따라서 앱 설정 파일만 복사하면 등록이 유지된다고 가정할 수 없습니다. 이 코드와 등록 정보를 변경하지 않았습니다.
+현재 WatchBridge는 `dev.foldbridge.watch`와 `dev.foldbridge.watch.widgets` 두 실행 대상을 사용합니다. `WatchStore.swift`는 등록 신원 키를 Keychain에 저장하며 신규 항목에 `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`를 설정합니다. 따라서 앱 설정 파일만 복사하면 등록이 유지된다고 가정할 수 없습니다. 이 코드와 등록 정보를 변경하지 않았습니다.
 
 ### 이번 작업의 결과
 

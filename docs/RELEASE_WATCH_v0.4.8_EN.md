@@ -15,9 +15,9 @@ Connections to a saved peer request Core Bluetooth automatic reconnection. When 
 
 To update in place, keep the Android signing key and application ID, plus the watch Bundle ID and Apple team used by the existing installation. Registration is not required again. New users receive notifications posted after first registration completes.
 
-- [Download Android APK](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-Local-0.5.3.apk)
-- [Watch source ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-watch-0.4.8-source.zip)
-- [Korean/English guide ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-0.4.8-guides-ko-en.zip)
+- [Download Android APK](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.8/FoldBridge-Local-0.5.3.apk)
+- [Watch source ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.8/FoldBridge-watch-0.4.8-source.zip)
+- [Korean/English guide ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.8/FoldBridge-0.4.8-guides-ko-en.zip)
 
 ## Connection scope
 

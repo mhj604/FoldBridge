@@ -15,8 +15,8 @@ struct VehicleControlView: View {
         guard link.connected else { return "먼저 갤럭시와 연결해 주세요." }
         switch link.vehicleState {
         case "ready": return "갤럭시 마이현대 위젯에 연결됐습니다."
-        case "disabled": return "갤럭시 FoldBridge에서 워치 차량 제어를 켜 주세요."
-        case "needs_widget": return "갤럭시 FoldBridge의 차량 제어 설정에서 마이현대 위젯을 연결해 주세요."
+        case "disabled": return "갤럭시 WatchBridge에서 워치 차량 제어를 켜 주세요."
+        case "needs_widget": return "갤럭시 WatchBridge의 차량 제어 설정에서 마이현대 위젯을 연결해 주세요."
         case "choose_buttons": return "갤럭시에서 워치에 표시할 버튼을 선택해 주세요."
         case "no_controls": return "마이현대 위젯의 제어 버튼을 읽지 못했습니다. 갤럭시 위젯 화면을 확인해 주세요."
         case "result_pending": return "제어 버튼을 누르면 결과 안내를 닫고 선택한 제어를 전달합니다."

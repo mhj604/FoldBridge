@@ -1,6 +1,6 @@
-# Windows에서 FoldBridge 진행하기
+# Windows에서 WatchBridge 진행하기
 
-Windows 10과 11에서 갤럭시 앱 빌드, APK 설치, 진단 로그 수집, APNs 중계 서버 실행을 진행하기 위한 도구입니다. 휴대폰과 워치에서 실행하는 앱은 기존 FoldBridge와 같습니다. Windows PC를 알림 중계의 필수 장치로 추가하지 않습니다.
+Windows 10과 11에서 갤럭시 앱 빌드, APK 설치, 진단 로그 수집, APNs 중계 서버 실행을 진행하기 위한 도구입니다. 휴대폰과 워치에서 실행하는 앱은 기존 WatchBridge와 같습니다. Windows PC를 알림 중계의 필수 장치로 추가하지 않습니다.
 
 **watchOS 앱의 네이티브 컴파일과 서명은 여전히 Mac의 Xcode가 필요합니다.** Windows용 Swift를 설치하는 것으로 watchOS SDK가 생기지는 않습니다. Windows에서 워치 프로젝트를 준비한 뒤 보유한 Mac으로 옮길 수 있습니다.
 
@@ -57,7 +57,7 @@ SDK는 `ANDROID_HOME`, `ANDROID_SDK_ROOT`, 기본 Android Studio SDK 경로 순�
 .\windows\FoldBridge.ps1 Install -Serial "휴대폰_ADB_SERIAL"
 ```
 
-설치 후 갤럭시에서 FoldBridge를 열고 근처 기기 권한, 알림 접근과 전달할 앱을 설정합니다. 워치 연결은 기존 안내대로 양쪽 FoldBridge 앱에서 진행합니다. 갤럭시의 일반 블루투스 설정에서 워치를 먼저 연결하지 않습니다.
+설치 후 갤럭시에서 WatchBridge를 열고 근처 기기 권한, 알림 접근과 전달할 앱을 설정합니다. 워치 연결은 기존 안내대로 양쪽 WatchBridge 앱에서 진행합니다. 갤럭시의 일반 블루투스 설정에서 워치를 먼저 연결하지 않습니다.
 
 ## Windows에서 직접 빌드
 
@@ -77,13 +77,13 @@ Windows SDK의 `aapt2.exe`와 `zipalign.exe`를 사용하며 D8과 apksigner는 
 
 ## 진단 로그
 
-갤럭시에서 FoldBridge를 실행한 상태로 다음 명령을 사용합니다.
+갤럭시에서 WatchBridge를 실행한 상태로 다음 명령을 사용합니다.
 
 ```powershell
 .\windows\FoldBridge.ps1 Logs -Output .\foldbridge-log.txt
 ```
 
-현재 FoldBridge 프로세스의 Android 로그 스냅샷을 저장합니다. 워치 수신 지연은 휴대폰 앱의 전달 확인 수치와 실제 워치 표시를 별도로 확인해야 합니다.
+현재 WatchBridge 프로세스의 Android 로그 스냅샷을 저장합니다. 워치 수신 지연은 휴대폰 앱의 전달 확인 수치와 실제 워치 표시를 별도로 확인해야 합니다.
 
 ## Windows에서 중계 서버 실행
 

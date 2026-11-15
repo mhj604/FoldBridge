@@ -1,8 +1,8 @@
-# FoldBridge Local BLE protocol
+# WatchBridge BLE protocol
 
 [한국어](PROTOCOL.md) · **English** · [All guides](README.md)
 
-Current candidate: Android 0.6.14 / Watch 0.5.18; older versioned sections document their original behavior. Android is the GATT server/peripheral; watchOS is the central/client. Initial registration happens inside FoldBridge rather than through a separate manual Android Bluetooth-settings step.
+Current candidate: Android 0.6.14 / Watch 0.5.18; older versioned sections document their original behavior. Android is the GATT server/peripheral; watchOS is the central/client. Initial registration happens inside WatchBridge rather than through a separate manual Android Bluetooth-settings step.
 
 ## Rejoin location activity (Watch 0.5.21)
 
@@ -27,7 +27,7 @@ Wire format and pinned identities are unchanged. Transient Watch background conn
 | Phone → watch | `c62d0201-7de5-4c34-a432-7c838e687a40`, indication |
 | Watch → phone | `c62d0202-7de5-4c34-a432-7c838e687a40`, write with response |
 
-The CCC descriptor is `0x2902`; indication enable and notification disable values are handled. The original FoldBridge profile uses the `c62d0100/0101/0102` family.
+The CCC descriptor is `0x2902`; indication enable and notification disable values are handled. The original WatchBridge profile uses the `c62d0100/0101/0102` family.
 
 Each ATT value starts with an 8-byte big-endian header: message ID (`uint32`), fragment index (`uint16`), and fragment count (`uint16`). Fragments fit the negotiated ATT value limit and a 200-byte cap. Maximum assembled message size is 16,384 bytes, with a 120-second assembly timeout. Assembly is ordered and resets with the session.
 
@@ -70,7 +70,7 @@ The phone retries notifications in memory only during the current authenticated 
 
 The watch checks notification authorization, registers a local notification, then ACKs accepted requests. Known revisions are ACKed without being displayed again. An ACK is not a guarantee of sound, visibility, or user reading. The watch stores up to 512 ID/revision hashes, not a separate title/body inbox.
 
-Source-icon notifications use `FOLDBRIDGE_COMPACT_ICON_ALERT` for a compact long-look body with a 24pt icon. Notifications without icons use `FOLDBRIDGE_NATIVE_ALERT`. Neither attaches icons as media. Grouping uses the source app identity. The system sender remains FoldBridge.
+Source-icon notifications use `FOLDBRIDGE_COMPACT_ICON_ALERT` for a compact long-look body with a 24pt icon. Notifications without icons use `FOLDBRIDGE_NATIVE_ALERT`. Neither attaches icons as media. Grouping uses the source app identity. The system sender remains WatchBridge.
 
 ## Refresh and restoration
 
@@ -119,3 +119,11 @@ Updated TX exposes `READ | INDICATE`. A saved peer starts compact resume before 
 After validating the compact request proof, suspend the old shared-GATT CCC delivery and start with reads. Accept a fresh CCC after encrypted confirm/ready; the connected notification requires both authentication and subscription. The read mailbox contains only the current authentication response/encrypted ready and is cleared on new authentication or teardown. Return the remainder at the requested read offset for the ATT stack rather than truncating to the conservative indication MTU estimate. Deduplicate read/indication responses and retain background tasks through pending reads, ready and subscription setup.
 
 Transport termination alone no longer disables fast authentication. Reconnection does not synthesize discovery completion from cached characteristic objects. Locked authentication was recorded, but sustained connection remains unresolved. [Actual result](LOCKED_AUTH_0.5.22_EN.md).
+
+## 0.5.24 / Android 0.6.18: read delivery
+
+The existing service/TX/RX UUIDs remain unchanged. A READ characteristic, `C62D0203-7DE5-4C34-A432-7C838E687A40`, is added. During saved-peer fast authentication, a watch with location keepalive requested and this capability discovered sends `read_delivery: 1` inside its encrypted `confirm`. The phone confirms the mode in encrypted `ready`. Initial new registration and older peers keep the existing indication path.
+
+Instead of subscribing to TX indications for delivery, the watch reads the new characteristic. Each explicit offset-zero read advances to one existing encrypted frame of at most 200 bytes. Subsequent ATT long-read offsets return the remainder of that same immutable frame. An empty value means no pending frame. Nonempty frames are drained immediately; an empty response schedules another app read approximately two seconds later. Existing assembly, AES-GCM validation and encrypted per-notification acknowledgements remain. Unauthenticated readers are rejected.
+
+The polling timer cannot create watchOS runtime. It runs only while the app is scheduled; the mode is not requested without location keepalive or with older peers. The phone's connected indicator additionally requires a read within ten seconds. When reads resume after runtime loss, old frames/notifications are discarded and a new notification cutoff is established. Physical reconnection authentication also clears the previous backlog as before.

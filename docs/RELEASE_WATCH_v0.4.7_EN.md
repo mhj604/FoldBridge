@@ -13,7 +13,7 @@ Android apps/system services share the GATT database. Device records showed a Sa
 
 Actual watch process restoration still uses pinned peer identity and fresh nonces rather than restoring old session keys. CCC re-subscription, old ATT completion separation, and MTU recovery were improved. Missing display ACKs remain pending instead of cancelling a healthy BLE link.
 
-Expanded notification text and the small source icon keep their previous positions. Only lower spacing is reduced by **4pt**. Font, line height, and icon size are unchanged. [Layout examples](https://github.com/mhj604/FoldBridge/blob/local-ble/docs/NOTIFICATION_LAYOUT_COMPARISON_EN.md)
+Expanded notification text and the small source icon keep their previous positions. Only lower spacing is reduced by **4pt**. Font, line height, and icon size are unchanged. [Layout examples](https://github.com/mhj604/WatchBridge/blob/local-ble/docs/NOTIFICATION_LAYOUT_COMPARISON_EN.md)
 
 ## Recorded physical-device observations
 
@@ -37,4 +37,4 @@ A phone refresh does not unconditionally force-launch a watch app. It uses chara
 
 ## Korean and English guides
 
-Current setup, FAQ, troubleshooting, build/signing, architecture, protocol, notification appearance, and contribution guides are available in both languages. [Documentation index](https://github.com/mhj604/FoldBridge/blob/local-ble/docs/README.md) · [English overview](https://github.com/mhj604/FoldBridge/blob/local-ble/README.en.md)
+Current setup, FAQ, troubleshooting, build/signing, architecture, protocol, notification appearance, and contribution guides are available in both languages. [Documentation index](https://github.com/mhj604/WatchBridge/blob/local-ble/docs/README.md) · [English overview](https://github.com/mhj604/WatchBridge/blob/local-ble/README.en.md)

@@ -177,7 +177,7 @@ class Relay:
 
 def handler_for(relay: Relay):
     class Handler(BaseHTTPRequestHandler):
-        server_version = "FoldBridge"
+        server_version = "WatchBridge"
 
         def setup(self):
             super().setup()
@@ -219,7 +219,7 @@ def handler_for(relay: Relay):
 def main():
     config = Config.environment()
     server = ThreadingHTTPServer((os.environ.get("RELAY_HOST", "127.0.0.1"), int(os.environ.get("RELAY_PORT", "8787"))), handler_for(Relay(config, APNs(config))))
-    print("FoldBridge relay listening. Configure HTTPS reverse proxy before connecting a phone.", flush=True)
+    print("WatchBridge relay listening. Configure HTTPS reverse proxy before connecting a phone.", flush=True)
     server.serve_forever()
 
 

@@ -58,7 +58,7 @@ def connected_device(adb,serial):
 
 
 def doctor(args):
-    print('FoldBridge host:',platform.system(),platform.machine())
+    print('WatchBridge host:',platform.system(),platform.machine())
     print('Python:',platform.python_version())
     failed=False
     try:
@@ -99,14 +99,14 @@ def install(args):
     except subprocess.CalledProcessError:
         print('Installation failed. If signatures differ, use the original signing key. This tool does not uninstall the app or erase its pairing data.')
         raise
-    print('Installed. Open FoldBridge on the phone and grant Nearby devices and notification access.')
+    print('Installed. Open WatchBridge on the phone and grant Nearby devices and notification access.')
 
 
 def logs(args):
     adb=find_adb(args.sdk);serial=connected_device(adb,args.serial)
     result=run(adb,'-s',serial,'shell','pidof','-s','dev.foldbridge',capture_output=True,text=True)
     pid=result.stdout.strip()
-    if not re.fullmatch(r'\d+',pid):raise ValueError('Open FoldBridge on the phone before collecting logs.')
+    if not re.fullmatch(r'\d+',pid):raise ValueError('Open WatchBridge on the phone before collecting logs.')
     command=[adb,'-s',serial,'logcat','-d','--pid',pid,'-v','threadtime']
     if args.output:
         destination=Path(args.output).resolve();destination.parent.mkdir(parents=True,exist_ok=True)
@@ -179,7 +179,7 @@ def prepare_watch(args):
 
 
 def main(argv=None):
-    parser=argparse.ArgumentParser(description='Windows build, install and relay tools for FoldBridge. watchOS still requires a Mac.')
+    parser=argparse.ArgumentParser(description='Windows build, install and relay tools for WatchBridge. watchOS still requires a Mac.')
     parser.add_argument('action',choices=['doctor','build','install','logs','relay-setup','relay-start','prepare-watch'])
     parser.add_argument('--sdk');parser.add_argument('--java-home');parser.add_argument('--serial')
     parser.add_argument('--apk');parser.add_argument('--output');parser.add_argument('--env-file')
@@ -188,7 +188,7 @@ def main(argv=None):
     if sys.version_info<(3,11):parser.error('Python 3.11 or newer is required.')
     try:return globals()[args.action.replace('-','_')](args) or 0
     except (ValueError,OSError,subprocess.CalledProcessError) as error:
-        print('FoldBridge:',error,file=sys.stderr);return 1
+        print('WatchBridge:',error,file=sys.stderr);return 1
 
 
 if __name__=='__main__':raise SystemExit(main())

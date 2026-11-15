@@ -20,7 +20,7 @@ Retain the signing key outside the repository and reuse it for updates. A differ
 
 For cable-free deployment from a Mac, see [wireless ADB installation](WIRELESS_INSTALL_EN.md). You can also download and install the APK directly on the Galaxy.
 
-After installation, grant Nearby devices and notifications, then separately enable the **FoldBridge Local notifications** in notification-access settings. Stop the older FoldBridge connection if present. Register the watch once by comparing both codes; use **Connect watch** for normal operation.
+After installation, grant Nearby devices and notifications, then separately enable the **WatchBridge notifications** in notification-access settings. Stop the older WatchBridge connection if present. Register the watch once by comparing both codes; use **Connect watch** for normal operation.
 
 ## Watch build and installation
 
@@ -34,7 +34,7 @@ The script generates the project and builds a watchOS app. To install, open `wat
 
 Enable developer mode and complete Mac development pairing before installation. The paired iPhone may be needed by USB during initial development setup. Actual notification delivery uses Galaxy–Watch BLE. Free development signing can require rebuilding after provisioning expires.
 
-On the watch, use **Connect phone → Find phone**, choose the Galaxy, compare codes on both devices, and allow notifications. Select the **FoldBridge Local** profile if migrating from the old app. Optional **Settings → Keep connection** requests location runtime and can increase battery consumption.
+On the watch, use **Connect phone → Find phone**, choose the Galaxy, compare codes on both devices, and allow notifications. Select the **WatchBridge** profile if migrating from the old app. Optional **Settings → Keep connection** requests location runtime and can increase battery consumption.
 
 ## Diagnostic tools
 
@@ -63,7 +63,7 @@ adb shell cmd notification allow_listener dev.foldbridge.local/dev.foldbridge.No
 
 The example uses Android user **0** and the distributed app ID. The command may be unavailable or restricted by a different OS/device policy. To restore the earlier blocked setting, set the AppOp to `ignore` and rebind the listener again. This is a device setting, not a permission the APK grants itself; reinstalling or policy changes may reset it. Content withheld by the original app remains unavailable. [Android implementation](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-release/services/core/java/com/android/server/notification/NotificationManagerService.java)
 
-Watch preview expansion is separate: **Settings → Notifications → Tap to Show Full Notification**. FoldBridge cannot change that system setting. [Apple notification settings](https://support.apple.com/108369)
+Watch preview expansion is separate: **Settings → Notifications → Tap to Show Full Notification**. WatchBridge cannot change that system setting. [Apple notification settings](https://support.apple.com/108369)
 
 ## Restarts and recovery
 

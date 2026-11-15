@@ -1,6 +1,10 @@
-# FoldBridge 문서 / Documentation
+# WatchBridge 문서 / Documentation
 
-**[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[다운로드 / Downloads](https://github.com/mhj604/FoldBridge/releases)**
+- [잠금 중 읽기 수신 0.5.24](REA_0.5.24_KO.md) · [English](REA_0.5.24_EN.md)
+
+- [WatchBridge 이름 변경·REA 조사 0.5.23](REA_0.5.23_KO.md) · [English](REA_0.5.23_EN.md)
+
+**[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[다운로드 / Downloads](https://github.com/mhj604/WatchBridge/releases)**
 
 최신 재연결 수정 후보 / Current reconnection candidate: **Android 0.6.16 / 38 · Watch 0.5.22 / 53** — [한국어](LOCKED_AUTH_0.5.22_KO.md) · [English](LOCKED_AUTH_0.5.22_EN.md). 아래 이전 배포 표와 구분합니다. / The older release table below is retained separately.
 
@@ -57,7 +61,7 @@ New users: start with **Install and connect**. Current release: **Android 0.6.7-
 - **Updates:** retain the Android signing key and watch Bundle ID/team. Try Refresh connection on one device for ordinary connection problems.
 - **Background:** watchOS controls runtime opportunities and budgets. Opening the watch app once may be needed after execution stops.
 
-과거 0.4.9 문서 묶음은 [한글·영어 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip)에 보존되어 있습니다. 최신 안내는 위 표를 사용하세요. / [Archived 0.4.9 Korean/English guide bundle](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) contains the older documentation; use the table above for current guides.
+과거 0.4.9 문서 묶음은 [한글·영어 문서 ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip)에 보존되어 있습니다. 최신 안내는 위 표를 사용하세요. / [Archived 0.4.9 Korean/English guide bundle](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) contains the older documentation; use the table above for current guides.
 
 ## 이전 문서 / Archives
 

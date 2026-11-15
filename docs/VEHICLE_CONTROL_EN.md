@@ -2,13 +2,13 @@
 
 [한국어](VEHICLE_CONTROL_KO.md) · **English** · [Documentation](README.md)
 
-Available with Android **0.6.0-local / code 16** and Watch **0.5.0 / build 24**. Start vehicle controls in the FoldBridge watch app. This does not redirect the original MyHyundai watch app's iPhone connection.
+Available with Android **0.6.0-local / code 16** and Watch **0.5.0 / build 24**. Start vehicle controls in the WatchBridge watch app. This does not redirect the original MyHyundai watch app's iPhone connection.
 
 ## How it works
 
-`Watch FoldBridge → existing encrypted BLE → Galaxy FoldBridge → official MyHyundai widget button`
+`Watch WatchBridge → existing encrypted BLE → Galaxy WatchBridge → official MyHyundai widget button`
 
-FoldBridge hosts a widget supplied by the Korean MyHyundai Android app (`com.hyundai.oneapp.kr`) using Android AppWidgetHost. The owner authorizes widget binding and selects the controls to expose. FoldBridge does not store MyHyundai passwords or vehicle PINs or call private vehicle APIs.
+WatchBridge hosts a widget supplied by the Korean MyHyundai Android app (`com.hyundai.oneapp.kr`) using Android AppWidgetHost. The owner authorizes widget binding and selects the controls to expose. WatchBridge does not store MyHyundai passwords or vehicle PINs or call private vehicle APIs.
 
 The watch-to-phone link needs no server or iPhone relay. **Actual remote vehicle service requires internet connectivity for Galaxy MyHyundai and the vehicle, plus the applicable service subscription and conditions.** Offline BLE notification forwarding and remote vehicle service are separate features.
 
@@ -16,12 +16,12 @@ The watch-to-phone link needs no server or iPhone relay. **Actual remote vehicle
 
 1. Update both apps and keep the existing BLE registration. No new watch pairing is required.
 2. Sign in and register your vehicle in the official Galaxy MyHyundai app.
-3. Open Galaxy FoldBridge Local → **Vehicle control settings → Connect MyHyundai widget**.
+3. Open Galaxy WatchBridge → **Vehicle control settings → Connect MyHyundai widget**.
 4. Choose an official control widget, allow Android widget binding, and complete the vehicle/authentication configuration in MyHyundai if shown.
 5. Select controls in **Buttons to show on watch**. The checkboxes select the watch catalogue; tapping a control inside the actual official widget may operate the vehicle.
-6. Open watch **FoldBridge → Vehicle controls**. It displays the selected official button labels. Use **Refresh control list** after changes.
+6. Open watch **WatchBridge → Vehicle controls**. It displays the selected official button labels. Use **Refresh control list** after changes.
 
-Turning off Watch vehicle controls disables the catalogue and dispatch. Disconnect vehicle controls removes only FoldBridge's hosted widget and selections; it does not remove the Hyundai account or BLE registration.
+Turning off Watch vehicle controls disables the catalogue and dispatch. Disconnect vehicle controls removes only WatchBridge's hosted widget and selections; it does not remove the Hyundai account or BLE registration.
 
 ## Commands and responses
 
@@ -44,19 +44,19 @@ No automated test operates a vehicle. This implementation provides the official-
 
 ## One vehicle control widget (Watch 0.5.5 / build 29)
 
-Smart Stack and watch faces now offer one **Vehicle controls** widget. Tap it to open the FoldBridge control panel, then choose **Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors**. Opening the widget alone sends no vehicle command. The widget kind is unchanged, so an existing widget can refresh to this layout. Separate action recommendations and the widget action picker are removed.
+Smart Stack and watch faces now offer one **Vehicle controls** widget. Tap it to open the WatchBridge control panel, then choose **Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors**. Opening the widget alone sends no vehicle command. The widget kind is unchanged, so an existing widget can refresh to this layout. Separate action recommendations and the widget action picker are removed.
 
-1. Open Smart Stack, touch and hold, then choose **+ → FoldBridge → Vehicle controls**. For a watch face, use **Edit → Complications → FoldBridge vehicle controls**.
+1. Open Smart Stack, touch and hold, then choose **+ → WatchBridge → Vehicle controls**. For a watch face, use **Edit → Complications → WatchBridge vehicle controls**.
 2. Tap the widget to open the panel and prepare the Galaxy connection and current catalogue.
 3. Choose the desired vehicle button. Saved quick assignments are retained. A uniquely matching explicit label can be assigned automatically; use **Quick control settings** if an assignment is needed.
 
-A command is sent once only when the assigned ID and label match the current catalogue. Connection/catalogue requests time out after 15 seconds without deferred execution. Lost replies never automatically resend a vehicle command. Widget labels follow the watch system language; the panel uses the FoldBridge language setting.
+A command is sent once only when the assigned ID and label match the current catalogue. Connection/catalogue requests time out after 15 seconds without deferred execution. Lost replies never automatically resend a vehicle command. Widget labels follow the watch system language; the panel uses the WatchBridge language setting.
 
 ## Automatically acknowledge result notices (Android 0.6.3 / Watch 0.5.6)
 
 Recommended versions: Android **0.6.3-local / code 19**, Watch **0.5.7 / build 31**. The official widget can replace its controls with an **OK** result notice after incomplete, successful, approved or failed requests. An empty control list alone does not indicate a lost login.
 
-Tap **Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors** in the watch control panel. When a result notice is present, FoldBridge acknowledges it once, fetches a fresh catalogue and sends the action you just chose once the controls are ready. A separate recovery tap or second action tap is no longer required. Merely opening the widget does not start this sequence.
+Tap **Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors** in the watch control panel. When a result notice is present, WatchBridge acknowledges it once, fetches a fresh catalogue and sends the action you just chose once the controls are ready. A separate recovery tap or second action tap is no longer required. Merely opening the widget does not start this sequence.
 
 Recognition is based on a unique **확인·닫기 / OK·Close** acknowledgement inside the official widget rather than one exact message body. Clickable notice containers containing words such as “engine start” are not treated as vehicle controls. Authentication prompts and questions authorizing vehicle operations are distinguished from result notices.
 

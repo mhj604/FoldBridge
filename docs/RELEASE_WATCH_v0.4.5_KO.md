@@ -1,4 +1,4 @@
-# FoldBridge Watch 0.4.5 — 기본 알림과 비교한 상세 본문 조정
+# WatchBridge Watch 0.4.5 — 기본 알림과 비교한 상세 본문 조정
 
 Watch **0.4.5 / build 16**, Android **0.5.0-local 유지**.
 
@@ -6,6 +6,6 @@ Watch **0.4.5 / build 16**, Android **0.5.0-local 유지**.
 
 Ultra 2 / watchOS 27.2 시뮬레이터에서 동일 예문으로 기본 알림과 비교했습니다. 한국어 예문의 글자 크기·왼쪽 위치·줄 간격이 일치합니다. 영어와 여러 문단에서는 일부 줄바꿈 차이가 남습니다. 짧은 알림·긴 본문·이모지 표시도 확인했습니다. 시스템 카드 구성 차이로 본문 시작점은 약 6pt 아래에 남습니다. 전체 화면이 완전히 같다고 주장하지 않습니다.
 
-[화면과 측정 결과](https://github.com/mhj604/FoldBridge/blob/local-ble/docs/NOTIFICATION_LAYOUT_COMPARISON_KO.md)
+[화면과 측정 결과](https://github.com/mhj604/WatchBridge/blob/local-ble/docs/NOTIFICATION_LAYOUT_COMPARISON_KO.md)
 
 동일 Team / Bundle ID로 업데이트하세요. Android 재설치와 새 워치 등록은 필요하지 않습니다. 사진 첨부나 알림 재발송은 추가하지 않았습니다. 비교용 코드와 인위적인 알림은 시뮬레이터에만 사용했습니다.

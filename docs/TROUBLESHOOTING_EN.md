@@ -13,13 +13,13 @@ Refresh preserves registration. Healthy sessions retain their queue; reconnectio
 
 Watch 0.4.9 retains OS automatic reconnection and removes the foreground requirement and 20-second expiry from recovery scanning. Android 0.5.4 resumes advertising after disconnect without closing a healthy GATT server for advertising retries. Radio range, interference, power, and OS scheduling can still cause interruptions or delays.
 
-A locked/background watch needs an OS-retained BLE connection and available watchOS runtime. The phone button cannot unconditionally launch a watch app. If a background-limit message appears or recovery stalls, open FoldBridge on the watch once. Force-quit, Bluetooth off, and being outside range need separate attention. [Background tasks](https://developer.apple.com/documentation/watchkit/using-background-tasks)
+A locked/background watch needs an OS-retained BLE connection and available watchOS runtime. The phone button cannot unconditionally launch a watch app. If a background-limit message appears or recovery stalls, open WatchBridge on the watch once. Force-quit, Bluetooth off, and being outside range need separate attention. [Background tasks](https://developer.apple.com/documentation/watchkit/using-background-tasks)
 
 If the error says the **saved peer key differs**, check whether an app was removed/reinstalled or a device/key changed. That situation may require forgetting registration on both sides and comparing new codes. A simple timeout usually does not.
 
 ## Connected, but no notifications
 
-- Android's own notification permission and **notification access to other apps** are separate. Enable **FoldBridge Local notifications** in notification-access settings.
+- Android's own notification permission and **notification access to other apps** are separate. Enable **WatchBridge notifications** in notification-access settings.
 - Check the selected apps, watch notification permission, and Focus settings.
 - Phone diagnostics separate collected notifications, delivery requests, and watch acknowledgments. Watch settings show received/display-request counts. These cumulative counters need not match because duplicates can be acknowledged again.
 - Acknowledgment means the watch accepted a local display request or recognized a revision. It does not prove the user saw, heard, or read it.
@@ -35,7 +35,7 @@ Leave **Charging status alerts** off to exclude Samsung System UI charging updat
 
 ## The original icon does not appear everywhere
 
-The system popup/header and Notification Center system icon show FoldBridge. Source app icons appear only in the expanded body when available. Notifications without an icon use the system text layout. [Display scope](NOTIFICATION_DISPLAY_LIMITS_EN.md)
+The system popup/header and Notification Center system icon show WatchBridge. Source app icons appear only in the expanded body when available. Notifications without an icon use the system text layout. [Display scope](NOTIFICATION_DISPLAY_LIMITS_EN.md)
 
 Old versions used source icons as attachments, which made them oversized media previews or card thumbnails. Current builds do not attach them as images. Previously delivered notifications keep their old attachments; updating does not delete or resend them.
 
@@ -43,11 +43,11 @@ Old versions used source icons as attachments, which made them oversized media p
 
 Watch 0.4.7/build 21 uses a bounded-width SwiftUI body with a 24pt icon overlay. It keeps the text/icon position from 0.4.6 and trims the bottom spacing by 4pt on watchOS 27+. Text uses a 16pt baseline size, zero extra paragraph gap, and adjusted body line height on watchOS 26+. Long content uses system scrolling. System popup and expanded-body templates remain different. [Screenshots and layout history](NOTIFICATION_LAYOUT_COMPARISON_EN.md)
 
-The FoldBridge app icon was also recentered in earlier releases. If the system still shows an older cached app icon, open the app again or restart the watch; uninstalling is not required solely to refresh an icon.
+The WatchBridge app icon was also recentered in earlier releases. If the system still shows an older cached app icon, open the app again or restart the watch; uninstalling is not required solely to refresh an icon.
 
 ## Cannot install the watch app
 
-Use your own Apple team, unique Bundle ID, and development-device registration. Keep the watch unlocked and maintain the Mac development connection during installation. A compatible full Xcode installation is required. Pairing with the Mac is separate from registering the Galaxy inside FoldBridge. [Installation steps](QUICK_START_EN.md#4-install-the-watch-app-with-your-account)
+Use your own Apple team, unique Bundle ID, and development-device registration. Keep the watch unlocked and maintain the Mac development connection during installation. A compatible full Xcode installation is required. Pairing with the Mac is separate from registering the Galaxy inside WatchBridge. [Installation steps](QUICK_START_EN.md#4-install-the-watch-app-with-your-account)
 
 ## Android update reports a signature mismatch
 
@@ -55,4 +55,4 @@ Use the same signing key as the existing APK. A self-built APK has a different k
 
 ## Asking for help
 
-Open a [GitHub issue](https://github.com/mhj604/FoldBridge/issues) in Korean or English. Include both app versions, phone/watch models and OS versions, what you pressed, and whether the watch app was visible, backgrounded, or force-quit. Connection stage and error text are useful; private messages, device identifiers, signing keys, and raw personal logs are not needed.
+Open a [GitHub issue](https://github.com/mhj604/WatchBridge/issues) in Korean or English. Include both app versions, phone/watch models and OS versions, what you pressed, and whether the watch app was visible, backgrounded, or force-quit. Connection stage and error text are useful; private messages, device identifiers, signing keys, and raw personal logs are not needed.

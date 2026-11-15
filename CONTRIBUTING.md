@@ -5,8 +5,8 @@
 `local-ble`은 서버 없는 BLE 사용 구성을 찾기 위한 브랜치입니다. `main`에도 현재 변경을 반영합니다. 수정할 때는 최신 브랜치에서 자신의 작업 브랜치를 만들어 PR을 보내 주세요.
 
 ```sh
-git clone --branch local-ble https://github.com/mhj604/FoldBridge.git
-cd FoldBridge
+git clone --branch local-ble https://github.com/mhj604/WatchBridge.git
+cd WatchBridge
 git switch -c fix/your-change
 ```
 

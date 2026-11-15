@@ -24,7 +24,7 @@ Bluetooth 범위, 전파 간섭, 전원과 watchOS 실행 제한 때문에 물�
 
 기존 앱을 삭제하지 않고 같은 Android 서명 키와 워치 Bundle ID/Team으로 업데이트합니다. 다시 코드로 등록할 필요는 없습니다.
 
-- [Android APK](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-Local-0.5.4.apk)
-- [워치 소스 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-watch-0.4.9-source.zip)
-- [한글·영어 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip)
+- [Android APK](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-Local-0.5.4.apk)
+- [워치 소스 ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-watch-0.4.9-source.zip)
+- [한글·영어 문서 ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip)
 - [케이블 없는 갤럭시 업데이트](WIRELESS_INSTALL_KO.md)

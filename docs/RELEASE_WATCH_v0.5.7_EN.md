@@ -4,14 +4,14 @@
 
 ## Versions and downloads
 
-- Android: **0.6.4-local / code 20** — [Download APK](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.4.apk)
-- Apple Watch: **0.5.7 / build 31** — [Source and Xcode project](https://github.com/mhj604/FoldBridge/tree/local-ble/watch)
+- Android: **0.6.4-local / code 20** — [Download APK](https://github.com/mhj604/WatchBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.4.apk)
+- Apple Watch: **0.5.7 / build 31** — [Source and Xcode project](https://github.com/mhj604/WatchBridge/tree/local-ble/watch)
 - Both `main` and `local-ble` contain the latest source and guides.
 - Start with [Install and connect](QUICK_START_EN.md) or [Build and settings](BUILD_AND_SETUP_EN.md). Sign the watch app using your own Apple team.
 
 ## Notifications and connectivity
 
-Notifications travel directly over encrypted Bluetooth LE without a server, internet connection or iPhone relay. Initial watch setup and developer installation are separate procedures. Titles, bodies and available original app icons are forwarded. Read them in watchOS Notification Center; there is no separate in-app message inbox. Original icons appear in expanded content; the initial system summary uses the FoldBridge name and icon. [Display scope](NOTIFICATION_DISPLAY_LIMITS_EN.md)
+Notifications travel directly over encrypted Bluetooth LE without a server, internet connection or iPhone relay. Initial watch setup and developer installation are separate procedures. Titles, bodies and available original app icons are forwarded. Read them in watchOS Notification Center; there is no separate in-app message inbox. Original icons appear in expanded content; the initial system summary uses the WatchBridge name and icon. [Display scope](NOTIFICATION_DISPLAY_LIMITS_EN.md)
 
 Repeated charging-percentage updates are filtered by default. Registration and reconnection forward new notifications posted after authentication, without replaying an offline backlog.
 
@@ -19,7 +19,7 @@ Saved peer keys are retained. Pending system connections and service-filtered di
 
 ## MyHyundai vehicle controls
 
-The path is `Watch FoldBridge → BLE → Galaxy FoldBridge → official MyHyundai widget`. It does not redirect the original MyHyundai watch app. Actual remote vehicle service requires internet connectivity for Galaxy MyHyundai and the vehicle.
+The path is `Watch WatchBridge → BLE → Galaxy WatchBridge → official MyHyundai widget`. It does not redirect the original MyHyundai watch app. Actual remote vehicle service requires internet connectivity for Galaxy MyHyundai and the vehicle.
 
 One **Vehicle controls** widget in Smart Stack or on the watch face opens the panel. Its four buttons match the current official Galaxy widget:
 

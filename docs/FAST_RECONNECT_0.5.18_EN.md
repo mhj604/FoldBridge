@@ -2,7 +2,7 @@
 
 [한국어](FAST_RECONNECT_0.5.18_KO.md) · [Documentation](README.md)
 
-Android **0.6.14-local / code 32** and Watch/widget **0.5.18 / build 44** were installed in place on 2026-11-15. Registration, identity and peer keys, and vehicle settings are retained. [Download APK](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.18/FoldBridge-Local-0.6.14.apk).
+Android **0.6.14-local / code 32** and Watch/widget **0.5.18 / build 44** were installed in place on 2026-11-15. Registration, identity and peer keys, and vehicle settings are retained. [Download APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.18/FoldBridge-Local-0.6.14.apk).
 
 ## Execution-state correction (2026-11-15)
 

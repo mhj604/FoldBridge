@@ -1,50 +1,54 @@
-# FoldBridge Local
+# WatchBridge
 
 [한국어](README.md) · **English** · [Documentation / 문서](docs/README.md)
 
-This branch contains the automatic-recovery and fast-authentication candidate: Android **0.6.16-local / code 38**, Watch **0.5.22 / build 53**, preserving registration. [Deployment results and remaining conditions](docs/LOCKED_AUTH_0.5.22_EN.md).
+The app and project are now named **WatchBridge**. Installation identifiers, internal protocol values and source paths remain unchanged to preserve existing registration, encryption keys and vehicle settings. Historical release filenames also remain unchanged, and older binaries may still show the previous app name.
 
-**Phone-only authentication while locked was recorded, but recurring termination and sustained connection remain unresolved. This is a candidate.**
+This branch contains the automatic-recovery and fast-authentication candidate: Android **0.6.18-local / code 40**, Watch **0.5.24 / build 57**, preserving registration. [Deployment results and remaining conditions](docs/REA_0.5.24_EN.md).
+
+**Locked background read delivery and a phone acknowledgement were recorded. Prolonged lock and physical return are separate conditions; this remains a candidate.**
 
 Forward notifications **directly from a Galaxy phone to Apple Watch over Bluetooth LE**. Notification delivery uses the two devices: no server, internet connection, iPhone relay, root access, or workout/audio session is needed.
 
 Initial Apple Watch setup still requires a paired iPhone. Installing the watch app requires a Mac, Xcode, and your own Apple signing team. Background delivery depends on watchOS runtime availability; the optional location keepalive mode is experimental.
 
-<img src="watch/FoldBridge/Assets.xcassets/FoldBridgeIcon.appiconset/FoldBridgeIcon.png" width="96" alt="FoldBridge app icon">
+<img src="watch/FoldBridge/Assets.xcassets/FoldBridgeIcon.appiconset/FoldBridgeIcon.png" width="96" alt="WatchBridge app icon">
+
+[Download WatchBridge 0.6.18 APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24/WatchBridge-0.6.18.apk) · [Candidate notes](docs/REA_0.5.24_EN.md)
 
 ## Start here
 
 Use the candidate link above for current fixes. The 0.6.7/0.5.8 download table below describes the preceding release.
 
-**[Current release guide](docs/LOCKED_AUTH_0.5.22_EN.md)**
+**[Current release guide](docs/REA_0.5.24_EN.md)**
 
 | What you need | Download or guide |
 | --- | --- |
-| Android **0.6.7-local · code 23** | [Download APK](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.7.apk) |
-| Apple Watch **0.5.8 · build 32** | [Current source](https://github.com/mhj604/FoldBridge/archive/refs/heads/local-ble.zip) · [Xcode project](watch/FoldBridge.xcodeproj) |
+| Android **0.6.7-local · code 23** | [Download APK](https://github.com/mhj604/WatchBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.7.apk) |
+| Apple Watch **0.5.8 · build 32** | [Current source](https://github.com/mhj604/WatchBridge/archive/refs/heads/local-ble.zip) · [Xcode project](watch/FoldBridge.xcodeproj) |
 | First installation | **[Step-by-step setup](docs/QUICK_START_EN.md)** |
 | Common questions | [FAQ](docs/FAQ_EN.md) |
 | Connection or notification problems | [Troubleshooting](docs/TROUBLESHOOTING_EN.md) |
-| Latest downloads and changes | [Releases](https://github.com/mhj604/FoldBridge/releases) · [Archived 0.4.9 guide ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
+| Latest downloads and changes | [Releases](https://github.com/mhj604/WatchBridge/releases) · [Archived 0.4.9 guide ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
 
-1. Install **FoldBridge Local** on the phone. Grant Nearby devices, notifications, and **notification access** for the relay service.
+1. Install **WatchBridge** on the phone. Grant Nearby devices, notifications, and **notification access** for the relay service.
 2. Open `watch/FoldBridge.xcodeproj` on your Mac. Select your Apple team, a unique Bundle ID, and your physical watch; press **Run**.
 3. On the phone, open **Settings → Pair a new watch**. On the watch, open **Connect phone → Find phone** and select the Galaxy. Compare the codes and confirm on both devices.
 4. Allow watch notifications. Optionally enable **Settings → Keep connection** and grant location permission.
 5. Keep the phone's connection service running and both devices within Bluetooth range. Use **Refresh connection** on either device when needed.
 
-Both `main` and [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) contain the current source and Korean/English guides. The `relay/`, `windows/`, and `legacy/` folders preserve older designs and are not needed for Local operation.
+Both `main` and [`local-ble`](https://github.com/mhj604/WatchBridge/tree/local-ble) contain the current source and Korean/English guides. The `relay/`, `windows/`, and `legacy/` folders preserve older designs and are not needed for Local operation.
 
 ```sh
-git clone --branch local-ble https://github.com/mhj604/FoldBridge.git
-cd FoldBridge
+git clone --branch local-ble https://github.com/mhj604/WatchBridge.git
+cd WatchBridge
 open watch/FoldBridge.xcodeproj
 ```
 
 
 ## MyHyundai through Galaxy
 
-Android **0.6.7-local** / Watch **0.5.8** adds **FoldBridge watch → BLE → Galaxy official MyHyundai widget**. It does not redirect the original MyHyundai watch app. Bind the widget, choose controls on Galaxy, then open **Vehicle controls** in FoldBridge on the watch. A single **Vehicle controls widget** in Smart Stack or on a watch face opens the control panel. Choose Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors inside the panel. Actual vehicle service requires internet and MyHyundai authentication; widget invocation is not vehicle success. **[Setup and scope](docs/VEHICLE_CONTROL_EN.md)** · [0.6.7 APK](artifacts/android/FoldBridge-Local-0.6.7.apk)
+Android **0.6.7-local** / Watch **0.5.8** adds **WatchBridge watch → BLE → Galaxy official MyHyundai widget**. It does not redirect the original MyHyundai watch app. Bind the widget, choose controls on Galaxy, then open **Vehicle controls** in WatchBridge on the watch. A single **Vehicle controls widget** in Smart Stack or on a watch face opens the control panel. Choose Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors inside the panel. Actual vehicle service requires internet and MyHyundai authentication; widget invocation is not vehicle success. **[Setup and scope](docs/VEHICLE_CONTROL_EN.md)** · [0.6.7 APK](artifacts/android/FoldBridge-Local-0.6.7.apk)
 
 ## Everyday use
 
@@ -62,7 +66,7 @@ Each app has **Settings → Language / 언어 → System default / 한국어 / E
 
 ## What watch notifications look like
 
-The initial system popup, Notification Center cards, and system header identify **FoldBridge** as the sending app. When a source icon is available, the **expanded notification body** shows it at **24pt**, alongside the original app name and message. Without an icon, the system text layout is used.
+The initial system popup, Notification Center cards, and system header identify **WatchBridge** as the sending app. When a source icon is available, the **expanded notification body** shows it at **24pt**, alongside the original app name and message. Without an icon, the system text layout is used.
 
 Source icons are not image attachments, so they do not become oversized media previews. The current build retains the compact expanded-body layout; Watch 0.4.7 kept the text/icon placement from 0.4.6 and reduced only the card's lower spacing by **4pt**. [Layout examples](docs/NOTIFICATION_LAYOUT_COMPARISON_EN.md) · [Display behavior and scope](docs/NOTIFICATION_DISPLAY_LIMITS_EN.md)
 

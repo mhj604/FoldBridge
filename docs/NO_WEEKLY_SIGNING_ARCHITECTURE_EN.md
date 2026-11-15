@@ -18,7 +18,7 @@ No implementation replacing this transport with ordinary Android Bluetooth APIs 
 
 Moving development to Windows or VS Code does not remove watchOS signing requirements. This investigation considers changing distribution or eliminating the custom Watch executable. No ready-to-use replacement was established that satisfies every condition: free, no manual renewal, no iPhone during normal use, local Bluetooth notifications without an external server, and vehicle control.
 
-The strongest direction for preserving existing features is **App Store distribution of FoldBridge**. It can be free for users, but a publisher must maintain membership or qualify for a fee waiver. An Android implementation of Apple's system protocol is a separate possibility. A no-root USB proposal exists, but current Fold7 / watchOS 27.2 operation is not established.
+The strongest direction for preserving existing features is **App Store distribution of WatchBridge**. It can be free for users, but a publisher must maintain membership or qualify for a fee waiver. An Android implementation of Apple's system protocol is a separate possibility. A no-root USB proposal exists, but current Fold7 / watchOS 27.2 operation is not established.
 
 The research covered 65 search-result slots, including duplicates, and primary documentation and source. Proposals are not device results. No apps, registrations, device connections, or canceled renewal schedules were changed. No system logs or vehicle commands were used.
 
@@ -26,23 +26,23 @@ The research covered 65 search-result slots, including duplicates, and primary d
 
 | Direction | Weekly user renewal | Cost | Feature boundary |
 | --- | --- | --- | --- |
-| FoldBridge on the App Store | Removed | Free to users; publisher membership or waiver needed | Retains the app/widget design, subject to publication work and review |
+| WatchBridge on the App Store | Removed | Free to users; publisher membership or waiver needed | Retains the app/widget design, subject to publication work and review |
 | Android system-protocol implementation | No custom Watch app to renew | Free software; no-root proposal requires USB Bluetooth hardware | Current-device support unestablished; vehicle widget needs replacement |
 | Built-in Shortcuts → Galaxy local HTTP | No custom Watch binary for this path | Built-in Shortcuts is free | Vehicle-control proposal only; local networking needed; no background notification replacement |
 | Existing free Bluetooth Watch client | No user development-profile renewal | Free candidate exists | Berkanan Lite receives only in the foreground on Watch |
 | Merge | No user development-profile renewal | Subscription required | Excluded by the free requirement; current vehicle-widget integration unestablished |
 
-## Distribution while retaining FoldBridge
+## Distribution while retaining WatchBridge
 
 Apple supports [watch-only App Store distribution without an iOS companion](https://help.apple.com/xcode/mac/current/en.lproj/devaba4602fd.html). This can remove the user's weekly Personal Team profile refresh without adding an iPhone runtime relay. Apple signing still exists. Distribution alone does not fix watchOS background execution or Bluetooth reconnection behavior.
 
-An enrolled partner could publish FoldBridge free to users, retaining publisher costs and responsibilities. No partner has been secured. Alternatively, [Apple's fee waiver](https://developer.apple.com/help/account/membership/fee-waivers/) covers qualifying nonprofit legal entities, accredited educational institutions, and government entities. Individuals, sole proprietors, and single-person businesses are excluded. Open-source status alone is insufficient. Annual eligibility confirmation still requires publisher operation.
+An enrolled partner could publish WatchBridge free to users, retaining publisher costs and responsibilities. No partner has been secured. Alternatively, [Apple's fee waiver](https://developer.apple.com/help/account/membership/fee-waivers/) covers qualifying nonprofit legal entities, accredited educational institutions, and government entities. Individuals, sole proprietors, and single-person businesses are excluded. Open-source status alone is insufficient. Annual eligibility confirmation still requires publisher operation.
 
 [TestFlight](https://testflight.apple.com/) builds expire after 90 days. [Unlisted distribution](https://developer.apple.com/support/unlisted-app-distribution/) still requires App Store review and is not free personal permanent signing.
 
 ## Removing the custom Watch client
 
-[`apple_watch_connector`](https://github.com/LordixDemon/apple_watch_connector) implements system communications on Android, offering a direction toward system notifications without a FoldBridge Watch app. Its main device evidence concerns Ultra 2 / watchOS 26.2. Its built-in Android Bluetooth path requires root and restricts supported hardware. This is not evidence for the current unrooted Fold7 / watchOS 27.2.
+[`apple_watch_connector`](https://github.com/LordixDemon/apple_watch_connector) implements system communications on Android, offering a direction toward system notifications without a WatchBridge Watch app. Its main device evidence concerns Ultra 2 / watchOS 26.2. Its built-in Android Bluetooth path requires root and restricts supported hardware. This is not evidence for the current unrooted Fold7 / watchOS 27.2.
 
 [PR #8](https://github.com/LordixDemon/apple_watch_connector/pull/8) proposes an external USB Bluetooth transport using Android USB Host APIs. It is **open and unmerged** as of the research date; the author reports no hardware confirmation. It does not make Shizuku an alternative to root for the built-in controller. Software is free, but purchasing an adapter would violate a zero-total-cost condition.
 

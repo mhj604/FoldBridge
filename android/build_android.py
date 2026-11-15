@@ -61,7 +61,7 @@ class Toolchain:
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--sdk', default=os.environ.get('ANDROID_HOME') or os.environ.get('ANDROID_SDK_ROOT'))
-    parser.add_argument('--output', default='FoldBridge-Local.apk')
+    parser.add_argument('--output', default='WatchBridge.apk')
     parser.add_argument('--application-id',default='dev.foldbridge.local')
     parser.add_argument('--keystore',help='Reuse the local signing key for future updates')
     parser.add_argument('--skip-signature-check',action='store_true')
@@ -91,7 +91,7 @@ def main():
         if name.startswith('.'):element.set(android_name,'dev.foldbridge'+name)
     manifest.write(work/'AndroidManifest.xml',encoding='utf-8',xml_declaration=True)
     run(tools.aapt2,'compile','--dir',root/'app/src/main/res','-o',work/'compiled-res.zip')
-    run(tools.aapt2,'link','-I',jar,'--manifest',work/'AndroidManifest.xml','--java',work/'generated','--min-sdk-version','33','--target-sdk-version','36','--version-code','38','--version-name','0.6.16-local','-o',work/'base.apk',work/'compiled-res.zip')
+    run(tools.aapt2,'link','-I',jar,'--manifest',work/'AndroidManifest.xml','--java',work/'generated','--min-sdk-version','33','--target-sdk-version','36','--version-code','40','--version-name','0.6.18-local','-o',work/'base.apk',work/'compiled-res.zip')
     sources=sorted((root/'app/src/main/java').rglob('*.java'))+sorted((work/'generated').rglob('*.java'))
     run(tools.javac,'-encoding','UTF-8','--release','17','-classpath',jar,'-d',work/'classes',*sources)
     run(*tools.dex_command('--lib',jar,'--min-api','33','--output',work/'dex',*sorted((work/'classes').rglob('*.class'))))
@@ -100,7 +100,7 @@ def main():
     run(tools.zipalign,'-f','4',work/'base.apk',work/'aligned.apk')
     key=Path(args.keystore).expanduser().resolve() if args.keystore else work/'debug.keystore'
     if not key.exists():
-        run(tools.keytool,'-genkeypair','-keystore',key,'-storepass','android','-keypass','android','-alias','androiddebugkey','-keyalg','RSA','-keysize','2048','-validity','3650','-dname','CN=FoldBridge Local Debug,O=Local,C=KR')
+        run(tools.keytool,'-genkeypair','-keystore',key,'-storepass','android','-keypass','android','-alias','androiddebugkey','-keyalg','RSA','-keysize','2048','-validity','3650','-dname','CN=WatchBridge Debug,O=Local,C=KR')
     output=Path(args.output).resolve(); output.parent.mkdir(parents=True,exist_ok=True)
     run(*tools.signer_command('sign','--ks',key,'--ks-pass','pass:android','--key-pass','pass:android','--out',output,work/'aligned.apk'))
     if not args.skip_signature_check:run(*tools.signer_command('verify','--verbose',output))

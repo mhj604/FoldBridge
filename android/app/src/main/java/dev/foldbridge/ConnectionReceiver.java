@@ -25,6 +25,6 @@ public final class ConnectionReceiver extends BroadcastReceiver {
                 ||context.checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE)!=PackageManager.PERMISSION_GRANTED)return;
         if(BridgeService.instance!=null) {BridgeService.instance.resumeBluetooth();return;}
         try {context.startForegroundService(new Intent(context,BridgeService.class));}
-        catch(RuntimeException error){BridgeService.error="연결 자동 시작이 제한됐습니다. Local 앱에서 연결 시작을 눌러 주세요.";}
+        catch(RuntimeException error){BridgeService.error="연결 자동 시작이 제한됐습니다. WatchBridge에서 워치 연결을 눌러 주세요.";}
     }
 }

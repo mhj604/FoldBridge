@@ -13,7 +13,7 @@ Android는 여러 앱과 시스템 서비스가 GATT 데이터베이스를 공�
 
 워치 프로세스가 복원된 경우에는 이전 세션 키를 재사용하지 않습니다. 저장된 상대 키를 확인하고 새 nonce로 같은 Bluetooth 링크에서 인증합니다. CCC 재구독과 이전 ATT 전송 응답 분리, MTU 복원도 보완했습니다. 알림 표시 ACK 지연은 미전달 대기로 남기며 정상 BLE 연결을 취소하지 않습니다.
 
-상세 알림의 작은 원본 아이콘·글씨 위치는 유지하고 카드 **아래 여백만 4pt** 줄였습니다. 글꼴·줄 높이·아이콘 크기를 바꾸지 않았습니다. [예문 화면 비교](https://github.com/mhj604/FoldBridge/blob/local-ble/docs/NOTIFICATION_LAYOUT_COMPARISON_KO.md)
+상세 알림의 작은 원본 아이콘·글씨 위치는 유지하고 카드 **아래 여백만 4pt** 줄였습니다. 글꼴·줄 높이·아이콘 크기를 바꾸지 않았습니다. [예문 화면 비교](https://github.com/mhj604/WatchBridge/blob/local-ble/docs/NOTIFICATION_LAYOUT_COMPARISON_KO.md)
 
 ## 실제 기기에서 관찰한 결과
 
@@ -38,4 +38,4 @@ Galaxy Z Fold7과 Apple Watch Ultra 2 / watchOS 27.0.1에 같은 서명으로 �
 
 ## 한국어·영어 사용 안내
 
-설치·FAQ·문제 해결·빌드/서명·구조·프로토콜·알림 표시·기여 방법을 두 언어로 제공합니다. [전체 문서](https://github.com/mhj604/FoldBridge/blob/local-ble/docs/README.md) · [English overview](https://github.com/mhj604/FoldBridge/blob/local-ble/README.en.md)
+설치·FAQ·문제 해결·빌드/서명·구조·프로토콜·알림 표시·기여 방법을 두 언어로 제공합니다. [전체 문서](https://github.com/mhj604/WatchBridge/blob/local-ble/docs/README.md) · [English overview](https://github.com/mhj604/WatchBridge/blob/local-ble/README.en.md)

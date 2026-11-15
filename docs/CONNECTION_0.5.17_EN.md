@@ -2,7 +2,7 @@
 
 [한국어](CONNECTION_0.5.17_KO.md) · [Documentation](README.md)
 
-Installed Android **0.6.13-local / code 31** and Watch/widget **0.5.17 / build 43** in place on November 15, 2026. Registration, keys and vehicle settings remain intact. [Download APK](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.17/FoldBridge-Local-0.6.13.apk).
+Installed Android **0.6.13-local / code 31** and Watch/widget **0.5.17 / build 43** in place on November 15, 2026. Registration, keys and vehicle settings remain intact. [Download APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.17/FoldBridge-Local-0.6.13.apk).
 
 ## Observed app state
 
@@ -27,7 +27,7 @@ Retain the persistent service and separate its channels:
 
 Disabled only the waiting channel on this Galaxy; app state reported `waitingNotificationHidden=true`. The foreground service, overall app notifications and notification-listener access remain enabled. Android may still list the service in its separate active-apps UI.
 
-Other users can choose **FoldBridge Local → Settings → Connection notifications → Open settings**, then turn off **Waiting for connection**. Keep the authenticated connection channel enabled. Automatic reconnection and watch notification forwarding remain enabled. Korean/English resources are updated on both platforms.
+Other users can choose **WatchBridge → Settings → Connection notifications → Open settings**, then turn off **Waiting for connection**. Keep the authenticated connection channel enabled. Automatic reconnection and watch notification forwarding remain enabled. Korean/English resources are updated on both platforms.
 
 ## Deployment and handoff
 

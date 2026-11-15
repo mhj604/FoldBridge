@@ -278,7 +278,7 @@ struct ContentView: View {
                             .buttonStyle(.plain).foregroundStyle(BridgeStyle.accent).frame(maxWidth:.infinity).padding(.vertical,8)
                     }
                 }.padding(.horizontal,3)
-            }.navigationTitle("FoldBridge")
+            }.navigationTitle("WatchBridge")
                 .toolbar { ToolbarItem(placement:.topBarTrailing) {
                     NavigationLink { BridgeSettingsView().environmentObject(link) } label: { Image(systemName:"gearshape").accessibilityLabel(language.text("설정")) }
                 } }
@@ -328,7 +328,7 @@ struct BridgeSettingsView: View {
             }
             Section {
                 Button(language.text("휴대폰 등록 해제"),role:.destructive) { forgetting = true }
-                Text("FoldBridge " + (Bundle.main.object(forInfoDictionaryKey:"CFBundleShortVersionString") as? String ?? "")).font(.caption2).foregroundStyle(.secondary)
+                Text("WatchBridge " + (Bundle.main.object(forInfoDictionaryKey:"CFBundleShortVersionString") as? String ?? "")).font(.caption2).foregroundStyle(.secondary)
             }
         }.navigationTitle(language.text("설정"))
             .confirmationDialog(language.text("연결 유지를 시작할까요?"),isPresented:$startingLocation,titleVisibility:.visible) {
@@ -360,8 +360,8 @@ struct PhoneConnectionView: View {
                 if !link.lastError.isEmpty { Text(language.text(link.lastError)).font(.caption2).foregroundStyle(.orange) }
                 NavigationLink(language.text("연결할 앱 선택")) {
                     List {
-                        Button { link.selectProfile(.local) } label: { HStack { Text("FoldBridge Local");if link.profile == .local { Image(systemName:"checkmark").foregroundStyle(BridgeStyle.accent) } } }
-                        Button { link.selectProfile(.original) } label: { HStack { Text(language.text("이전 FoldBridge"));if link.profile == .original { Image(systemName:"checkmark").foregroundStyle(BridgeStyle.accent) } } }
+                        Button { link.selectProfile(.local) } label: { HStack { Text("WatchBridge");if link.profile == .local { Image(systemName:"checkmark").foregroundStyle(BridgeStyle.accent) } } }
+                        Button { link.selectProfile(.original) } label: { HStack { Text(language.text("이전 WatchBridge"));if link.profile == .original { Image(systemName:"checkmark").foregroundStyle(BridgeStyle.accent) } } }
                     }.navigationTitle(language.text("연결 앱"))
                 }.font(.caption)
             }

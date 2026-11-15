@@ -2,7 +2,7 @@
 
 [English](CONNECTION_0.5.17_EN.md) · [문서 목록](README.md)
 
-2026-11-15에 Android **0.6.13-local / 코드 31**, Watch·차량 위젯 **0.5.17 / 빌드 43**을 기존 앱에 덮어 설치했습니다. 등록·키·차량 설정은 유지합니다. [APK 다운로드](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.17/FoldBridge-Local-0.6.13.apk).
+2026-11-15에 Android **0.6.13-local / 코드 31**, Watch·차량 위젯 **0.5.17 / 빌드 43**을 기존 앱에 덮어 설치했습니다. 등록·키·차량 설정은 유지합니다. [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.17/FoldBridge-Local-0.6.13.apk).
 
 ## 실제로 읽은 상태
 
@@ -27,7 +27,7 @@
 
 이번 갤럭시에서는 대기 채널만 끄는 설정을 적용했고, 앱 상태의 `waitingNotificationHidden=true`를 읽었습니다. 전경 서비스를 중지하거나 앱 전체 알림·다른 앱의 알림 접근을 끄지 않습니다. Android의 별도 실행 중 앱 목록에는 서비스가 남을 수 있습니다.
 
-다른 사용자는 **FoldBridge Local → 설정 → 연결 알림 표시 → 설정 열기 → 연결 대기 알림 끄기**로 같은 설정을 사용할 수 있습니다. 실제 연결 채널은 켜 둡니다. 자동 재연결과 워치 알림 전달은 유지됩니다. Android·watchOS의 한국어·영어 리소스도 함께 갱신했습니다.
+다른 사용자는 **WatchBridge → 설정 → 연결 알림 표시 → 설정 열기 → 연결 대기 알림 끄기**로 같은 설정을 사용할 수 있습니다. 실제 연결 채널은 켜 둡니다. 자동 재연결과 워치 알림 전달은 유지됩니다. Android·watchOS의 한국어·영어 리소스도 함께 갱신했습니다.
 
 ## 설치 후 상태와 작업 종료
 

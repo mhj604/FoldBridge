@@ -1,11 +1,11 @@
-# FoldBridge Local 0.4.0
+# WatchBridge 0.4.0
 
 갤럭시 알림을 Apple Watch로 BLE 직접 전달하는 Local 배포입니다.
 
 - Galaxy 앱: **0.4.0-local / versionCode 9**
 - Watch 앱: **0.3.0 / build 10**
-- 사용 브랜치: [local-ble](https://github.com/mhj604/FoldBridge/tree/local-ble)
-- 설치 순서: [한국어 빠른 시작](https://github.com/mhj604/FoldBridge/blob/local-ble/docs/QUICK_START_KO.md)
+- 사용 브랜치: [local-ble](https://github.com/mhj604/WatchBridge/tree/local-ble)
+- 설치 순서: [한국어 빠른 시작](https://github.com/mhj604/WatchBridge/blob/local-ble/docs/QUICK_START_KO.md)
 
 ## 이번 변경
 

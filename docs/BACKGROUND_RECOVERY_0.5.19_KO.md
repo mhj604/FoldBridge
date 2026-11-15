@@ -2,7 +2,7 @@
 
 [English](BACKGROUND_RECOVERY_0.5.19_EN.md) · [문서 목록](README.md)
 
-2026-11-15 수정 후보: Android **0.6.15-local / 코드 33**, Watch·차량 위젯 **0.5.19 / 빌드 45**. [APK 다운로드](https://github.com/mhj604/FoldBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk). 기존 등록·신원 키·고정 상대 키·차량 설정을 유지합니다.
+2026-11-15 수정 후보: Android **0.6.15-local / 코드 33**, Watch·차량 위젯 **0.5.19 / 빌드 45**. [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk). 기존 등록·신원 키·고정 상대 키·차량 설정을 유지합니다.
 
 ## 실행 상태 해석 정정 (2026-11-15)
 

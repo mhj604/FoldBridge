@@ -6,15 +6,15 @@
 
 See the **[Android 0.6.8 / Watch 0.5.10 record](WATCH_0.5.10_CANDIDATE_EN.md)** for the latest candidate and unfinished work. Next goals are to fully resolve interrupted background authentication, recovery after prolonged locking, and automatic reconnection after physical range loss/return. All remain unfinished.
 
-The goal is reconnection after unlocking the watch, without refreshing either device or opening FoldBridge on the watch. Current versions: Android **0.6.7 / code 23**, Watch **0.5.8 / build 32**.
+The goal is reconnection after unlocking the watch, without refreshing either device or opening WatchBridge on the watch. Current versions: Android **0.6.7 / code 23**, Watch **0.5.8 / build 32**.
 
 ## Android 0.6.7-local · code 23 (Watch 0.5.8 unchanged)
 
-Android GATT server connection callbacks can include links used by other BLE traffic. Previously the first physical link claimed the watch slot and stopped advertising, allowing an unrelated device to occupy connection waiting. Select the peer only when it subscribes to FoldBridge's own TX CCC descriptor. Existing pinned-key encrypted authentication remains required. Retain MTU values per device until subscription; unrelated connections and disconnections no longer reset the watch session or trigger cancellation of the other device.
+Android GATT server connection callbacks can include links used by other BLE traffic. Previously the first physical link claimed the watch slot and stopped advertising, allowing an unrelated device to occupy connection waiting. Select the peer only when it subscribes to WatchBridge's own TX CCC descriptor. Existing pinned-key encrypted authentication remains required. Retain MTU values per device until subscription; unrelated connections and disconnections no longer reset the watch session or trigger cancellation of the other device.
 
 While running, the phone service checks the local Bluetooth stack every 15 seconds. Clear a stale app connection and resume advertising when the physical link is gone. This check sends no periodic heartbeat to the watch. Add advertising, observed-link, subscription-claim and local-check fields to diagnostics.
 
-Device records showed authentication without refresh after APK replacement, and again after stopping the phone process and explicitly reopening only the phone app. The agent did not launch FoldBridge on the watch. The Mac–watch developer tunnel remained unavailable, so the watch screen and a physical lock/unlock cycle could not be checked directly. This does not establish reliable automatic recovery after every unlock or extended idle period. [Scope and remaining investigation](AUTO_RECONNECT_EN.md)
+Device records showed authentication without refresh after APK replacement, and again after stopping the phone process and explicitly reopening only the phone app. The agent did not launch WatchBridge on the watch. The Mac–watch developer tunnel remained unavailable, so the watch screen and a physical lock/unlock cycle could not be checked directly. This does not establish reliable automatic recovery after every unlock or extended idle period. [Scope and remaining investigation](AUTO_RECONNECT_EN.md)
 
 ## Watch conditions still to distinguish
 

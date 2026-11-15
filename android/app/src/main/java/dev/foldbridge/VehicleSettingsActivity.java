@@ -44,9 +44,9 @@ public final class VehicleSettingsActivity extends Activity {
         addText(root,"워치에 표시할 버튼",17);
         addText(root,"아래 목록에서 사용할 버튼만 선택하세요. 위젯의 제어 버튼을 누르면 실제 차량 명령이 실행될 수 있습니다.",13);
         actions=new LinearLayout(this);actions.setOrientation(LinearLayout.VERTICAL);root.addView(actions);
-        addText(root,"워치에서는 FoldBridge → 차량 제어를 엽니다. 마이현대가 휴대폰 인증을 요구하면 갤럭시에서 완료하세요. 실제 제어 결과는 마이현대 알림으로 확인합니다.",14);
+        addText(root,"워치에서는 WatchBridge → 차량 제어를 엽니다. 마이현대가 휴대폰 인증을 요구하면 갤럭시에서 완료하세요. 실제 제어 결과는 마이현대 알림으로 확인합니다.",14);
         addButton(root,"차량 제어 연결 해제",()->new AlertDialog.Builder(this).setTitle(t("차량 제어 연결 해제"))
-            .setMessage(t("FoldBridge에 연결한 위젯과 버튼 선택만 제거합니다."))
+            .setMessage(t("WatchBridge에 연결한 위젯과 버튼 선택만 제거합니다."))
             .setPositiveButton(t("해제"),(d,w)->bridge.removeWidget()).setNegativeButton(t("취소"),null).show());
         bridge.start();render();
     }

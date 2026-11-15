@@ -1,29 +1,33 @@
-# FoldBridge Local
+# WatchBridge
 
 **한국어** · [English](README.en.md) · [전체 문서](docs/README.md)
 
-현재 브랜치는 Android **0.6.16-local / 코드 38**, Watch **0.5.22 / 빌드 53**의 자동 복구·빠른 재인증 수정 후보입니다. 기존 등록을 유지합니다. [수정·설치 결과와 남은 조건](docs/LOCKED_AUTH_0.5.22_KO.md).
+앱과 프로젝트의 표시 이름은 **WatchBridge**로 변경했습니다. 기존 등록·암호화 키·차량 설정을 유지하기 위해 설치 식별자와 내부 프로토콜·소스 경로는 유지합니다. 이전 배포 파일의 이름도 그대로 남으며, 이전 바이너리에는 이전 앱 이름이 표시될 수 있습니다.
 
-**잠금 상태의 폰 단독 인증은 기록됐지만, 반복 종료와 지속 연결은 미해결입니다. 이 버전은 수정 후보입니다.**
+현재 브랜치는 Android **0.6.18-local / 코드 40**, Watch **0.5.24 / 빌드 57**의 자동 복구·빠른 재인증 수정 후보입니다. 기존 등록을 유지합니다. [수정·설치 결과와 남은 조건](docs/REA_0.5.24_KO.md).
+
+**잠금·백그라운드 상태에서 읽기 방식의 알림 수신과 폰 수신 확인을 기록했습니다. 장시간 잠금·거리 복귀는 별도 조건이며 이 버전은 수정 후보입니다.**
 
 갤럭시에 도착한 알림을 **Apple Watch로 직접 전달**하는 Android·watchOS 앱입니다. 두 기기는 Bluetooth LE로 통신하며, 알림 전달에 서버·인터넷·페어링된 아이폰을 사용하지 않습니다. 루팅·운동·오디오 세션도 사용하지 않습니다.
 
 워치의 최초 설정과 개발용 앱 설치에는 Apple의 기기 등록과 Mac/Xcode가 필요합니다. 위치 세션을 이용하는 백그라운드 수신은 실험 기능이며, watchOS가 앱을 중단할 수 있어 모든 알림의 상시·즉시 수신을 보장하지는 않습니다.
 
-<img src="watch/FoldBridge/Assets.xcassets/FoldBridgeIcon.appiconset/FoldBridgeIcon.png" width="96" alt="FoldBridge 앱 아이콘">
+<img src="watch/FoldBridge/Assets.xcassets/FoldBridgeIcon.appiconset/FoldBridgeIcon.png" width="96" alt="WatchBridge 앱 아이콘">
+
+[WatchBridge 0.6.18 APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24/WatchBridge-0.6.18.apk) · [수정 후보 안내](docs/REA_0.5.24_KO.md)
 
 ## 바로 시작하기
 
 최신 수정 후보 APK와 소스는 위 안내를 사용하세요. 아래 0.6.7/0.5.8 표는 이전 배포 기준입니다.
 
-**[현재 버전 사용 안내](docs/LOCKED_AUTH_0.5.22_KO.md)** · **[최신 배포 파일](https://github.com/mhj604/FoldBridge/releases)** · **[자주 묻는 질문](docs/FAQ_KO.md)** · **[English setup](docs/QUICK_START_EN.md)**
+**[현재 버전 사용 안내](docs/REA_0.5.24_KO.md)** · **[최신 배포 파일](https://github.com/mhj604/WatchBridge/releases)** · **[자주 묻는 질문](docs/FAQ_KO.md)** · **[English setup](docs/QUICK_START_EN.md)**
 
 | 항목 | 현재 버전 / 링크 |
 | --- | --- |
-| 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/FoldBridge/tree/local-ble) — 서버 없는 BLE 구성 |
-| Android | **0.6.7-local · 코드 23** / [APK 바로 다운로드](https://github.com/mhj604/FoldBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.7.apk) |
+| 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/WatchBridge/tree/local-ble) — 서버 없는 BLE 구성 |
+| Android | **0.6.7-local · 코드 23** / [APK 바로 다운로드](https://github.com/mhj604/WatchBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.7.apk) |
 | Apple Watch | **0.5.8 · 빌드 32** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
-| 배포 묶음 | [GitHub Releases](https://github.com/mhj604/FoldBridge/releases) · [이전 0.4.9 문서 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
+| 배포 묶음 | [GitHub Releases](https://github.com/mhj604/WatchBridge/releases) · [이전 0.4.9 문서 ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
 | 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
 | 연결이 끊긴 경우 | **[새로고침·문제 해결](docs/TROUBLESHOOTING_KO.md)** |
 
@@ -34,8 +38,8 @@
 5. 연결이 풀리면 **갤럭시 또는 워치 한쪽의 ‘연결 새로고침’**을 누릅니다. 기존 등록과 대기 알림은 보존됩니다.
 
 ```sh
-git clone --branch local-ble https://github.com/mhj604/FoldBridge.git
-cd FoldBridge
+git clone --branch local-ble https://github.com/mhj604/WatchBridge.git
+cd WatchBridge
 open watch/FoldBridge.xcodeproj
 ```
 
@@ -44,7 +48,7 @@ open watch/FoldBridge.xcodeproj
 
 ## 갤럭시를 통한 마이현대 차량 제어
 
-Android **0.6.7-local** / Watch **0.5.8**에는 **FoldBridge 워치 → BLE → 갤럭시 공식 마이현대 위젯** 연결 기능이 추가되었습니다. 기존 워치 마이현대의 아이폰 연동을 변경하지 않습니다. 갤럭시에서 위젯을 연결하고 표시할 버튼을 선택한 후 워치의 **차량 제어**를 사용합니다. **스마트 스택·시계 페이스의 차량 제어 위젯 하나**를 누르면 제어 창이 열립니다. 열린 창에서 시동/공조 켜기·문 잠금·비상등 켜기·문 잠금 해제를 선택합니다. 실제 차량 서비스에는 인터넷과 마이현대 인증이 필요하며 위젯 호출은 차량 성공 응답과 다릅니다. **[설정과 동작 범위](docs/VEHICLE_CONTROL_KO.md)** · [0.6.7 APK](artifacts/android/FoldBridge-Local-0.6.7.apk)
+Android **0.6.7-local** / Watch **0.5.8**에는 **WatchBridge 워치 → BLE → 갤럭시 공식 마이현대 위젯** 연결 기능이 추가되었습니다. 기존 워치 마이현대의 아이폰 연동을 변경하지 않습니다. 갤럭시에서 위젯을 연결하고 표시할 버튼을 선택한 후 워치의 **차량 제어**를 사용합니다. **스마트 스택·시계 페이스의 차량 제어 위젯 하나**를 누르면 제어 창이 열립니다. 열린 창에서 시동/공조 켜기·문 잠금·비상등 켜기·문 잠금 해제를 선택합니다. 실제 차량 서비스에는 인터넷과 마이현대 인증이 필요하며 위젯 호출은 차량 성공 응답과 다릅니다. **[설정과 동작 범위](docs/VEHICLE_CONTROL_KO.md)** · [0.6.7 APK](artifacts/android/FoldBridge-Local-0.6.7.apk)
 
 ## 한국어 / English 전환
 
@@ -55,7 +59,7 @@ Android **0.6.7-local** / Watch **0.5.8**에는 **FoldBridge 워치 → BLE → 
 ## 무엇을 할 수 있나요?
 
 - 다른 앱의 제목·본문·원본 앱 아이콘을 암호화해 워치로 전달합니다. 모든 앱 전달이 기본이며 앱 선택도 가능합니다.
-- 알림은 워치 **알림 센터**에 표시합니다. FoldBridge 내부에 이전 메시지 목록이나 본문을 따로 보관하지 않습니다.
+- 알림은 워치 **알림 센터**에 표시합니다. WatchBridge 내부에 이전 메시지 목록이나 본문을 따로 보관하지 않습니다.
 - 미확인 알림은 현재 연결 중에만 메모리에서 재시도합니다. 연결이 끊기면 대기열을 비우고 디스크에 저장하지 않습니다.
 - 최초 등록뿐 아니라 재연결 때도 인증 완료 시점을 기준으로 시작합니다. 그 전에 게시된 알림과 연결이 끊긴 동안의 알림은 나중에 몰아서 보내지 않습니다.
 - 충전율 변경 때 반복되던 Samsung System UI 충전 알림은 기본 제외합니다. **충전 상태 알림**을 켜면 포함합니다.
@@ -66,7 +70,7 @@ Android **0.6.7-local** / Watch **0.5.8**에는 **FoldBridge 워치 → BLE → 
 
 현재 버전은 0.4.9에서 정리한 작은 원본 아이콘과 펼친 본문 배치를 유지합니다. 첫 요약 팝업과 상세 화면의 전체 디자인을 동일하게 만들거나 시스템 아이콘을 알림별로 교체하는 기능은 제공하지 않습니다. 이전 요청의 조사 결과는 [알림 표시 범위](docs/NOTIFICATION_DISPLAY_LIMITS_KO.md)에 기록했습니다.
 
-처음 뜨는 팝업과 알림 센터 카드의 시스템 아이콘은 **FoldBridge**입니다. 원본 앱 아이콘이 있으면 **눌러 펼친 본문에만 24pt**로 표시합니다. 원본 아이콘이 없는 알림은 기본 텍스트 화면을 사용합니다.
+처음 뜨는 팝업과 알림 센터 카드의 시스템 아이콘은 **WatchBridge**입니다. 원본 앱 아이콘이 있으면 **눌러 펼친 본문에만 24pt**로 표시합니다. 원본 아이콘이 없는 알림은 기본 텍스트 화면을 사용합니다.
 
 원본 아이콘은 사진 첨부로 보내지 않습니다. 따라서 큰 미디어 미리보기나 카드 썸네일로 재사용되지 않습니다. 아이콘이 있는 상세 본문은 왼쪽 16pt 기준선을 유지하고, 기본 16pt 글자·0pt 추가 문단 간격·18.5pt 본문 줄 높이로 조정했습니다. 원본 아이콘은 텍스트 행 높이에 영향을 주지 않습니다. watchOS 27의 본문 시작점을 보정했습니다. 0.4.6에서 아이콘과 글씨를 함께 3pt 아래로 옮긴 위치는 유지하고, 0.4.7에서는 카드의 아래 여백만 4pt 줄였습니다. [기본 알림과 비교한 화면·측정 결과](docs/NOTIFICATION_LAYOUT_COMPARISON_KO.md)를 참고하세요. 확장 프레임·중첩 스크롤·고정 본문 높이를 사용하지 않습니다. 제목과 본문은 시스템 글꼴로 줄바꿈하고, 스크롤과 닫기 버튼은 watchOS가 처리합니다. [Apple 알림 표시 구조](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
 

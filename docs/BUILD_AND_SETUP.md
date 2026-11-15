@@ -25,8 +25,8 @@ APK는 `artifacts/android/`에도 포함한다. 설치 후 다음을 설정한�
 Mac에서 케이블 없이 설치·업데이트하려면 [무선 ADB 설치 안내](WIRELESS_INSTALL_KO.md)를 따른다. 갤럭시에서 APK를 직접 내려받아 업데이트하는 방법도 있다.
 
 1. 근처 기기와 일반 알림 권한 허용.
-2. **알림 접근 허용** 또는 **설정 → 알림 접근 설정**에서 **FoldBridge Local 알림 전달**의 알림 접근 허용.
-3. 기존 Android FoldBridge 앱을 실행 중이면 연결 중지.
+2. **알림 접근 허용** 또는 **설정 → 알림 접근 설정**에서 **WatchBridge 알림 전달**의 알림 접근 허용.
+3. 기존 Android WatchBridge 앱을 실행 중이면 연결 중지.
 4. 처음 연결할 때 Local의 **설정 → 새 워치 등록**을 누르고 워치와 코드를 비교해 양쪽 확인.
 5. 일반 사용 시 연결 시작. 충전 상태 알림 전달은 기본 꺼짐.
 
@@ -40,7 +40,7 @@ python3 watch/build_watch.py --team YOUR_TEAM_ID
 
 또는 `watch/FoldBridge.xcodeproj`를 Xcode에서 열어 Team과 실제 워치를 선택하고 Run으로 설치한다. 기본 bundle ID는 `dev.foldbridge.watch`이며 업데이트할 때 bundle ID와 서명 Team을 유지한다. 워치 개발자 모드와 Mac 개발용 페어링을 먼저 완료한다. 기기 발견 문제가 있으면 워치와 페어링된 아이폰을 USB로 연결하는 초기 개발 설정이 필요할 수 있다. 앱 통신 자체는 Galaxy–Watch BLE를 사용한다.
 
-워치 앱에서 **휴대폰 연결 → 휴대폰 찾기 → Galaxy 선택**으로 등록한다. 이전 프로필을 사용 중이면 **연결할 앱 선택 → FoldBridge Local**로 바꾼다. **알림 표시 허용**을 처리하고, 필요한 경우 **설정 → 연결 유지**를 켜서 위치 권한을 허용한다. 위치 모드는 배터리를 더 사용할 수 있고 상시 수신을 보장하지 않는다. 무료 개발 Team의 설치는 프로비저닝 만료에 따라 재서명이 필요할 수 있다.
+워치 앱에서 **휴대폰 연결 → 휴대폰 찾기 → Galaxy 선택**으로 등록한다. 이전 프로필을 사용 중이면 **연결할 앱 선택 → WatchBridge**로 바꾼다. **알림 표시 허용**을 처리하고, 필요한 경우 **설정 → 연결 유지**를 켜서 위치 권한을 허용한다. 위치 모드는 배터리를 더 사용할 수 있고 상시 수신을 보장하지 않는다. 무료 개발 Team의 설치는 프로비저닝 만료에 따라 재서명이 필요할 수 있다.
 
 ## 진단 도구
 
@@ -59,7 +59,7 @@ Android 상태 파일은 `/sdcard/Android/data/dev.foldbridge.local/files/foldbr
 
 ## 앱 아이콘 자산
 
-저장소의 FoldBridge 자체 아이콘은 `tools/generate-app-icon.swift`로 만든 기기 연결 모양이다. Mac에서 아래처럼 다시 만들 수 있다.
+저장소의 WatchBridge 자체 아이콘은 `tools/generate-app-icon.swift`로 만든 기기 연결 모양이다. Mac에서 아래처럼 다시 만들 수 있다.
 
 ```sh
 xcrun swift tools/generate-app-icon.swift \
@@ -87,7 +87,7 @@ adb shell cmd notification allow_listener dev.foldbridge.local/dev.foldbridge.No
 
 ## 재시작 후 사용
 
-한 번 양쪽 코드로 등록하고 Galaxy의 연결 시작을 켜 두면 등록 키와 연결 의도는 계속 저장된다. 재부팅 뒤 양쪽 잠금을 한 번 해제하고 Bluetooth가 켜져 있어야 한다. Galaxy는 연결 서비스를 자동 재개하며, 워치는 OS 실행/복원 기회에 저장된 휴대폰으로 연결한다. 워치가 바로 연결되지 않으면 FoldBridge를 한 번 연다. 새 워치 등록이나 기존 등록 해제는 필요하지 않다. 사용자가 연결 중지/등록 해제를 선택한 상태는 자동 시작으로 덮어쓰지 않는다.
+한 번 양쪽 코드로 등록하고 Galaxy의 연결 시작을 켜 두면 등록 키와 연결 의도는 계속 저장된다. 재부팅 뒤 양쪽 잠금을 한 번 해제하고 Bluetooth가 켜져 있어야 한다. Galaxy는 연결 서비스를 자동 재개하며, 워치는 OS 실행/복원 기회에 저장된 휴대폰으로 연결한다. 워치가 바로 연결되지 않으면 WatchBridge를 한 번 연다. 새 워치 등록이나 기존 등록 해제는 필요하지 않다. 사용자가 연결 중지/등록 해제를 선택한 상태는 자동 시작으로 덮어쓰지 않는다.
 
 watchOS는 일반 앱에 부팅 즉시 실행을 보장하는 공개 API를 제공하지 않는다. 30분 뒤 백그라운드 갱신 요청과 Core Bluetooth 복원은 실행 기회를 요청하는 수단이며 완전한 무인 재부팅 복구를 보장하지 않는다. [Apple 백그라운드 재연결](https://developer.apple.com/documentation/watchkit/using-background-tasks), [Android 부팅/업데이트 후 서비스 시작](https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start)
 

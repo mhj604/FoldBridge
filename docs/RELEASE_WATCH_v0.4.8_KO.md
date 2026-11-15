@@ -15,9 +15,9 @@
 
 기존 앱 위에 업데이트하려면 이전 설치 때 사용한 Android 서명 키, Android 앱 ID, 워치 Bundle ID와 Apple Team을 유지합니다. 등록을 새로 할 필요는 없습니다. 새 사용자는 첫 등록 완료 뒤부터 알림을 받습니다.
 
-- [Android APK 다운로드](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-Local-0.5.3.apk)
-- [워치 소스 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-watch-0.4.8-source.zip)
-- [한글·영어 안내 ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.8/FoldBridge-0.4.8-guides-ko-en.zip)
+- [Android APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.8/FoldBridge-Local-0.5.3.apk)
+- [워치 소스 ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.8/FoldBridge-watch-0.4.8-source.zip)
+- [한글·영어 안내 ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.8/FoldBridge-0.4.8-guides-ko-en.zip)
 
 ## 연결 범위
 

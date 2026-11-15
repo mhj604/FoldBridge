@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-11-15 — Android 0.6.18 / Watch 0.5.24 · Read delivery
+
+- Added negotiated encrypted-frame reads for saved peers using location keepalive. This avoids the indication delivery path that reproduced disconnection before receipt.
+- The phone's connected state requires a recent read in this mode; stale queues are discarded when runtime resumes. Existing registration/keys and older-peer indications remain.
+- A passcode-locked watch in actual background received and scheduled a 29-frame notification, and the phone received its acknowledgement without a connection loss in that interval. Multi-hour lock and OS termination remain outside this observation.
+- [REA evidence and conditions](docs/REA_0.5.24_EN.md).
+
+## 2026-11-15 — WatchBridge / Android 0.6.17 · Watch 0.5.23
+
+- Renamed visible app, widget and project branding to WatchBridge while preserving installation IDs, keys and existing registration.
+- Replaced unconditional watch-app-opening advice with state-specific copy. The watch publishes connected only after ready and subscription completion.
+- Removed redundant background scans during native pending connections and automatic vehicle-catalogue requests on idle background reconnects.
+- Used REA for package and app-record acquisition. Repeated native disconnections remain under investigation. Prolonged lock and physical range return are not marked solved. [REA report](docs/REA_0.5.23_EN.md).
+
 [한국어](CHANGELOG.md) · **English** · [Documentation](docs/README.md)
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
@@ -66,15 +80,15 @@ Retries missing-service discovery without cancelling the link, handles restored 
 
 ## Android 0.6.7-local · code 23 (Watch 0.5.8 unchanged)
 
-Android GATT server connection callbacks can include links used by other BLE traffic. Previously the first physical link claimed the watch slot and stopped advertising, allowing an unrelated device to occupy connection waiting. Select the peer only when it subscribes to FoldBridge's own TX CCC descriptor. Existing pinned-key encrypted authentication remains required. Retain MTU values per device until subscription; unrelated connections and disconnections no longer reset the watch session or trigger cancellation of the other device.
+Android GATT server connection callbacks can include links used by other BLE traffic. Previously the first physical link claimed the watch slot and stopped advertising, allowing an unrelated device to occupy connection waiting. Select the peer only when it subscribes to WatchBridge's own TX CCC descriptor. Existing pinned-key encrypted authentication remains required. Retain MTU values per device until subscription; unrelated connections and disconnections no longer reset the watch session or trigger cancellation of the other device.
 
 While running, the phone service checks the local Bluetooth stack every 15 seconds. Clear a stale app connection and resume advertising when the physical link is gone. This check sends no periodic heartbeat to the watch. Add advertising, observed-link, subscription-claim and local-check fields to diagnostics.
 
-Device records showed authentication without refresh after APK replacement, and again after stopping the phone process and explicitly reopening only the phone app. The agent did not launch FoldBridge on the watch. The Mac–watch developer tunnel remained unavailable, so the watch screen and a physical lock/unlock cycle could not be checked directly. This does not establish reliable automatic recovery after every unlock or extended idle period. [Scope and remaining investigation](AUTO_RECONNECT_EN.md)
+Device records showed authentication without refresh after APK replacement, and again after stopping the phone process and explicitly reopening only the phone app. The agent did not launch WatchBridge on the watch. The Mac–watch developer tunnel remained unavailable, so the watch screen and a physical lock/unlock cycle could not be checked directly. This does not establish reliable automatic recovery after every unlock or extended idle period. [Scope and remaining investigation](AUTO_RECONNECT_EN.md)
 
 ## Android 0.6.6-local · code 22 (Watch 0.5.8 unchanged)
 
-Galaxy records showed a real bring&T device-response notification with a title, plus an Android-generated `GROUP_SUMMARY` / `AUTOGROUP_SUMMARY` shell without title or body. Forwarding that empty shell caused FoldBridge's empty-notification fallback.
+Galaxy records showed a real bring&T device-response notification with a title, plus an Android-generated `GROUP_SUMMARY` / `AUTOGROUP_SUMMARY` shell without title or body. Forwarding that empty shell caused WatchBridge's empty-notification fallback.
 
 Exclude textless group summaries from initial collection, active-notification replay and forwarding, before recording first-post state. Summaries with text, text lines, custom layouts or action buttons, and individual notifications, are not excluded by this filter. Keep the existing bring&T numeric-update and charging-alert policies. Previously delivered watch Notification Center entries are not removed by the update.
 
@@ -150,7 +164,7 @@ For Wattz (`dubrowgn.wattz`) and bring&T (`com.bring.bringnt`), only the first p
 
 ## Watch 0.5.0 · build 24 / Android 0.6.0-local · code 16
 
-- Add FoldBridge watch vehicle controls and owner-authorized hosting of the official Korean MyHyundai widget on Galaxy.
+- Add WatchBridge watch vehicle controls and owner-authorized hosting of the official Korean MyHyundai widget on Galaxy.
 - Expose selected labelled widget controls over the existing authenticated, encrypted BLE link.
 - Suppress duplicate request IDs, require the current catalogue revision, and never automatically retry commands after a timeout. Distinguish widget invocation from vehicle success.
 - The original MyHyundai watch app remains iPhone-bound. No vehicle command was executed. [Setup and scope](docs/VEHICLE_CONTROL_EN.md)
@@ -204,7 +218,7 @@ For Wattz (`dubrowgn.wattz`) and bring&T (`com.bring.bringnt`), only the first p
 
 - Use bounded-width custom expanded content only when a source icon is available.
 - Keep a 24pt icon in the body and use system text content when unavailable.
-- Do not use photo attachments; system popup/card icons remain FoldBridge.
+- Do not use photo attachments; system popup/card icons remain WatchBridge.
 
 ## Watch 0.4.2 · build 13
 
@@ -225,7 +239,7 @@ For Wattz (`dubrowgn.wattz`) and bring&T (`com.bring.bringnt`), only the first p
 
 - Add Refresh connection while retaining registration and pending items.
 - Separate stale GATT-server callbacks from new sessions; avoid duplicate connection/subscription authentication starts.
-- Improve retry/error clearing, visually center the FoldBridge icon, and publish Korean setup/contribution guides on `local-ble`.
+- Improve retry/error clearing, visually center the WatchBridge icon, and publish Korean setup/contribution guides on `local-ble`.
 
 ## Android 0.3.2 / Watch 0.2.4
 

@@ -24,7 +24,7 @@ Radio range, interference, power, and watchOS runtime limits can still interrupt
 
 Update in place with the existing Android signing key and watch Bundle ID/team. No new code comparison is needed.
 
-- [Android APK](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-Local-0.5.4.apk)
-- [Watch source ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-watch-0.4.9-source.zip)
-- [Korean/English guide ZIP](https://github.com/mhj604/FoldBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip)
+- [Android APK](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-Local-0.5.4.apk)
+- [Watch source ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-watch-0.4.9-source.zip)
+- [Korean/English guide ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip)
 - [Cable-free Galaxy updates](WIRELESS_INSTALL_EN.md)

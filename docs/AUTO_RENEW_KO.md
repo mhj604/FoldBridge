@@ -35,10 +35,10 @@
 
 1. 현재 설치된 앱의 빌드 번호와 저장소에 커밋된 빌드 번호가 같은지 확인합니다. 다른 버전을 자동으로 설치하지 않습니다.
 2. 저장소의 커밋된 `watch/`만 별도 작업 폴더에 추출합니다. 작성 중인 로컬 변경은 빌드하지 않습니다.
-3. 지정한 Team의 FoldBridge 앱·위젯에 해당하는 프로파일만 백업하고 Xcode 캐시에서 옮깁니다. 다른 앱의 프로파일은 변경하지 않습니다.
+3. 지정한 Team의 WatchBridge 앱·위젯에 해당하는 프로파일만 백업하고 Xcode 캐시에서 옮깁니다. 다른 앱의 프로파일은 변경하지 않습니다.
 4. `xcodebuild -allowProvisioningUpdates`로 새 프로파일을 요청하고 빌드합니다.
 5. 실제 새 만료일이 연장된 경우에만 갱신본으로 취급합니다. 워치가 연결되지 않으면 빌드 결과를 보관하고 다음 실행에서 설치를 재시도합니다.
-6. `devicectl`로 같은 앱에 덮어 설치한 뒤 FoldBridge를 실행해 연결 복구를 시작합니다. 차량 명령은 실행하지 않습니다.
+6. `devicectl`로 같은 앱에 덮어 설치한 뒤 WatchBridge를 실행해 연결 복구를 시작합니다. 차량 명령은 실행하지 않습니다.
 
 [Apple의 프로파일 갱신 절차](https://developer.apple.com/help/account/provisioning-profiles/edit-download-or-delete-profiles)와 [무료 계정 유효기간 안내](https://developer.apple.com/help/account/basics/about-your-developer-account)를 따릅니다.
 

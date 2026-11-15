@@ -1,4 +1,4 @@
-# FoldBridge Watch 0.4.1 — 알림 상세 화면 복원
+# WatchBridge Watch 0.4.1 — 알림 상세 화면 복원
 
 - Watch: **0.4.1 / build 12**
 - Android: **0.5.0-local 유지** — 기존 앱을 그대로 사용합니다.
@@ -11,6 +11,6 @@
 
 ## 설치
 
-[local-ble 브랜치](https://github.com/mhj604/FoldBridge/tree/local-ble)나 소스 ZIP에서 `watch/FoldBridge.xcodeproj`를 열어 기존 Team과 Bundle ID로 워치 앱을 업데이트합니다. 처음 설치는 [한국어 빠른 시작](https://github.com/mhj604/FoldBridge/blob/local-ble/docs/QUICK_START_KO.md)을 따릅니다. Apple 서명 프로파일은 배포하지 않습니다.
+[local-ble 브랜치](https://github.com/mhj604/WatchBridge/tree/local-ble)나 소스 ZIP에서 `watch/FoldBridge.xcodeproj`를 열어 기존 Team과 Bundle ID로 워치 앱을 업데이트합니다. 처음 설치는 [한국어 빠른 시작](https://github.com/mhj604/WatchBridge/blob/local-ble/docs/QUICK_START_KO.md)을 따릅니다. Apple 서명 프로파일은 배포하지 않습니다.
 
 배포에 포함한 Android APK는 기존 0.5.0과 같은 파일입니다. 이 수정은 워치 앱에 적용됩니다.

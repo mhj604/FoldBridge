@@ -128,8 +128,8 @@ final class VehicleQuickRouter: ObservableObject {
         cancelPending()
         guard link.vehicleState == "ready" else {
             switch link.vehicleState {
-            case "disabled":message = "갤럭시 FoldBridge에서 워치 차량 제어를 켜 주세요."
-            case "needs_widget":message = "갤럭시 FoldBridge의 차량 제어 설정에서 마이현대 위젯을 연결해 주세요."
+            case "disabled":message = "갤럭시 WatchBridge에서 워치 차량 제어를 켜 주세요."
+            case "needs_widget":message = "갤럭시 WatchBridge의 차량 제어 설정에서 마이현대 위젯을 연결해 주세요."
             case "choose_buttons":message = "갤럭시에서 워치에 표시할 버튼을 선택해 주세요."
             case "no_controls":message = "마이현대 위젯의 제어 버튼을 읽지 못했습니다. 갤럭시 위젯 화면을 확인해 주세요."
             case "result_pending":message = "제어 버튼을 누르면 결과 안내를 닫고 선택한 제어를 전달합니다."

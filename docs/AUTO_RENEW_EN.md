@@ -31,7 +31,7 @@ The official route for internet installation and updates without a Watch–Mac c
 - An unavailable/locked watch leaves the app intact and records a waiting status. There is no separate short-interval retry schedule. Seven days is the owner's explicitly selected interval; if a scheduled renewal fails, another pre-expiration attempt is not guaranteed.
 - `caffeinate -i` prevents idle sleep only while renewal runs. No permanent process or power-setting change is installed.
 
-The tool compares the installed build number with committed source, extracts committed `watch/` files into a separate folder, backs up only the matching FoldBridge profiles, and requests new profiles through `xcodebuild -allowProvisioningUpdates`. Uncommitted changes are not built. It never automatically replaces an installed app with a different source version.
+The tool compares the installed build number with committed source, extracts committed `watch/` files into a separate folder, backs up only the matching WatchBridge profiles, and requests new profiles through `xcodebuild -allowProvisioningUpdates`. Uncommitted changes are not built. It never automatically replaces an installed app with a different source version.
 
 A build counts as renewed only if its actual earliest expiration advances. Pending builds are retained for later installation. `devicectl` installs the same app in place and launches it to resume its connection; no vehicle command is sent.
 

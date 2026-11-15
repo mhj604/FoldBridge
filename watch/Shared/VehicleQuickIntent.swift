@@ -18,7 +18,7 @@ enum VehicleQuickControl: String, AppEnum, CaseIterable, Identifiable {
 
 struct RunVehicleQuickControl: AppIntent {
     static var title: LocalizedStringResource = "차량 빠른 제어"
-    static var description = IntentDescription("FoldBridge의 Bluetooth 연결로 갤럭시 마이현대 제어 버튼을 실행합니다.")
+    static var description = IntentDescription("WatchBridge의 Bluetooth 연결로 갤럭시 마이현대 제어 버튼을 실행합니다.")
     // Reuse the app's authenticated BLE connection; never create a second central in the widget.
     static var openAppWhenRun: Bool = true
     @Parameter(title:"차량 버튼") var control: VehicleQuickControl
@@ -35,7 +35,7 @@ struct RunVehicleQuickControl: AppIntent {
 /// The widget opens the control panel; opening it never invokes a vehicle button.
 struct OpenVehicleControls: AppIntent {
     static var title: LocalizedStringResource = "차량 제어 열기"
-    static var description = IntentDescription("FoldBridge 차량 제어 창을 엽니다.")
+    static var description = IntentDescription("WatchBridge 차량 제어 창을 엽니다.")
     static var openAppWhenRun: Bool = true
     @MainActor func perform() async throws -> some IntentResult {
         #if !WIDGET_EXTENSION

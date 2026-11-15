@@ -6,11 +6,11 @@ Follow-up: [distribution and Watch-client alternatives](NO_WEEKLY_SIGNING_ARCHIT
 
 ## Finding
 
-**A free Windows renewal application has concrete implementation building blocks. No complete path was established for keeping all FoldBridge functionality on watchOS 27.2 through internet-only, watch-only automatic renewal, or permanent signing.** Replacing macOS with Windows does not remove the free Personal Team profile's seven-day validity. [Apple limits](https://developer.apple.com/help/account/basics/about-your-developer-account)
+**A free Windows renewal application has concrete implementation building blocks. No complete path was established for keeping all WatchBridge functionality on watchOS 27.2 through internet-only, watch-only automatic renewal, or permanent signing.** Replacing macOS with Windows does not remove the free Personal Team profile's seven-day validity. [Apple limits](https://developer.apple.com/help/account/basics/about-your-developer-account)
 
 The strongest candidate is the Watch installer in `AndreySemjonov/iloader`. Its unattended renewal backend explicitly excludes Watch apps. This is a development candidate, not a ready-to-install solution.
 
-The owner requires free automatic renewal, excludes manual renewal, and previously required no Watch–Mac connection and internet only. Investigating Windows does not authorize an always-present iPhone relay. The target is Ultra 2 / watchOS 27.2, FoldBridge 0.5.15 / build 41 and its vehicle WidgetKit extension.
+The owner requires free automatic renewal, excludes manual renewal, and previously required no Watch–Mac connection and internet only. Investigating Windows does not authorize an always-present iPhone relay. The target is Ultra 2 / watchOS 27.2, WatchBridge 0.5.15 / build 41 and its vehicle WidgetKit extension.
 
 Research covered 91 Exa search-result slots, including duplicates, across Windows installation, untethered renewal, permanent-signing techniques and free distribution. This is search coverage, not 91 independent sources or hardware results. Conclusions use primary documentation and source. No device connection, app replacement, registration change, system-log collection, vehicle command or schedule restart was performed.
 
@@ -35,11 +35,11 @@ Inspected `AndreySemjonov/iloader` at **`2d13485ef2d7107b2bc2ec6cdb5f54ce5729ef7
 - [Watch installer](https://github.com/AndreySemjonov/iloader/blob/2d13485ef2d7107b2bc2ec6cdb5f54ce5729ef70/vendor/isideload/isideload/src/sideload/watch_install.rs) forwards Watch lockdown and `streaming_zip_conduit` through iPhone `CompanionProxy`, with USB and RSD variants. Normal updates do not explicitly uninstall the existing Watch app.
 - [Signing](https://github.com/AndreySemjonov/iloader/blob/2d13485ef2d7107b2bc2ec6cdb5f54ce5729ef70/vendor/isideload/isideload/src/sideload/sign.rs) uses Rust signing code and explicitly signs embedded Watch apps. Re-signing an existing executable is distinct from compiling Swift source again.
 - [Renewal backend](https://github.com/AndreySemjonov/iloader/blob/2d13485ef2d7107b2bc2ec6cdb5f54ce5729ef70/src-tauri/src/renewal/live.rs) rejects Watch in `connect_device` and `sign`; `install_watch` returns `WatchNotSupported`. Enabling a single switch would not implement Watch renewal.
-- That backend also expects Team-suffixed rewritten bundle identifiers. FoldBridge must retain its existing app/widget IDs, Team and keychain access relationship to update in place and preserve registration.
+- That backend also expects Team-suffixed rewritten bundle identifiers. WatchBridge must retain its existing app/widget IDs, Team and keychain access relationship to update in place and preserve registration.
 
-The independent [Rzbck project](https://github.com/Rzbck/iloader-watch-companion) records physical Windows→iPhone→Watch installation and launch. Its [compatibility document](https://github.com/Rzbck/iloader-watch-companion/blob/404fe4c7f8ad610552ec2a4bc79a0d8d86c3048c/docs/COMPATIBILITY.md) explicitly does not establish support for independent Watch apps without an iPhone host or all nested extension layouts. This is not a FoldBridge hardware result.
+The independent [Rzbck project](https://github.com/Rzbck/iloader-watch-companion) records physical Windows→iPhone→Watch installation and launch. Its [compatibility document](https://github.com/Rzbck/iloader-watch-companion/blob/404fe4c7f8ad610552ec2a4bc79a0d8d86c3048c/docs/COMPATIBILITY.md) explicitly does not establish support for independent Watch apps without an iPhone host or all nested extension layouts. This is not a WatchBridge hardware result.
 
-FoldBridge's `watch/project.yml` defines a watch-only application plus `dev.foldbridge.watch.widgets`, without an iOS host. Renaming the current `.app` to `.ipa` does not satisfy a companion-IPA installer's assumptions.
+WatchBridge's `watch/project.yml` defines a watch-only application plus `dev.foldbridge.watch.widgets`, without an iOS host. Renaming the current `.app` to `.ipa` does not satisfy a companion-IPA installer's assumptions.
 
 A candidate implementation would reuse the existing Watch executable, renew app/widget profiles under the same Team, sign or replace profiles on Windows, then apply them to the watch. Regular renewal need not require a fresh Swift compilation. Future source updates still need an Apple SDK build environment; public-repository standard [GitHub Actions runners](https://docs.github.com/en/actions/concepts/billing-and-usage) are a free build candidate. Cloud artifact production alone does not supply a watch installation transport.
 
@@ -65,12 +65,12 @@ App Store distribution removes the user's weekly development-profile renewal wor
 
 [WatchWitch](https://github.com/seemoo-lab/watchwitch) requires rooted Android, jailbroken iPhone setup and older supported Watch conditions; it documents a watchOS 10+ transport limitation. [apple_watch_connector](https://github.com/LordixDemon/apple_watch_connector) has newer native-protocol work but restricts its Android root HAL to supported hardware and documents watchOS 26.2 hardware evidence.
 
-These projects may avoid a custom development-signed Watch receiver, but do not establish full FoldBridge vehicle-widget equivalence on the owner's unrooted Fold7 and watchOS 27.2. This is a separate protocol implementation effort, not a Windows re-signing setting. No system pairing was changed.
+These projects may avoid a custom development-signed Watch receiver, but do not establish full WatchBridge vehicle-widget equivalence on the owner's unrooted Fold7 and watchOS 27.2. This is a separate protocol implementation effort, not a Windows re-signing setting. No system pairing was changed.
 
 ## Development direction
 
 For the strict requirement, the first missing piece is **direct Windows–Watch connectivity and app/widget profile application without an iPhone relay**. A signing UI or scheduled task does not solve that missing transport.
 
-If an iPhone relay becomes acceptable, concrete Watch installation code and a separate renewal engine could be integrated. Independent FoldBridge and its widget would still require implementation work. One successful manual installation is not proof of ongoing unattended renewal.
+If an iPhone relay becomes acceptable, concrete Watch installation code and a separate renewal engine could be integrated. Independent WatchBridge and its widget would still require implementation work. One successful manual installation is not proof of ongoing unattended renewal.
 
 Current classification: **free Windows automatic renewal — a source-backed development candidate; free watch-only internet renewal — unresolved; permanent execution on this current watch — no usable implementation established.** Existing app behavior and the stopped schedule were left unchanged.

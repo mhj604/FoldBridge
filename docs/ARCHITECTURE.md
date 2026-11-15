@@ -1,4 +1,4 @@
-# FoldBridge Local 구조
+# WatchBridge 구조
 
 **한국어** · [English](ARCHITECTURE_EN.md) · [전체 문서](README.md)
 
@@ -42,7 +42,7 @@
 
 Android 개인 키는 Android Keystore, 워치 개인 키는 기기 전용 Keychain에 둔다. 휴대폰은 현재 연결의 미확인 목록을 메모리로만 유지한다. 워치는 알림 내용의 별도 수신함을 두지 않으며 중복 방지용 ID/리비전 해시 512개만 저장한다. 빌드 6 첫 실행에서 이전 inbox의 해시만 옮긴 뒤 제목·본문을 포함한 기존 inbox를 제거한다. watchOS 알림 센터의 알림은 유지한다. 양쪽 `foldbridge-status.json`은 연결/권한/단계별 개수만 기록하며 알림 본문·개인 키·위치 좌표는 넣지 않는다.
 
-워치 앱의 기존 FoldBridge와 Local 프로필은 휴대폰 키/식별자를 따로 보관한다. 기존 앱과 Local Android BLE 서비스를 동시에 실행하지 않는다. 읽음·삭제의 양방향 동기화는 구현하지 않았으며 알림 열람/삭제는 watchOS 알림 센터에서 처리한다.
+워치 앱의 기존 WatchBridge와 Local 프로필은 휴대폰 키/식별자를 따로 보관한다. 기존 앱과 Local Android BLE 서비스를 동시에 실행하지 않는다. 읽음·삭제의 양방향 동기화는 구현하지 않았으며 알림 열람/삭제는 watchOS 알림 센터에서 처리한다.
 
 ## 보존한 초기 구성
 
@@ -54,7 +54,7 @@ Android `AppIcons`는 PackageManager의 원본 앱 아이콘을 읽고 BLE 메�
 
 워치는 아이콘을 Application Support 폴더에 저장하고 메모리 캐시를 사용한다. 이미지 첨부는 만들지 않는다. 팝업과 카드는 시스템 표시이며, 원본 아이콘이 있는 알림의 펼친 본문만 24pt 아이콘을 포함한 제한 폭 SwiftUI 화면을 사용한다. 아이콘이 없으면 시스템 텍스트 화면을 사용한다. 발신 앱 ID로 알림을 묶는다. 새 아이콘이 기존 수신 알림에 추가돼도 같은 내용 리비전을 다시 알리지 않는다.
 
-watchOS의 short-look과 상단 sash는 시스템이 FoldBridge 앱 이름/아이콘으로 생성한다. 이는 원본 Android 앱의 알림으로 바꿀 수 없으며 원본 아이콘은 사용자 정의 콘텐츠 영역에 표시한다. [Apple 문서](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
+watchOS의 short-look과 상단 sash는 시스템이 WatchBridge 앱 이름/아이콘으로 생성한다. 이는 원본 Android 앱의 알림으로 바꿀 수 없으며 원본 아이콘은 사용자 정의 콘텐츠 영역에 표시한다. [Apple 문서](https://developer.apple.com/documentation/watchos-apps/presenting-notifications-on-apple-watch)
 
 기존 암호화/프레임 형식을 유지하며 추가 아이콘 필드는 선택 사항이다. 아이콘이 없거나 원본을 가져올 수 없으면 시스템 기본 텍스트 알림을 사용한다.
 
@@ -78,17 +78,17 @@ watchOS의 short-look과 상단 sash는 시스템이 FoldBridge 앱 이름/아�
 
 ## 미디어 첨부 제거 (Watch 0.4.2)
 
-0.4.1의 첨부는 앱 아이콘이 아닌 미디어이므로 시스템이 크게 표시하거나 그룹/개별 카드의 썸네일로 재사용할 수 있었다. 원본 PNG 크기와 시스템 미디어 영역 크기는 별개다. 0.4.2는 이 첨부 경로 전체를 제거한다. 기본 알림에는 FoldBridge 시스템 아이콘과 원본 앱 이름/제목/본문만 표시한다. 이전 알림의 첨부를 삭제하거나 다시 등록하지 않으므로 새로 수신하는 알림부터 적용된다. 기본 시스템 아이콘을 그룹과 개별 카드에서 각각 바꾸는 공개 API는 사용하지 않는다.
+0.4.1의 첨부는 앱 아이콘이 아닌 미디어이므로 시스템이 크게 표시하거나 그룹/개별 카드의 썸네일로 재사용할 수 있었다. 원본 PNG 크기와 시스템 미디어 영역 크기는 별개다. 0.4.2는 이 첨부 경로 전체를 제거한다. 기본 알림에는 WatchBridge 시스템 아이콘과 원본 앱 이름/제목/본문만 표시한다. 이전 알림의 첨부를 삭제하거나 다시 등록하지 않으므로 새로 수신하는 알림부터 적용된다. 기본 시스템 아이콘을 그룹과 개별 카드에서 각각 바꾸는 공개 API는 사용하지 않는다.
 
 ## 작은 원본 아이콘을 상세 본문에 표시 (Watch 0.4.3)
 
 사용자가 원본 아이콘을 유지하는 두 번째 표시 방식을 선택했다. `FOLDBRIDGE_COMPACT_ICON_ALERT`만 CompactNotificationController/CompactNotificationView에 연결한다. 기존 native 카테고리와는 분리하며 원본 아이콘이 캐시에 있을 때만 선택한다.
 
-notification host의 intrinsic size를 제한하기 위해 화면 폭에서 40pt를 뺀 유한 폭을 모든 행과 텍스트에 지정한다. icon은 24×24pt, 간격은 8pt이며 나머지 폭에 앱 이름을 배치한다. 본문 높이와 줄 수를 고정하지 않는다. GeometryReader, maxWidth infinity, Spacer, 중첩 ScrollView, 추가 scene padding을 사용하지 않는다. 이미지가 미디어 미리보기로 승격되지 않도록 UNNotificationAttachment는 사용하지 않는다. 첫 팝업/카드/sash는 시스템 FoldBridge 표시를 유지한다.
+notification host의 intrinsic size를 제한하기 위해 화면 폭에서 40pt를 뺀 유한 폭을 모든 행과 텍스트에 지정한다. icon은 24×24pt, 간격은 8pt이며 나머지 폭에 앱 이름을 배치한다. 본문 높이와 줄 수를 고정하지 않는다. GeometryReader, maxWidth infinity, Spacer, 중첩 ScrollView, 추가 scene padding을 사용하지 않는다. 이미지가 미디어 미리보기로 승격되지 않도록 UNNotificationAttachment는 사용하지 않는다. 첫 팝업/카드/sash는 시스템 WatchBridge 표시를 유지한다.
 
 ## 상세 본문의 기본 간격에 맞춘 조정 (Watch 0.4.4)
 
-원본 아이콘은 오른쪽 24pt로 유지한다. 유한 본문 폭을 screenBounds.width-32로 넓혀 좌우 기준 여백을 16pt로 맞추고, VStack 문단 간격은 2pt로 줄인다. 추가 vertical padding 4pt를 제거해 제목·본문의 시작 위치를 위로 옮긴다. 제목·발신자·본문의 왼쪽 기준선과 시스템 글꼴은 유지한다. 이 값은 FoldBridge가 선택한 배치이며 Apple 시스템 알림의 비공개 치수와 동일하다고 주장하지 않는다.
+원본 아이콘은 오른쪽 24pt로 유지한다. 유한 본문 폭을 screenBounds.width-32로 넓혀 좌우 기준 여백을 16pt로 맞추고, VStack 문단 간격은 2pt로 줄인다. 추가 vertical padding 4pt를 제거해 제목·본문의 시작 위치를 위로 옮긴다. 제목·발신자·본문의 왼쪽 기준선과 시스템 글꼴은 유지한다. 이 값은 WatchBridge가 선택한 배치이며 Apple 시스템 알림의 비공개 치수와 동일하다고 주장하지 않는다.
 
 
 ## 상세 알림의 실측 조정

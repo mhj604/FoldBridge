@@ -1,4 +1,4 @@
-# FoldBridge Watch 0.4.4 — 상세 알림의 글씨 위치와 간격 조정
+# WatchBridge Watch 0.4.4 — 상세 알림의 글씨 위치와 간격 조정
 
 - Watch: **0.4.4 / build 15**
 - Android: **0.5.0-local 유지**

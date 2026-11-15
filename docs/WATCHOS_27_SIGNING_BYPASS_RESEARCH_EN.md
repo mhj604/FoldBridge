@@ -4,9 +4,9 @@
 
 ## Finding
 
-**No free, no-renewal implementation was obtained for Ultra 2 / watchOS 27.2 (24S118) that preserves the existing FoldBridge installation and pairing.** Relevant research exists: physical Watch permasigning on older firmware, a recent Watch modification demo, memory-corruption research affecting the current OS family, and execution in a virtual Watch. None supplies the required complete path on this device.
+**No free, no-renewal implementation was obtained for Ultra 2 / watchOS 27.2 (24S118) that preserves the existing WatchBridge installation and pairing.** Relevant research exists: physical Watch permasigning on older firmware, a recent Watch modification demo, memory-corruption research affecting the current OS family, and execution in a virtual Watch. None supplies the required complete path on this device.
 
-This was public-source analysis. No devices were connected, system logs collected, PoCs executed, apps installed or re-signed, settings changed, devices erased, or pairings removed. No vehicle commands or canceled renewal schedules were run. FoldBridge application code was not changed; signing bypass remains unimplemented.
+This was public-source analysis. No devices were connected, system logs collected, PoCs executed, apps installed or re-signed, settings changed, devices erased, or pairings removed. No vehicle commands or canceled renewal schedules were run. WatchBridge application code was not changed; signing bypass remains unimplemented.
 
 ## Scope
 
@@ -41,7 +41,7 @@ The author's [follow-up](https://x.com/LIJI32/status/1769123903585058905) did no
 
 Apple lists CVE-2026-111497 as fixed in [watchOS 27.2.1, released November 9](https://support.apple.com/en-us/149722), with memory corruption as the impact. This is relevant to investigating 27.2, but not proof of code execution or permasigning on Ultra 2. Google publishes the [upstream fix](https://github.com/google/brotli/commit/0ed4268a4401abcb4472096340477cf4af7d1a2b) and [1.2.1 changelog](https://github.com/google/brotli/blob/v1.2.1/CHANGELOG.md).
 
-The [Apple-library PoC at `0899753a85829472ac4a6e63b75655dd91db6fa0`](https://github.com/MchinaMd57764/CVE-2026-111497-PoC/tree/0899753a85829472ac4a6e63b75655dd91db6fa0) reports iPhone behavior and explicitly excludes demonstrated code execution, control-flow hijack, PAC bypass, and kernel compromise. It contains no Watch result. Connecting this lead to the user's goal requires new work establishing a reachable Watch path and execution control, additional privileges or trust-check bypass, installation/relaunch, and persistence. Adding a crash reproducer to FoldBridge would not resolve expiry. No PoC was run or transmitted.
+The [Apple-library PoC at `0899753a85829472ac4a6e63b75655dd91db6fa0`](https://github.com/MchinaMd57764/CVE-2026-111497-PoC/tree/0899753a85829472ac4a6e63b75655dd91db6fa0) reports iPhone behavior and explicitly excludes demonstrated code execution, control-flow hijack, PAC bypass, and kernel compromise. It contains no Watch result. Connecting this lead to the user's goal requires new work establishing a reachable Watch path and execution control, additional privileges or trust-check bypass, installation/relaunch, and persistence. Adding a crash reproducer to WatchBridge would not resolve expiry. No PoC was run or transmitted.
 
 ## Why other code is not directly portable
 
@@ -56,7 +56,7 @@ A **signature-logic-bug route** needs a current Watch validation flaw plus an in
 
 A **privilege-escalation route** needs access/execution on the current build, handling of signing/installation/runtime trust boundaries, and a persistence or automatic restoration mechanism. A kernel read/write primitive alone does not establish all these capabilities.
 
-FoldBridge uses both `dev.foldbridge.watch` and `dev.foldbridge.watch.widgets`. App execution alone would not prove WidgetKit extension operation or relaunch support. Preserving registration, keys, and settings also requires maintaining bundle identity, keychain access relationships, and the data container. None of the candidates supplies that complete path for the current target.
+WatchBridge uses both `dev.foldbridge.watch` and `dev.foldbridge.watch.widgets`. App execution alone would not prove WidgetKit extension operation or relaunch support. Preserving registration, keys, and settings also requires maintaining bundle identity, keychain access relationships, and the data container. None of the candidates supplies that complete path for the current target.
 
 ## Outcome
 
@@ -83,7 +83,7 @@ An additional Exa search covered **18 searches, 90 result slots including duplic
 | [ReProvision Reborn](https://github.com/sohsatoh/ReProvision-Reborn) | Watch re-signing from jailbroken iPhone | Actual renewal, with an iPhone execution dependency |
 | [iLoader Watch fork](https://github.com/AndreySemjonov/iloader) | Watch companion installation via iPhone | Installation is not permanent signing; automatic Watch renewal is explicitly unsupported |
 | [LiveContainer](https://github.com/LiveContainer/LiveContainer) | Rehosts apps inside a signed iOS host | Not a watchOS host; guest widgets/extensions generally unsupported |
-| [WatchBox](https://github.com/34306/WatchBox) / [WatchFix](https://github.com/577fkj/WatchFix) / [watched](https://github.com/34306/watched) | iPhone–Watch pairing/version compatibility | Does not remove FoldBridge expiry; some flows require pairing again |
+| [WatchBox](https://github.com/34306/WatchBox) / [WatchFix](https://github.com/577fkj/WatchFix) / [watched](https://github.com/34306/watched) | iPhone–Watch pairing/version compatibility | Does not remove WatchBridge expiry; some flows require pairing again |
 
 ### New lead: MissedRevoke
 
@@ -93,7 +93,7 @@ Its SQL triggers address expiry records, making it relevant research. However, t
 
 ### Source-level distinctions
 
-- AppSync revision [`235aca6cddfbdc9fa87fcb5b2aec2df37ed6d65a`](https://github.com/akemin-dayo/AppSync/blob/235aca6cddfbdc9fa87fcb5b2aec2df37ed6d65a/AppSyncUnified-FrontBoard/AppSyncUnified-FrontBoard.x) changes runtime trust responses through hooks. It needs injection into operating-system processes, not an ordinary function added to FoldBridge.
+- AppSync revision [`235aca6cddfbdc9fa87fcb5b2aec2df37ed6d65a`](https://github.com/akemin-dayo/AppSync/blob/235aca6cddfbdc9fa87fcb5b2aec2df37ed6d65a/AppSyncUnified-FrontBoard/AppSyncUnified-FrontBoard.x) changes runtime trust responses through hooks. It needs injection into operating-system processes, not an ordinary function added to WatchBridge.
 - Splice revision [`7968bb190ffe4f1aa0bac1b8da6fd3003af072be`](https://github.com/franklintra/splice/blob/7968bb190ffe4f1aa0bac1b8da6fd3003af072be/frontends/cli/source/trollstore.d) bases permanent-install status on vulnerable iOS versions. The option name does not establish watchOS support.
 - [LiveContainer's FAQ](https://livecontainer.github.io/docs/faq) excludes general guest widget/extension support; it does not preserve the existing vehicle WidgetKit extension.
 - [SideStore's FAQ](https://docs.sidestore.io/docs/faq) explicitly describes renewal. [NoFreeAppLimit](https://havoc.app/package/nofreeapplimit) removes an app-count restriction, not expiry.
@@ -120,7 +120,7 @@ The [upstream Gist](https://gist.github.com/khanhduytran0/e3ae92673a1acfe85ce5a5
 | Delivery | iOS MobileDeviceDomain partial-restore sample | A current Watch access path retaining registration, keys and settings; none is provided |
 | Expired execution | Changes expiry/deletion bookkeeping but retains the original cms_blob | Handling the separate install/launch clock checks described by the author, including app and widget relaunch |
 
-These SQL observations are static analysis. No device database was read and no trigger was executed. The sample also lacks a FoldBridge-only scope; copying it does not produce a targeted modification that preserves the existing installation.
+These SQL observations are static analysis. No device database was read and no trigger was executed. The sample also lacks a WatchBridge-only scope; copying it does not produce a targeted modification that preserves the existing installation.
 
 Apple's [TN3125](https://developer.apple.com/documentation/technotes/tn3125-inside-code-signing-provisioning-profiles) explains that a profile is Apple-signed CMS data containing execution validity, and that **watchOS 8 and later require the DER profile representation**. Changing a database timestamp or readable plist does not extend the Apple-signed profile. Combined with the author's remaining clock workaround, this supports the assessment that an SQL port alone does not deliver indefinite execution with the correct system clock. The exact current Watch enforcement functions or a bypass for them have not been obtained.
 
@@ -130,7 +130,7 @@ Apple's [TN3125](https://developer.apple.com/documentation/technotes/tn3125-insi
 
 Apple's [Watch restore documentation](https://support.apple.com/guide/watch/restore-applewatch-from-a-backup-apdaa8cc32e8/watchos) describes selecting a backup during pairing. It does not document in-place replacement of a system database while retaining pairing. The [iOS 27 restore report](https://github.com/libimobiledevice/libimobiledevice/issues/1746) and [Nugget27](https://github.com/idkwhatt0d0dev/Nugget27)'s full backup/change/restore workaround do not provide a Watch no-renewal implementation preserving its current pairing. Their iOS behavior is not asserted to occur on this watchOS build.
 
-FoldBridge has two executables: `dev.foldbridge.watch` and `dev.foldbridge.watch.widgets`. `WatchStore.swift` stores the registration identity in Keychain and sets newly inserted items to `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`. Copying app preference files alone therefore cannot establish registration preservation. Neither that code nor the registration was changed.
+WatchBridge has two executables: `dev.foldbridge.watch` and `dev.foldbridge.watch.widgets`. `WatchStore.swift` stores the registration identity in Keychain and sets newly inserted items to `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`. Copying app preference files alone therefore cannot establish registration preservation. Neither that code nor the registration was changed.
 
 ### Outcome
 
