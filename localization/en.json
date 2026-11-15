@@ -264,5 +264,10 @@
   "비상등 켜기": "Turn on hazard lights",
   "문 잠금 해제": "Unlock doors",
   "갤럭시 위젯에 해당 제어 버튼이 없습니다.": "This control is not available in the Galaxy widget.",
-  "휴대폰 연결 서비스 대기 중": "Waiting for the phone connection service"
+  "휴대폰 연결 서비스 대기 중": "Waiting for the phone connection service",
+  "연결 대기 알림": "Waiting for connection",
+  "실제 연결 알림": "Authenticated connection",
+  "연결 알림 표시": "Connection notifications",
+  "설정 열기": "Open settings",
+  "실제 연결됐을 때만 폰 알림을 보려면 다음 화면에서 ‘연결 대기 알림’을 꺼 주세요. 자동 재연결과 워치 알림 전달은 유지됩니다. Android의 실행 중 앱 목록에는 서비스가 남을 수 있습니다.": "To show phone notifications only while connected, turn off Waiting for connection on the next screen. Automatic reconnection and watch notification delivery remain enabled. Android may still list the service under active apps."
 }

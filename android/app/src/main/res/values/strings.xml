@@ -116,6 +116,7 @@
   <string name="text_5bde3b7f9937aafb" formatted="false">"Pair a new watch"</string>
   <string name="text_79edb556943a3ab1" formatted="false">"Choose apps to forward"</string>
   <string name="text_115bced49291a6a0" formatted="false">"Settings"</string>
+  <string name="text_3a6b16eab508fe67" formatted="false">"Open settings"</string>
   <string name="text_291572f8cbcf5bb9" formatted="false">"Check your settings: "</string>
   <string name="text_cef4d8ab741c76bf" formatted="false">"Received"</string>
   <string name="text_6bbeb44e673fe476" formatted="false">"Confirmed"</string>
@@ -124,6 +125,8 @@
   <string name="text_22b259cb4ad7df67" formatted="false">"Run start, stop, lock and unlock controls directly from your watch."</string>
   <string name="text_d87ab725df97a39a" formatted="false">"System default"</string>
   <string name="text_b1f28cd21af730b2" formatted="false">"Start"</string>
+  <string name="text_7bb1535c89c9ad87" formatted="false">"Authenticated connection"</string>
+  <string name="text_d3e103425d002878" formatted="false">"To show phone notifications only while connected, turn off Waiting for connection on the next screen. Automatic reconnection and watch notification delivery remain enabled. Android may still list the service under active apps."</string>
   <string name="text_ac2a58826d92e6ae" formatted="false">"Run"</string>
   <string name="text_a5f02f68f216f03b" formatted="false">"Select the buttons to use below. Tapping controls in the official widget can operate the vehicle."</string>
   <string name="text_dc20bb491cd32fb2" formatted="false">"Choose the MyHyundai action for this button below. After assigning it, tap the widget again to send the command."</string>
@@ -147,9 +150,11 @@
   <string name="text_9f96455d7246cbaa" formatted="false">"Language / 언어"</string>
   <string name="text_32dd2947e74266d5" formatted="false">"Connection"</string>
   <string name="text_f4965b9f1b3fd16e" formatted="false">"Disconnected. Waiting for the watch to reconnect"</string>
+  <string name="text_ef71e3cc36ed5bd4" formatted="false">"Waiting for connection"</string>
   <string name="text_f7b73f72009e7f13" formatted="false">"Waiting for connection"</string>
   <string name="text_5acf3020fde3e93f" formatted="false">"Refresh connection"</string>
   <string name="text_724e65a5c182623b" formatted="false">"Refreshing connection"</string>
+  <string name="text_e9507073ea123095" formatted="false">"Connection notifications"</string>
   <string name="text_08b471ed5f3ef411" formatted="false">"Phone app"</string>
   <string name="text_6cc2a07d63acdcb4" formatted="false">"Keep connection"</string>
   <string name="text_fe8d944f83f238df" formatted="false">"Keep connection is on"</string>
@@ -234,7 +239,7 @@
   <string name="text_8ae81e81bde031d5" formatted="false">"Vehicle controls widget"</string>
   <string name="text_9b7d7c773e1744cc" formatted="false">"Pairing a watch for the first time?"</string>
   <string name="text_23466026b7f56424" formatted="false">"Charging status alerts"</string>
-  <string name="text_6b725729acdad283" formatted="false">"Alert once when charging starts; ignore changing values"</string>
+  <string name="text_6b725729acdad283" formatted="false">"Include battery charging updates"</string>
   <string name="text_be876433993ab7ba" formatted="false">"Cancel"</string>
   <string name="text_749a1aa6edfad5eb" formatted="false">"Codes match"</string>
   <string name="text_c3c997b250b4d898" formatted="false">"Could not open the communication channel."</string>

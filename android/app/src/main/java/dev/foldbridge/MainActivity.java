@@ -106,15 +106,25 @@ public final class MainActivity extends Activity {
         BridgeService.recordState(this);
     }
     private void showSettings(){
-        String[] items={L("새 워치 등록"),L("알림 접근 설정"),L("전달할 앱 선택"),L("연결 진단"),L("연결 중지"),L("등록한 워치 해제"),L("언어 / Language")};
+        String[] items={L("새 워치 등록"),L("알림 접근 설정"),L("전달할 앱 선택"),L("연결 진단"),L("연결 중지"),L("등록한 워치 해제"),L("언어 / Language"),L("연결 알림 표시")};
         new AlertDialog.Builder(this).setTitle(L("설정")).setItems(items,(dialog,index)->{
             switch(index){
                 case 0->start(true);case 1->openNotificationAccess();case 2->selectApps();case 3->showDiagnostics();
                 case 4->{getSharedPreferences("settings",MODE_PRIVATE).edit().putBoolean("connection_enabled",false).apply();stopService(new Intent(this,BridgeService.class));}
                 case 6->showLanguageSettings();
+                case 7->showConnectionNotificationSettings();
                 case 5->new AlertDialog.Builder(this).setTitle(L("워치 등록을 해제할까요?")).setMessage(L("다시 연결할 때 두 기기에서 코드를 확인해야 합니다.")).setPositiveButton(L("해제"),(d,w)->BridgeService.forget(this)).setNegativeButton(L("취소"),null).show();
             }
         }).setNegativeButton(L("닫기"),null).show();
+    }
+    private void showConnectionNotificationSettings() {
+        BridgeService.prepareConnectionChannels(this);
+        new AlertDialog.Builder(this).setTitle(L("연결 알림 표시"))
+            .setMessage(L("실제 연결됐을 때만 폰 알림을 보려면 다음 화면에서 ‘연결 대기 알림’을 꺼 주세요. 자동 재연결과 워치 알림 전달은 유지됩니다. Android의 실행 중 앱 목록에는 서비스가 남을 수 있습니다."))
+            .setPositiveButton(L("설정 열기"),(d,w)->startActivity(new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+                .putExtra(Settings.EXTRA_APP_PACKAGE,getPackageName())
+                .putExtra(Settings.EXTRA_CHANNEL_ID,BridgeService.WAITING_CHANNEL)))
+            .setNegativeButton(L("취소"),null).show();
     }
     private void showLanguageSettings(){
         android.app.LocaleManager locales=getSystemService(android.app.LocaleManager.class);
@@ -128,7 +138,7 @@ public final class MainActivity extends Activity {
     }
     private void showDiagnostics(){
         String timing=BridgeService.lastRtt<0?L("아직 없음"):BridgeService.lastRtt+" ms";
-        new AlertDialog.Builder(this).setTitle(L("연결 진단")).setMessage(L("연결: ")+L(BridgeService.status)+L("\n알림 접근: ")+(NotificationRelay.hasAccess(this)?L("허용됨"):L("꺼짐"))+L("\n알림 수집: ")+(NotificationRelay.instance!=null?L("연결됨"):L("대기 중"))+L("\n수집 ")+NotificationRelay.received+L(" · 전달 요청 ")+NotificationRelay.forwarded+L("\n최근 전달 확인: ")+timing+"\n\nFoldBridge Local 0.6.11").setPositiveButton(L("닫기"),null).show();
+        new AlertDialog.Builder(this).setTitle(L("연결 진단")).setMessage(L("연결: ")+L(BridgeService.status)+L("\n알림 접근: ")+(NotificationRelay.hasAccess(this)?L("허용됨"):L("꺼짐"))+L("\n알림 수집: ")+(NotificationRelay.instance!=null?L("연결됨"):L("대기 중"))+L("\n수집 ")+NotificationRelay.received+L(" · 전달 요청 ")+NotificationRelay.forwarded+L("\n최근 전달 확인: ")+timing+"\n\nFoldBridge Local 0.6.13").setPositiveButton(L("닫기"),null).show();
     }
     private void start(boolean pair) {
         if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED||checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE)!=PackageManager.PERMISSION_GRANTED) {requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_ADVERTISE,Manifest.permission.POST_NOTIFICATIONS},7);toast(L("권한을 허용한 뒤 연결 버튼을 다시 누르세요."));return;}

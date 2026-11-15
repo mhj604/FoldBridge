@@ -88,6 +88,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var seenOrder: [String] = []
     private var reconnectWork: DispatchWorkItem?, backgroundIdleWork: DispatchWorkItem?
     private var recoveryScanning = false
+    private var lastBackgroundRecoveryScan = Date.distantPast
+    private var backgroundRecoveryScans = 0
     private var autoReconnectPending = false
     private var refreshingServices = false
     private var serviceDiscoveryWork: DispatchWorkItem?
@@ -283,6 +285,18 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // Core Bluetooth can restore an already-running scan before this
         // process has restored its own routing flag. Keep using that scan.
         if manager.isScanning { recoveryScanning = true;return }
+        if !active {
+            // A known peripheral already has a native pending connection. Starting
+            // another discovery on every retry consumes the same scarce watchOS
+            // budget as timely alerts. Retain native reconnect; reserve discovery
+            // for a stale/missing address, at most once per background refresh.
+            if let p = peripheral {
+                guard p.state != .connected,
+                      Date().timeIntervalSince(connectionAttemptAt) >= 30 else { return }
+            }
+            guard Date().timeIntervalSince(lastBackgroundRecoveryScan) >= 30*60 else { return }
+            lastBackgroundRecoveryScan = Date();backgroundRecoveryScans += 1
+        }
         // A missing OS cache entry must not force the user to register the same phone again.
         // Discovery still authenticates the saved public key before any alert is accepted.
         recoveryScanning = true;scanEpoch += 1
@@ -981,7 +995,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"status":status,"active":active,
-            "build":42,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":43,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "backgroundRecoveryScans":backgroundRecoveryScans,
             "discardedFrames":discardedFrames,"writeWaits":writeWaits,
             "serviceWaitCount":serviceWaitCount,"serviceDiscoveryAttempts":serviceDiscoveryAttempts,"lastServiceDiscoveryError":lastServiceDiscoveryError,
             "lastConnectError":lastConnectError,

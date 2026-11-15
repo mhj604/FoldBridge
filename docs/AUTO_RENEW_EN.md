@@ -4,6 +4,10 @@
 
 This automates re-provisioning, signing and in-place installation from a Mac. It does not remove the seven-day Personal Team limit. Existing registration/settings are retained; the app is never uninstalled.
 
+## November 15, 2026 update
+
+Installed Watch is now **0.5.17 / build 43**. Earliest profile expiration remains **November 20, 2026, 17:10:54 KST**; a new build does not necessarily extend validity by seven days. Local installation records and weekly scheduler source are aligned with the new version's commit. Free Watch-only renewal remains the priority unresolved goal. [Additional research](WATCH_ONLY_RENEWAL_2026-11-15_EN.md).
+
 ## November 13, 2026: once-weekly native macOS scheduling
 
 Follow-up [Windows and profile-only renewal research](SIGNING_WINDOWS_RESEARCH_EN.md) found free Windows Watch installation code, but its automatic renewal excludes Watch. Direct application without an iPhone remains unresolved. SideStore's iOS refresh can replace profiles without a full reinstall, so a full reinstall must not be described as universal across platforms. The procedure below describes this repository's Mac/Xcode tool.

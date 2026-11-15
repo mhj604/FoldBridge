@@ -13,6 +13,7 @@ import java.security.*;
 import java.util.*;
 
 public final class BridgeService extends Service {
+    static final String WAITING_CHANNEL="connection_waiting", ONLINE_CHANNEL="connection_online";
     // Retry only within the current authenticated connection; never replay an offline backlog.
     private static final long DELIVERY_RETENTION_MILLIS=24L*60*60*1000;
     private static final int MAX_PENDING=1024;
@@ -26,7 +27,9 @@ public final class BridgeService extends Service {
     static void recordState(Context context) {
         BridgeService s=instance;
         if(s!=null)s.updateConnectionNotification();
-        JSONObject state=object("build",30,"bridgeRunning",s!=null,"status",status,"error",error,
+        NotificationChannel waitingChannel=context.getSystemService(NotificationManager.class).getNotificationChannel(WAITING_CHANNEL);
+        JSONObject state=object("build",31,"bridgeRunning",s!=null,"status",status,"error",error,
+            "waitingNotificationHidden",waitingChannel!=null&&waitingChannel.getImportance()==NotificationManager.IMPORTANCE_NONE,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
             "softRefreshCount",s==null?0:s.softRefreshCount,"disconnectCount",s==null?0:s.disconnectCount,"lastDisconnectReason",s==null?"":s.lastDisconnectReason,
@@ -146,14 +149,24 @@ public final class BridgeService extends Service {
         return START_STICKY;
     }
     private void updateConnectionNotification() {if(foregroundStarted)updateConnectionNotification(false);}
+    static void prepareConnectionChannels(Context context) {
+        NotificationManager manager=context.getSystemService(NotificationManager.class);
+        NotificationChannel waiting=new NotificationChannel(WAITING_CHANNEL,I18n.t(context,"연결 대기 알림"),NotificationManager.IMPORTANCE_LOW);
+        waiting.setShowBadge(false);
+        NotificationChannel online=new NotificationChannel(ONLINE_CHANNEL,I18n.t(context,"실제 연결 알림"),NotificationManager.IMPORTANCE_LOW);
+        online.setShowBadge(false);
+        manager.createNotificationChannels(Arrays.asList(waiting,online));
+    }
     private void updateConnectionNotification(boolean force) {
         boolean linked=authenticated&&subscribed&&central!=null;
         String key=linked+":"+getResources().getConfiguration().getLocales().toLanguageTags();
         if(!force&&key.equals(notificationState))return;
         NotificationManager manager=getSystemService(NotificationManager.class);
-        manager.createNotificationChannel(new NotificationChannel("connection",I18n.t(this,"워치 연결 상태"),NotificationManager.IMPORTANCE_LOW));
+        prepareConnectionChannels(this);
         PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_IMMUTABLE);
-        Notification notification=new Notification.Builder(this,"connection")
+        // Keep foreground execution even when the owner disables only the waiting
+        // channel. Actual authenticated connections use their own enabled channel.
+        Notification notification=new Notification.Builder(this,linked?ONLINE_CHANNEL:WAITING_CHANNEL)
             .setSmallIcon(android.R.drawable.stat_sys_data_bluetooth)
             .setContentTitle("FoldBridge Local · "+I18n.t(this,linked?"워치 연결됨":"워치 연결 대기 중"))
             .setContentText(I18n.t(this,linked?"Bluetooth로 애플워치 알림을 전달합니다":"휴대폰과 워치가 가까이 있으면 연결을 이어갑니다."))
