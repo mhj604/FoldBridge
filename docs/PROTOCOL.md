@@ -32,6 +32,19 @@ AES-256-GCM의 AAD는 `FoldBridge/v1`이다. 휴대폰 nonce prefix는 `FBP1`, �
 
 암호화 envelope는 `{type:"sealed", seq:1, data:"base64(ciphertext || tag)"}`다. Local 실행 경로의 메시지는 `confirm`, `ready`, `state`, `sync`, `notification`, `ack`, `refresh`, `refreshed` (이전 버전 호환: `reconnect`, `ping`, `pong`)다. 기존 Push 지원 소스는 남아 있으나 Local은 APNs 토큰을 보내거나 서버를 사용하지 않는다.
 
+## 저장된 상대의 빠른 재인증 (Android 0.6.14 / Watch 0.5.18)
+
+Local 프로필에 상대 공개 키가 고정돼 있을 때만 사용한다. 최초 등록은 위 commit/reveal·코드 확인을 그대로 사용한다. `b64`는 표준 Base64, `||`는 바이트 연결, 모든 문맥 문자열은 UTF-8이다.
+
+1. 워치는 새 32바이트 `wn`을 만들고 기존 개인 키와 고정 폰 공개 키로 ECDH `shared`를 계산한다. `requestKey = HKDF-SHA256(shared, salt=wn, info="FoldBridge/resume/request/v1", len=32)`; `proof = HMAC-SHA256(requestKey, "FoldBridge/resume/watch/v1")`. 평문 `{type:"resume",v:1,nonce:b64(wn),proof:b64(proof)}`를 보낸다.
+2. 폰은 고정 워치 키로 같은 증명을 확인하고 새 32바이트 `pn`을 만든다. `key = HKDF-SHA256(shared, salt=wn || pn, info="FoldBridge/v1", len=32)`; `replyProof = HMAC-SHA256(key, "FoldBridge/resume/phone/v1" || wn || pn)`. 평문 `{type:"resumed",v:1,nonce:b64(pn),proof:b64(replyProof)}`를 보낸다.
+3. 워치는 같은 후보 세션 키로 응답을 확인한 뒤 기존 AES-GCM envelope의 암호화된 `confirm`을 먼저 전송한다. 폰은 이를 검증한 뒤 인증을 완료하고 암호화된 `{type:"ready",liveness:0,fast_resume:1}`을 보낸다. 이후 메시지도 기존 AES-GCM 순번·AAD를 사용한다.
+
+상대 키를 교체하거나 새 등록을 만들지 않는다. 저장된 세션 키를 재사용하지 않고 매번 양쪽 새 난수로 키를 파생한다. 폰 프로세스는 최근 수락한 요청 nonce 64개를 기억해 중복 ATT 전달이 진행 중/완료된 인증을 초기화하지 않게 한다. 프로세스가 다시 시작해도 새 폰 난수가 새 세션을 만든다.
+
+워치는 암호화된 `ready.fast_resume`로 호환성을 기록한다. 아직 능력을 모르는 저장된 Local 상대에는 빠른 방식을 먼저 시도하며, 실패하거나 인증 전 끊기면 다음 연결에서 기존 commit/reveal로 돌아간다. 새 인증 중 늦게 온 이전 envelope와 중복 초기 신호가 난수를 다시 생성하지 않게 한다. 최초 등록의 코드 비교, 고정 상대 키, 알림 전송 전 인증 조건은 유지한다. 정적 신원 키 기반이므로 전방향 안전성이나 OS 실행 보장은 추가되지 않는다.
+
+
 ## 알림과 수신 확인
 
 `notification`에는 Android 알림 키의 해시 ID, 제목/본문의 해시 리비전, 앱 표시명, 제목, 본문, 게시 시각을 넣는다. 최초 양쪽 확인 전에는 전달하지 않는다.

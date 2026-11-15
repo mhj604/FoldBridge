@@ -28,7 +28,7 @@ public final class BridgeService extends Service {
         BridgeService s=instance;
         if(s!=null)s.updateConnectionNotification();
         NotificationChannel waitingChannel=context.getSystemService(NotificationManager.class).getNotificationChannel(WAITING_CHANNEL);
-        JSONObject state=object("build",31,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",32,"bridgeRunning",s!=null,"status",status,"error",error,
             "waitingNotificationHidden",waitingChannel!=null&&waitingChannel.getImportance()==NotificationManager.IMPORTANCE_NONE,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
@@ -43,6 +43,8 @@ public final class BridgeService extends Service {
             "staleLinkRecoveries",s==null?0:s.staleLinkRecoveries,"maintenanceAt",s==null?0:s.maintenanceAt,
             "discardedFrames",s==null?0:s.discardedFrames,"indicationWaits",s==null?0:s.indicationWaits,
             "busySendRetries",s==null?0:s.busySendRetries,
+            "fastResumeAttempts",s==null?0:s.fastResumeAttempts,"fastResumeCompleted",s==null?0:s.fastResumeCompleted,
+            "authenticationMillis",s==null?-1:s.authenticationMillis,
             "connectionStartedAt",s==null?0:s.connectionStartedAt,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
             "received",NotificationRelay.received,"forwarded",NotificationRelay.forwarded,
@@ -75,6 +77,10 @@ public final class BridgeService extends Service {
     private int observedLinks=0, subscriptionClaims=0, staleLinkRecoveries=0;
     private int retainedSubscriptionClaims=0, rejectedCharacteristicWrites=0;
     private int bootstrapSent=0, discoveryRefreshes=0;
+    private int fastResumeAttempts=0, fastResumeCompleted=0;
+    private boolean fastAuthentication=false;
+    private final LinkedHashSet<String> recentResumeNonces=new LinkedHashSet<>();
+    private long authenticationStartedAt=0,authenticationMillis=-1;
     private long maintenanceAt=0;
     private volatile long indicationTicket=0;
     private int indicationGeneration;
@@ -344,7 +350,7 @@ public final class BridgeService extends Service {
     };}
     private void claimSubscription(BluetoothDevice device) {
         clearSession();central=device;subscribed=true;mtu=linkMtus.getOrDefault(device.getAddress(),23);
-        stopAdvertising();error="";status="워치 인증 중";schedulePairingDeadline();
+        stopAdvertising();error="";status="워치 인증 중";authenticationStartedAt=SystemClock.elapsedRealtime();schedulePairingDeadline();
         int epoch=generation;
         // Send an indication as soon as the descriptor write is answered. A
         // background watch needs the characteristic event's runtime to finish
@@ -378,8 +384,9 @@ public final class BridgeService extends Service {
             if(message!=null) {
                 resumeProbes.remove(address);
                 commit=new JSONObject(new String(message,StandardCharsets.UTF_8));
-                if(!"commit".equals(commit.optString("type"))||commit.optInt("v")!=1||unb64(commit.getString("commit")).length!=32)
-                    throw new GeneralSecurityException("Resume commit");
+                boolean legacy="commit".equals(commit.optString("type"))&&unb64(commit.getString("commit")).length==32;
+                boolean fast="resume".equals(commit.optString("type"))&&unb64(commit.getString("nonce")).length==32&&unb64(commit.getString("proof")).length==32;
+                if((!legacy&&!fast)||commit.optInt("v")!=1)throw new GeneralSecurityException("Resume handshake");
                 claimSubscription(device);retainedSubscriptionClaims++;
                 mtu=Math.max(mtu,value.length+3);
             }
@@ -397,10 +404,32 @@ public final class BridgeService extends Service {
     private boolean matches(BluetoothDevice d) { return central!=null&&d.getAddress().equals(central.getAddress()); }
     private void receive(JSONObject message) throws Exception {
         String type=message.optString("type");
+        if("resume".equals(type)) {
+            String pinned=vault.get("peer");
+            if(pinned.isEmpty()||message.optInt("v")!=1)throw new GeneralSecurityException("Saved peer required");
+            byte[] nonce=unb64(message.getString("nonce")),proof=unb64(message.getString("proof"));
+            if(nonce.length!=32||proof.length!=32)throw new GeneralSecurityException("Resume bounds");
+            // Duplicate ATT delivery must not rotate a live exchange's nonce.
+            if(recentResumeNonces.contains(b64(nonce)))return;
+            byte[] peer=unb64(pinned),shared=Crypto.agree(identity.getPrivate(),peer);
+            try {
+                if(!MessageDigest.isEqual(proof,Crypto.resumeRequestProof(shared,nonce)))throw new GeneralSecurityException("Resume peer proof");
+                clearProtocol();authenticationStartedAt=SystemClock.elapsedRealtime();
+                peerPublic=peer;ownNonce=Crypto.random(32);
+                byte[] key=Crypto.hkdf(shared,Crypto.join(nonce,ownNonce),Crypto.INFO,32);
+                session=new Crypto.Session(key,true);localConfirmed=true;remoteConfirmed=false;stage="confirm";
+                fastAuthentication=true;fastResumeAttempts++;
+                recentResumeNonces.add(b64(nonce));
+                if(recentResumeNonces.size()>64)recentResumeNonces.remove(recentResumeNonces.iterator().next());
+                sendPlain(object("type","resumed","v",1,"nonce",b64(ownNonce),"proof",b64(Crypto.resumeResponseProof(key,nonce,ownNonce))));
+                Arrays.fill(key,(byte)0);recordState(this);return;
+            } finally {Arrays.fill(shared,(byte)0);}
+        }
         if("commit".equals(type)) {
             if(message.optInt("v")!=1)throw new GeneralSecurityException("Handshake state");
             if(vault.get("peer").isEmpty()&&SystemClock.elapsedRealtime()>pairUntil) { disconnect("휴대폰에서 새 워치 등록을 먼저 누르세요."); return; }
             byte[] commit=unb64(message.getString("commit")); if(commit.length!=32)throw new GeneralSecurityException("Commit length");
+            if("reveal".equals(stage)&&peerCommit!=null&&MessageDigest.isEqual(peerCommit,commit))return;
             if(!stage.equals("idle")||session!=null) {
                 clearProtocol();
                 schedulePairingDeadline();
@@ -412,6 +441,7 @@ public final class BridgeService extends Service {
                 outgoing.clear();messages.clear();
             }
             peerCommit=commit;
+            authenticationStartedAt=SystemClock.elapsedRealtime();
             ownNonce=Crypto.random(32); stage="reveal";
             sendPlain(object("type","commit","v",1,"commit",b64(Crypto.digest(Crypto.join(identity.getPublic().getEncoded(),ownNonce))))); return;
         }
@@ -462,7 +492,9 @@ public final class BridgeService extends Service {
         connectionStartedAt=System.currentTimeMillis();
         pending.clear();activeDelivery=null;waiting=0;
         vault.put("peer",b64(peerPublic)); authenticated=true;pairingCode="";failures=0;blockedUntil=0;error="";status="워치 연결됨";
-        sendSecure(object("type","ready","liveness",0));
+        authenticationMillis=SystemClock.elapsedRealtime()-authenticationStartedAt;
+        if(fastAuthentication)fastResumeCompleted++;
+        sendSecure(object("type","ready","liveness",0,"fast_resume",1));
         recordState(this);
     }
     private void sendPlain(JSONObject object) {
@@ -569,6 +601,7 @@ public final class BridgeService extends Service {
         generation++; acknowledgedIcons.clear(); session=null; peerPublic=null; ownNonce=null; peerCommit=null; stage="idle";
         activeDelivery=null;pending.clear();waiting=0;connectionStartedAt=0;
         authenticated=false;localConfirmed=false;remoteConfirmed=false;watchActive=false;pairingCode="";
+        fastAuthentication=false;authenticationStartedAt=0;
         updateConnectionNotification();
         outgoing.clear();messages.clear();assembler.reset();
         // Keep the old ATT indication slot until its callback. Its old-generation

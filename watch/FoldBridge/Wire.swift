@@ -17,6 +17,10 @@ enum Wire {
     }
     static func be<T: FixedWidthInteger>(_ value: T) -> Data { withUnsafeBytes(of: value.bigEndian) { Data($0) } }
     static func number(_ bytes: Data) -> UInt64 { bytes.reduce(UInt64(0)) { ($0 << 8) | UInt64($1) } }
+    static func resumeRequestProof(shared: SharedSecret, nonce: Data) -> Data {
+        let key = shared.hkdfDerivedSymmetricKey(using:SHA256.self,salt:nonce,sharedInfo:Data("FoldBridge/resume/request/v1".utf8),outputByteCount:32)
+        return Data(HMAC<SHA256>.authenticationCode(for:Data("FoldBridge/resume/watch/v1".utf8),using:key))
+    }
 
     final class Framer {
         private var next: UInt32 = 0
@@ -56,6 +60,9 @@ enum Wire {
             let raw = key.withUnsafeBytes { Data($0) }
             let digest = Data(SHA256.hash(data: raw + Data("compare".utf8)))
             return String(format: "%06llu", number(digest.prefix(4)) % 1000000)
+        }
+        func acceptsResumeProof(_ proof: Data, watchNonce: Data, phoneNonce: Data) -> Bool {
+            HMAC<SHA256>.isValidAuthenticationCode(proof,authenticating:Data("FoldBridge/resume/phone/v1".utf8)+watchNonce+phoneNonce,using:key)
         }
         func seal(_ object: [String: Any]) throws -> [String: Any] {
             guard sent < UInt64.max else { throw Failure.bounds }; sent += 1

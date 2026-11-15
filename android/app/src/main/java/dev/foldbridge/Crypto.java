@@ -30,6 +30,17 @@ public final class Crypto {
         Arrays.fill(prk, (byte)0); return output;
     }
     public static byte[] join(byte[] a, byte[] b) { byte[] r = Arrays.copyOf(a, a.length+b.length); System.arraycopy(b,0,r,a.length,b.length); return r; }
+    public static byte[] hmac(byte[] key,byte[] data) throws GeneralSecurityException {
+        Mac mac=Mac.getInstance("HmacSHA256");mac.init(new SecretKeySpec(key,"HmacSHA256"));return mac.doFinal(data);
+    }
+    public static byte[] resumeRequestProof(byte[] shared,byte[] nonce) throws GeneralSecurityException {
+        byte[] key=hkdf(shared,nonce,"FoldBridge/resume/request/v1".getBytes(StandardCharsets.UTF_8),32);
+        try{return hmac(key,"FoldBridge/resume/watch/v1".getBytes(StandardCharsets.UTF_8));}
+        finally{Arrays.fill(key,(byte)0);}
+    }
+    public static byte[] resumeResponseProof(byte[] key,byte[] watchNonce,byte[] phoneNonce) throws GeneralSecurityException {
+        return hmac(key,join("FoldBridge/resume/phone/v1".getBytes(StandardCharsets.UTF_8),join(watchNonce,phoneNonce)));
+    }
     public static byte[] digest(byte[] bytes) {
         try { return MessageDigest.getInstance("SHA-256").digest(bytes); } catch (GeneralSecurityException e) { throw new IllegalStateException(e); }
     }

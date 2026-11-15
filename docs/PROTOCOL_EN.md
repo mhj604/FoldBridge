@@ -2,7 +2,7 @@
 
 [한국어](PROTOCOL.md) · **English** · [All guides](README.md)
 
-Current behavior: Android 0.5.4 / Watch 0.4.9. Android is the GATT server/peripheral; watchOS is the central/client. Initial registration happens inside FoldBridge rather than through a separate manual Android Bluetooth-settings step.
+Current candidate: Android 0.6.14 / Watch 0.5.18; older versioned sections document their original behavior. Android is the GATT server/peripheral; watchOS is the central/client. Initial registration happens inside FoldBridge rather than through a separate manual Android Bluetooth-settings step.
 
 ## GATT and framing
 
@@ -31,6 +31,19 @@ Each endpoint retains a P-256 ECDH identity key. Android uses Android Keystore a
 Messages use AES-256-GCM with AAD `FoldBridge/v1`. Directional nonce prefixes are `FBP1` for phone and `FBW1` for watch, followed by a 64-bit sequence number. Repeated/decreasing sequences are rejected. New authentication always uses fresh nonces; process-lost session keys are not restored.
 
 The encrypted envelope is `{type:"sealed", seq:1, data:"base64(ciphertext || tag)"}`. Current messages include `confirm`, `ready`, `state`, `sync`, `notification`, `ack`, `refresh`, and `refreshed`. Legacy `reconnect`, `ping`, and `pong` are accepted for compatibility. Local does not send APNs tokens or contact a relay.
+
+## Fast saved-peer authentication (Android 0.6.14 / Watch 0.5.18)
+
+Only Local peers with a pinned public key use this route. Initial registration retains commit/reveal and code comparison above. `b64` means standard Base64, `||` concatenates bytes, and all context strings are UTF-8.
+
+1. Watch generates fresh 32-byte `wn` and derives ECDH `shared` from its identity and the pinned phone public key. `requestKey = HKDF-SHA256(shared, salt=wn, info="FoldBridge/resume/request/v1", len=32)`; `proof = HMAC-SHA256(requestKey, "FoldBridge/resume/watch/v1")`. Send plaintext `{type:"resume",v:1,nonce:b64(wn),proof:b64(proof)}`.
+2. Phone verifies the proof using the pinned Watch key and generates fresh 32-byte `pn`. `key = HKDF-SHA256(shared, salt=wn || pn, info="FoldBridge/v1", len=32)`; `replyProof = HMAC-SHA256(key, "FoldBridge/resume/phone/v1" || wn || pn)`. Send plaintext `{type:"resumed",v:1,nonce:b64(pn),proof:b64(replyProof)}`.
+3. Watch validates the response with its candidate session key and queues encrypted `confirm` before subsequent messages, using the existing AES-GCM envelope. Phone authenticates only after validating it, then sends encrypted `{type:"ready",liveness:0,fast_resume:1}`. Existing AES-GCM sequence and AAD rules remain.
+
+Peer keys and registrations are retained. Session keys are freshly derived from both nonces rather than restored. The phone remembers the last 64 accepted request nonces in memory so duplicate ATT delivery cannot reset an exchange or an authenticated session. Fresh phone nonces still create fresh sessions after process restart.
+
+Watch records compatibility from encrypted `ready.fast_resume`. An unknown saved Local peer is initially tried with fast authentication; failure or disconnect before completion makes the next attempt use legacy commit/reveal. Late old envelopes and duplicate bootstrap signals do not restart an in-progress nonce exchange. Initial code comparison, pinned identity and authentication before notification delivery remain. Static identity keys do not add forward secrecy or OS runtime guarantees.
+
 
 ## Notifications, icons, and acknowledgment
 
