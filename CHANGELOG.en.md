@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Watch 0.5.20 / build 46 — execution-opportunity recovery
+
+Retain Android 0.6.15 / 33. Resume stalled discovery/unfinished authentication on application-refresh and location/maintenance opportunities. Exclude invalidated cached services and complete native-wait-only tasks without cancelling requests. Silence does not tear down healthy links. [Deployment, records and OS limits](docs/BACKGROUND_OPPORTUNITY_0.5.20_EN.md).
+
 ## Android 0.6.15 / Watch 0.5.19 retain background recovery
 
 Close timer-only background retry, scan-only restoration, repeated service invalidation and advertising after CCC release gaps. Retain registration; prolonged lock and actual range return are not declared unconditionally resolved. [Changes, deployment and remaining conditions](docs/BACKGROUND_RECOVERY_0.5.19_EN.md).
