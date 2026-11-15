@@ -33,7 +33,7 @@ Other users can choose **FoldBridge Local → Settings → Connection notificati
 
 Both installations succeeded and the watch app was launched once. Phone app state reported `build=31`, `authenticated=true`, `subscribed=true`, zero queued frames/messages and zero app cancellations. This is an immediate deployment result, not a prolonged stability result. No vehicle commands were executed.
 
-The handoff policy remains: retain registration and use only **Stop connection** on the phone. The final reply separately states whether that operation completed. Closing Mac diagnostics is distinct from stopping Galaxy–Watch transport.
+Selected **Settings → Stop connection** on the phone. Subsequent app state reported `bridgeRunning=false`, `centralPresent=false`, `subscribed=false`, `authenticated=false` and stopped status. Registration, keys and vehicle settings were not deleted/reset. Closing Mac diagnostics is distinct from stopping Galaxy–Watch transport.
 
 ## Signing priority
 
