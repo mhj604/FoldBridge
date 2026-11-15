@@ -35,6 +35,19 @@ After preparation, native diagnostics reported `locationActivityState=eligible`,
 
 No system logs, administrator password, actual vehicle commands or separate prolonged-lock/range QA were used. Initial installation/connection is not proof of complete prolonged-lock or real range-return recovery. Loss of the native activity, force-quit/reboot, permission and OS execution policy remain relevant.
 
+## Follow-up: user-requested passcode-lock observation — connection failed
+
+On November 15, 2026, at 22:03–22:05 KST, the user confirmed the Watch was removed from the wrist and passcode-locked. Only the phone’s **Connect Watch** button was pressed once; the Watch app was not opened or refreshed. This is an additional observation, separate from the preceding unlocked-background result. App versions, code and registration were unchanged.
+
+- Watch: `applicationStateName=background`, `continuousRequested=true`, and `locationActivityState=eligible`. Location callbacks increased from 358 to 425 after locking.
+- Phone: the service started, the peer appeared and the subscription was present, but `authenticated=false` and **Authenticating Watch** persisted. Authentication did not complete.
+- App-owned Watch events repeatedly showed `handshake.commit`, then `disconnect.ended.0.current.0`, reconnection, discovery and subscription approximately every 2–3 seconds. Between 22:03:34 and 22:05:01, the session generation rose from 53 to 86. The final state remained `connected=false`, `stage=commit`.
+- The Watch app explicitly cancelled zero connections and the disconnect callback carried no error. The phone GATT server also recorded zero disconnects. Its peer-presence indicator must not be treated as proof that the Watch app’s Core Bluetooth connection lifetime was uninterrupted. These records do not establish the exact OS reason or prove that locking alone caused the failure.
+
+**Result: the 0.5.21 location activity continued while locked, but phone-only authentication to the locked Watch failed. Prolonged-lock and range-return recovery remain unresolved.** The next repair should address the app-level BLE connection lifetime and repeated authentication resets around these callbacks, rather than merely adding another location session. Do not blindly ignore nil-error disconnects or delete registration.
+
+No system logs, administrator password or vehicle commands were used. The Watch app was not foregrounded to obtain the locked-state result. The phone connection service is stopped for handoff as described below; registration is preserved.
+
 ## Handoff
 
 Following the existing handoff preference, phone **Settings → Stop connection** was selected. Records show `bridgeRunning=false`, `centralPresent=false`, `subscribed=false`, `authenticated=false` and stopped status. Registration, keys and vehicle settings are preserved; Mac wireless debugging is closed.

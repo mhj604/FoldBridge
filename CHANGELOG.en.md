@@ -6,6 +6,8 @@ The previous documentation update paired current setup, FAQ, build, architecture
 
 ## Watch 0.5.21 / build 47 — rejoin location activity
 
+A subsequent passcode-lock observation retained location activity but phone-only authentication repeatedly ended and restarted approximately every 2–3 seconds. **Locked-state connection remains unresolved.** No app code changed during this observation. [Actual locked-state result](docs/LOCATION_RESTORATION_0.5.21_EN.md#follow-up-user-requested-passcode-lock-observation--connection-failed).
+
 Retain Android 0.6.15 / 33. Add relaunch restoration with official Core Location activity/update APIs, only for the enabled preference and following one-time foreground preparation. Distinguish native session eligibility and app state. [Deployment, conditions and remaining limits](docs/LOCATION_RESTORATION_0.5.21_EN.md).
 
 ## Watch 0.5.20 / build 46 — execution-opportunity recovery
