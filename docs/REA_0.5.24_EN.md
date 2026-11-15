@@ -2,7 +2,7 @@
 
 [한국어](REA_0.5.24_KO.md) · [Earlier REA investigation](REA_0.5.23_EN.md)
 
-2026-11-15. Candidate: Android **0.6.18-local / code 40**, Watch/widget **0.5.24 / build 57**. Both were installed in place, retaining registration, keys and vehicle settings. [Download APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24/WatchBridge-0.6.18.apk).
+2026-11-15. Candidate: Android **0.6.18-local / code 40**, Watch/widget **0.5.24 / build 58**. Both were installed in place, retaining registration, keys and vehicle settings. [Download APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24-build58/WatchBridge-0.6.18.apk).
 
 ## Narrowing the failure
 
@@ -39,3 +39,19 @@ The user carried the passcode-locked watch out of range. Phone records transitio
 Build 54's scan suppression also blocked this real-timeout recovery path. Build 57 permits one service-filtered discovery monitor per recovery episode after a real connection timeout/disconnection or restoration of a pending connection, while retaining the native pending request. It does not restore repeated scan restarts for nil-error indication losses. A newly discovered peripheral still must authenticate with the saved peer key; registration is retained.
 
 The previous records do not prove that the phone's advertising address changed. The established gap is that recovery discovery was blocked while the phone was advertising and the watch kept only the old pending connection. Build 57 installation/observation results are added below.
+
+
+### Build 57 preparation
+
+After installation the owner prepared the location session once and passcode-locked the watch again. The new build-57 process reported actual background state, eligible location activity, authentication and read delivery. Authentication itself took about **147ms on the watch / 121ms on the phone**. This foreground-assisted preparation is not used as evidence for automatic range return.
+
+Native lock Evidence: `ev_44c4ab56b993a5cbc8ac203faa3b459ab4577636dc4b4de81f596e963513b139`. Subsequent background app record: `ev_50f2f1b45355fb1cd07d6066f3e50eef624938500268e4b7a09cf914b910f2f4`.
+
+A second physical departure on this build changed the phone to `centralPresent=false`, `authenticated=false`, and `advertising=true`. Return without opening apps or refreshing is recorded separately. Departure Evidence: `ev_eeacd036d30903708545856c9956b964852f295b1f868b0ee03f0895f450c91b`.
+
+
+### Build 57 return failed; additional build 58 change
+
+After the second physical return, the phone remained advertising and unauthenticated. The same background/eligible watch process had started recovery discovery but remained native `connecting` after `CBErrorDomain:6`, without another connection callback. **Physical return on build 58 remains unresolved.** Watch Evidence: `ev_80f641ed29a344e6ee2f9982bfd61ecd47545cfebe4736b1625070eed1fd19ed`; phone: `ev_5e5b12d3361ed659e62f27ac8a965b6e1a5d9a2ce060360934c4239dffa6546f`; app events: `ev_83ec845d7a87db99983fca33ed3dfc608641509179c8cdd157304ecb0d47acf5`.
+
+Build 58 no longer suppresses a fresh native request solely because the peripheral object says `connecting` when the disconnect callback did not report an OS-owned reconnect. A real proximity recovery that stays pending for 45 seconds is re-armed once per episode. This cancels/resubmits the stalled pending request while retaining registration; it never cancels a healthy authenticated link merely for silence. Discovery-callback counts were added to app records. This is an implementation change, not evidence of successful physical return.

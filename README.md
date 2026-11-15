@@ -4,7 +4,7 @@
 
 앱과 프로젝트의 표시 이름은 **WatchBridge**로 변경했습니다. 기존 등록·암호화 키·차량 설정을 유지하기 위해 설치 식별자와 내부 프로토콜·소스 경로는 유지합니다. 이전 배포 파일의 이름도 그대로 남으며, 이전 바이너리에는 이전 앱 이름이 표시될 수 있습니다.
 
-현재 브랜치는 Android **0.6.18-local / 코드 40**, Watch **0.5.24 / 빌드 57**의 자동 복구·빠른 재인증 수정 후보입니다. 기존 등록을 유지합니다. [수정·설치 결과와 남은 조건](docs/REA_0.5.24_KO.md).
+현재 브랜치는 Android **0.6.18-local / 코드 40**, Watch **0.5.24 / 빌드 58**의 자동 복구·빠른 재인증 수정 후보입니다. 기존 등록을 유지합니다. [수정·설치 결과와 남은 조건](docs/REA_0.5.24_KO.md).
 
 **잠금·백그라운드 상태에서 읽기 방식의 알림 수신과 폰 수신 확인을 기록했습니다. 장시간 잠금·거리 복귀는 별도 조건이며 이 버전은 수정 후보입니다.**
 
@@ -14,7 +14,7 @@
 
 <img src="watch/FoldBridge/Assets.xcassets/FoldBridgeIcon.appiconset/FoldBridgeIcon.png" width="96" alt="WatchBridge 앱 아이콘">
 
-[WatchBridge 0.6.18 APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24/WatchBridge-0.6.18.apk) · [수정 후보 안내](docs/REA_0.5.24_KO.md)
+[WatchBridge 0.6.18 APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24-build58/WatchBridge-0.6.18.apk) · [수정 후보 안내](docs/REA_0.5.24_KO.md)
 
 ## 바로 시작하기
 

@@ -113,6 +113,9 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var proximityRecoveryNeeded = false
     private var backgroundRecoveryScanSubmitted = false
     private var backgroundRecoveryScans = 0
+    private var proximityRearmUsed = false
+    private var proximityRearms = 0
+    private var recoveryAdvertisements = 0
     private var backgroundConnectResubmissions = 0
     private var scanOnlyRestorations = 0
     private var executionOpportunityRepairs = 0
@@ -303,6 +306,23 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             reconnectWork?.cancel();reconnectWork = nil;nextConnectAttempt = .distantPast
         }
         reconnect()
+        if proximityRecoveryNeeded, !connected, !proximityRearmUsed,
+           switchingFrom == nil, let p = peripheral, p.state == .connecting,
+           Date().timeIntervalSince(connectionAttemptAt) >= 45 {
+            // A real range timeout left this native request pending through
+            // discovery without delivering a fresh connection callback. Re-arm
+            // it once per recovery episode, never a healthy authenticated link.
+            proximityRearmUsed = true;proximityRearms += 1
+            trace("recovery.proximity.rearm")
+            resetSession();switchingFrom = p;refreshAfterDisconnect = false
+            cancelConnection(p,reason:"proximity-stalled")
+            let current = epoch
+            DispatchQueue.main.asyncAfter(deadline:.now()+3) { [weak self, weak p] in
+                guard let self, let p, self.epoch == current, self.switchingFrom === p else { return }
+                self.switchingFrom = nil;self.reconnect()
+            }
+            return
+        }
         guard switchingFrom == nil, let p = peripheral, p.state == .connected else { return }
         let now = Date()
         if stage == "waitingForService", now >= nextServiceDiscovery {
@@ -437,6 +457,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     func centralManager(_ central: CBCentralManager, didDiscover p: CBPeripheral, advertisementData: [String:Any], rssi RSSI: NSNumber) {
         if recoveryScanning {
+            recoveryAdvertisements += 1
+            if recoveryAdvertisements <= 3 { trace("recovery.advertisement.\(p.state.rawValue)") }
             guard Date() >= nextConnectAttempt else { return }
             if let existing = peripheral, existing.identifier == p.identifier {
                 if switchingFrom == nil, existing.state == .connected, stage == "waitingForService" {
@@ -564,7 +586,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         if !active || reconnects <= 1 {
             nextConnectAttempt = .distantPast
             connectionAttemptAt = Date()
-            if p.state != .connecting { manager.connect(p,options:connectionOptions()) }
+            // This callback did not report an OS-owned reconnect. Object state
+            // alone must not suppress submitting the new native request.
+            manager.connect(p,options:connectionOptions())
+            backgroundConnectResubmissions += active ? 0:1
             startRecoveryScan()
         } else { retryConnection() }
         writeDiagnostics()
@@ -1000,7 +1025,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         guard !authenticated, localConfirmed, remoteConfirmed else { return }
         try WatchStore.put(peerKey,phonePublic); UserDefaults.standard.set(peripheral?.identifier.uuidString,forKey:phoneIDKey)
         authenticated = true; code = ""; reconnects = 0; nextConnectAttempt = .distantPast; lastError = ""; status = "보안 확인 완료 · 알림 연결 준비 중"
-        proximityRecoveryNeeded = false;backgroundRecoveryScanSubmitted = false
+        proximityRecoveryNeeded = false;backgroundRecoveryScanSubmitted = false;proximityRearmUsed = false
         authenticationMillis = Int(Date().timeIntervalSince(authenticationStartedAt)*1000)
         if attemptingFastResume { fastResumeCompleted += 1 }
         attemptingFastResume = false
@@ -1364,6 +1389,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             "applicationStateName":applicationStateName,
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "proximityRecoveryNeeded":proximityRecoveryNeeded,"backgroundRecoveryScanSubmitted":backgroundRecoveryScanSubmitted,
+            "proximityRearms":proximityRearms,"proximityRearmUsed":proximityRearmUsed,"recoveryAdvertisements":recoveryAdvertisements,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,
             "pongCount":pongCount,"remoteRefreshCount":remoteRefreshCount,

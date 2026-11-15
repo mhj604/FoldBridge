@@ -4,7 +4,7 @@
 
 The app and project are now named **WatchBridge**. Installation identifiers, internal protocol values and source paths remain unchanged to preserve existing registration, encryption keys and vehicle settings. Historical release filenames also remain unchanged, and older binaries may still show the previous app name.
 
-This branch contains the automatic-recovery and fast-authentication candidate: Android **0.6.18-local / code 40**, Watch **0.5.24 / build 57**, preserving registration. [Deployment results and remaining conditions](docs/REA_0.5.24_EN.md).
+This branch contains the automatic-recovery and fast-authentication candidate: Android **0.6.18-local / code 40**, Watch **0.5.24 / build 58**, preserving registration. [Deployment results and remaining conditions](docs/REA_0.5.24_EN.md).
 
 **Locked background read delivery and a phone acknowledgement were recorded. Prolonged lock and physical return are separate conditions; this remains a candidate.**
 
@@ -14,7 +14,7 @@ Initial Apple Watch setup still requires a paired iPhone. Installing the watch a
 
 <img src="watch/FoldBridge/Assets.xcassets/FoldBridgeIcon.appiconset/FoldBridgeIcon.png" width="96" alt="WatchBridge app icon">
 
-[Download WatchBridge 0.6.18 APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24/WatchBridge-0.6.18.apk) · [Candidate notes](docs/REA_0.5.24_EN.md)
+[Download WatchBridge 0.6.18 APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24-build58/WatchBridge-0.6.18.apk) · [Candidate notes](docs/REA_0.5.24_EN.md)
 
 ## Start here
 
