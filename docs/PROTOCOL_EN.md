@@ -4,6 +4,11 @@
 
 Current candidate: Android 0.6.14 / Watch 0.5.18; older versioned sections document their original behavior. Android is the GATT server/peripheral; watchOS is the central/client. Initial registration happens inside FoldBridge rather than through a separate manual Android Bluetooth-settings step.
 
+## Retain background recovery (Android 0.6.15 / Watch 0.5.19)
+
+Wire format and pinned identities are unchanged. Transient Watch background connection failures submit a native pending connect instead of leaving only an app timer. Scan-only restoration preserves scanning and explicitly resumes. System limits and other nontransient failures resume on a later OS opportunity. Repeated service invalidation starts current discovery and discards obsolete service-object callbacks. Phone CCC removal releases its app session/peer claim and restarts advertising without cancelling a shared physical link or erasing registration. [Changes and observation scope](BACKGROUND_RECOVERY_0.5.19_EN.md).
+
+
 ## GATT and framing
 
 | Purpose | UUID / transport |

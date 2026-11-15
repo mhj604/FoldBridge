@@ -28,7 +28,7 @@ public final class BridgeService extends Service {
         BridgeService s=instance;
         if(s!=null)s.updateConnectionNotification();
         NotificationChannel waitingChannel=context.getSystemService(NotificationManager.class).getNotificationChannel(WAITING_CHANNEL);
-        JSONObject state=object("build",32,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",33,"bridgeRunning",s!=null,"status",status,"error",error,
             "waitingNotificationHidden",waitingChannel!=null&&waitingChannel.getImportance()==NotificationManager.IMPORTANCE_NONE,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
@@ -39,6 +39,7 @@ public final class BridgeService extends Service {
             "observedLinks",s==null?0:s.observedLinks,"subscriptionClaims",s==null?0:s.subscriptionClaims,
             "retainedSubscriptionClaims",s==null?0:s.retainedSubscriptionClaims,
             "bootstrapSent",s==null?0:s.bootstrapSent,"discoveryRefreshes",s==null?0:s.discoveryRefreshes,
+            "subscriptionReleases",s==null?0:s.subscriptionReleases,
             "rejectedCharacteristicWrites",s==null?0:s.rejectedCharacteristicWrites,
             "staleLinkRecoveries",s==null?0:s.staleLinkRecoveries,"maintenanceAt",s==null?0:s.maintenanceAt,
             "discardedFrames",s==null?0:s.discardedFrames,"indicationWaits",s==null?0:s.indicationWaits,
@@ -77,6 +78,7 @@ public final class BridgeService extends Service {
     private int observedLinks=0, subscriptionClaims=0, staleLinkRecoveries=0;
     private int retainedSubscriptionClaims=0, rejectedCharacteristicWrites=0;
     private int bootstrapSent=0, discoveryRefreshes=0;
+    private int subscriptionReleases=0;
     private int fastResumeAttempts=0, fastResumeCompleted=0;
     private boolean fastAuthentication=false;
     private final LinkedHashSet<String> recentResumeNonces=new LinkedHashSet<>();
@@ -309,6 +311,12 @@ public final class BridgeService extends Service {
                 valid=valid&&(matches(device)||(central==null&&disable));
                 if(valid)subscribed=enable;
                 if(response)server.sendResponse(device,requestId,valid?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,0,null);
+                if(valid&&disable&&matches(device)) {
+                    // CCC removal ends this app's subscription, not necessarily
+                    // Android's shared physical LE link. Release the claim so a
+                    // returning watch can discover/subscribe without a refresh.
+                    subscriptionReleases++;clearSession();status="워치 연결 대기 중";startAdvertising();
+                }
                 recordState(BridgeService.this);
             });
         }

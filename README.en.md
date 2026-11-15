@@ -2,7 +2,7 @@
 
 [한국어](README.md) · **English** · [Documentation / 문서](docs/README.md)
 
-This branch contains the automatic-recovery and fast-authentication candidate: Android **0.6.14-local / code 32**, Watch **0.5.18 / build 44**, preserving registration. [Deployment results and remaining conditions](docs/FAST_RECONNECT_0.5.18_EN.md).
+This branch contains the automatic-recovery and fast-authentication candidate: Android **0.6.15-local / code 33**, Watch **0.5.19 / build 45**, preserving registration. [Deployment results and remaining conditions](docs/BACKGROUND_RECOVERY_0.5.19_EN.md).
 
 Forward notifications **directly from a Galaxy phone to Apple Watch over Bluetooth LE**. Notification delivery uses the two devices: no server, internet connection, iPhone relay, root access, or workout/audio session is needed.
 
@@ -14,7 +14,7 @@ Initial Apple Watch setup still requires a paired iPhone. Installing the watch a
 
 Use the candidate link above for current fixes. The 0.6.7/0.5.8 download table below describes the preceding release.
 
-**[Current release guide](docs/FAST_RECONNECT_0.5.18_EN.md)**
+**[Current release guide](docs/BACKGROUND_RECOVERY_0.5.19_EN.md)**
 
 | What you need | Download or guide |
 | --- | --- |

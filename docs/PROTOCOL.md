@@ -4,6 +4,11 @@
 
 Android는 GATT peripheral/server, watchOS는 central/client다. 앱 안에서 휴대폰을 선택하며 Android 시스템 Bluetooth 페어링을 별도로 요구하지 않는다.
 
+## 백그라운드 복구 보존 (Android 0.6.15 / Watch 0.5.19)
+
+wire 형식·고정 상대 키는 바꾸지 않는다. 워치의 일시적 백그라운드 연결 실패는 앱 타이머만 남기지 않고 native pending connect를 요청한다. 검색만 복원된 경우 기존 검색을 유지하고 명시적으로 재개한다. 시스템 제한 등 즉시 반복할 수 없는 오류는 후속 OS 실행 기회에서 재개한다. 연속 서비스 무효화는 새 탐색으로 처리하고 이전 서비스 객체의 응답을 버린다. 폰 CCC 해제는 앱 세션/상대 선택을 정리하고 광고를 다시 시작하며 공유 물리 링크를 취소하거나 등록을 지우지 않는다. [변경과 관찰 범위](BACKGROUND_RECOVERY_0.5.19_KO.md).
+
+
 ## GATT와 프레임
 
 | 용도 | Local UUID |

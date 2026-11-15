@@ -4,6 +4,10 @@
 
 The previous documentation update paired current setup, FAQ, build, architecture, protocol, display-scope, history, and contribution guides in Korean and English. That remains a past documentation entry; newer app changes are recorded below.
 
+## Android 0.6.15 / Watch 0.5.19 retain background recovery
+
+Close timer-only background retry, scan-only restoration, repeated service invalidation and advertising after CCC release gaps. Retain registration; prolonged lock and actual range return are not declared unconditionally resolved. [Changes, deployment and remaining conditions](docs/BACKGROUND_RECOVERY_0.5.19_EN.md).
+
 ## Android 0.6.14 / Watch 0.5.18 automatic recovery and fast authentication
 
 Retain one recovery scan until authentication and shorten service discovery waits. Add fresh-nonce authentication with pinned peer keys. Both in-place installations completed and background authentication was recorded without a Watch launch command. Prolonged-lock and real range-return conditions are not declared fully resolved. [Changes, actual records and remaining conditions](docs/FAST_RECONNECT_0.5.18_EN.md).
