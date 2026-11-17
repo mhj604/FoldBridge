@@ -1371,7 +1371,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
             "profile":profile.rawValue,"connected":connected,"authenticated":authenticated,"status":status,"active":active,
-            "build":57,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
+            "build":Int(Bundle.main.object(forInfoDictionaryKey:"CFBundleVersion") as? String ?? "") ?? 0,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "authenticationDisconnects":authenticationDisconnects,"lastAuthenticationDisconnectStage":lastAuthenticationDisconnectStage,"compactResumeEnabled":UserDefaults.standard.bool(forKey:compactResumeKey),
             "authenticationReads":authenticationReads,
             "readDelivery":readDelivery,"deliveryReadPending":deliveryReadPending,"deliveryReads":deliveryReads,"deliveryFramesRead":deliveryFramesRead,

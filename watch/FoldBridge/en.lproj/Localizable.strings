@@ -99,6 +99,7 @@
 "문 잠금" = "Lock";
 "문 잠금 해제" = "Unlock doors";
 "미전달 보관 한도에 도달해 가장 오래된 알림을 비웠습니다." = "The pending queue is full. The oldest notification was removed.";
+"백그라운드 사용" = "Background use";
 "백그라운드 수신 한도에 가까워졌습니다. 앱을 직접 열면 수신 기회가 갱신됩니다." = "Approaching the background reception limit. Open the app to renew the available opportunities.";
 "버튼 선택 필요" = "Select a button";
 "버튼을 지정했습니다. 위젯에서 다시 누르면 전달됩니다." = "Button assigned. Tap the widget again to send the command.";
@@ -127,6 +128,7 @@
 "설정의 ‘새 워치 등록’과 워치의 ‘휴대폰 찾기’로 처음 한 번 코드를 확인해 주세요." = "For initial setup, choose Register new watch in Settings and Find phone on your watch, then compare the codes.";
 "수신" = "Received";
 "수신 확인" = "Confirmed";
+"시계 화면에서도 알림 수신과 자동 재연결을 이어갑니다." = "Notifications and automatic reconnection continue behind the watch face.";
 "시동" = "Start";
 "시동/공조 켜기" = "Start engine / climate";
 "시동·정지·문 잠금·문 열기를 워치에서 바로 실행합니다." = "Run start, stop, lock and unlock controls directly from your watch.";
@@ -154,6 +156,7 @@
 "알림을 준비하지 못했습니다." = "Could not prepare the notification.";
 "앞선 요청을 처리 중입니다. 잠시 기다려 주세요." = "A previous request is being processed. Please wait.";
 "앱을 선택하지 않고 모두 전달합니다" = "Forward notifications from every app";
+"앱이 다시 나타나면 워치 설정 → 일반 → 시계로 돌아가기 → WatchBridge에서 ‘사용자화 → 항상’을 선택하세요. ‘앱으로 돌아가기’가 있으면 끄세요." = "If the app reappears, open Watch Settings → General → Return to Clock → WatchBridge and choose Custom → Always. Turn off Return to App if available.";
 "언어 / Language" = "Language / 언어";
 "연결" = "Connection";
 "연결 끊김, 워치 재연결 대기" = "Disconnected. Waiting for the watch to reconnect";
@@ -252,6 +255,7 @@
 "처음 등록하는 기기입니다. 양쪽 코드가 같으면 확인해 주세요." = "This is the first registration. Confirm only if both devices show the same code.";
 "처음 연결하는 워치인가요?" = "Pairing a watch for the first time?";
 "충전 상태 알림" = "Charging status alerts";
+"충전 시작만 한 번 알립니다. 배터리 보호 알림은 전달하지 않습니다." = "Announce charging once. Battery protection notices are not forwarded.";
 "충전율이 바뀔 때도 알려줍니다" = "Include battery charging updates";
 "취소" = "Cancel";
 "코드가 같아요" = "Codes match";

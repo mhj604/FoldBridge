@@ -71,7 +71,7 @@ public final class MainActivity extends Activity {
         allApps=toggle(preferences,L("모든 앱 알림"),L("앱을 선택하지 않고 모두 전달합니다"),getSharedPreferences("settings",MODE_PRIVATE).getBoolean("all_apps",true));
         allApps.setOnCheckedChangeListener((button,checked)->{getSharedPreferences("settings",MODE_PRIVATE).edit().putBoolean("all_apps",checked).apply();if(checked)NotificationRelay.replayActive();renderState();});
         View divider=new View(this);divider.setBackgroundColor(line);LinearLayout.LayoutParams dividerParams=new LinearLayout.LayoutParams(-1,dp(1));dividerParams.setMargins(0,dp(15),0,dp(15));preferences.addView(divider,dividerParams);
-        Switch charging=toggle(preferences,L("충전 상태 알림"),L("충전 시작만 한 번 알리고 수치 갱신은 제외합니다"),getSharedPreferences("settings",MODE_PRIVATE).getBoolean("forward_charging_status",false));
+        Switch charging=toggle(preferences,L("충전 상태 알림"),L("충전 시작만 한 번 알립니다. 배터리 보호 알림은 전달하지 않습니다."),getSharedPreferences("settings",MODE_PRIVATE).getBoolean("forward_charging_status",false));
         charging.setOnCheckedChangeListener((button,checked)->{getSharedPreferences("settings",MODE_PRIVATE).edit().putBoolean("forward_charging_status",checked).apply();NotificationRelay.replayActive();});
         selectedAppsButton=action(L("전달할 앱 선택"),this::selectApps,false);preferences.addView(selectedAppsButton,buttonParams());root.addView(preferences);
         LinearLayout vehicle=card();addText(vehicle,L("마이현대 차량 제어"),18,ink,true);

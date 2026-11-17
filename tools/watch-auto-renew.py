@@ -51,7 +51,7 @@ class Renewal:
         if state is None:return None
         return state.get('passcodeRequired') is False and state.get('unlockedSinceBoot') is True
     def launch(self):
-        result=self.command(['/usr/bin/xcrun','devicectl','device','process','launch','--device',self.device,self.bundle,'--timeout','20'],timeout=30)
+        result=self.command(['/usr/bin/xcrun','devicectl','device','process','launch','--device',self.device,'--no-activate',self.bundle,'--timeout','20'],timeout=30)
         self.state['pending_launch']=result.returncode!=0
         return result.returncode==0
     def run(self,force=False):
@@ -63,7 +63,7 @@ class Renewal:
         if lock is None:return self.finish('waiting_watch_connection')
         if not lock:return self.finish('waiting_watch_unlock')
         if self.state.get('pending_launch'):
-            if not self.launch():return self.finish('waiting_app_launch')
+            if not self.launch():return self.finish('waiting_background_app_launch')
             if not due and not force:return self.finish('app_resumed')
         repo=Path(self.config['repo']).expanduser()
         tree=self.command(['/usr/bin/git','-C',str(repo),'rev-parse','HEAD:watch'])
@@ -141,7 +141,7 @@ class Renewal:
         self.state['installed_revision']=self.state['candidate']['revision'];self.state['pending_launch']=True
         save(self.state_path,self.state)
         launched=self.launch()
-        return self.finish('renewed' if launched else 'renewed_waiting_app_launch')
+        return self.finish('renewed' if launched else 'renewed_waiting_background_app_launch')
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)

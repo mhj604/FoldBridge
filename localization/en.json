@@ -283,5 +283,9 @@
   "현재 알림을 읽지 못했습니다. WatchBridge의 알림 접근 권한을 확인해 주세요.": "Unable to read notifications. Check WatchBridge notification access.",
   "연결 자동 시작이 제한됐습니다. WatchBridge에서 워치 연결을 눌러 주세요.": "Automatic startup was restricted. Tap Connect watch in WatchBridge.",
   "워치 응답 대기": "Waiting for watch response",
-  "등록은 유지됩니다. 워치 실행 기회가 생기면 수신을 다시 시도합니다.": "Registration is retained. Receiving resumes when watchOS grants runtime."
+  "등록은 유지됩니다. 워치 실행 기회가 생기면 수신을 다시 시도합니다.": "Registration is retained. Receiving resumes when watchOS grants runtime.",
+  "충전 시작만 한 번 알립니다. 배터리 보호 알림은 전달하지 않습니다.": "Announce charging once. Battery protection notices are not forwarded.",
+  "백그라운드 사용": "Background use",
+  "시계 화면에서도 알림 수신과 자동 재연결을 이어갑니다.": "Notifications and automatic reconnection continue behind the watch face.",
+  "앱이 다시 나타나면 워치 설정 → 일반 → 시계로 돌아가기 → WatchBridge에서 ‘사용자화 → 항상’을 선택하세요. ‘앱으로 돌아가기’가 있으면 끄세요.": "If the app reappears, open Watch Settings → General → Return to Clock → WatchBridge and choose Custom → Always. Turn off Return to App if available."
 }

@@ -28,11 +28,18 @@ public final class BridgeService extends Service {
     static volatile long acknowledged=0, apnsAccepted=0, lastRtt=-1;
     static volatile int waiting=0;
     private static String recordedState="";
+    private static long installedBuild=-1;
+    private static long appBuild(Context context) {
+        if(installedBuild<0)try {
+            installedBuild=context.getPackageManager().getPackageInfo(context.getPackageName(),0).getLongVersionCode();
+        } catch(android.content.pm.PackageManager.NameNotFoundException ignored) { return 0; }
+        return installedBuild;
+    }
     static void recordState(Context context) {
         BridgeService s=instance;
         if(s!=null)s.updateConnectionNotification();
         NotificationChannel waitingChannel=context.getSystemService(NotificationManager.class).getNotificationChannel(WAITING_CHANNEL);
-        JSONObject state=object("build",40,"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",appBuild(context),"bridgeRunning",s!=null,"status",status,"error",error,
             "waitingNotificationHidden",waitingChannel!=null&&waitingChannel.getImportance()==NotificationManager.IMPORTANCE_NONE,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
@@ -56,6 +63,7 @@ public final class BridgeService extends Service {
             "connectionStartedAt",s==null?0:s.connectionStartedAt,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
             "received",NotificationRelay.received,"forwarded",NotificationRelay.forwarded,
+            "suppressedBatteryProtection",NotificationRelay.suppressedBatteryProtection,
             "acknowledged",acknowledged,"pending",waiting);
         String comparable=state.toString();if(comparable.equals(recordedState))return;
         try {

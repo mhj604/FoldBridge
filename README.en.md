@@ -1,10 +1,12 @@
 # WatchBridge
 
+Latest presentation/filter update: Android **0.6.19 / code 41**, Watch **0.5.25 / build 59**. [Changes and deployment](docs/QUIET_BACKGROUND_0.5.25_EN.md) · [Download APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk).
+
 [한국어](README.md) · **English** · [Documentation / 문서](docs/README.md)
 
 The app and project are now named **WatchBridge**. Installation identifiers, internal protocol values and source paths remain unchanged to preserve existing registration, encryption keys and vehicle settings. Historical release filenames also remain unchanged, and older binaries may still show the previous app name.
 
-This branch contains the automatic-recovery and fast-authentication candidate: Android **0.6.18-local / code 40**, Watch **0.5.24 / build 58**, preserving registration. [Deployment results and remaining conditions](docs/REA_0.5.24_EN.md).
+This update retains the automatic-recovery and fast-authentication code from Android **0.6.18-local / code 40**, Watch **0.5.24 / build 58**, preserving registration. [Deployment results and remaining conditions](docs/REA_0.5.24_EN.md).
 
 **Locked background read delivery and a phone acknowledgement were recorded. Prolonged lock and physical return are separate conditions; this remains a candidate.**
 

@@ -100,6 +100,7 @@
   <string name="text_bee96bc1136efbf8" formatted="false">"Lock"</string>
   <string name="text_dda6f24caf87cc14" formatted="false">"Unlock doors"</string>
   <string name="text_948fecb37cc203f8" formatted="false">"The pending queue is full. The oldest notification was removed."</string>
+  <string name="text_cfbb43117f501fff" formatted="false">"Background use"</string>
   <string name="text_ecc46449252f2f84" formatted="false">"Approaching the background reception limit. Open the app to renew the available opportunities."</string>
   <string name="text_0966c38e1bd49d46" formatted="false">"Select a button"</string>
   <string name="text_06709aee91547021" formatted="false">"Button assigned. Tap the widget again to send the command."</string>
@@ -128,6 +129,7 @@
   <string name="text_b7962d28d4c91800" formatted="false">"For initial setup, choose Register new watch in Settings and Find phone on your watch, then compare the codes."</string>
   <string name="text_cef4d8ab741c76bf" formatted="false">"Received"</string>
   <string name="text_6bbeb44e673fe476" formatted="false">"Confirmed"</string>
+  <string name="text_b7ca11f7cb9df862" formatted="false">"Notifications and automatic reconnection continue behind the watch face."</string>
   <string name="text_48143d7a01533441" formatted="false">"Start"</string>
   <string name="text_9c3401283706ee09" formatted="false">"Start engine / climate"</string>
   <string name="text_22b259cb4ad7df67" formatted="false">"Run start, stop, lock and unlock controls directly from your watch."</string>
@@ -155,6 +157,7 @@
   <string name="text_17e48db3e847418b" formatted="false">"Could not prepare the notification."</string>
   <string name="text_d02f6bb1f423f7fa" formatted="false">"A previous request is being processed. Please wait."</string>
   <string name="text_3f0df84146df4645" formatted="false">"Forward notifications from every app"</string>
+  <string name="text_af2b06887aabf7f6" formatted="false">"If the app reappears, open Watch Settings → General → Return to Clock → WatchBridge and choose Custom → Always. Turn off Return to App if available."</string>
   <string name="text_9f96455d7246cbaa" formatted="false">"Language / 언어"</string>
   <string name="text_32dd2947e74266d5" formatted="false">"Connection"</string>
   <string name="text_f4965b9f1b3fd16e" formatted="false">"Disconnected. Waiting for the watch to reconnect"</string>
@@ -253,6 +256,7 @@
   <string name="text_2b0960c26c541f15" formatted="false">"This is the first registration. Confirm only if both devices show the same code."</string>
   <string name="text_9b7d7c773e1744cc" formatted="false">"Pairing a watch for the first time?"</string>
   <string name="text_23466026b7f56424" formatted="false">"Charging status alerts"</string>
+  <string name="text_7712360389e6d7b1" formatted="false">"Announce charging once. Battery protection notices are not forwarded."</string>
   <string name="text_6b725729acdad283" formatted="false">"Include battery charging updates"</string>
   <string name="text_be876433993ab7ba" formatted="false">"Cancel"</string>
   <string name="text_749a1aa6edfad5eb" formatted="false">"Codes match"</string>

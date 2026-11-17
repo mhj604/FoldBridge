@@ -100,6 +100,7 @@
   <string name="text_bee96bc1136efbf8" formatted="false">"문 잠금"</string>
   <string name="text_dda6f24caf87cc14" formatted="false">"문 잠금 해제"</string>
   <string name="text_948fecb37cc203f8" formatted="false">"미전달 보관 한도에 도달해 가장 오래된 알림을 비웠습니다."</string>
+  <string name="text_cfbb43117f501fff" formatted="false">"백그라운드 사용"</string>
   <string name="text_ecc46449252f2f84" formatted="false">"백그라운드 수신 한도에 가까워졌습니다. 앱을 직접 열면 수신 기회가 갱신됩니다."</string>
   <string name="text_0966c38e1bd49d46" formatted="false">"버튼 선택 필요"</string>
   <string name="text_06709aee91547021" formatted="false">"버튼을 지정했습니다. 위젯에서 다시 누르면 전달됩니다."</string>
@@ -128,6 +129,7 @@
   <string name="text_b7962d28d4c91800" formatted="false">"설정의 ‘새 워치 등록’과 워치의 ‘휴대폰 찾기’로 처음 한 번 코드를 확인해 주세요."</string>
   <string name="text_cef4d8ab741c76bf" formatted="false">"수신"</string>
   <string name="text_6bbeb44e673fe476" formatted="false">"수신 확인"</string>
+  <string name="text_b7ca11f7cb9df862" formatted="false">"시계 화면에서도 알림 수신과 자동 재연결을 이어갑니다."</string>
   <string name="text_48143d7a01533441" formatted="false">"시동"</string>
   <string name="text_9c3401283706ee09" formatted="false">"시동/공조 켜기"</string>
   <string name="text_22b259cb4ad7df67" formatted="false">"시동·정지·문 잠금·문 열기를 워치에서 바로 실행합니다."</string>
@@ -155,6 +157,7 @@
   <string name="text_17e48db3e847418b" formatted="false">"알림을 준비하지 못했습니다."</string>
   <string name="text_d02f6bb1f423f7fa" formatted="false">"앞선 요청을 처리 중입니다. 잠시 기다려 주세요."</string>
   <string name="text_3f0df84146df4645" formatted="false">"앱을 선택하지 않고 모두 전달합니다"</string>
+  <string name="text_af2b06887aabf7f6" formatted="false">"앱이 다시 나타나면 워치 설정 → 일반 → 시계로 돌아가기 → WatchBridge에서 ‘사용자화 → 항상’을 선택하세요. ‘앱으로 돌아가기’가 있으면 끄세요."</string>
   <string name="text_9f96455d7246cbaa" formatted="false">"언어 / Language"</string>
   <string name="text_32dd2947e74266d5" formatted="false">"연결"</string>
   <string name="text_f4965b9f1b3fd16e" formatted="false">"연결 끊김, 워치 재연결 대기"</string>
@@ -253,6 +256,7 @@
   <string name="text_2b0960c26c541f15" formatted="false">"처음 등록하는 기기입니다. 양쪽 코드가 같으면 확인해 주세요."</string>
   <string name="text_9b7d7c773e1744cc" formatted="false">"처음 연결하는 워치인가요?"</string>
   <string name="text_23466026b7f56424" formatted="false">"충전 상태 알림"</string>
+  <string name="text_7712360389e6d7b1" formatted="false">"충전 시작만 한 번 알립니다. 배터리 보호 알림은 전달하지 않습니다."</string>
   <string name="text_6b725729acdad283" formatted="false">"충전율이 바뀔 때도 알려줍니다"</string>
   <string name="text_be876433993ab7ba" formatted="false">"취소"</string>
   <string name="text_749a1aa6edfad5eb" formatted="false">"코드가 같아요"</string>

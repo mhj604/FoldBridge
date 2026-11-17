@@ -11,7 +11,7 @@ import java.util.*;
 
 public final class NotificationRelay extends NotificationListenerService {
     static volatile NotificationRelay instance;
-    static volatile long received=0, forwarded=0;
+    static volatile long received=0, forwarded=0, suppressedBatteryProtection=0;
     private static long lastRebind=-15000;
     // Live measurement updates and System UI alerts marked ONLY_ALERT_ONCE must
     // not become new watch alerts. Store keys only, never message text.
@@ -50,7 +50,7 @@ public final class NotificationRelay extends NotificationListenerService {
         if(listener==null||BridgeService.instance==null)return;
         try {
             for(StatusBarNotification sbn:listener.getActiveNotifications()) {
-                if(emptyGroupSummary(sbn))continue;
+                if(emptyGroupSummary(sbn)||listener.suppressBatteryProtection(sbn))continue;
                 // Rebinding, refreshing or reconnecting must not replay a live meter.
                 if(firstPostOnly(sbn)){listener.activeFirstPostIds.putIfAbsent(sbn.getKey(),"");continue;}
                 if(System.currentTimeMillis()-sbn.getPostTime()<24L*60*60*1000)listener.forward(sbn,sbn.getPostTime());
@@ -64,7 +64,7 @@ public final class NotificationRelay extends NotificationListenerService {
         // Android can synthesize a textless grouping shell alongside the real
         // child notification. Do not turn that shell into "내용 없는 알림" or
         // consume a first-post slot for it.
-        if(emptyGroupSummary(sbn))return;
+        if(emptyGroupSummary(sbn)||suppressBatteryProtection(sbn))return;
         // Observe even while disconnected so a later numeric update does not turn
         // an old notification into a fresh alert after the BLE connection returns.
         if(firstPostOnly(sbn)) {
@@ -112,8 +112,40 @@ public final class NotificationRelay extends NotificationListenerService {
              ("CHR".equals(n.getChannelId()) && Notification.CATEGORY_SYSTEM.equals(n.category) &&
               (n.flags&Notification.FLAG_ONGOING_EVENT)!=0));
     }
+    private static boolean batteryProtectionStatus(StatusBarNotification sbn) {
+        if(!"com.android.systemui".equals(sbn.getPackageName()))return false;
+        Notification n=sbn.getNotification();
+        StringBuilder content=new StringBuilder();
+        for(String key:new String[]{Notification.EXTRA_TITLE,Notification.EXTRA_TITLE_BIG,
+                Notification.EXTRA_TEXT,Notification.EXTRA_BIG_TEXT,Notification.EXTRA_SUB_TEXT,
+                Notification.EXTRA_SUMMARY_TEXT}) {
+            CharSequence value=n.extras.getCharSequence(key);
+            if(value!=null)content.append(value).append(' ');
+        }
+        CharSequence[] lines=n.extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES);
+        if(lines!=null)for(CharSequence line:lines)if(line!=null)content.append(line).append(' ');
+        // Match the charging-protection meaning independently of Samsung's
+        // channel/tag/notification key and the changing percentage. Never apply
+        // this rule to messages from other apps or to all SystemUI alerts.
+        String compact=content.toString().toLowerCase(Locale.ROOT).replaceAll("[\\s\\p{Z}]+","");
+        return (compact.contains("배터리보호")&&compact.contains("충전")) ||
+            (compact.contains("충전")&&compact.contains("%로제한")) ||
+            (compact.contains("charg")&&(compact.contains("batteryprotection")||
+                compact.contains("toprotectyourbattery")||compact.contains("toprotectthebattery"))) ||
+            compact.contains("chargingislimitedto")||compact.contains("charginglimitedto");
+    }
+    private boolean suppressBatteryProtection(StatusBarNotification sbn) {
+        if(!batteryProtectionStatus(sbn))return false;
+        suppressedBatteryProtection++;
+        String firstPost=activeFirstPostIds.remove(sbn.getKey());
+        if(firstPost!=null&&!firstPost.isEmpty())BridgeService.discardPending(firstPost);
+        BridgeService.discardPending(hex(Crypto.digest(sbn.getKey().getBytes(StandardCharsets.UTF_8))).substring(0,32));
+        BridgeService.recordState(this);
+        return true;
+    }
     private void forward(StatusBarNotification sbn,long postedAt) {
         if(emptyGroupSummary(sbn)||BridgeService.instance==null||sbn.getPackageName().equals(getPackageName())||sbn.getPackageName().equals("dev.foldbridge"))return;
+        if(suppressBatteryProtection(sbn))return;
         Notification n=sbn.getNotification();
         String id=firstPostOnly(sbn)?activeFirstPostIds.get(sbn.getKey()):hex(Crypto.digest(sbn.getKey().getBytes(StandardCharsets.UTF_8))).substring(0,32);
         if(id==null||id.isEmpty())return;

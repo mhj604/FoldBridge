@@ -321,6 +321,12 @@ struct BridgeSettingsView: View {
                 Text(language.text("위치 세션으로 연결 유지를 시도합니다. 배터리 사용이 늘 수 있고 상시 수신은 보장되지 않습니다."))
                     .font(.caption2).foregroundStyle(.secondary)
             }
+            Section(language.text("백그라운드 사용")) {
+                Text(language.text("시계 화면에서도 알림 수신과 자동 재연결을 이어갑니다."))
+                    .font(.caption2).foregroundStyle(.secondary)
+                Text(language.text("앱이 다시 나타나면 워치 설정 → 일반 → 시계로 돌아가기 → WatchBridge에서 ‘사용자화 → 항상’을 선택하세요. ‘앱으로 돌아가기’가 있으면 끄세요."))
+                    .font(.caption2).foregroundStyle(.secondary)
+            }
             Section(language.text("알림")) {
                 if link.notificationAllowed { Label(language.text("표시 허용됨"),systemImage:"bell.badge.fill").foregroundStyle(BridgeStyle.accent) }
                 else { Button(language.text("알림 표시 허용")) { link.requestNotifications() } }

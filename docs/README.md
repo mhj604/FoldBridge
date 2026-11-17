@@ -77,3 +77,5 @@ Older `RELEASE_*_KO.md` and initial `legacy/` documents remain archived in their
 
 - [0.6.13 / 0.5.17: 백그라운드 재검색·연결 알림 분리](CONNECTION_0.5.17_KO.md) · [English](CONNECTION_0.5.17_EN.md)
 - [워치 단독 무료 자동 갱신 추가 조사](WATCH_ONLY_RENEWAL_2026-11-15_KO.md) · [English](WATCH_ONLY_RENEWAL_2026-11-15_EN.md)
+
+- [0.5.25 백그라운드 표시·충전 보호 알림](QUIET_BACKGROUND_0.5.25_KO.md) / [English](QUIET_BACKGROUND_0.5.25_EN.md)
