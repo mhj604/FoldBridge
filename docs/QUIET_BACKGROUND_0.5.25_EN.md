@@ -27,3 +27,10 @@ Build 59 was installed and launched with `--no-activate`. Android 0.6.19 was bui
 Multi-hour/overnight lock and physical departure/return after build 58 remain unfinished. Presentation/filter changes do not establish those outcomes. [Earlier connection report](REA_0.5.24_EN.md).
 
 The post-install `--no-activate` request succeeded, but acquiring the subsequent app state failed with a Mac–Watch tunnel timeout (`ev_d0df01e753ba4d6d865cef2fad83b7a54fff1ac87163495b2ecb68be5a7ce422`). Command success is distinguished from observing the resulting screen/new-process state. Android device installation is waiting for the debugging port.
+
+
+## Final deployment — 2026-11-17 KST
+
+Restarting the ADB server restored access to the same Galaxy address/port without changing network or device registration. Android **0.6.19 / code 41** was installed in place, and app-owned state reported authentication and read delivery. The charging-protection suppression count was 0 at acquisition, so no claim is made that a real instance of that notice was observed being filtered. The matching implementation and deployment are complete.
+
+Watch acquisition subsequently succeeded: the new **build-59** process reported actual background state, eligible location activity, authentication and read delivery. The owner also reported completing the Return to Clock preference. Installation/state Evidence IDs appear in the Korean report. The private renewal snapshot was aligned to installed build 59; no renewal or scheduling change was performed.
