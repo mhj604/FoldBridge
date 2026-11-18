@@ -1,5 +1,7 @@
 # Android 0.6.9 / Watch 0.5.12: 백그라운드 인증 재개 수정
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 **한국어** · [English](WATCH_0.5.12_BACKGROUND_AUTH_EN.md)
 
 `fix/watch-background-reconnect` 브랜치의 수정 후보입니다. Android 0.6.9-local / 코드 25와 Watch 0.5.12 / 빌드 36을 기존 앱에 덮어 설치하며 등록·상대 키·차량 설정을 유지합니다. [후보 APK](../artifacts/android/FoldBridge-Local-0.6.9.apk).

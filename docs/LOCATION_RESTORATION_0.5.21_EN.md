@@ -1,5 +1,7 @@
 # Watch 0.5.21 — restore the location keep-connection activity
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](LOCATION_RESTORATION_0.5.21_KO.md) · [Documentation](README.md)
 
 2026-11-15: Watch/widget **0.5.21 / build 47**, retaining Android **0.6.15-local / code 33**. Registration, keys and vehicle settings remain. [Android APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk).

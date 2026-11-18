@@ -1,5 +1,7 @@
 # Wrist-raise presentation — change-history investigation
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 > Follow-up correction: automatic return/reconnection without app presentation and new REA records do not establish location restoration as the cause. Rollback is not the preferred action without evidence. [Current investigation](DISPLAY_INVESTIGATION_0.5.26_EN.md).
 
 

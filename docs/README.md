@@ -1,85 +1,50 @@
 # WatchBridge 문서 / Documentation
 
-- [잠금 중 읽기 수신 0.5.24](REA_0.5.24_KO.md) · [English](REA_0.5.24_EN.md)
+**[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[현재 버전·남은 작업](CURRENT_STATUS_KO.md)** · **[Current versions and remaining work](CURRENT_STATUS_EN.md)**
 
-- [WatchBridge 이름 변경·REA 조사 0.5.23](REA_0.5.23_KO.md) · [English](REA_0.5.23_EN.md)
+2026-11-18 기준: **Android 0.6.19 / 코드 41 · Watch 0.5.26 / 빌드 60**. Android APK 배포 묶음 태그는 `watchbridge-v0.5.25`입니다. 워치는 현재 소스를 자신의 Team으로 서명해 설치합니다. / Android APK release bundle: `watchbridge-v0.5.25`; sign current Watch source for your own team.
 
-**[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[다운로드 / Downloads](https://github.com/mhj604/WatchBridge/releases)**
-
-최신 재연결 수정 후보 / Current reconnection candidate: **Android 0.6.16 / 38 · Watch 0.5.22 / 53** — [한국어](LOCKED_AUTH_0.5.22_KO.md) · [English](LOCKED_AUTH_0.5.22_EN.md). 아래 이전 배포 표와 구분합니다. / The older release table below is retained separately.
-
-**잠금 결과 / Locked-state result:** 0.5.22는 폰 단독 인증·구독이 기록됐지만 재시도와 지속 연결 문제는 남습니다. / Phone-only authentication and subscription were recorded, but retries and sustained-connection issues remain. [한국어](LOCKED_AUTH_0.5.22_KO.md) · [English](LOCKED_AUTH_0.5.22_EN.md).
-
-처음 사용하는 분은 **빠른 시작**부터 읽어 주세요. 현재 배포는 **Android 0.6.7-local / 코드 23**, **Watch 0.5.8 / 빌드 32**입니다.
-
-New users: start with **Install and connect**. Current release: **Android 0.6.7-local / code 23**, **Watch 0.5.8 / build 32**.
-
-직전 연결 코드 복원 / Restore the preceding connection code: [Android 0.6.9 / Watch 0.5.12 한국어](ROLLBACK_0.5.12_KO.md) · [English](ROLLBACK_0.5.12_EN.md).
-
-이전 후보의 자동 연결·거리 복귀·프로세스 복원 / Previous candidate automatic connection, range return and process recovery: [Android 0.6.10 · Watch 0.5.13 한국어](WATCH_0.5.13_AUTOMATIC_RECOVERY_KO.md) · [English](WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md).
-
-백그라운드 인증 재개 수정 / Background authentication recovery: [Android 0.6.9 · Watch 0.5.12 한국어](WATCH_0.5.12_BACKGROUND_AUTH_KO.md) · [English](WATCH_0.5.12_BACKGROUND_AUTH_EN.md).
-
-앱 실행 후 연결 지연 퇴행 수정 / Foreground reconnection regression fix: [Watch 0.5.11 한국어](WATCH_0.5.11_FOREGROUND_FIX_KO.md) · [English](WATCH_0.5.11_FOREGROUND_FIX_EN.md).
-
-이전 재연결 수정 후보와 미완료 목표 / Previous candidate and unfinished goals: [Android 0.6.8 · Watch 0.5.10 한국어](WATCH_0.5.10_CANDIDATE_KO.md) · [English](WATCH_0.5.10_CANDIDATE_EN.md).
+## 현재 사용 안내 / Current guides
 
 | 내용 / Topic | 한국어 | English |
 | --- | --- | --- |
-| 개요·다운로드 / Overview and downloads | [시작 화면](../README.md) | [Overview](../README.en.md) |
-| 처음 설치·등록 / First installation and registration | [빠른 시작](QUICK_START_KO.md) | [Install and connect](QUICK_START_EN.md) |
-| 자주 묻는 질문 / Common questions | [FAQ](FAQ_KO.md) | [FAQ](FAQ_EN.md) |
-| 연결·알림 문제 / Connection and notification problems | [문제 해결](TROUBLESHOOTING_KO.md) | [Troubleshooting](TROUBLESHOOTING_EN.md) |
+| 현재 버전·파일·진행 상태 / Versions, downloads, status | [기준 문서](CURRENT_STATUS_KO.md) | [Current status](CURRENT_STATUS_EN.md) |
+| 처음 설치·등록 / First installation | [빠른 시작](QUICK_START_KO.md) | [Install and connect](QUICK_START_EN.md) |
+| 연결·알림 문제 / Connection and notifications | [문제 해결](TROUBLESHOOTING_KO.md) | [Troubleshooting](TROUBLESHOOTING_EN.md) |
+| 재연결 동작·남은 조건 / Recovery behavior and remaining conditions | [자동 재연결](AUTO_RECONNECT_KO.md) | [Automatic reconnection](AUTO_RECONNECT_EN.md) |
+| 자주 묻는 질문 / Questions | [FAQ](FAQ_KO.md) | [FAQ](FAQ_EN.md) |
 | 빌드·서명·민감한 본문 / Build, signing, sensitive content | [빌드와 설치](BUILD_AND_SETUP.md) | [Build and settings](BUILD_AND_SETUP_EN.md) |
-| 무료 계정 워치 서명 갱신 / Free-account watch renewal | [자동 갱신](AUTO_RENEW_KO.md) | [Automatic renewal](AUTO_RENEW_EN.md) |
-| Windows·무갱신 무료 경로 조사 / Windows and free permanent-signing research | [심층 조사와 개발 후보](SIGNING_WINDOWS_RESEARCH_KO.md) | [Research and development candidates](SIGNING_WINDOWS_RESEARCH_EN.md) |
-| 배포 변경·자체 Watch 앱 대체 / Distribution and Watch-client alternatives | [매주 갱신 없는 구조 조사](NO_WEEKLY_SIGNING_ARCHITECTURE_KO.md) | [Architecture without weekly user renewal](NO_WEEKLY_SIGNING_ARCHITECTURE_EN.md) |
-| watchOS 27.2 서명 우회 연구 / Signing bypass research | [공개 연구와 직접 구현 가능성](WATCHOS_27_SIGNING_BYPASS_RESEARCH_KO.md) | [Public research and implementation feasibility](WATCHOS_27_SIGNING_BYPASS_RESEARCH_EN.md) |
-| 케이블 없는 APK 업데이트 / Wireless APK updates | [무선 설치](WIRELESS_INSTALL_KO.md) | [Wireless installation](WIRELESS_INSTALL_EN.md) |
-| 마이현대 차량 제어 / MyHyundai vehicle controls | [위젯 연결과 사용](VEHICLE_CONTROL_KO.md) | [Widget setup and use](VEHICLE_CONTROL_EN.md) |
-| 현재 앱 구조 / Current architecture | [구조](ARCHITECTURE.md) | [Architecture](ARCHITECTURE_EN.md) |
+| 무료 계정 워치 서명 갱신 / Free-account renewal | [주간 Mac 갱신](AUTO_RENEW_KO.md) | [Weekly Mac renewal](AUTO_RENEW_EN.md) |
+| 케이블 없는 APK 업데이트 / Wireless APK update | [무선 설치](WIRELESS_INSTALL_KO.md) | [Wireless installation](WIRELESS_INSTALL_EN.md) |
+| 마이현대 차량 제어 / Vehicle controls | [위젯 연결과 사용](VEHICLE_CONTROL_KO.md) | [Widget setup and use](VEHICLE_CONTROL_EN.md) |
+| 앱 구조 / Architecture | [구조](ARCHITECTURE.md) | [Architecture](ARCHITECTURE_EN.md) |
 | 암호화·BLE·복원 / Encryption, BLE, restoration | [프로토콜](PROTOCOL.md) | [Protocol](PROTOCOL_EN.md) |
-| 시스템 아이콘과 본문 / System icons and custom content | [알림 표시 범위](NOTIFICATION_DISPLAY_LIMITS_KO.md) | [Notification display](NOTIFICATION_DISPLAY_LIMITS_EN.md) |
-| 알림 화면·배치 이력 / Notification screenshots and layout | [화면 비교](NOTIFICATION_LAYOUT_COMPARISON_KO.md) | [Layout examples](NOTIFICATION_LAYOUT_COMPARISON_EN.md) |
-| 미완료 재연결·다음 수정 / Unfinished reconnection work | [최신 복구 결과와 남은 조건](WATCH_0.5.13_AUTOMATIC_RECOVERY_KO.md) | [Latest recovery results and remaining conditions](WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md) |
-| 최신 배포 변경 / Current release changes | [0.5.8 안내](RELEASE_WATCH_v0.5.8_KO.md) | [0.5.8 notes](RELEASE_WATCH_v0.5.8_EN.md) |
-| 버전별 변경 / Changes by version | [변경 이력](../CHANGELOG.md) | [Changelog](../CHANGELOG.en.md) |
-| 주요 구축 과정 / Development milestones | [구축 이력](DEVELOPMENT_HISTORY.md) | [Development history](DEVELOPMENT_HISTORY_EN.md) |
-| 수정·번역·문의 / Contributions, translations, help | [기여 방법](../CONTRIBUTING.md) | [Contributing](../CONTRIBUTING.en.md) |
+| 시스템 아이콘과 본문 / Notification display | [표시 범위](NOTIFICATION_DISPLAY_LIMITS_KO.md) | [Display scope](NOTIFICATION_DISPLAY_LIMITS_EN.md) |
+| 수정·번역·문의 / Contributing | [기여 방법](../CONTRIBUTING.md) | [Contributing](../CONTRIBUTING.en.md) |
 
-현재 차량 제어 권장 버전은 Android **0.6.7-local / 23**, Watch **0.5.8 / 32**입니다. / Recommended vehicle-control versions: Android **0.6.7-local / 23**, Watch **0.5.8 / 32**.
+## 버전별 조사와 변경 기록 / Historical investigations and changes
 
-## 먼저 알아둘 점 / Before starting
+아래는 각 버전 당시의 기록입니다. “현재/완료/실패”를 최신 설치본의 상태로 해석하지 마세요. 최신 상태는 위 기준 문서를 따릅니다. / The following describe their own version/date. Use the current status page for today's behavior and unfinished work.
 
-- **사용 중:** 갤럭시와 워치의 Bluetooth로 직접 전달합니다. 서버·인터넷·아이폰 중계가 필요하지 않습니다.
-- **최초 준비:** 워치 초기 설정에는 아이폰, 워치 앱 서명·설치에는 Mac/Xcode와 자신의 Apple Team이 필요합니다.
-- **업데이트:** Android 서명 키, 워치 Bundle ID와 Team을 유지합니다. 연결 문제에는 먼저 한쪽의 연결 새로고침을 사용합니다.
-- **백그라운드:** watchOS 실행 기회와 수신 예산이 적용됩니다. 실행이 중단된 경우 워치 앱을 한 번 열어야 할 수 있습니다.
+| 기록 / Record | 한국어 | English |
+| --- | --- | --- |
+| 0.5.26 화면 진입 기록 / Display-entry journal | [조사](DISPLAY_INVESTIGATION_0.5.26_KO.md) | [Investigation](DISPLAY_INVESTIGATION_0.5.26_EN.md) |
+| 0.5.25 충전 필터·표시 / Charging filter and presentation | [변경](QUIET_BACKGROUND_0.5.25_KO.md) | [Changes](QUIET_BACKGROUND_0.5.25_EN.md) |
+| 0.5.24 잠금 중 읽기 수신·거리 복구 / Locked read delivery and range recovery | [REA 기록](REA_0.5.24_KO.md) | [REA record](REA_0.5.24_EN.md) |
+| 0.5.23 이름 변경·REA 조사 / Rename and REA | [기록](REA_0.5.23_KO.md) | [Record](REA_0.5.23_EN.md) |
+| 0.5.22 읽기 우선 인증 / Read-first authentication | [기록](LOCKED_AUTH_0.5.22_KO.md) | [Record](LOCKED_AUTH_0.5.22_EN.md) |
+| 손목 들기 화면 복귀 / Wrist-raise presentation | [이력과 추정 정정](WRIST_RAISE_REGRESSION_KO.md) | [History and corrected hypothesis](WRIST_RAISE_REGRESSION_EN.md) |
+| 원본 아이콘·본문 배치 / Notification layout | [화면 비교](NOTIFICATION_LAYOUT_COMPARISON_KO.md) | [Layout history](NOTIFICATION_LAYOUT_COMPARISON_EN.md) |
+| 버전별 변경 / Changelog | [변경 이력](../CHANGELOG.md) | [Changelog](../CHANGELOG.en.md) |
+| 전체 구축 과정 / Milestones | [구축 이력](DEVELOPMENT_HISTORY.md) | [Development history](DEVELOPMENT_HISTORY_EN.md) |
 
-- **During use:** notification delivery runs directly over Bluetooth; no server, internet, or iPhone relay is needed.
-- **Initial setup:** Apple Watch setup needs an iPhone; signing/installing the watch app needs Mac/Xcode and your Apple team.
-- **Updates:** retain the Android signing key and watch Bundle ID/team. Try Refresh connection on one device for ordinary connection problems.
-- **Background:** watchOS controls runtime opportunities and budgets. Opening the watch app once may be needed after execution stops.
+이전 `RELEASE_*`, `WATCH_*`, `ROLLBACK_*` 문서와 [과거 배포 파일](https://github.com/mhj604/WatchBridge/releases)은 그대로 보존합니다. 파일의 과거 버전 번호를 최신 버전으로 바꿔 쓰지 않습니다. / Older version-specific files and release artifacts remain available with their original versions.
 
-과거 0.4.9 문서 묶음은 [한글·영어 문서 ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip)에 보존되어 있습니다. 최신 안내는 위 표를 사용하세요. / [Archived 0.4.9 Korean/English guide bundle](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) contains the older documentation; use the table above for current guides.
+## 서명·배포 방식 조사 / Signing and distribution research
 
-## 이전 문서 / Archives
+아래 조사 문서는 사용 가능한 워치 단독 갱신 기능이 구현됐다는 뜻이 아닙니다. / These investigations do not establish an implemented watch-only renewal path.
 
-이전 버전의 `RELEASE_*_KO.md`와 초기 `legacy/` 문서는 한국어 원문으로 보존합니다. 현재 사용법은 위 표의 문서를 따릅니다. 중요한 과거 변경은 두 언어의 변경·구축 이력에 정리했습니다.
-
-Older `RELEASE_*_KO.md` and initial `legacy/` documents remain archived in their original language. Use the guides above for current operation. Significant earlier changes are summarized in both languages' changelog and development history.
-
-- [Watch 0.5.14: 구독 콜백에서 백그라운드 인증 시작](WATCH_0.5.14_SUBSCRIPTION_AUTH_KO.md) · [English](WATCH_0.5.14_SUBSCRIPTION_AUTH_EN.md)
-
-- [0.6.11 / 0.5.15: 재연결 지연 줄이기](FAST_RECONNECT_0.5.15_KO.md) · [English](FAST_RECONNECT_0.5.15_EN.md)
-
-- [0.6.12 / 0.5.16 수정 후보: 연결 취소 줄이기·실제 연결 상태 알림](CONNECTION_STABILITY_0.5.16_KO.md) · [English](CONNECTION_STABILITY_0.5.16_EN.md)
-
-- [0.6.13 / 0.5.17: 백그라운드 재검색·연결 알림 분리](CONNECTION_0.5.17_KO.md) · [English](CONNECTION_0.5.17_EN.md)
-- [워치 단독 무료 자동 갱신 추가 조사](WATCH_ONLY_RENEWAL_2026-11-15_KO.md) · [English](WATCH_ONLY_RENEWAL_2026-11-15_EN.md)
-
-- [0.5.25 백그라운드 표시·충전 보호 알림](QUIET_BACKGROUND_0.5.25_KO.md) / [English](QUIET_BACKGROUND_0.5.25_EN.md)
-
-- [손목 들기 화면 복귀의 버전별 원인 조사](WRIST_RAISE_REGRESSION_KO.md) / [English](WRIST_RAISE_REGRESSION_EN.md)
-
-- [0.5.26 화면 진입 경로 기록과 추정 정정](DISPLAY_INVESTIGATION_0.5.26_KO.md) / [English](DISPLAY_INVESTIGATION_0.5.26_EN.md)
+- [워치 단독 갱신 조사](WATCH_ONLY_RENEWAL_2026-11-15_KO.md) · [Watch-only renewal research](WATCH_ONLY_RENEWAL_2026-11-15_EN.md)
+- [Windows·프로파일 갱신 조사](SIGNING_WINDOWS_RESEARCH_KO.md) · [Windows/profile renewal](SIGNING_WINDOWS_RESEARCH_EN.md)
+- [배포·앱 구조 대안](NO_WEEKLY_SIGNING_ARCHITECTURE_KO.md) · [Distribution/architecture alternatives](NO_WEEKLY_SIGNING_ARCHITECTURE_EN.md)
+- [공개 서명 우회 연구의 범위](WATCHOS_27_SIGNING_BYPASS_RESEARCH_KO.md) · [Scope of public signing-bypass research](WATCHOS_27_SIGNING_BYPASS_RESEARCH_EN.md)

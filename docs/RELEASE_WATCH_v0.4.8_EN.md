@@ -1,5 +1,7 @@
 # Watch 0.4.8 / Android 0.5.3 — first-pair queue reset and automatic reconnection
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](RELEASE_WATCH_v0.4.8_KO.md) · **English** · [All guides](README.md)
 
 - Watch **0.4.8 / build 22**

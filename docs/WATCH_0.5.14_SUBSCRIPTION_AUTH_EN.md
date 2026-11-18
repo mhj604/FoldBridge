@@ -1,5 +1,7 @@
 # Watch 0.5.14 — start background authentication from phone controls
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](WATCH_0.5.14_SUBSCRIPTION_AUTH_KO.md) · **English**
 
 Branch: `fix/watch-background-reconnect`. Retain Android **0.6.9-local / installation code 28**; apply this connection change to Watch **0.5.14 / build 40** only.

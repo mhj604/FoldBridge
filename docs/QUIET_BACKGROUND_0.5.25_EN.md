@@ -1,5 +1,7 @@
 # WatchBridge 0.5.25 — background presentation and charging protection
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](QUIET_BACKGROUND_0.5.25_KO.md)
 
 2026-11-17 KST. Android **0.6.19-local / code 41**, Watch/widget **0.5.25 / build 59**, on `fix/watch-background-reconnect`. Build-58 connection recovery, registration, keys, vehicle settings and stable installation IDs are retained.

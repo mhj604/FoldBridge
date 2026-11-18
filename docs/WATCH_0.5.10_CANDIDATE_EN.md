@@ -1,5 +1,7 @@
 # Watch 0.5.10 / Android 0.6.8: background reconnection candidate
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 > Subsequent progress: [0.6.10 / 0.5.13 automatic recovery](WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md). The unfinished table below records November 7 status. Actual range return and process recovery later succeeded; see the latest notes for remaining scope.
 
 [한국어](WATCH_0.5.10_CANDIDATE_KO.md) · **English**

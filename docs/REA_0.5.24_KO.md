@@ -1,5 +1,7 @@
 # WatchBridge 0.5.24 — 잠금 중 읽기 수신
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 [English](REA_0.5.24_EN.md) · [앞선 REA 조사](REA_0.5.23_KO.md)
 
 2026-11-15. Android **0.6.18-local / 코드 40**, Watch·위젯 **0.5.24 / 빌드 58** 수정 후보입니다. Android 코드 40과 Watch 빌드 57은 기존 등록·키·차량 설정을 유지하고 덮어 설치했습니다. 빌드 58도 2026-11-16(KST)에 덮어 설치하고 잠금 중 폰 단독 인증을 기록했습니다. [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24-build58/WatchBridge-0.6.18.apk).

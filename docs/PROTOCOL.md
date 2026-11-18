@@ -1,5 +1,7 @@
 # WatchBridge BLE 프로토콜
 
+> 현재 기준(2026-11-18): Android **0.6.19 / 41**, Watch **0.5.26 / 60**. [버전·다운로드·진행 상태](CURRENT_STATUS_KO.md). 아래 날짜·버전이 붙은 항목은 당시 변경 기록입니다.
+
 **한국어** · [English](PROTOCOL_EN.md) · [전체 문서](README.md)
 
 Android는 GATT peripheral/server, watchOS는 central/client다. 앱 안에서 휴대폰을 선택하며 Android 시스템 Bluetooth 페어링을 별도로 요구하지 않는다.

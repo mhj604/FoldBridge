@@ -1,5 +1,7 @@
 # Android 0.6.11 / Watch 0.5.15 — reduce reconnection latency
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](FAST_RECONNECT_0.5.15_KO.md) · **English**
 
 Branch: `fix/watch-background-reconnect`. Android **0.6.11-local / code 29**, Watch **0.5.15 / build 41**. [APK](../artifacts/android/FoldBridge-Local-0.6.11.apk).

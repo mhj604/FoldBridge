@@ -1,5 +1,7 @@
 # 직전 연결 코드 복원 — Android 0.6.9 / Watch 0.5.12
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 **한국어** · [English](ROLLBACK_0.5.12_EN.md)
 
 브랜치: `fix/watch-background-reconnect`. `c3f3f53` 당시의 Android **0.6.9-local** / Watch **0.5.12** 원본으로 복원했습니다. 워치는 당시 **원본 빌드 36 설치 파일**을 직접 사용했습니다. Android는 원본 실행 코드·리소스를 유지하고 덮어 설치용 번호만 **28**로 올렸습니다. [원본 코드 APK](../artifacts/android/FoldBridge-Local-0.6.9-original-code-28.apk).

@@ -1,5 +1,7 @@
 # WatchBridge 0.5.25 — 백그라운드 표시와 충전 보호 알림
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 [English](QUIET_BACKGROUND_0.5.25_EN.md)
 
 2026-11-17(KST). Android **0.6.19-local / 코드 41**, Watch·위젯 **0.5.25 / 빌드 59**. `fix/watch-background-reconnect`에서 진행하며, 빌드 58의 연결 복구 코드는 유지합니다. 기존 등록·키·차량 설정·설치 ID를 변경하지 않습니다.

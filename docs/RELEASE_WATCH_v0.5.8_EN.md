@@ -1,5 +1,7 @@
 # Watch 0.5.8 · build 32 / Android 0.6.7
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](RELEASE_WATCH_v0.5.8_KO.md) · **English** · [Full usage guide](RELEASE_WATCH_v0.5.7_EN.md)
 
 ## Background connection investigation

@@ -1,5 +1,7 @@
 # Android 0.6.14 / Watch 0.5.18 — automatic recovery and fast authentication
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](FAST_RECONNECT_0.5.18_KO.md) · [Documentation](README.md)
 
 Android **0.6.14-local / code 32** and Watch/widget **0.5.18 / build 44** were installed in place on 2026-11-15. Registration, identity and peer keys, and vehicle settings are retained. [Download APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.18/FoldBridge-Local-0.6.14.apk).

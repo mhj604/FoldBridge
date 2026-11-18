@@ -1,5 +1,7 @@
 # WatchBridge 0.5.23 — REA investigation and rename
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](REA_0.5.23_KO.md) · [Documentation](README.md)
 
 2026-11-15. Candidate: Android **0.6.17-local / code 39**, Watch/widget **0.5.23 / build 55**. **Repeated disconnections remain unresolved; this is not a stable release.**

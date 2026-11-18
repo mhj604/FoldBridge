@@ -1,5 +1,7 @@
 # WatchBridge 0.5.24 — read delivery while locked
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](REA_0.5.24_KO.md) · [Earlier REA investigation](REA_0.5.23_EN.md)
 
 2026-11-15. Candidate: Android **0.6.18-local / code 40**, Watch/widget **0.5.24 / build 58**. Android code 40 and Watch build 57 were installed in place, retaining registration, keys and vehicle settings. Build 58 was also installed on 2026-11-16 KST, followed by locked phone-only authentication. [Download APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24-build58/WatchBridge-0.6.18.apk).

@@ -1,5 +1,7 @@
 # Watch 0.5.26 — display-entry investigation
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](DISPLAY_INVESTIGATION_0.5.26_KO.md)
 
 2026-11-18 KST. Watch/widget 0.5.26 / build 60 improves app-owned display records. Android 0.6.19 / code 41, registration, encryption, location runtime, and BLE authentication/delivery/recovery remain unchanged. The build is complete; deployment is recorded separately below.

@@ -1,5 +1,7 @@
 # Android 0.6.15 / Watch 0.5.19 — 백그라운드 복구 요청 보존
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 [English](BACKGROUND_RECOVERY_0.5.19_EN.md) · [문서 목록](README.md)
 
 2026-11-15 수정 후보: Android **0.6.15-local / 코드 33**, Watch·차량 위젯 **0.5.19 / 빌드 45**. [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk). 기존 등록·신원 키·고정 상대 키·차량 설정을 유지합니다.

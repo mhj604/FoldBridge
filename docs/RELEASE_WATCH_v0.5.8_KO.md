@@ -1,5 +1,7 @@
 # Watch 0.5.8 · 빌드 32 / Android 0.6.7
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 **한국어** · [English](RELEASE_WATCH_v0.5.8_EN.md) · [전체 사용 안내](RELEASE_WATCH_v0.5.7_KO.md)
 
 ## 백그라운드 연결 조사

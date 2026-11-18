@@ -1,5 +1,7 @@
 # 갤럭시 앱을 케이블 없이 업데이트하기
 
+> 현재 기준(2026-11-18): Android **0.6.19 / 41**, Watch **0.5.26 / 60**. [버전·다운로드·진행 상태](CURRENT_STATUS_KO.md). 아래 날짜·버전이 붙은 항목은 당시 변경 기록입니다.
+
 **한국어** · [English](WIRELESS_INSTALL_EN.md) · [전체 문서](README.md)
 
 일상적인 알림 전달은 Galaxy–Watch Bluetooth를 사용한다. 아래 Wi-Fi 연결은 Mac에서 갤럭시 APK를 설치하거나 앱 상태를 읽을 때만 사용한다.

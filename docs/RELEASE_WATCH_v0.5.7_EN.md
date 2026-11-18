@@ -1,5 +1,7 @@
 # Current release · Watch 0.5.7 / Android 0.6.4
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](RELEASE_WATCH_v0.5.7_KO.md) · **English** · [All guides](README.md)
 
 ## Versions and downloads

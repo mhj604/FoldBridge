@@ -1,5 +1,7 @@
 # Android 0.6.9 / Watch 0.5.12: background authentication recovery
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](WATCH_0.5.12_BACKGROUND_AUTH_KO.md) · **English**
 
 Candidate on `fix/watch-background-reconnect`: Android 0.6.9-local / code 25 and Watch 0.5.12 / build 36. In-place updates preserve registration, peer keys and vehicle settings. [Candidate APK](../artifacts/android/FoldBridge-Local-0.6.9.apk).

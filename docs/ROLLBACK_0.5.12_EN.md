@@ -1,5 +1,7 @@
 # Restore the preceding connection code — Android 0.6.9 / Watch 0.5.12
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](ROLLBACK_0.5.12_KO.md) · **English**
 
 Branch: `fix/watch-background-reconnect`. Restored the original Android **0.6.9-local** / Watch **0.5.12** apps from `c3f3f53`. The watch uses the **original build-36 installation artifact** directly. Android retains the original executable code and resources, advancing only its in-place installation number to **28**. [Original-code APK](../artifacts/android/FoldBridge-Local-0.6.9-original-code-28.apk).

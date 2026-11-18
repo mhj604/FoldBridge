@@ -1,26 +1,28 @@
-# Reconnection without buttons: changes and remaining conditions
+# Automatic reconnection and remaining conditions
 
-> Latest installed candidate: [Android 0.6.10 / Watch 0.5.13](WATCH_0.5.13_AUTOMATIC_RECOVERY_EN.md). Actual range return and process restoration succeeded. Earlier candidate descriptions below are historical; use the latest notes for prolonged locking and reboot scope.
+[한국어](AUTO_RECONNECT_KO.md) · **English** · [Current versions/downloads](CURRENT_STATUS_EN.md)
 
-[한국어](AUTO_RECONNECT_KO.md) · **English**
+As of 2026-11-18: Android **0.6.19 / 41**, Watch **0.5.26 / 60**. Earlier version outcomes are linked separately below.
 
-See the **[Android 0.6.8 / Watch 0.5.10 record](WATCH_0.5.10_CANDIDATE_EN.md)** for the latest candidate and unfinished work. Next goals are to fully resolve interrupted background authentication, recovery after prolonged locking, and automatic reconnection after physical range loss/return. All remain unfinished.
+## Current behavior
 
-The goal is reconnection after unlocking the watch, without refreshing either device or opening WatchBridge on the watch. Current versions: Android **0.6.7 / code 23**, Watch **0.5.8 / build 32**.
+1. Retain registration. Use **Connect watch** when the phone service is off, or **Refresh connection** while it is running. **Sync now** processes pending transfers over an already authenticated connection.
+2. Refresh on a healthy link sends an encrypted request without replacing the session. After disconnection, authenticate the saved peer again and discard the old notification queue.
+3. The watch uses Core Bluetooth saved-peer connection/restoration and service-filtered recovery discovery after range loss. It can resubmit a native connection request that received no callback.
+4. When location keepalive provides runtime and both peers support it, encrypted reads deliver notifications. A polling timer cannot itself wake a suspended app.
+5. Phone **Settings → Stop connection** intentionally disables the service. This is not an automatic-recovery state; **Connect watch** starts it again without deleting registration.
 
-## Android 0.6.7-local · code 23 (Watch 0.5.8 unchanged)
+## Observation scope
 
-Android GATT server connection callbacks can include links used by other BLE traffic. Previously the first physical link claimed the watch slot and stopped advertising, allowing an unrelated device to occupy connection waiting. Select the peer only when it subscribes to WatchBridge's own TX CCC descriptor. Existing pinned-key encrypted authentication remains required. Retain MTU values per device until subscription; unrelated connections and disconnections no longer reset the watch session or trigger cancellation of the other device.
+Authentication, read delivery, a display request and phone acknowledgement were recorded during passcode lock in actual background. On November 18, the owner reported automatic reconnection after physical return without the app appearing. Lock state for that return was unspecified.
 
-While running, the phone service checks the local Bluetooth stack every 15 seconds. Clear a stale app connection and resume advertising when the physical link is gone. This check sends no periodic heartbeat to the watch. Add advertising, observed-link, subscription-claim and local-check fields to diagnostics.
+**Multi-hour/overnight lock, repeated physical range returns, OS process termination, nearby repeated disconnections and recovery delays are not marked complete.** Do not erase registration or repeatedly cancel a healthy session to obtain recovery.
 
-Device records showed authentication without refresh after APK replacement, and again after stopping the phone process and explicitly reopening only the phone app. The agent did not launch WatchBridge on the watch. The Mac–watch developer tunnel remained unavailable, so the watch screen and a physical lock/unlock cycle could not be checked directly. This does not establish reliable automatic recovery after every unlock or extended idle period. [Scope and remaining investigation](AUTO_RECONNECT_EN.md)
+Initial location-session preparation after installation/process replacement is distinct from normal reconnection. Unexpected main-screen display is deferred at the owner's request; current connection behavior is retained.
 
-## Watch conditions still to distinguish
+## Change records
 
-- Saved-peer connections, service-filtered discovery and Core Bluetooth restoration already exist.
-- Starting the optional location keepalive session requires the app to be active. Unlocking the watch and activating the app are different events.
-- Some stalled-authentication timeouts run only in foreground. Watch records are needed to determine whether the reported failure stops there.
-- watchOS manages background BLE runtime and delivery budgets. [Apple's explanation](https://developer.apple.com/videos/play/wwdc2022/10135/). The specific watchOS 9 count is not assumed to apply unchanged to current OS versions.
-
-Mac–watch developer connectivity is needed for the remaining investigation, independently of ordinary Galaxy–watch BLE use. This work did not execute vehicle commands, reset peer registration or change signature-renewal schedules.
+- [0.5.24 read delivery and build 57/58 range recovery](REA_0.5.24_EN.md)
+- [0.5.25 charging filter and maintenance launch](QUIET_BACKGROUND_0.5.25_EN.md)
+- [0.5.26 display-state records](DISPLAY_INVESTIGATION_0.5.26_EN.md)
+- [0.5.8 historical reconnection changes](RELEASE_WATCH_v0.5.8_EN.md), not current installation instructions

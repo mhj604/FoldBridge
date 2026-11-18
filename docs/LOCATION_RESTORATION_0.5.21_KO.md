@@ -1,5 +1,7 @@
 # Watch 0.5.21 — 위치 연결 유지 세션의 재실행 복원
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 [English](LOCATION_RESTORATION_0.5.21_EN.md) · [문서 목록](README.md)
 
 2026-11-15, Watch·차량 위젯 **0.5.21 / 빌드 47**. Android **0.6.15-local / 코드 33**은 유지합니다. 기존 등록·키·차량 설정을 지우지 않습니다. [Android APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk).

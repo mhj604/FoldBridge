@@ -1,45 +1,20 @@
 # WatchBridge
 
-현재 설치 버전: Android **0.6.19 / 코드 41**, Watch **0.5.26 / 빌드 60**. [화면 진입 경로 조사·기록 보완](docs/DISPLAY_INVESTIGATION_0.5.26_KO.md) · [배터리 보호 필터](docs/QUIET_BACKGROUND_0.5.25_KO.md) · [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk).
+**한국어** · [English](README.en.md) · [현재 버전·남은 작업](docs/CURRENT_STATUS_KO.md) · [전체 문서](docs/README.md)
 
+갤럭시에 도착한 알림을 **Apple Watch로 Bluetooth LE 직접 전달**하는 Android·watchOS 앱입니다. 알림 전달에는 서버·인터넷·아이폰 중계·루팅·운동/오디오 세션을 사용하지 않습니다. 워치 초기 설정과 앱 설치 준비는 별도입니다.
 
-화면에서 누르지 않은 앱이 열리면 **설정 → 손쉬운 사용 → 초점이 맞춰진 앱 자동 선택**을 끄세요. 앱 전환기에서 1초 후 자동으로 여는 watchOS 기능이며 모든 앱에 적용됩니다. [화면 관련 조사 기록](docs/QUIET_BACKGROUND_0.5.25_KO.md#후속-원인-조사-및-화면-설정--2026-11-18).
-**한국어** · [English](README.en.md) · [전체 문서](docs/README.md)
+## 설치와 업데이트 — 2026-11-18 기준
 
-앱과 프로젝트의 표시 이름은 **WatchBridge**로 변경했습니다. 기존 등록·암호화 키·차량 설정을 유지하기 위해 설치 식별자와 내부 프로토콜·소스 경로는 유지합니다. 이전 배포 파일의 이름도 그대로 남으며, 이전 바이너리에는 이전 앱 이름이 표시될 수 있습니다.
-
-현재 표시·필터 수정은 Android **0.6.18-local / 코드 40**, Watch **0.5.24 / 빌드 58**에서 이어진 자동 복구·빠른 재인증 코드를 유지합니다. 기존 등록을 유지합니다. [수정·설치 결과와 남은 조건](docs/REA_0.5.24_KO.md).
-
-**잠금·백그라운드 상태에서 읽기 방식의 알림 수신과 폰 수신 확인을 기록했습니다. 장시간 잠금·거리 복귀는 별도 조건이며 이 버전은 수정 후보입니다.**
-
-갤럭시에 도착한 알림을 **Apple Watch로 직접 전달**하는 Android·watchOS 앱입니다. 두 기기는 Bluetooth LE로 통신하며, 알림 전달에 서버·인터넷·페어링된 아이폰을 사용하지 않습니다. 루팅·운동·오디오 세션도 사용하지 않습니다.
-
-워치의 최초 설정과 개발용 앱 설치에는 Apple의 기기 등록과 Mac/Xcode가 필요합니다. 위치 세션을 이용하는 백그라운드 수신은 실험 기능이며, watchOS가 앱을 중단할 수 있어 모든 알림의 상시·즉시 수신을 보장하지는 않습니다.
-
-<img src="watch/FoldBridge/Assets.xcassets/FoldBridgeIcon.appiconset/FoldBridgeIcon.png" width="96" alt="WatchBridge 앱 아이콘">
-
-[WatchBridge 0.6.18 APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24-build58/WatchBridge-0.6.18.apk) · [수정 후보 안내](docs/REA_0.5.24_KO.md)
-
-## 바로 시작하기
-
-최신 수정 후보 APK와 소스는 위 안내를 사용하세요. 아래 0.6.7/0.5.8 표는 이전 배포 기준입니다.
-
-**[현재 버전 사용 안내](docs/REA_0.5.24_KO.md)** · **[최신 배포 파일](https://github.com/mhj604/WatchBridge/releases)** · **[자주 묻는 질문](docs/FAQ_KO.md)** · **[English setup](docs/QUICK_START_EN.md)**
-
-| 항목 | 현재 버전 / 링크 |
+| 항목 | 현재 버전 / 받는 곳 |
 | --- | --- |
-| 사용·수정용 브랜치 | [`local-ble`](https://github.com/mhj604/WatchBridge/tree/local-ble) — 서버 없는 BLE 구성 |
-| Android | **0.6.7-local · 코드 23** / [APK 바로 다운로드](https://github.com/mhj604/WatchBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.7.apk) |
-| Apple Watch | **0.5.8 · 빌드 32** / [Xcode 프로젝트](watch/FoldBridge.xcodeproj) |
-| 배포 묶음 | [GitHub Releases](https://github.com/mhj604/WatchBridge/releases) · [이전 0.4.9 문서 ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
-| 처음 설치하는 경우 | **[처음부터 설치하고 연결하기](docs/QUICK_START_KO.md)** |
-| 연결이 끊긴 경우 | **[새로고침·문제 해결](docs/TROUBLESHOOTING_KO.md)** |
+| Android | **0.6.19-local / 코드 41** — [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk) |
+| 워치 앱·차량 위젯 | **0.5.26 / 빌드 60** — [Xcode 프로젝트](watch/FoldBridge.xcodeproj), 자신의 Team으로 서명·설치 |
+| 처음 설치 | [설치·등록 순서](docs/QUICK_START_KO.md) |
+| 기존 사용자 | 같은 서명 키·Bundle ID·Team으로 덮어 업데이트. 등록을 삭제하지 않습니다. |
+| 연결 문제 | [문제 해결](docs/TROUBLESHOOTING_KO.md) · [현재 상태와 미완료 범위](docs/CURRENT_STATUS_KO.md) |
 
-1. 갤럭시에 APK를 설치하고 **근처 기기·알림·알림 접근**을 허용합니다.
-2. Mac에서 소스를 받아 `watch/FoldBridge.xcodeproj`를 Xcode로 엽니다. 자신의 Team과 고유한 Bundle ID를 선택해 실제 워치에 설치합니다. 다른 사람의 워치 서명 파일을 그대로 설치하는 방식은 아닙니다.
-3. 갤럭시 **설정 → 새 워치 등록**, 워치 **휴대폰 연결 → 휴대폰 찾기**에서 서로 선택합니다. 코드가 같으면 양쪽에서 확인합니다.
-4. 워치에서 알림 표시를 허용합니다. 원하는 경우 **설정 → 연결 유지**를 켜고 위치 권한을 허용합니다.
-5. 연결이 풀리면 **갤럭시 또는 워치 한쪽의 ‘연결 새로고침’**을 누릅니다. 기존 등록과 대기 알림은 보존됩니다.
+APK는 `watchbridge-v0.5.25` 배포 묶음에 있습니다. 묶음 태그·Android 버전·워치 버전은 서로 다릅니다. 과거 버전 파일은 [Releases](https://github.com/mhj604/WatchBridge/releases)에 보존합니다.
 
 ```sh
 git clone --branch local-ble https://github.com/mhj604/WatchBridge.git
@@ -47,12 +22,15 @@ cd WatchBridge
 open watch/FoldBridge.xcodeproj
 ```
 
-`main`에도 최신 소스와 한국어·영어 문서를 반영합니다. `relay/`, `windows/`, `legacy/`는 과거 구성으로 현재 Local 앱 실행에는 필요하지 않습니다.
+처음에는 갤럭시 **설정 → 새 워치 등록**, 워치 **휴대폰 연결 → 휴대폰 찾기**에서 같은 코드를 확인합니다. 이후에는 저장된 등록을 사용합니다. 폰 서비스가 꺼져 있으면 **워치 연결**, 켜져 있으면 **연결 새로고침**을 사용합니다. 재연결 전 알림은 몰아서 보내지 않습니다.
 
+잠금·백그라운드에서 인증과 읽기 수신을 기록했고 실제 거리 복귀 후 자동 연결 사례도 있습니다. **수시간 잠금·반복 거리 복귀·연결 유지의 완전 해결을 뜻하지 않습니다.** 워치 메인 화면 자동 표시 문제는 실사용 관찰을 기다리며 보류 중입니다. [현재 우선순위](docs/CURRENT_STATUS_KO.md#우선순위와-미완료-항목).
+
+표시 이름은 **WatchBridge**입니다. 기존 등록·암호화 키·차량 설정 보존을 위해 설치 ID·키체인·BLE UUID·내부 소스 경로는 유지합니다. `main`, `local-ble`, `fix/watch-background-reconnect`에 소스·문서를 반영합니다. `relay/`, `windows/`, `legacy/`는 과거 구성입니다.
 
 ## 갤럭시를 통한 마이현대 차량 제어
 
-Android **0.6.7-local** / Watch **0.5.8**에는 **WatchBridge 워치 → BLE → 갤럭시 공식 마이현대 위젯** 연결 기능이 추가되었습니다. 기존 워치 마이현대의 아이폰 연동을 변경하지 않습니다. 갤럭시에서 위젯을 연결하고 표시할 버튼을 선택한 후 워치의 **차량 제어**를 사용합니다. **스마트 스택·시계 페이스의 차량 제어 위젯 하나**를 누르면 제어 창이 열립니다. 열린 창에서 시동/공조 켜기·문 잠금·비상등 켜기·문 잠금 해제를 선택합니다. 실제 차량 서비스에는 인터넷과 마이현대 인증이 필요하며 위젯 호출은 차량 성공 응답과 다릅니다. **[설정과 동작 범위](docs/VEHICLE_CONTROL_KO.md)** · [0.6.7 APK](artifacts/android/FoldBridge-Local-0.6.7.apk)
+현재 앱은 **WatchBridge 워치 → BLE → 갤럭시 공식 마이현대 위젯** 연결을 사용합니다. 기존 워치 마이현대의 아이폰 연동을 변경하지 않습니다. 갤럭시에서 위젯을 연결하고 표시할 버튼을 선택한 후 워치의 **차량 제어**를 사용합니다. **스마트 스택·시계 페이스의 차량 제어 위젯 하나**를 누르면 제어 창이 열립니다. 열린 창에서 시동/공조 켜기·문 잠금·비상등 켜기·문 잠금 해제를 선택합니다. 실제 차량 서비스에는 인터넷과 마이현대 인증이 필요하며 위젯 호출은 차량 성공 응답과 다릅니다. **[설정과 동작 범위](docs/VEHICLE_CONTROL_KO.md)**
 
 ## 한국어 / English 전환
 

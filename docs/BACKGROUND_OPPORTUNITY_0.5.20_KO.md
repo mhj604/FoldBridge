@@ -1,5 +1,7 @@
 # Watch 0.5.20 — 실행 기회에서 중단된 복구 단계 재개
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 [English](BACKGROUND_OPPORTUNITY_0.5.20_EN.md) · [문서 목록](README.md)
 
 2026-11-15, Watch·차량 위젯 **0.5.20 / 빌드 46**. Android는 **0.6.15-local / 코드 33**을 유지합니다. 기존 등록·신원 키·상대 키·차량 설정은 유지합니다. [Android APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.19/FoldBridge-Local-0.6.15.apk).

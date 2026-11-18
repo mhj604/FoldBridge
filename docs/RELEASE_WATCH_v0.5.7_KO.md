@@ -1,5 +1,7 @@
 # 현재 배포 안내 · Watch 0.5.7 / Android 0.6.4
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 **한국어** · [English](RELEASE_WATCH_v0.5.7_EN.md) · [전체 문서](README.md)
 
 ## 버전과 다운로드

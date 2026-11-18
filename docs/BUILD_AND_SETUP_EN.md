@@ -1,5 +1,7 @@
 # Build, signing, and device settings
 
+> Current baseline (2026-11-18): Android **0.6.19 / 41**, Watch **0.5.26 / 60**. [Versions, downloads and work status](CURRENT_STATUS_EN.md). Dated/version-specific sections below retain historical observations.
+
 [한국어](BUILD_AND_SETUP.md) · **English** · [All guides](README.md)
 
 Current release: Android **0.5.4-local / code 15**, Watch **0.4.9 / build 23**. For installing the distributed APK and signing the watch app, start with [the setup guide](QUICK_START_EN.md).

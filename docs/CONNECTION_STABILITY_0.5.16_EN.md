@@ -1,5 +1,7 @@
 # Connection maintenance — Android 0.6.12 / Watch 0.5.16
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](CONNECTION_STABILITY_0.5.16_KO.md) · [Documentation](README.md)
 
 Candidate dated November 14, 2026: Android code 30; Watch and vehicle widget build 42. Watch installation and launch completed. The Android APK built, but has not been installed on the Galaxy because its hotspot ADB connection is unavailable. Registration, keys and vehicle settings are retained.

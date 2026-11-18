@@ -1,5 +1,7 @@
 # Android 0.6.13 / Watch 0.5.17 — less recovery scanning, separate status channels
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](CONNECTION_0.5.17_KO.md) · [Documentation](README.md)
 
 Installed Android **0.6.13-local / code 31** and Watch/widget **0.5.17 / build 43** in place on November 15, 2026. Registration, keys and vehicle settings remain intact. [Download APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.17/FoldBridge-Local-0.6.13.apk).

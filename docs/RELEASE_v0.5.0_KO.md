@@ -1,5 +1,7 @@
 # WatchBridge 0.5.0 — 앱 내 한국어 / English 선택
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 - Galaxy: **0.5.0-local / versionCode 10**
 - Watch: **0.4.0 / build 11**
 - 사용 브랜치: [local-ble](https://github.com/mhj604/WatchBridge/tree/local-ble)

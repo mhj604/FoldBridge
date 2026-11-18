@@ -1,5 +1,7 @@
 # 빌드와 설치
 
+> 현재 기준(2026-11-18): Android **0.6.19 / 41**, Watch **0.5.26 / 60**. [버전·다운로드·진행 상태](CURRENT_STATUS_KO.md). 아래 날짜·버전이 붙은 항목은 당시 변경 기록입니다.
+
 **한국어** · [English](BUILD_AND_SETUP_EN.md) · [전체 문서](README.md)
 
 현재 배포는 Android `0.5.4-local` / versionCode 15, 워치 `0.4.9` / build 23이다. 처음 사용하는 경우 [빠른 시작](QUICK_START_KO.md)을 먼저 읽는다.

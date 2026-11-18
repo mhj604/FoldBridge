@@ -1,5 +1,7 @@
 # WatchBridge 구조
 
+> 현재 기준(2026-11-18): Android **0.6.19 / 41**, Watch **0.5.26 / 60**. [버전·다운로드·진행 상태](CURRENT_STATUS_KO.md). 아래 날짜·버전이 붙은 항목은 당시 변경 기록입니다.
+
 **한국어** · [English](ARCHITECTURE_EN.md) · [전체 문서](README.md)
 
 현재 구성은 Galaxy Z Fold 계열 Android 휴대폰의 알림을 Apple Watch에 BLE로 직접 전달하는 Android 앱과 watchOS 앱이다. 알림 전달 자체에 서버·인터넷·페어링된 아이폰을 사용하지 않는다. 초기 워치 설정과 개발용 서명/설치에는 Apple 개발 도구와 기기 등록 절차가 필요하다.

@@ -1,5 +1,7 @@
 # Android 0.6.13 / Watch 0.5.17 — 재검색 줄이기와 연결 알림 분리
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 [English](CONNECTION_0.5.17_EN.md) · [문서 목록](README.md)
 
 2026-11-15에 Android **0.6.13-local / 코드 31**, Watch·차량 위젯 **0.5.17 / 빌드 43**을 기존 앱에 덮어 설치했습니다. 등록·키·차량 설정은 유지합니다. [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.17/FoldBridge-Local-0.6.13.apk).

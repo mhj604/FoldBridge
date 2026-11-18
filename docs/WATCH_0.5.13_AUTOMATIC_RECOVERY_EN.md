@@ -1,5 +1,7 @@
 # Android 0.6.10 / Watch 0.5.13: automatic recovery paths
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](WATCH_0.5.13_AUTOMATIC_RECOVERY_KO.md) · **English**
 
 This rollback branch restores preceding code after the reported need to open the watch app on 0.5.13. See [reason and deployment state](ROLLBACK_0.5.12_EN.md). The content below records the previous candidate.

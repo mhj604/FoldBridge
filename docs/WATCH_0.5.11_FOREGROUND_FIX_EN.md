@@ -1,5 +1,7 @@
 # Watch 0.5.11 / build 35: foreground reconnection regression fix
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](WATCH_0.5.11_FOREGROUND_FIX_KO.md) · **English**
 
 Keep Android 0.6.8-local / code 24 and update Watch to 0.5.11 / build 35. Registration, keys, and vehicle settings are retained.

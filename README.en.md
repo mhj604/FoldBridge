@@ -1,47 +1,20 @@
 # WatchBridge
 
-Installed versions: Android **0.6.19 / code 41**, Watch **0.5.26 / build 60**. [Display-entry investigation](docs/DISPLAY_INVESTIGATION_0.5.26_EN.md) · [Charging-protection filter](docs/QUIET_BACKGROUND_0.5.25_EN.md) · [Download APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk).
+[한국어](README.md) · **English** · [Current versions and remaining work](docs/CURRENT_STATUS_EN.md) · [All guides](docs/README.md)
 
+Forward Galaxy notifications **directly to Apple Watch over Bluetooth LE**. Notification delivery needs no server, internet, iPhone relay, root access, or workout/audio session. Initial watch setup and app installation are separate.
 
-If an app opens without a tap in the App Switcher, disable **Settings → Accessibility → Auto-Select Focused App**. This watchOS preference opens a focused app after one second and affects all apps. [Display investigation](docs/QUIET_BACKGROUND_0.5.25_EN.md#follow-up-investigation-and-display-preference--2026-11-18-kst).
-[한국어](README.md) · **English** · [Documentation / 문서](docs/README.md)
+## Install or update — as of 2026-11-18
 
-The app and project are now named **WatchBridge**. Installation identifiers, internal protocol values and source paths remain unchanged to preserve existing registration, encryption keys and vehicle settings. Historical release filenames also remain unchanged, and older binaries may still show the previous app name.
-
-This update retains the automatic-recovery and fast-authentication code from Android **0.6.18-local / code 40**, Watch **0.5.24 / build 58**, preserving registration. [Deployment results and remaining conditions](docs/REA_0.5.24_EN.md).
-
-**Locked background read delivery and a phone acknowledgement were recorded. Prolonged lock and physical return are separate conditions; this remains a candidate.**
-
-Forward notifications **directly from a Galaxy phone to Apple Watch over Bluetooth LE**. Notification delivery uses the two devices: no server, internet connection, iPhone relay, root access, or workout/audio session is needed.
-
-Initial Apple Watch setup still requires a paired iPhone. Installing the watch app requires a Mac, Xcode, and your own Apple signing team. Background delivery depends on watchOS runtime availability; the optional location keepalive mode is experimental.
-
-<img src="watch/FoldBridge/Assets.xcassets/FoldBridgeIcon.appiconset/FoldBridgeIcon.png" width="96" alt="WatchBridge app icon">
-
-[Download WatchBridge 0.6.18 APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.24-build58/WatchBridge-0.6.18.apk) · [Candidate notes](docs/REA_0.5.24_EN.md)
-
-## Start here
-
-Use the candidate link above for current fixes. The 0.6.7/0.5.8 download table below describes the preceding release.
-
-**[Current release guide](docs/REA_0.5.24_EN.md)**
-
-| What you need | Download or guide |
+| Component | Current version / location |
 | --- | --- |
-| Android **0.6.7-local · code 23** | [Download APK](https://github.com/mhj604/WatchBridge/raw/refs/heads/local-ble/artifacts/android/FoldBridge-Local-0.6.7.apk) |
-| Apple Watch **0.5.8 · build 32** | [Current source](https://github.com/mhj604/WatchBridge/archive/refs/heads/local-ble.zip) · [Xcode project](watch/FoldBridge.xcodeproj) |
-| First installation | **[Step-by-step setup](docs/QUICK_START_EN.md)** |
-| Common questions | [FAQ](docs/FAQ_EN.md) |
-| Connection or notification problems | [Troubleshooting](docs/TROUBLESHOOTING_EN.md) |
-| Latest downloads and changes | [Releases](https://github.com/mhj604/WatchBridge/releases) · [Archived 0.4.9 guide ZIP](https://github.com/mhj604/WatchBridge/releases/download/watch-v0.4.9/FoldBridge-0.4.9-guides-ko-en.zip) |
+| Android | **0.6.19-local / code 41** — [Download APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk) |
+| Watch app and vehicle widget | **0.5.26 / build 60** — [Xcode project](watch/FoldBridge.xcodeproj); sign for your own team/device |
+| New installation | [Step-by-step setup](docs/QUICK_START_EN.md) |
+| Existing users | Update in place with the same signing key and watch Bundle ID/team. Preserve registration. |
+| Connection problems | [Troubleshooting](docs/TROUBLESHOOTING_EN.md) · [Current status and unfinished scope](docs/CURRENT_STATUS_EN.md) |
 
-1. Install **WatchBridge** on the phone. Grant Nearby devices, notifications, and **notification access** for the relay service.
-2. Open `watch/FoldBridge.xcodeproj` on your Mac. Select your Apple team, a unique Bundle ID, and your physical watch; press **Run**.
-3. On the phone, open **Settings → Pair a new watch**. On the watch, open **Connect phone → Find phone** and select the Galaxy. Compare the codes and confirm on both devices.
-4. Allow watch notifications. Optionally enable **Settings → Keep connection** and grant location permission.
-5. Keep the phone's connection service running and both devices within Bluetooth range. Use **Refresh connection** on either device when needed.
-
-Both `main` and [`local-ble`](https://github.com/mhj604/WatchBridge/tree/local-ble) contain the current source and Korean/English guides. The `relay/`, `windows/`, and `legacy/` folders preserve older designs and are not needed for Local operation.
+The APK belongs to release bundle `watchbridge-v0.5.25`. Bundle tags, Android versions and Watch versions are different. Older artifacts remain in [Releases](https://github.com/mhj604/WatchBridge/releases).
 
 ```sh
 git clone --branch local-ble https://github.com/mhj604/WatchBridge.git
@@ -49,10 +22,15 @@ cd WatchBridge
 open watch/FoldBridge.xcodeproj
 ```
 
+Initially use phone **Settings → Pair a new watch** and watch **Connect phone → Find phone**, then compare codes. Later connections use saved registration. Use **Connect watch** when the phone service is off, or **Refresh connection** while it is running. Notifications predating reconnection are not replayed.
+
+Authentication and read delivery were recorded in locked/background conditions, and physical return has produced automatic reconnection. **This does not establish reliable multi-hour lock, repeated range recovery or uninterrupted connections.** Unexpected main-screen display is deferred pending everyday-use observations. [Current priorities](docs/CURRENT_STATUS_EN.md#priorities-and-unfinished-work).
+
+Visible branding is **WatchBridge**. Installation IDs, keychain/storage keys, BLE UUIDs and source paths stay stable to preserve registration and vehicle settings. Source and guides are reflected in `main`, `local-ble`, and `fix/watch-background-reconnect`. `relay/`, `windows/`, and `legacy/` preserve older designs.
 
 ## MyHyundai through Galaxy
 
-Android **0.6.7-local** / Watch **0.5.8** adds **WatchBridge watch → BLE → Galaxy official MyHyundai widget**. It does not redirect the original MyHyundai watch app. Bind the widget, choose controls on Galaxy, then open **Vehicle controls** in WatchBridge on the watch. A single **Vehicle controls widget** in Smart Stack or on a watch face opens the control panel. Choose Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors inside the panel. Actual vehicle service requires internet and MyHyundai authentication; widget invocation is not vehicle success. **[Setup and scope](docs/VEHICLE_CONTROL_EN.md)** · [0.6.7 APK](artifacts/android/FoldBridge-Local-0.6.7.apk)
+The current apps use **WatchBridge watch → BLE → Galaxy official MyHyundai widget**. It does not redirect the original MyHyundai watch app. Bind the widget, choose controls on Galaxy, then open **Vehicle controls** in WatchBridge on the watch. A single **Vehicle controls widget** in Smart Stack or on a watch face opens the control panel. Choose Start engine / climate, Lock doors, Turn on hazard lights or Unlock doors inside the panel. Actual vehicle service requires internet and MyHyundai authentication; widget invocation is not vehicle success. **[Setup and scope](docs/VEHICLE_CONTROL_EN.md)**
 
 ## Everyday use
 
@@ -85,7 +63,7 @@ Android may redact sensitive notification content before the relay receives it. 
 | Watch installation | Mac with compatible full Xcode, developer mode, development pairing, your Apple signing team |
 | Apple account | Free Personal Team supported; it need not match the watch's account |
 
-The current release clears old notifications on every reconnection, restarts phone advertising after disconnect, and retains background recovery requests. Recovery still depends on Bluetooth range and watchOS scheduling. [Release details](docs/RELEASE_WATCH_v0.4.9_EN.md)
+The current release clears old notifications on every reconnection, restarts phone advertising after disconnect, and retains background recovery requests. Recovery still depends on Bluetooth range and watchOS scheduling. [Current scope](docs/CURRENT_STATUS_EN.md)
 
 watchOS suspension, force-quit, runtime budgets, Bluetooth range, Focus, and notification permission affect delivery. Location keepalive can increase battery use. Development signing may expire and require rebuilding. Replies and bidirectional read/delete synchronization are not implemented. Notification text, private keys, device logs, and location coordinates are not published in this repository; location coordinates are not retained or transmitted by keepalive.
 

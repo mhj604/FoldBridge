@@ -1,12 +1,18 @@
 # Automatic renewal with a free Apple account
 
+> Current baseline (2026-11-18): Android **0.6.19 / 41**, Watch **0.5.26 / 60**. [Versions, downloads and work status](CURRENT_STATUS_EN.md). Dated/version-specific sections below retain historical observations.
+
 [한국어](AUTO_RENEW_KO.md) · **English** · [Documentation](README.md)
 
 This automates re-provisioning, signing and in-place installation from a Mac. It does not remove the seven-day Personal Team limit. Existing registration/settings are retained; the app is never uninstalled.
 
-## November 15, 2026 update
+## Current installation record — November 18, 2026
 
-Installed Watch is now **0.5.17 / build 43**. Earliest profile expiration remains **November 20, 2026, 17:10:54 KST**; a new build does not necessarily extend validity by seven days. Local installation records and weekly scheduler source are aligned with the new version's commit. Free Watch-only renewal remains the priority unresolved goal. [Additional research](WATCH_ONLY_RENEWAL_2026-11-15_EN.md).
+The owner's installed Watch is **0.5.26 / build 60**; committed renewal source is aligned to `95577b5`. The earliest recorded app/widget expiry is **November 20, 2026, 17:10:54 KST**. Aligning source does not issue a new profile or establish a successful weekly run. The 0.5.17/0.5.15 entries below are historical setup records. The schedule is **Friday at 16:00**, requiring an awake Mac and reachable unlocked watch development connection. Maintenance launch requests `--no-activate`. Free watch-only renewal remains unresolved.
+
+## Historical snapshot: November 15, 2026
+
+The Watch installation at that time was **0.5.17 / build 43**. Earliest profile expiration remains **November 20, 2026, 17:10:54 KST**; a new build does not necessarily extend validity by seven days. Local installation records and weekly scheduler source are aligned with the new version's commit. Free Watch-only renewal remains the priority unresolved goal. [Additional research](WATCH_ONLY_RENEWAL_2026-11-15_EN.md).
 
 ## November 13, 2026: once-weekly native macOS scheduling
 

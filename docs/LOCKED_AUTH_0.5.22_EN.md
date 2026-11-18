@@ -1,5 +1,7 @@
 # Android 0.6.16 / Watch 0.5.22 — locked-state authentication
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](LOCKED_AUTH_0.5.22_KO.md) · [Documentation](README.md)
 
 November 15, 2026. Candidate: Android **0.6.16-local / code 38**, Watch and vehicle widget **0.5.22 / build 53**. Install in place, preserving registration, pinned keys, identity keys and vehicle settings. [Android APK](https://github.com/mhj604/WatchBridge/releases/download/connection-v0.5.22/FoldBridge-Local-0.6.16.apk).

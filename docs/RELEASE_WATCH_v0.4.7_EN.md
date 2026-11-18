@@ -1,5 +1,7 @@
 # Watch 0.4.7 / Android 0.5.2 — session-preserving refresh and card spacing
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](RELEASE_WATCH_v0.4.7_KO.md) · **English** · [All guides](README.md)
 
 - Watch **0.4.7 / build 21**

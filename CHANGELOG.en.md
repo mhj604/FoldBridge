@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-18 — Separate current installation guides from history
+
+Added an Android 0.6.19 / Watch 0.5.26 baseline and replaced obsolete landing-page/setup downloads. Version-specific investigations are marked as historical. Connection reliability and watch-only renewal remain active; unsolicited display is deferred pending everyday-use observations. No app version, registration or behavior change. [Current status](docs/CURRENT_STATUS_EN.md).
+
 ## 2026-11-18 — Watch 0.5.26 / build 60
 
 Separate inactive from actual background and record notification/widget entry markers in a bounded app-owned journal. Connection behavior remains unchanged; automatic presentation is not yet resolved. [REA investigation and deployment](docs/DISPLAY_INVESTIGATION_0.5.26_EN.md).

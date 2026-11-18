@@ -1,5 +1,7 @@
 # Watch 0.5.9 / build 33: installation and background restoration
 
+> Historical version-specific investigation/change record. “Current/complete/unresolved” refers to that snapshot, not the latest installation instructions. [Current versions and work status](CURRENT_STATUS_EN.md).
+
 [한국어](WATCH_0.5.9_CANDIDATE_KO.md) · **English**
 
 This branch adds watch background-restoration changes on top of Android 0.6.7. On 2026-11-07, **Watch 0.5.9 / build 33** was installed over the existing app on a physical Apple Watch Ultra 2. Both the installed-app listing and the app's own diagnostics confirmed the build. The phone runs **Android 0.6.7-local / code 23**. Distinguish this branch's installation results from the default branch's Watch 0.5.8 instructions.

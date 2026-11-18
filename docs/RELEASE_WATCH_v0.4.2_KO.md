@@ -1,5 +1,7 @@
 # WatchBridge Watch 0.4.2 — 큰 아이콘 이미지 첨부 제거
 
+> 버전별 조사·변경 기록입니다. 여기의 “현재/완료/미해결”은 해당 시점 기준이며 최신 설치 안내가 아닙니다. [현재 버전과 작업 상태](CURRENT_STATUS_KO.md).
+
 - Watch: **0.4.2 / build 13**
 - Android: **0.5.0-local 유지**
 
