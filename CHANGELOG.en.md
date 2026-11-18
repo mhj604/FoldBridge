@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-18 — Direct repeated recovery tests during passcode lock
+
+No app-code change. All three 30/60/90-second Bluetooth interruptions recovered authentication/delivery without opening the watch app or refreshing. A subsequent ten-minute observation had 21 healthy samples and no additional disconnections. This does not establish all physical-range or multi-hour conditions. [REA evidence and scope](docs/LOCKED_RECOVERY_TEST_2026-11-18_EN.md).
+
 ## 2026-11-18 — Watch 0.5.28 / build 62
 
 Complete connection switches directly in failure as well as disconnect callbacks. Repair stalled requests from matching discovery and retain its evidence when background duplicates coalesce. Do not cancel native waits on elapsed time alone without discovery; space subsequent recovery attempts. Actual background authentication/read delivery was recorded after installation. Multi-hour lock and repeated physical return are not marked complete. [Changes, REA and remaining conditions](docs/RANGE_RECOVERY_0.5.28_EN.md).

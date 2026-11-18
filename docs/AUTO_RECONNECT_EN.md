@@ -22,6 +22,10 @@ Authentication, read delivery, a display request and phone acknowledgement were 
 
 Initial location-session preparation after installation/process replacement is distinct from normal reconnection. Unexpected main-screen display is deferred at the owner's request; current connection behavior is retained.
 
+## Directly controlled repeated radio interruptions
+
+During passcode lock, all three Galaxy Bluetooth interruptions of 30, 60 and 90 seconds recovered authentication and delivery without opening the app or refreshing. This differs from physically moving out of range. [Measurement scope and REA evidence](LOCKED_RECOVERY_TEST_2026-11-18_EN.md).
+
 ## Change records
 
 - [0.5.24 read delivery and build 57/58 range recovery](REA_0.5.24_EN.md)

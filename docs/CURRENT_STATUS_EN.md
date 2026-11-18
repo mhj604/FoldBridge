@@ -2,7 +2,7 @@
 
 [Watch 0.5.28 locked-callback and range-recovery improvements](RANGE_RECOVERY_0.5.28_EN.md). Phone remains 0.6.20.
 
-[Android 0.6.20 retained-link/delivery-waiting change and deployment](CONNECTION_STATE_0.6.20_EN.md). Installed Watch remains 0.5.26.
+[Android 0.6.20 retained-link/delivery-waiting change](CONNECTION_STATE_0.6.20_EN.md) · [Repeated radio recovery during passcode lock](LOCKED_RECOVERY_TEST_2026-11-18_EN.md). Installed Watch is now 0.5.28.
 
 [한국어](CURRENT_STATUS_KO.md) · **English** · [Install and connect](QUICK_START_EN.md) · [All guides](README.md)
 
@@ -26,7 +26,9 @@ Sign the watch source for your own Apple team/device. There is no universal sign
 - Notifications predating reconnection authentication are not replayed. The watch app has no message inbox.
 - Wattz/bring&T revisions of the same notification key do not alert repeatedly. SystemUI battery-protection/charge-limit notices are excluded from forwarding. This does not remove the original phone notifications.
 - Read delivery, a display request and phone acknowledgement were recorded during passcode lock in actual background. On November 18, the owner reported automatic reconnection after physical return without the app appearing; lock state for that return was unspecified.
-- These observations do not establish reliable recovery after every multi-hour lock, range return or process termination. Build 60 adds display records without changing connection behavior.
+- On November 18, the passcode-locked watch automatically authenticated and resumed delivery after all three Galaxy Bluetooth interruptions of 30, 60 and 90 seconds, without opening the app or refreshing. First responsive samples arrived about 11, 5 and 10 seconds after enable requests. [Controlled conditions and REA evidence](LOCKED_RECOVERY_TEST_2026-11-18_EN.md).
+- The following ten-minute observation retained authentication/delivery in all 21 samples, with zero additional native disconnections. Passcode lock was reconfirmed mid-observation. The final watch-file read failed on the Mac development tunnel and is distinguished from phone BLE records.
+- These observations do not establish recovery after every multi-hour lock, physical range return or process termination.
 
 ## Priorities and unfinished work
 
