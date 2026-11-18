@@ -338,9 +338,11 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         guard proximityRecoveryNeeded, !connected, switchingFrom == nil,
               let p = peripheral, p.state == .connecting,
               now.timeIntervalSince(connectionAttemptAt) >= 45,
-              now.timeIntervalSince(lastRecoveryAdvertisementAt) <= 10,
+              lastRecoveryAdvertisementAt >= connectionAttemptAt,
               !proximityRearmUsed || now.timeIntervalSince(lastProximityRearmAt) >= 60 else { return false }
-        // A live matching advertisement is evidence that the phone returned.
+        // A matching advertisement since this pending request proves a return.
+        // Background scans may coalesce duplicates; do not require a second
+        // advertisement after the 45-second request threshold.
         // Do not cancel the OS-owned wait solely because time passed out of range.
         // Retry a failed recovery only on a later live advertisement/opportunity,
         // at most once a minute, rather than exhausting a one-shot forever.
