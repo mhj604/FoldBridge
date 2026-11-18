@@ -53,3 +53,5 @@ REA CLI controlled the Galaxy and collected app-owned files. Watch files and loc
 | First ten-minute observation sample | `ev_01824d2a4b270567a018ef8305239e1266b08675e3ea9d7f95f3bec9c7d3fd39` |
 | Last ten-minute observation sample | `ev_0277f17a1fc5d4a9254e1b6aec6d07b9793d7156d8bbb6a94cbe82aadaa8fcc1` |
 | Final watch-file copy failure | `ev_ae8cc55a6b3c94484c835c35cfcbda441d81e9a8ffe4101f030d0956243a320d` |
+
+Follow-up: all three owner-performed physical range-loss/return cycles also recovered automatically. [Separate results and collection scope](PHYSICAL_RETURN_2026-11-18_EN.md).

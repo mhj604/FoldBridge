@@ -28,14 +28,15 @@ Sign the watch source for your own Apple team/device. There is no universal sign
 - Read delivery, a display request and phone acknowledgement were recorded during passcode lock in actual background. On November 18, the owner reported automatic reconnection after physical return without the app appearing; lock state for that return was unspecified.
 - On November 18, the passcode-locked watch automatically authenticated and resumed delivery after all three Galaxy Bluetooth interruptions of 30, 60 and 90 seconds, without opening the app or refreshing. First responsive samples arrived about 11, 5 and 10 seconds after enable requests. [Controlled conditions and REA evidence](LOCKED_RECOVERY_TEST_2026-11-18_EN.md).
 - The following ten-minute observation retained authentication/delivery in all 21 samples, with zero additional native disconnections. Passcode lock was reconfirmed mid-observation. The final watch-file read failed on the Mac development tunnel and is distinguished from phone BLE records.
-- These observations do not establish recovery after every multi-hour lock, physical range return or process termination.
+- All three subsequent physical range-loss/return cycles automatically restored authentication and reads without opening the app or refreshing. Disconnect totals progressed 3 → 4 → 5 → 6; final watch state was authenticated in actual background. [Round results and collection scope](PHYSICAL_RETURN_2026-11-18_EN.md).
+- These three successes do not guarantee every environment/future range return or OS process-termination recovery. Additional multi-hour lock testing was excluded from this session at the owner’s request.
 
 ## Priorities and unfinished work
 
 | Item | Status / next direction |
 | --- | --- |
 | Documentation version drift | Current guides use this page; historical records are separate. |
-| Connection persistence/recovery | **Active.** Repeated nearby disconnections, recovery delays, multi-hour/overnight lock, repeated physical range returns and recovery after OS process termination are not marked complete. Preserve registration. |
+| Connection persistence/recovery | **Physical returns: 3/3 succeeded.** Three controlled radio interruptions and a subsequent ten-minute observation also passed. Additional multi-hour lock testing is outside this session; OS process-termination restoration was not tested here. Investigate any new symptoms using app-owned records while retaining registration. |
 | Free automatic signing renewal | **Active.** A configured weekly Mac task is different from watch-only renewal. A usable free renewal-and-application path using only watch internet has not been established. [Renewal conditions](AUTO_RENEW_EN.md). |
 | Unexpected main-screen display | **Deferred at the owner's request.** Continue from app-owned display records after further everyday-use observations. Location activity has not been established as the cause. [Build 60 records](DISPLAY_INVESTIGATION_0.5.26_EN.md). |
 

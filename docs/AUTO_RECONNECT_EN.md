@@ -18,7 +18,7 @@ As of 2026-11-18: Android **0.6.20 / 42**, Watch **0.5.28 / 62**. Earlier versio
 
 Authentication, read delivery, a display request and phone acknowledgement were recorded during passcode lock in actual background. On November 18, the owner reported automatic reconnection after physical return without the app appearing. Lock state for that return was unspecified.
 
-**Multi-hour/overnight lock, repeated physical range returns, OS process termination, nearby repeated disconnections and recovery delays are not marked complete.** Do not erase registration or repeatedly cancel a healthy session to obtain recovery.
+All **three subsequent physical return cycles automatically restored authentication/delivery**; final watch state was actual background. [Per-round REA evidence and collection scope](PHYSICAL_RETURN_2026-11-18_EN.md). Additional multi-hour lock testing was excluded from this session. These results do not guarantee restoration after OS process termination or every future return/environment. Do not erase registration or repeatedly cancel a healthy session to obtain recovery.
 
 Initial location-session preparation after installation/process replacement is distinct from normal reconnection. Unexpected main-screen display is deferred at the owner's request; current connection behavior is retained.
 

@@ -24,6 +24,8 @@
 
 ## 버전별 조사와 변경 기록 / Historical investigations and changes
 
+- [11월 18일 실제 거리 복귀 3회 결과](PHYSICAL_RETURN_2026-11-18_KO.md) · [Three physical range-return cycles](PHYSICAL_RETURN_2026-11-18_EN.md)
+
 - [11월 18일 암호 잠금 중 반복 무선 복구 시험](LOCKED_RECOVERY_TEST_2026-11-18_KO.md) · [Repeated radio recovery during passcode lock](LOCKED_RECOVERY_TEST_2026-11-18_EN.md)
 
 - [워치 0.5.28 잠금 중 콜백·거리 복구 보완](RANGE_RECOVERY_0.5.28_KO.md) · [Locked callbacks and range recovery](RANGE_RECOVERY_0.5.28_EN.md)

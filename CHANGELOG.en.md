@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-18 — Three automatic physical-return recoveries
+
+Existing Android 0.6.20 / Watch 0.5.28 automatically restored authentication/reads in all three physical range-loss/return cycles, without opening the app or refreshing. Final watch state was authenticated in actual background. No additional app-code change. [Per-round evidence and collection scope](docs/PHYSICAL_RETURN_2026-11-18_EN.md).
+
 ## 2026-11-18 — Direct repeated recovery tests during passcode lock
 
 No app-code change. All three 30/60/90-second Bluetooth interruptions recovered authentication/delivery without opening the watch app or refreshing. A subsequent ten-minute observation had 21 healthy samples and no additional disconnections. This does not establish all physical-range or multi-hour conditions. [REA evidence and scope](docs/LOCKED_RECOVERY_TEST_2026-11-18_EN.md).
