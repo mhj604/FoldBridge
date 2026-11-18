@@ -22,6 +22,12 @@ All **three subsequent physical return cycles automatically restored authenticat
 
 Initial location-session preparation after installation/process replacement is distinct from normal reconnection. Unexpected main-screen display is deferred at the owner's request; current connection behavior is retained.
 
+## Work added back
+
+At the owner's subsequent request, **multi-hour/overnight passcode-lock persistence or automatic recovery of connection and new-notification delivery** is back on the task list. The historical exclusion from the physical-return session remains unchanged. No additional test has been performed yet.
+
+**Restoration after OS process termination** separately concerns resuming saved-peer connection/delivery without manually opening the app after watchOS has ended its running process. Screen-off, passcode lock and suspension are different conditions; this item does not assert a reproduced current failure.
+
 ## Directly controlled repeated radio interruptions
 
 During passcode lock, all three Galaxy Bluetooth interruptions of 30, 60 and 90 seconds recovered authentication and delivery without opening the app or refreshing. This differs from physically moving out of range. [Measurement scope and REA evidence](LOCKED_RECOVERY_TEST_2026-11-18_EN.md).

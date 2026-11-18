@@ -36,7 +36,9 @@ Sign the watch source for your own Apple team/device. There is no universal sign
 | Item | Status / next direction |
 | --- | --- |
 | Documentation version drift | Current guides use this page; historical records are separate. |
-| Connection persistence/recovery | **Physical returns: 3/3 succeeded.** Three controlled radio interruptions and a subsequent ten-minute observation also passed. Additional multi-hour lock testing is outside this session; OS process-termination restoration was not tested here. Investigate any new symptoms using app-owned records while retaining registration. |
+| Connection persistence/recovery | **Physical returns: 3/3 succeeded.** Three controlled radio interruptions and a subsequent ten-minute observation also passed. Investigate any new symptoms using app-owned records while retaining registration. |
+| Multi-hour passcode lock | **Added back to remaining work.** Check whether authentication and new-notification delivery persist or automatically recover after several hours/overnight passcode lock, without opening the app or refreshing. This differs from the ten-minute observation; no additional test has been performed yet. |
+| Restoration after OS process termination | **To investigate.** If watchOS ends the WatchBridge process, for example because of memory reclamation or an app crash, check whether a subsequent system-granted execution opportunity restores saved-peer connection and delivery without manually opening the app. This differs from screen-off, passcode lock or suspension and is not an established current failure. |
 | Free automatic signing renewal | **Active.** A configured weekly Mac task is different from watch-only renewal. A usable free renewal-and-application path using only watch internet has not been established. [Renewal conditions](AUTO_RENEW_EN.md). |
 | Unexpected main-screen display | **Deferred at the owner's request.** Continue from app-owned display records after further everyday-use observations. Location activity has not been established as the cause. [Build 60 records](DISPLAY_INVESTIGATION_0.5.26_EN.md). |
 
