@@ -4,7 +4,7 @@
 
 [한국어](AUTO_RECONNECT_KO.md) · **English** · [Current versions/downloads](CURRENT_STATUS_EN.md)
 
-As of 2026-11-18: Android **0.6.20 / 42**, Watch **0.5.28 / 62**. Earlier version outcomes are linked separately below.
+As of 2026-11-18: Android **0.6.21 / 43**, Watch **0.5.28 / 62**. Earlier version outcomes are linked separately below.
 
 ## Current behavior
 
@@ -26,7 +26,7 @@ Initial location-session preparation after installation/process replacement is d
 
 At the owner's subsequent request, **multi-hour/overnight passcode-lock persistence or automatic recovery of connection and new-notification delivery** is back on the task list. The historical exclusion from the physical-return session remains unchanged. No additional test has been performed yet.
 
-**Restoration after OS process termination** separately concerns resuming saved-peer connection/delivery without manually opening the app after watchOS has ended its running process. Screen-off, passcode lock and suspension are different conditions; this item does not assert a reproduced current failure.
+**Restoration after OS process termination** separately concerns resuming saved-peer connection/delivery without manually opening the app after watchOS has ended its running process. Screen-off, passcode lock and suspension are different conditions; this item does not assert a reproduced current failure. It is excluded from the agreed required task list and retained only as a reference condition.
 
 ## Directly controlled repeated radio interruptions
 

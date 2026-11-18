@@ -2,7 +2,7 @@
 
 **[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[현재 버전·남은 작업](CURRENT_STATUS_KO.md)** · **[Current versions and remaining work](CURRENT_STATUS_EN.md)**
 
-2026-11-18 기준: **Android 0.6.20 / 코드 42 · Watch 0.5.28 / 빌드 62**. Android APK 배포 묶음 태그는 `android-v0.6.20`입니다. 워치는 현재 소스를 자신의 Team으로 서명해 설치합니다. / Android APK release bundle: `android-v0.6.20`; sign current Watch source for your own team.
+2026-11-18 기준: **Android 0.6.21 / 코드 43 · Watch 0.5.28 / 빌드 62**. Android APK 배포 묶음 태그는 `android-v0.6.21`입니다. 워치는 현재 소스를 자신의 Team으로 서명해 설치합니다. / Android APK release bundle: `android-v0.6.21`; sign current Watch source for your own team.
 
 ## 현재 사용 안내 / Current guides
 
@@ -23,6 +23,8 @@
 | 수정·번역·문의 / Contributing | [기여 방법](../CONTRIBUTING.md) | [Contributing](../CONTRIBUTING.en.md) |
 
 ## 버전별 조사와 변경 기록 / Historical investigations and changes
+
+- [Android 0.6.21 UI 업데이트 설치](ANDROID_UI_0.6.21_KO.md) · [Android UI update deployment](ANDROID_UI_0.6.21_EN.md)
 
 - [11월 18일 실제 거리 복귀 3회 결과](PHYSICAL_RETURN_2026-11-18_KO.md) · [Three physical range-return cycles](PHYSICAL_RETURN_2026-11-18_EN.md)
 

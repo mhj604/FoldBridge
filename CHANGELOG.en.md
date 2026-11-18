@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased — Installed Android version and connection prompt
+## 2026-11-18 — Android 0.6.21 / code 43 · Version and connection prompt
 
-Removed the fixed `WatchBridge 0.6.18` diagnostic footer. Opening the dialog reads the installed package's `versionName` and build number, for example `WatchBridge 0.6.20-local (42)`. The main-screen prompt is now “Connect your phone and watch.” with the matching Korean text. This is a source change; no APK release or device update was performed in this task.
+Removed the fixed `WatchBridge 0.6.18` diagnostic footer. Opening the dialog reads the installed package's `versionName` and build number, for example `WatchBridge 0.6.21-local (43)`. The main-screen prompt is now “Connect your phone and watch.” with the matching Korean text. Built with the existing Android signing key and app ID, and installed in place on the owner’s phone. No uninstall, unpair or settings reset was performed.
 
 ## 2026-11-18 — Three automatic physical-return recoveries
 
