@@ -116,6 +116,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var backgroundRecoveryScans = 0
     private var proximityRearmUsed = false
     private var proximityRearms = 0
+    private var lastRecoveryAdvertisementAt = Date.distantPast
+    private var lastProximityRearmAt = Date.distantPast
+    private var recoveryFailureCompletions = 0
+    private var recoveryDisconnectCompletions = 0
     private var recoveryAdvertisements = 0
     private var backgroundConnectResubmissions = 0
     private var scanOnlyRestorations = 0
@@ -307,23 +311,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             reconnectWork?.cancel();reconnectWork = nil;nextConnectAttempt = .distantPast
         }
         reconnect()
-        if proximityRecoveryNeeded, !connected, !proximityRearmUsed,
-           switchingFrom == nil, let p = peripheral, p.state == .connecting,
-           Date().timeIntervalSince(connectionAttemptAt) >= 45 {
-            // A real range timeout left this native request pending through
-            // discovery without delivering a fresh connection callback. Re-arm
-            // it once per recovery episode, never a healthy authenticated link.
-            proximityRearmUsed = true;proximityRearms += 1
-            trace("recovery.proximity.rearm")
-            resetSession();switchingFrom = p;refreshAfterDisconnect = false
-            cancelConnection(p,reason:"proximity-stalled")
-            let current = epoch
-            DispatchQueue.main.asyncAfter(deadline:.now()+3) { [weak self, weak p] in
-                guard let self, let p, self.epoch == current, self.switchingFrom === p else { return }
-                self.switchingFrom = nil;self.reconnect()
-            }
-            return
-        }
+        if rearmStalledProximityConnection() { return }
         guard switchingFrom == nil, let p = peripheral, p.state == .connected else { return }
         let now = Date()
         if stage == "waitingForService", now >= nextServiceDiscovery {
@@ -344,6 +332,42 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             executionOpportunityRepairs += 1;trace("opportunity.auth.retry")
             reauthenticate(p)
         }
+    }
+    private func rearmStalledProximityConnection() -> Bool {
+        let now = Date()
+        guard proximityRecoveryNeeded, !connected, switchingFrom == nil,
+              let p = peripheral, p.state == .connecting,
+              now.timeIntervalSince(connectionAttemptAt) >= 45,
+              now.timeIntervalSince(lastRecoveryAdvertisementAt) <= 10,
+              !proximityRearmUsed || now.timeIntervalSince(lastProximityRearmAt) >= 60 else { return false }
+        // A live matching advertisement is evidence that the phone returned.
+        // Do not cancel the OS-owned wait solely because time passed out of range.
+        // Retry a failed recovery only on a later live advertisement/opportunity,
+        // at most once a minute, rather than exhausting a one-shot forever.
+        proximityRearmUsed = true;proximityRearms += 1;lastProximityRearmAt = now
+        trace("recovery.proximity.rearm")
+        resetSession();switchingFrom = p;refreshAfterDisconnect = false
+        cancelConnection(p,reason:"proximity-stalled")
+        let current = epoch
+        DispatchQueue.main.asyncAfter(deadline:.now()+3) { [weak self, weak p] in
+            guard let self, let p, self.epoch == current, self.switchingFrom?.identifier == p.identifier else { return }
+            self.switchingFrom = nil;self.reconnect()
+        }
+        return true
+    }
+    private func completeConnectionSwitch(_ p: CBPeripheral, fromFailure: Bool) -> Bool {
+        guard let old = switchingFrom, old.identifier == p.identifier else { return false }
+        // Cancelling a pending connect may complete through didFailToConnect.
+        // Submit the replacement native request in that callback; a suspended
+        // app cannot depend on its delayed fallback being scheduled promptly.
+        switchingFrom = nil
+        if fromFailure { recoveryFailureCompletions += 1 }
+        else { recoveryDisconnectCompletions += 1 }
+        trace(fromFailure ? "recovery.switch.failed-complete":"recovery.switch.disconnected-complete")
+        if refreshAfterDisconnect { refreshAfterDisconnect = false;startRecoveryScan() }
+        else { reconnect() }
+        writeDiagnostics()
+        return true
     }
     private func scheduleRecoveryRefresh() {
         guard UserDefaults.standard.string(forKey:phoneIDKey) != nil,
@@ -433,7 +457,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // native monitor and explicitly resume; a second state event is not owed.
         let services = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID] ?? []
         if central.isScanning || services.contains(CBUUID(string:profile.service)) { recoveryScanning = true }
-        defer { DispatchQueue.main.async { [weak self] in self?.resumeSavedConnection() } }
+        defer { DispatchQueue.main.async { [weak self] in self?.resumeSavedConnection(repairStalled:true) } }
         guard let restored = (dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral])?.first(where:{$0.identifier.uuidString == id}) else {
             scanOnlyRestorations += 1;trace("restore.scan-only")
             return
@@ -462,6 +486,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             if recoveryAdvertisements <= 3 { trace("recovery.advertisement.\(p.state.rawValue)") }
             guard Date() >= nextConnectAttempt else { return }
             if let existing = peripheral, existing.identifier == p.identifier {
+                lastRecoveryAdvertisementAt = Date()
                 if switchingFrom == nil, existing.state == .connected, stage == "waitingForService" {
                     trace("service.advertisement.retry");retryServiceDiscovery(existing)
                 } else if switchingFrom == nil, existing.state == .disconnected, Date() >= nextConnectAttempt {
@@ -470,6 +495,10 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
                     autoReconnectPending = false;connectionAttemptAt = Date()
                     existing.delegate = self;manager.connect(existing,options:connectionOptions())
                     trace("recovery.advertisement.connect")
+                } else if existing.state == .connecting {
+                    // This callback can be the only background execution on return.
+                    // Use it now instead of waiting for a location/maintenance timer.
+                    _ = rearmStalledProximityConnection()
                 }
                 return
             }
@@ -511,7 +540,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         }
     }
     func centralManager(_ central: CBCentralManager, didFailToConnect p: CBPeripheral, error: Error?) {
-        guard p === peripheral else { return }
+        if completeConnectionSwitch(p,fromFailure:true) { return }
+        guard p.identifier == peripheral?.identifier else { return }
         lastConnectError = error.map { "\(($0 as NSError).domain):\(($0 as NSError).code):\($0.localizedDescription)" } ?? "none"
         trace("connect.failed.\((error as NSError?)?.code ?? 0)")
         autoReconnectPending = false
@@ -548,12 +578,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         }
         lastDisconnect = error.map { "\(($0 as NSError).domain):\(($0 as NSError).code):\($0.localizedDescription)" } ?? "none"
         trace("disconnect.\(isReconnecting ? "reconnecting" : "ended").\((error as NSError?)?.code ?? 0).\(p === peripheral ? "current" : "other").\(p.state.rawValue)")
-        if p === switchingFrom {
-            switchingFrom = nil
-            if refreshAfterDisconnect { refreshAfterDisconnect = false;startRecoveryScan() }
-            else { reconnect() }
-            return
-        }
+        if completeConnectionSwitch(p,fromFailure:false) { return }
         guard p.identifier == peripheral?.identifier else { return }
         // A real timeout can leave a saved-UUID pending request unable to find
         // the phone's re-advertised/private address. Keep one filtered monitor
@@ -1027,6 +1052,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         try WatchStore.put(peerKey,phonePublic); UserDefaults.standard.set(peripheral?.identifier.uuidString,forKey:phoneIDKey)
         authenticated = true; code = ""; reconnects = 0; nextConnectAttempt = .distantPast; lastError = ""; status = "보안 확인 완료 · 알림 연결 준비 중"
         proximityRecoveryNeeded = false;backgroundRecoveryScanSubmitted = false;proximityRearmUsed = false
+        lastRecoveryAdvertisementAt = .distantPast;lastProximityRearmAt = .distantPast
         authenticationMillis = Int(Date().timeIntervalSince(authenticationStartedAt)*1000)
         if attemptingFastResume { fastResumeCompleted += 1 }
         attemptingFastResume = false
@@ -1416,6 +1442,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             "autoReconnectPending":autoReconnectPending,"recoveryScanning":recoveryScanning,
             "proximityRecoveryNeeded":proximityRecoveryNeeded,"backgroundRecoveryScanSubmitted":backgroundRecoveryScanSubmitted,
             "proximityRearms":proximityRearms,"proximityRearmUsed":proximityRearmUsed,"recoveryAdvertisements":recoveryAdvertisements,
+            "recoveryAdvertisementAgeSeconds":lastRecoveryAdvertisementAt == .distantPast ? -1:Date().timeIntervalSince(lastRecoveryAdvertisementAt),
+            "recoveryFailureCompletions":recoveryFailureCompletions,"recoveryDisconnectCompletions":recoveryDisconnectCompletions,
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,
             "pongCount":pongCount,"remoteRefreshCount":remoteRefreshCount,
