@@ -42,6 +42,8 @@
 
 ## 서명·배포 방식 조사 / Signing and distribution research
 
+- [11월 18일 워치 단독 갱신 소스 후속 조사](RENEWAL_RESEARCH_2026-11-18_KO.md) · [November 18 renewal source follow-up](RENEWAL_RESEARCH_2026-11-18_EN.md)
+
 아래 조사 문서는 사용 가능한 워치 단독 갱신 기능이 구현됐다는 뜻이 아닙니다. / These investigations do not establish an implemented watch-only renewal path.
 
 - [워치 단독 갱신 조사](WATCH_ONLY_RENEWAL_2026-11-15_KO.md) · [Watch-only renewal research](WATCH_ONLY_RENEWAL_2026-11-15_EN.md)

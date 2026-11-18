@@ -6,6 +6,8 @@
 
 This automates re-provisioning, signing and in-place installation from a Mac. It does not remove the seven-day Personal Team limit. Existing registration/settings are retained; the app is never uninstalled.
 
+[November 18 source follow-up](RENEWAL_RESEARCH_2026-11-18_EN.md): a new candidate’s live renewal backend rejects Watch requests. A watch-only path remains unestablished.
+
 ## Current installation record — November 18, 2026
 
 The owner's installed Watch is **0.5.26 / build 60**; committed renewal source is aligned to `95577b5`. The earliest recorded app/widget expiry is **November 20, 2026, 17:10:54 KST**. Aligning source does not issue a new profile or establish a successful weekly run. The 0.5.17/0.5.15 entries below are historical setup records. The schedule is **Friday at 16:00**, requiring an awake Mac and reachable unlocked watch development connection. Maintenance launch requests `--no-activate`. Free watch-only renewal remains unresolved.
