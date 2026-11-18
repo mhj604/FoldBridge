@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — Installed Android version in diagnostics
+
+Removed the fixed `WatchBridge 0.6.18` diagnostic footer. Opening the dialog reads the installed package's `versionName` and build number, for example `WatchBridge 0.6.20-local (42)`. This is a source change; no APK release or device update was performed in this task.
+
 ## 2026-11-18 — Three automatic physical-return recoveries
 
 Existing Android 0.6.20 / Watch 0.5.28 automatically restored authentication/reads in all three physical range-loss/return cycles, without opening the app or refreshing. Final watch state was authenticated in actual background. No additional app-code change. [Per-round evidence and collection scope](docs/PHYSICAL_RETURN_2026-11-18_EN.md).

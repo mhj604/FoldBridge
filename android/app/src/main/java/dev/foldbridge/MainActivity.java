@@ -139,7 +139,16 @@ public final class MainActivity extends Activity {
     }
     private void showDiagnostics(){
         String timing=BridgeService.lastRtt<0?L("아직 없음"):BridgeService.lastRtt+" ms";
-        new AlertDialog.Builder(this).setTitle(L("연결 진단")).setMessage(L("연결: ")+L(BridgeService.status)+L("\n알림 접근: ")+(NotificationRelay.hasAccess(this)?L("허용됨"):L("꺼짐"))+L("\n알림 수집: ")+(NotificationRelay.instance!=null?L("연결됨"):L("대기 중"))+L("\n수집 ")+NotificationRelay.received+L(" · 전달 요청 ")+NotificationRelay.forwarded+L("\n최근 전달 확인: ")+timing+"\n\nWatchBridge 0.6.18").setPositiveButton(L("닫기"),null).show();
+        new AlertDialog.Builder(this).setTitle(L("연결 진단")).setMessage(L("연결: ")+L(BridgeService.status)+L("\n알림 접근: ")+(NotificationRelay.hasAccess(this)?L("허용됨"):L("꺼짐"))+L("\n알림 수집: ")+(NotificationRelay.instance!=null?L("연결됨"):L("대기 중"))+L("\n수집 ")+NotificationRelay.received+L(" · 전달 요청 ")+NotificationRelay.forwarded+L("\n최근 전달 확인: ")+timing+"\n\n"+installedVersionLabel()).setPositiveButton(L("닫기"),null).show();
+    }
+    private String installedVersionLabel(){
+        try {
+            PackageInfo info=getPackageManager().getPackageInfo(getPackageName(),PackageManager.PackageInfoFlags.of(0));
+            String version=info.versionName;
+            return "WatchBridge"+(version==null||version.isBlank()?"":" "+version)+" ("+info.getLongVersionCode()+")";
+        } catch(PackageManager.NameNotFoundException ignored) {
+            return "WatchBridge";
+        }
     }
     private void start(boolean pair) {
         if(checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT)!=PackageManager.PERMISSION_GRANTED||checkSelfPermission(Manifest.permission.BLUETOOTH_ADVERTISE)!=PackageManager.PERMISSION_GRANTED) {requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_ADVERTISE,Manifest.permission.POST_NOTIFICATIONS},7);toast(L("권한을 허용한 뒤 연결 버튼을 다시 누르세요."));return;}
