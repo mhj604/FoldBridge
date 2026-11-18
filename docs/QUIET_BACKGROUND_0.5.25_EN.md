@@ -53,3 +53,14 @@ This removes an observed system route for opening the app without tapping it. It
 The phone also reported `suppressedBatteryProtection=20`, providing an actual instance of the new filter suppressing notices. No personal notification content is published. Evidence IDs are listed in the Korean report.
 
 This work used app-owned diagnostic records and applied a display preference. No broad QA, synthetic notifications, forced-disconnection or range experiments were performed. Multi-hour lock and physical range return after build 58 remain unfinished.
+
+
+### Owner clarification: appears on wrist raise or screen wake
+
+The owner clarified that WatchBridge appears **when raising the wrist or waking the screen**, rather than while browsing the App Switcher. The disabled auto-select preference therefore must not be treated as the established cause or completed fix for this symptom.
+
+[Apple's background-session documentation](https://developer.apple.com/documentation/watchkit/enabling-background-sessions) describes apps appearing on wrist raise during location/audio/workout sessions. The current `LocationKeepAlive` retains a `CLBackgroundActivitySession` and live location updates, providing a code path consistent with the report. This is based on documentation, source and the owner's clarification; no additional device experiment was performed. It differs from App Switcher auto-selection.
+
+**Unresolved:** No applicable app-side method has yet been established to suppress session-related wrist-raise presentation while retaining the location runtime. The device exposes no Return to App switch for this session. Disabling Always On alone would not prevent restoration on wake. Neither the connection-keeping session nor the process was terminated as a display workaround. App versions and registration remain unchanged.
+
+Handoff: the owner confirmed tapping the phone's **connection stop** setting. Mac Device Hub mirroring and ADB were already disconnected. App state was not reacquired after that confirmation.
