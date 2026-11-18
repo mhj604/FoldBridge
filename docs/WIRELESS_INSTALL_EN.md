@@ -1,6 +1,6 @@
 # Update the Galaxy app without a cable
 
-> Current baseline (2026-11-18): Android **0.6.20 / 42**, Watch **0.5.26 / 60**. [Versions, downloads and work status](CURRENT_STATUS_EN.md). Dated/version-specific sections below retain historical observations.
+> Current baseline (2026-11-18): Android **0.6.20 / 42**, Watch **0.5.28 / 62**. [Versions, downloads and work status](CURRENT_STATUS_EN.md). Dated/version-specific sections below retain historical observations.
 
 [한국어](WIRELESS_INSTALL_KO.md) · **English** · [All guides](README.md)
 

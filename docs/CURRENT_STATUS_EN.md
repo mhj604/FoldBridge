@@ -1,5 +1,7 @@
 # Current versions and remaining work
 
+[Watch 0.5.28 locked-callback and range-recovery improvements](RANGE_RECOVERY_0.5.28_EN.md). Phone remains 0.6.20.
+
 [Android 0.6.20 retained-link/delivery-waiting change and deployment](CONNECTION_STATE_0.6.20_EN.md). Installed Watch remains 0.5.26.
 
 [한국어](CURRENT_STATUS_KO.md) · **English** · [Install and connect](QUICK_START_EN.md) · [All guides](README.md)
@@ -11,10 +13,10 @@ As of **2026-11-18 KST**. This page distinguishes current source, the owner's in
 | Component | Version / location |
 | --- | --- |
 | Android app | **0.6.20-local / code 42** — [WatchBridge-0.6.20.apk](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.20/WatchBridge-0.6.20.apk) |
-| Watch app and vehicle widget | **0.5.26 / build 60** — [local-ble source](https://github.com/mhj604/WatchBridge/tree/local-ble), `watch/FoldBridge.xcodeproj` |
+| Watch app and vehicle widget | **0.5.28 / build 62** — [local-ble source](https://github.com/mhj604/WatchBridge/tree/local-ble), `watch/FoldBridge.xcodeproj` |
 | Source branches | `main`, `local-ble`, and `fix/watch-background-reconnect`. Documentation-only commits may retain the same app version. |
 | APK release tag | `android-v0.6.20` names the release bundle. Its Android APK is 0.6.20; it is not Watch 0.5.26. |
-| Owner's installed Watch source | `95577b5` — build 60 installed and launched with no activation requested. Later documentation commits do not alter app behavior. |
+| Owner's installed Watch source | `f0983e8` — build 62 installed and launched with no activation requested. Later documentation commits do not alter app behavior. |
 
 Sign the watch source for your own Apple team/device. There is no universal signed watch download. **Update existing installations in place; retain the watch Bundle ID/team and Android signing key.** Visible branding is WatchBridge; `dev.foldbridge.*`, source paths, BLE UUIDs and stored keys remain stable to preserve registration.
 

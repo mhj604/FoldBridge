@@ -2,7 +2,7 @@
 
 [한국어](QUICK_START_KO.md) · **English** · [All guides](README.md)
 
-For Android **0.6.20-local / code 42** and Watch **0.5.26 / build 60** (2026-11-18). See [current versions, observations and remaining work](CURRENT_STATUS_EN.md). Notifications travel directly over BLE. No relay address, internet connection, or paid push setup is needed during use.
+For Android **0.6.20-local / code 42** and Watch **0.5.28 / build 62** (2026-11-18). See [current versions, observations and remaining work](CURRENT_STATUS_EN.md). Notifications travel directly over BLE. No relay address, internet connection, or paid push setup is needed during use.
 
 ## 1. Prepare
 

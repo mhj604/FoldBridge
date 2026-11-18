@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-18 — Watch 0.5.28 / build 62
+
+Complete connection switches directly in failure as well as disconnect callbacks. Repair stalled requests from matching discovery and retain its evidence when background duplicates coalesce. Do not cancel native waits on elapsed time alone without discovery; space subsequent recovery attempts. Actual background authentication/read delivery was recorded after installation. Multi-hour lock and repeated physical return are not marked complete. [Changes, REA and remaining conditions](docs/RANGE_RECOVERY_0.5.28_EN.md).
+
 ## 2026-11-18 — Android 0.6.20 / code 42
 
 Distinguish paused reads from actual BLE loss with a retained-link delivery-waiting state and connected notification channel. Record authentication time, read resumption and native disconnects separately. Updated in place; Watch 0.5.26 background authentication/read recovery was observed. Multi-hour lock and repeated range recovery remain unfinished. [Changes and REA evidence](docs/CONNECTION_STATE_0.6.20_EN.md).

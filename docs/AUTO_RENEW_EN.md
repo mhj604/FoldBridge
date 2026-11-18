@@ -1,6 +1,6 @@
 # Automatic renewal with a free Apple account
 
-> Current baseline (2026-11-18): Android **0.6.20 / 42**, Watch **0.5.26 / 60**. [Versions, downloads and work status](CURRENT_STATUS_EN.md). Dated/version-specific sections below retain historical observations.
+> Current baseline (2026-11-18): Android **0.6.20 / 42**, Watch **0.5.28 / 62**. [Versions, downloads and work status](CURRENT_STATUS_EN.md). Dated/version-specific sections below retain historical observations.
 
 [한국어](AUTO_RENEW_KO.md) · **English** · [Documentation](README.md)
 
@@ -10,7 +10,7 @@ This automates re-provisioning, signing and in-place installation from a Mac. It
 
 ## Current installation record — November 18, 2026
 
-The owner's installed Watch is **0.5.26 / build 60**; committed renewal source is aligned to `95577b5`. The earliest recorded app/widget expiry is **November 20, 2026, 17:10:54 KST**. Aligning source does not issue a new profile or establish a successful weekly run. The 0.5.17/0.5.15 entries below are historical setup records. The schedule is **Friday at 16:00**, requiring an awake Mac and reachable unlocked watch development connection. Maintenance launch requests `--no-activate`. Free watch-only renewal remains unresolved.
+The owner's installed Watch is **0.5.28 / build 62**; committed renewal source is aligned to `f0983e8`. The earliest recorded app/widget expiry is **November 20, 2026, 17:10:54 KST**. Aligning source does not issue a new profile or establish a successful weekly run. The 0.5.17/0.5.15 entries below are historical setup records. The schedule is **Friday at 16:00**, requiring an awake Mac and reachable unlocked watch development connection. Maintenance launch requests `--no-activate`. Free watch-only renewal remains unresolved.
 
 ## Historical snapshot: November 15, 2026
 

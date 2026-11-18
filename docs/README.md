@@ -2,7 +2,7 @@
 
 **[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[현재 버전·남은 작업](CURRENT_STATUS_KO.md)** · **[Current versions and remaining work](CURRENT_STATUS_EN.md)**
 
-2026-11-18 기준: **Android 0.6.20 / 코드 42 · Watch 0.5.26 / 빌드 60**. Android APK 배포 묶음 태그는 `android-v0.6.20`입니다. 워치는 현재 소스를 자신의 Team으로 서명해 설치합니다. / Android APK release bundle: `android-v0.6.20`; sign current Watch source for your own team.
+2026-11-18 기준: **Android 0.6.20 / 코드 42 · Watch 0.5.28 / 빌드 62**. Android APK 배포 묶음 태그는 `android-v0.6.20`입니다. 워치는 현재 소스를 자신의 Team으로 서명해 설치합니다. / Android APK release bundle: `android-v0.6.20`; sign current Watch source for your own team.
 
 ## 현재 사용 안내 / Current guides
 
@@ -23,6 +23,8 @@
 | 수정·번역·문의 / Contributing | [기여 방법](../CONTRIBUTING.md) | [Contributing](../CONTRIBUTING.en.md) |
 
 ## 버전별 조사와 변경 기록 / Historical investigations and changes
+
+- [워치 0.5.28 잠금 중 콜백·거리 복구 보완](RANGE_RECOVERY_0.5.28_KO.md) · [Locked callbacks and range recovery](RANGE_RECOVERY_0.5.28_EN.md)
 
 - [Android 0.6.20 연결 상태 분리](CONNECTION_STATE_0.6.20_KO.md) · [Retained link and delivery waiting](CONNECTION_STATE_0.6.20_EN.md)
 
