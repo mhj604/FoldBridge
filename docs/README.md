@@ -2,7 +2,7 @@
 
 **[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[현재 버전·남은 작업](CURRENT_STATUS_KO.md)** · **[Current versions and remaining work](CURRENT_STATUS_EN.md)**
 
-2026-11-18 기준: **Android 0.6.19 / 코드 41 · Watch 0.5.26 / 빌드 60**. Android APK 배포 묶음 태그는 `watchbridge-v0.5.25`입니다. 워치는 현재 소스를 자신의 Team으로 서명해 설치합니다. / Android APK release bundle: `watchbridge-v0.5.25`; sign current Watch source for your own team.
+2026-11-18 기준: **Android 0.6.20 / 코드 42 · Watch 0.5.26 / 빌드 60**. Android APK 배포 묶음 태그는 `android-v0.6.20`입니다. 워치는 현재 소스를 자신의 Team으로 서명해 설치합니다. / Android APK release bundle: `android-v0.6.20`; sign current Watch source for your own team.
 
 ## 현재 사용 안내 / Current guides
 
@@ -23,6 +23,8 @@
 | 수정·번역·문의 / Contributing | [기여 방법](../CONTRIBUTING.md) | [Contributing](../CONTRIBUTING.en.md) |
 
 ## 버전별 조사와 변경 기록 / Historical investigations and changes
+
+- [Android 0.6.20 연결 상태 분리](CONNECTION_STATE_0.6.20_KO.md) · [Retained link and delivery waiting](CONNECTION_STATE_0.6.20_EN.md)
 
 아래는 각 버전 당시의 기록입니다. “현재/완료/실패”를 최신 설치본의 상태로 해석하지 마세요. 최신 상태는 위 기준 문서를 따릅니다. / The following describe their own version/date. Use the current status page for today's behavior and unfinished work.
 

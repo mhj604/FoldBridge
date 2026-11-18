@@ -2,7 +2,7 @@
 
 [한국어](AUTO_RECONNECT_KO.md) · **English** · [Current versions/downloads](CURRENT_STATUS_EN.md)
 
-As of 2026-11-18: Android **0.6.19 / 41**, Watch **0.5.26 / 60**. Earlier version outcomes are linked separately below.
+As of 2026-11-18: Android **0.6.20 / 42**, Watch **0.5.26 / 60**. Earlier version outcomes are linked separately below.
 
 ## Current behavior
 

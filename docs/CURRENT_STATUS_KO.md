@@ -1,5 +1,7 @@
 # 현재 버전과 남은 작업
 
+[Android 0.6.20 연결/수신 대기 구분과 설치 결과](CONNECTION_STATE_0.6.20_KO.md). 워치 설치본은 0.5.26을 유지합니다.
+
 **한국어** · [English](CURRENT_STATUS_EN.md) · [설치 순서](QUICK_START_KO.md) · [문서 목록](README.md)
 
 기준일: **2026-11-18 KST**. 이 문서는 현재 소스·소유자 설치 기록·배포 파일을 구분합니다. 다른 사용자의 실제 설치 버전을 뜻하지는 않습니다. 버전별 조사 문서의 “현재”, “실패”, “완료”는 해당 문서 작성 당시의 결과입니다.
@@ -8,10 +10,10 @@
 
 | 항목 | 버전 / 받는 곳 |
 | --- | --- |
-| Android 앱 | **0.6.19-local / 코드 41** — [WatchBridge-0.6.19.apk](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk) |
+| Android 앱 | **0.6.20-local / 코드 42** — [WatchBridge-0.6.20.apk](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.20/WatchBridge-0.6.20.apk) |
 | 워치 앱·차량 위젯 | **0.5.26 / 빌드 60** — [local-ble 소스](https://github.com/mhj604/WatchBridge/tree/local-ble), `watch/FoldBridge.xcodeproj` |
 | 앱 소스 | `main`, `local-ble`, `fix/watch-background-reconnect`에 반영. 문서 전용 커밋 뒤에도 앱 버전은 유지될 수 있습니다. |
-| APK 배포 태그 | `watchbridge-v0.5.25` — 태그는 묶음 이름이며 포함된 Android 앱 버전은 0.6.19입니다. 워치 0.5.26을 뜻하지 않습니다. |
+| APK 배포 태그 | `android-v0.6.20` — 태그는 묶음 이름이며 포함된 Android 앱 버전은 0.6.20입니다. 워치 0.5.26을 뜻하지 않습니다. |
 | 소유자 워치 설치 소스 | `95577b5` — 빌드 60 설치·비활성 실행 요청 완료. 이후 문서 커밋은 앱 동작을 바꾸지 않습니다. |
 
 워치는 자신의 Apple Team·기기에 맞게 소스를 서명해 설치합니다. 공용 워치 설치 파일을 제공하는 방식이 아닙니다. **기존 사용자는 APK를 삭제하지 않고 업데이트하고, 워치 Bundle ID·Team과 Android 서명 키를 유지합니다.** 표시 이름은 WatchBridge지만 `dev.foldbridge.*`, 소스 경로, BLE UUID와 저장 키는 기존 등록 보존을 위해 유지합니다.

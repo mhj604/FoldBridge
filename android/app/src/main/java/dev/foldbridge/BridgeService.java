@@ -21,6 +21,9 @@ public final class BridgeService extends Service {
     private static final UUID PULL=UUID.fromString("c62d0203-7de5-4c34-a432-7c838e687a40");
     static volatile BridgeService instance;
     static boolean isConnected(){BridgeService s=instance;return s!=null&&s.authenticated&&s.central!=null&&(s.readDelivery?SystemClock.elapsedRealtime()-s.lastDeliveryRead<10000:s.subscribed);}
+    // The OS connection callback and completed authentication own the link.
+    // A paused read timer describes delivery availability, not a BLE disconnect.
+    static boolean hasAuthenticatedLink(){BridgeService s=instance;return s!=null&&s.authenticated&&s.central!=null&&(s.readDelivery||s.subscribed);}
     static boolean hasSavedPeer(Context context){return context.getSharedPreferences("vault",MODE_PRIVATE).contains("peer");}
     static boolean isAuthenticating(){BridgeService s=instance;return s!=null&&s.central!=null&&!s.authenticated;}
     static boolean isWaitingForRead(){BridgeService s=instance;return s!=null&&s.authenticated&&s.readDelivery&&!isConnected();}
@@ -45,7 +48,7 @@ public final class BridgeService extends Service {
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
             "softRefreshCount",s==null?0:s.softRefreshCount,"disconnectCount",s==null?0:s.disconnectCount,"lastDisconnectReason",s==null?"":s.lastDisconnectReason,
             "sessionGeneration",s==null?0:s.generation,"refreshCount",s==null?0:s.refreshCount,"stage",s==null?"idle":s.stage,
-            "authenticated",s!=null&&s.authenticated,"watchActive",s!=null&&s.watchActive,
+            "authenticated",s!=null&&s.authenticated,"authenticatedLink",hasAuthenticatedLink(),"deliveryResponsive",isConnected(),"watchActive",s!=null&&s.watchActive,
             "advertising",s!=null&&s.advertisements!=null,
             "observedLinks",s==null?0:s.observedLinks,"subscriptionClaims",s==null?0:s.subscriptionClaims,
             "retainedSubscriptionClaims",s==null?0:s.retainedSubscriptionClaims,
@@ -60,7 +63,16 @@ public final class BridgeService extends Service {
             "readDelivery",s!=null&&s.readDelivery,"deliveryReads",s==null?0:s.deliveryReads,
             "deliveryFramesRead",s==null?0:s.deliveryFramesRead,
             "authenticationMillis",s==null?-1:s.authenticationMillis,
-            "connectionStartedAt",s==null?0:s.connectionStartedAt,
+            "connectionStartedAt",s==null?0:s.connectionStartedAt,"notificationCutoffAt",s==null?0:s.connectionStartedAt,
+            "authenticatedAt",s==null?0:s.authenticatedAt,
+            "lastDeliveryReadAt",s==null?0:s.lastDeliveryReadAt,
+            "deliveryReadAgeMillis",s==null||s.lastDeliveryRead==0?-1:SystemClock.elapsedRealtime()-s.lastDeliveryRead,
+            "deliveryReadResumes",s==null?0:s.deliveryReadResumes,
+            "lastDeliveryReadGapMillis",s==null?0:s.lastDeliveryReadGapMillis,
+            "longestDeliveryReadGapMillis",s==null?0:s.longestDeliveryReadGapMillis,
+            "lastDeliveryResumeAt",s==null?0:s.lastDeliveryResumeAt,
+            "nativeDisconnectCount",s==null?0:s.nativeDisconnectCount,
+            "lastNativeDisconnectAt",s==null?0:s.lastNativeDisconnectAt,
             "listenerAccess",NotificationRelay.hasAccess(context),"listenerBound",NotificationRelay.instance!=null,
             "received",NotificationRelay.received,"forwarded",NotificationRelay.forwarded,
             "suppressedBatteryProtection",NotificationRelay.suppressedBatteryProtection,
@@ -100,6 +112,10 @@ public final class BridgeService extends Service {
     private boolean readDelivery=false;
     private byte[] deliveryReadPacket=new byte[0];
     private long lastDeliveryRead=0,lastVehicleCatalogueRequest=0;
+    private long authenticatedAt=0,lastDeliveryReadAt=0,lastDeliveryResumeAt=0;
+    private long lastDeliveryReadGapMillis=0,longestDeliveryReadGapMillis=0;
+    private int deliveryReadResumes=0,nativeDisconnectCount=0;
+    private long lastNativeDisconnectAt=0;
     private int deliveryReads=0,deliveryFramesRead=0;
     private int authenticationReads=0;
     private final LinkedHashSet<String> recentResumeNonces=new LinkedHashSet<>();
@@ -133,7 +149,7 @@ public final class BridgeService extends Service {
             }
         } catch(SecurityException ignored) {
         } catch(RuntimeException error) {android.util.Log.i("FoldBridgeConnection","local_connection_check_failed");}
-        if(authenticated&&readDelivery&&!isConnected())status="워치 응답 대기";
+        if(isWaitingForRead())status="연결 유지 중 · 수신 대기";
         maintenanceAt=System.currentTimeMillis();recordState(BridgeService.this);
         handler.postDelayed(this,15000);
     }};
@@ -206,8 +222,8 @@ public final class BridgeService extends Service {
         manager.createNotificationChannels(Arrays.asList(waiting,online));
     }
     private void updateConnectionNotification(boolean force) {
-        boolean linked=isConnected();
-        String key=linked+":"+getResources().getConfiguration().getLocales().toLanguageTags();
+        boolean linked=hasAuthenticatedLink(),receiving=isConnected();
+        String key=linked+":"+receiving+":"+getResources().getConfiguration().getLocales().toLanguageTags();
         if(!force&&key.equals(notificationState))return;
         NotificationManager manager=getSystemService(NotificationManager.class);
         prepareConnectionChannels(this);
@@ -217,7 +233,7 @@ public final class BridgeService extends Service {
         Notification notification=new Notification.Builder(this,linked?ONLINE_CHANNEL:WAITING_CHANNEL)
             .setSmallIcon(android.R.drawable.stat_sys_data_bluetooth)
             .setContentTitle("WatchBridge · "+I18n.t(this,linked?"워치 연결됨":"워치 연결 대기 중"))
-            .setContentText(I18n.t(this,linked?"Bluetooth로 애플워치 알림을 전달합니다":"등록된 워치의 자동 재연결을 기다리고 있습니다."))
+            .setContentText(I18n.t(this,linked?(receiving?"Bluetooth로 애플워치 알림을 전달합니다":"Bluetooth 연결은 유지되며 워치 수신 재개를 기다립니다."):"등록된 워치의 자동 재연결을 기다리고 있습니다."))
             .setCategory(Notification.CATEGORY_SERVICE).setOnlyAlertOnce(true)
             .setOngoing(true).setShowWhen(false).setContentIntent(open).build();
         if(foregroundStarted)manager.notify(10,notification);
@@ -323,14 +339,21 @@ public final class BridgeService extends Service {
                 if(PULL.equals(characteristic.getUuid())) {
                     if(!matches(device)||!authenticated||!readDelivery){server.sendResponse(device,requestId,BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,offset,null);return;}
                     if(offset==0) {
-                        if(lastDeliveryRead>0&&SystemClock.elapsedRealtime()-lastDeliveryRead>=10000) {
+                        long readNow=SystemClock.elapsedRealtime();
+                        long gap=lastDeliveryRead==0?0:readNow-lastDeliveryRead;
+                        if(lastDeliveryRead>0&&gap>=10000) {
+                            // Retain the authenticated BLE session. Record delivery
+                            // resumption separately from a new pairing/connection.
+                            deliveryReadResumes++;lastDeliveryReadGapMillis=gap;
+                            longestDeliveryReadGapMillis=Math.max(longestDeliveryReadGapMillis,gap);
+                            lastDeliveryResumeAt=System.currentTimeMillis();
                             // Runtime loss is not an offline message backlog.
                             pending.clear();activeDelivery=null;waiting=0;outgoing.clear();messages.clear();
                             connectionStartedAt=System.currentTimeMillis();
                         }
                         if(outgoing.isEmpty()&&!messages.isEmpty())outgoing.addAll(frames.split(messages.removeFirst(),200));
                         deliveryReadPacket=outgoing.isEmpty()?new byte[0]:outgoing.removeFirst();
-                        lastDeliveryRead=SystemClock.elapsedRealtime();deliveryReads++;
+                        lastDeliveryRead=readNow;lastDeliveryReadAt=System.currentTimeMillis();deliveryReads++;
                         status="워치 연결됨";
                         if(deliveryReadPacket.length>0)deliveryFramesRead++;
                     }
@@ -369,7 +392,7 @@ public final class BridgeService extends Service {
             } else if(state==BluetoothProfile.STATE_DISCONNECTED) {
                 linkMtus.remove(device.getAddress());
                 resumeProbes.remove(device.getAddress());
-                if(matches(device)) {clearSession();status="연결 끊김, 워치 재연결 대기";startAdvertising();recordState(BridgeService.this);}
+                if(matches(device)) {nativeDisconnectCount++;lastNativeDisconnectAt=System.currentTimeMillis();clearSession();status="연결 끊김, 워치 재연결 대기";startAdvertising();recordState(BridgeService.this);}
             }
         }); }
         @Override public void onMtuChanged(BluetoothDevice device,int value) { handler.post(()->{if(token!=bluetoothEpoch)return;int size=Math.max(23,value);linkMtus.put(device.getAddress(),size);if(matches(device))mtu=size;}); }
@@ -592,7 +615,7 @@ public final class BridgeService extends Service {
         if(authenticated||!localConfirmed||!remoteConfirmed)return;
         // Every authenticated connection starts now, including saved-peer reconnects.
         // Late listener callbacks keep Android's post time and cannot replay old alerts.
-        connectionStartedAt=System.currentTimeMillis();
+        connectionStartedAt=System.currentTimeMillis();authenticatedAt=connectionStartedAt;
         pending.clear();activeDelivery=null;waiting=0;
         vault.put("peer",b64(peerPublic)); authenticated=true;pairingCode="";failures=0;blockedUntil=0;error="";status=subscribed?"워치 연결됨":"워치 인증 중";
         authenticationMillis=SystemClock.elapsedRealtime()-authenticationStartedAt;
@@ -705,7 +728,7 @@ public final class BridgeService extends Service {
     }
     private void clearProtocol() {
         authenticationReply=null;
-        readDelivery=false;deliveryReadPacket=new byte[0];lastDeliveryRead=0;lastVehicleCatalogueRequest=0;
+        readDelivery=false;deliveryReadPacket=new byte[0];lastDeliveryRead=0;lastDeliveryReadAt=0;authenticatedAt=0;lastVehicleCatalogueRequest=0;
         generation++; acknowledgedIcons.clear(); session=null; peerPublic=null; ownNonce=null; peerCommit=null; stage="idle";
         activeDelivery=null;pending.clear();waiting=0;connectionStartedAt=0;
         authenticated=false;localConfirmed=false;remoteConfirmed=false;watchActive=false;pairingCode="";

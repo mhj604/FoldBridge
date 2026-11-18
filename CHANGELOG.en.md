@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-18 — Android 0.6.20 / code 42
+
+Distinguish paused reads from actual BLE loss with a retained-link delivery-waiting state and connected notification channel. Record authentication time, read resumption and native disconnects separately. Updated in place; Watch 0.5.26 background authentication/read recovery was observed. Multi-hour lock and repeated range recovery remain unfinished. [Changes and REA evidence](docs/CONNECTION_STATE_0.6.20_EN.md).
+
 ## 2026-11-18 — Separate current installation guides from history
 
 Added an Android 0.6.19 / Watch 0.5.26 baseline and replaced obsolete landing-page/setup downloads. Version-specific investigations are marked as historical. Connection reliability and watch-only renewal remain active; unsolicited display is deferred pending everyday-use observations. No app version, registration or behavior change. [Current status](docs/CURRENT_STATUS_EN.md).

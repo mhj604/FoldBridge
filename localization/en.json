@@ -287,5 +287,8 @@
   "충전 시작만 한 번 알립니다. 배터리 보호 알림은 전달하지 않습니다.": "Announce charging once. Battery protection notices are not forwarded.",
   "백그라운드 사용": "Background use",
   "시계 화면에서도 알림 수신과 자동 재연결을 이어갑니다.": "Notifications and automatic reconnection continue behind the watch face.",
-  "앱이 다시 나타나면 워치 설정 → 일반 → 시계로 돌아가기 → WatchBridge에서 ‘사용자화 → 항상’을 선택하세요. ‘앱으로 돌아가기’가 있으면 끄세요.": "If the app reappears, open Watch Settings → General → Return to Clock → WatchBridge and choose Custom → Always. Turn off Return to App if available."
+  "앱이 다시 나타나면 워치 설정 → 일반 → 시계로 돌아가기 → WatchBridge에서 ‘사용자화 → 항상’을 선택하세요. ‘앱으로 돌아가기’가 있으면 끄세요.": "If the app reappears, open Watch Settings → General → Return to Clock → WatchBridge and choose Custom → Always. Turn off Return to App if available.",
+  "연결 유지 중 · 수신 대기": "Connected · waiting for delivery",
+  "Bluetooth 인증 연결은 유지됩니다. 워치가 읽기를 재개하면 알림 전달도 자동으로 재개됩니다.": "The authenticated Bluetooth link is retained. Notification delivery resumes automatically when the watch reads again.",
+  "Bluetooth 연결은 유지되며 워치 수신 재개를 기다립니다.": "Bluetooth remains connected; waiting for watch delivery to resume."
 }

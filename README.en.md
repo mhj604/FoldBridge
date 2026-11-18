@@ -8,13 +8,13 @@ Forward Galaxy notifications **directly to Apple Watch over Bluetooth LE**. Noti
 
 | Component | Current version / location |
 | --- | --- |
-| Android | **0.6.19-local / code 41** — [Download APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk) |
+| Android | **0.6.20-local / code 42** — [Download APK](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.20/WatchBridge-0.6.20.apk) |
 | Watch app and vehicle widget | **0.5.26 / build 60** — [Xcode project](watch/FoldBridge.xcodeproj); sign for your own team/device |
 | New installation | [Step-by-step setup](docs/QUICK_START_EN.md) |
 | Existing users | Update in place with the same signing key and watch Bundle ID/team. Preserve registration. |
 | Connection problems | [Troubleshooting](docs/TROUBLESHOOTING_EN.md) · [Current status and unfinished scope](docs/CURRENT_STATUS_EN.md) |
 
-The APK belongs to release bundle `watchbridge-v0.5.25`. Bundle tags, Android versions and Watch versions are different. Older artifacts remain in [Releases](https://github.com/mhj604/WatchBridge/releases).
+The APK belongs to release bundle `android-v0.6.20`. Bundle tags, Android versions and Watch versions are different. Older artifacts remain in [Releases](https://github.com/mhj604/WatchBridge/releases).
 
 ```sh
 git clone --branch local-ble https://github.com/mhj604/WatchBridge.git

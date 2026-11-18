@@ -17,6 +17,8 @@
   <string name="text_1b1ed780c38f5640" formatted="false">"Bluetooth 광고 준비를 기다립니다."</string>
   <string name="text_cc5e92a778c365cd" formatted="false">"Bluetooth 서버 준비를 다시 시도합니다."</string>
   <string name="text_a69173ca1cb572ff" formatted="false">"Bluetooth 연결만으로는 다른 앱의 알림을 전달할 수 없습니다. 설정에서 ‘WatchBridge 알림 전달’의 알림 접근을 허용해 주세요."</string>
+  <string name="text_be6fece9f6c077d6" formatted="false">"Bluetooth 연결은 유지되며 워치 수신 재개를 기다립니다."</string>
+  <string name="text_15450ec804f9e50a" formatted="false">"Bluetooth 인증 연결은 유지됩니다. 워치가 읽기를 재개하면 알림 전달도 자동으로 재개됩니다."</string>
   <string name="text_a4b3bc978835cb01" formatted="false">"Bluetooth 준비를 다시 시도합니다."</string>
   <string name="text_63593f4a1e56faad" formatted="false">"Bluetooth가 켜지면 다시 연결합니다"</string>
   <string name="text_ee99ebc7344137cf" formatted="false">"Bluetooth로 애플워치 알림을 전달합니다"</string>
@@ -168,6 +170,7 @@
   <string name="text_e9507073ea123095" formatted="false">"연결 알림 표시"</string>
   <string name="text_08b471ed5f3ef411" formatted="false">"연결 앱"</string>
   <string name="text_6cc2a07d63acdcb4" formatted="false">"연결 유지"</string>
+  <string name="text_e32b6e72d8deef27" formatted="false">"연결 유지 중 · 수신 대기"</string>
   <string name="text_fe8d944f83f238df" formatted="false">"연결 유지 켜짐"</string>
   <string name="text_dd468818314057d5" formatted="false">"연결 유지를 시작할까요?"</string>
   <string name="text_89ded1329bc2c24f" formatted="false">"연결 자동 시작이 제한됐습니다. WatchBridge에서 워치 연결을 눌러 주세요."</string>

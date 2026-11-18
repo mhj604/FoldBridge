@@ -8,13 +8,13 @@
 
 | 항목 | 현재 버전 / 받는 곳 |
 | --- | --- |
-| Android | **0.6.19-local / 코드 41** — [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk) |
+| Android | **0.6.20-local / 코드 42** — [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.20/WatchBridge-0.6.20.apk) |
 | 워치 앱·차량 위젯 | **0.5.26 / 빌드 60** — [Xcode 프로젝트](watch/FoldBridge.xcodeproj), 자신의 Team으로 서명·설치 |
 | 처음 설치 | [설치·등록 순서](docs/QUICK_START_KO.md) |
 | 기존 사용자 | 같은 서명 키·Bundle ID·Team으로 덮어 업데이트. 등록을 삭제하지 않습니다. |
 | 연결 문제 | [문제 해결](docs/TROUBLESHOOTING_KO.md) · [현재 상태와 미완료 범위](docs/CURRENT_STATUS_KO.md) |
 
-APK는 `watchbridge-v0.5.25` 배포 묶음에 있습니다. 묶음 태그·Android 버전·워치 버전은 서로 다릅니다. 과거 버전 파일은 [Releases](https://github.com/mhj604/WatchBridge/releases)에 보존합니다.
+APK는 `android-v0.6.20` 배포 묶음에 있습니다. 묶음 태그·Android 버전·워치 버전은 서로 다릅니다. 과거 버전 파일은 [Releases](https://github.com/mhj604/WatchBridge/releases)에 보존합니다.
 
 ```sh
 git clone --branch local-ble https://github.com/mhj604/WatchBridge.git

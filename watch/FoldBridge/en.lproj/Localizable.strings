@@ -16,6 +16,8 @@
 "Bluetooth 광고 준비를 기다립니다." = "Waiting for Bluetooth advertising.";
 "Bluetooth 서버 준비를 다시 시도합니다." = "Retrying Bluetooth server setup.";
 "Bluetooth 연결만으로는 다른 앱의 알림을 전달할 수 없습니다. 설정에서 ‘WatchBridge 알림 전달’의 알림 접근을 허용해 주세요." = "Bluetooth alone cannot forward other apps’ notifications. Enable notification access for ‘WatchBridge notifications’ in Settings.";
+"Bluetooth 연결은 유지되며 워치 수신 재개를 기다립니다." = "Bluetooth remains connected; waiting for watch delivery to resume.";
+"Bluetooth 인증 연결은 유지됩니다. 워치가 읽기를 재개하면 알림 전달도 자동으로 재개됩니다." = "The authenticated Bluetooth link is retained. Notification delivery resumes automatically when the watch reads again.";
 "Bluetooth 준비를 다시 시도합니다." = "Retrying Bluetooth setup.";
 "Bluetooth가 켜지면 다시 연결합니다" = "Will reconnect when Bluetooth is on";
 "Bluetooth로 애플워치 알림을 전달합니다" = "Forwarding notifications to Apple Watch over Bluetooth";
@@ -167,6 +169,7 @@
 "연결 알림 표시" = "Connection notifications";
 "연결 앱" = "Phone app";
 "연결 유지" = "Keep connection";
+"연결 유지 중 · 수신 대기" = "Connected · waiting for delivery";
 "연결 유지 켜짐" = "Keep connection is on";
 "연결 유지를 시작할까요?" = "Start keeping the connection?";
 "연결 자동 시작이 제한됐습니다. WatchBridge에서 워치 연결을 눌러 주세요." = "Automatic startup was restricted. Tap Connect watch in WatchBridge.";

@@ -1,6 +1,6 @@
 # WatchBridge BLE 프로토콜
 
-> 현재 기준(2026-11-18): Android **0.6.19 / 41**, Watch **0.5.26 / 60**. [버전·다운로드·진행 상태](CURRENT_STATUS_KO.md). 아래 날짜·버전이 붙은 항목은 당시 변경 기록입니다.
+> 현재 기준(2026-11-18): Android **0.6.20 / 42**, Watch **0.5.26 / 60**. [버전·다운로드·진행 상태](CURRENT_STATUS_KO.md). 아래 날짜·버전이 붙은 항목은 당시 변경 기록입니다.
 
 **한국어** · [English](PROTOCOL_EN.md) · [전체 문서](README.md)
 

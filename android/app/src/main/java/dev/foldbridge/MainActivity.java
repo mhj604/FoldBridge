@@ -96,9 +96,9 @@ public final class MainActivity extends Activity {
     private void renderState(){
         boolean access=NotificationRelay.hasAccess(this),bound=NotificationRelay.instance!=null,connected=BridgeService.isConnected(),running=BridgeService.instance!=null;
         boolean saved=BridgeService.hasSavedPeer(this),authenticating=BridgeService.isAuthenticating(),waitingRead=BridgeService.isWaitingForRead();
-        text(state,!access?L("알림 접근이 필요해요"):connected?L("워치와 연결됐어요"):!running?L("연결이 중지됐어요"):waitingRead?L("워치 응답 대기"):authenticating?L("워치 인증 중"):saved?L("등록된 워치 연결 대기"):L("새 워치를 등록해 주세요"));
+        text(state,!access?L("알림 접근이 필요해요"):connected?L("워치와 연결됐어요"):!running?L("연결이 중지됐어요"):waitingRead?L("연결 유지 중 · 수신 대기"):authenticating?L("워치 인증 중"):saved?L("등록된 워치 연결 대기"):L("새 워치를 등록해 주세요"));
         statusDot.setTextColor(!access||!BridgeService.error.isEmpty()?Color.rgb(255,192,126):connected?accent:muted);
-        text(subtitle,!access?L("다른 앱의 알림을 읽을 수 있도록 허용해 주세요."):!running?L("‘워치 연결’을 누르면 저장된 등록으로 연결을 시작합니다."):!BridgeService.error.isEmpty()?L(BridgeService.error):connected?!bound?L("워치는 연결됐지만 알림 수집 서비스를 기다리고 있어요."):L("새 알림을 워치로 전달하고 있어요."):waitingRead?L("등록은 유지됩니다. 워치 실행 기회가 생기면 수신을 다시 시도합니다."):authenticating?saved?L("저장된 키로 기기를 확인하고 있습니다. 새 등록은 필요하지 않습니다."):L("처음 등록하는 기기입니다. 양쪽 코드가 같으면 확인해 주세요."):saved?L("워치 앱을 열지 않고 자동 재연결을 시도하고 있습니다. 시스템 실행 상태에 따라 지연될 수 있습니다."):L("설정의 ‘새 워치 등록’과 워치의 ‘휴대폰 찾기’로 처음 한 번 코드를 확인해 주세요."));
+        text(subtitle,!access?L("다른 앱의 알림을 읽을 수 있도록 허용해 주세요."):!running?L("‘워치 연결’을 누르면 저장된 등록으로 연결을 시작합니다."):!BridgeService.error.isEmpty()?L(BridgeService.error):connected?!bound?L("워치는 연결됐지만 알림 수집 서비스를 기다리고 있어요."):L("새 알림을 워치로 전달하고 있어요."):waitingRead?L("Bluetooth 인증 연결은 유지됩니다. 워치가 읽기를 재개하면 알림 전달도 자동으로 재개됩니다."):authenticating?saved?L("저장된 키로 기기를 확인하고 있습니다. 새 등록은 필요하지 않습니다."):L("처음 등록하는 기기입니다. 양쪽 코드가 같으면 확인해 주세요."):saved?L("워치 앱을 열지 않고 자동 재연결을 시도하고 있습니다. 시스템 실행 상태에 따라 지연될 수 있습니다."):L("설정의 ‘새 워치 등록’과 워치의 ‘휴대폰 찾기’로 처음 한 번 코드를 확인해 주세요."));
         permissionButton.setVisibility(access?View.GONE:View.VISIBLE);connectButton.setVisibility(running?View.GONE:View.VISIBLE);
         refreshButton.setVisibility(running?View.VISIBLE:View.GONE);
         pairCard.setVisibility(BridgeService.pairingCode.isEmpty()?View.GONE:View.VISIBLE);text(code,BridgeService.pairingCode);

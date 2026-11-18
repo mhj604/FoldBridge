@@ -1,5 +1,7 @@
 # Current versions and remaining work
 
+[Android 0.6.20 retained-link/delivery-waiting change and deployment](CONNECTION_STATE_0.6.20_EN.md). Installed Watch remains 0.5.26.
+
 [한국어](CURRENT_STATUS_KO.md) · **English** · [Install and connect](QUICK_START_EN.md) · [All guides](README.md)
 
 As of **2026-11-18 KST**. This page distinguishes current source, the owner's installation records, and published downloads. It does not report another user's installed version. “Current”, “failed”, and “complete” in version-specific investigations describe their historical snapshot.
@@ -8,10 +10,10 @@ As of **2026-11-18 KST**. This page distinguishes current source, the owner's in
 
 | Component | Version / location |
 | --- | --- |
-| Android app | **0.6.19-local / code 41** — [WatchBridge-0.6.19.apk](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk) |
+| Android app | **0.6.20-local / code 42** — [WatchBridge-0.6.20.apk](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.20/WatchBridge-0.6.20.apk) |
 | Watch app and vehicle widget | **0.5.26 / build 60** — [local-ble source](https://github.com/mhj604/WatchBridge/tree/local-ble), `watch/FoldBridge.xcodeproj` |
 | Source branches | `main`, `local-ble`, and `fix/watch-background-reconnect`. Documentation-only commits may retain the same app version. |
-| APK release tag | `watchbridge-v0.5.25` names the release bundle. Its Android APK is 0.6.19; it is not Watch 0.5.26. |
+| APK release tag | `android-v0.6.20` names the release bundle. Its Android APK is 0.6.20; it is not Watch 0.5.26. |
 | Owner's installed Watch source | `95577b5` — build 60 installed and launched with no activation requested. Later documentation commits do not alter app behavior. |
 
 Sign the watch source for your own Apple team/device. There is no universal signed watch download. **Update existing installations in place; retain the watch Bundle ID/team and Android signing key.** Visible branding is WatchBridge; `dev.foldbridge.*`, source paths, BLE UUIDs and stored keys remain stable to preserve registration.

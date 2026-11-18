@@ -17,6 +17,8 @@
   <string name="text_1b1ed780c38f5640" formatted="false">"Waiting for Bluetooth advertising."</string>
   <string name="text_cc5e92a778c365cd" formatted="false">"Retrying Bluetooth server setup."</string>
   <string name="text_a69173ca1cb572ff" formatted="false">"Bluetooth alone cannot forward other apps’ notifications. Enable notification access for ‘WatchBridge notifications’ in Settings."</string>
+  <string name="text_be6fece9f6c077d6" formatted="false">"Bluetooth remains connected; waiting for watch delivery to resume."</string>
+  <string name="text_15450ec804f9e50a" formatted="false">"The authenticated Bluetooth link is retained. Notification delivery resumes automatically when the watch reads again."</string>
   <string name="text_a4b3bc978835cb01" formatted="false">"Retrying Bluetooth setup."</string>
   <string name="text_63593f4a1e56faad" formatted="false">"Will reconnect when Bluetooth is on"</string>
   <string name="text_ee99ebc7344137cf" formatted="false">"Forwarding notifications to Apple Watch over Bluetooth"</string>
@@ -168,6 +170,7 @@
   <string name="text_e9507073ea123095" formatted="false">"Connection notifications"</string>
   <string name="text_08b471ed5f3ef411" formatted="false">"Phone app"</string>
   <string name="text_6cc2a07d63acdcb4" formatted="false">"Keep connection"</string>
+  <string name="text_e32b6e72d8deef27" formatted="false">"Connected · waiting for delivery"</string>
   <string name="text_fe8d944f83f238df" formatted="false">"Keep connection is on"</string>
   <string name="text_dd468818314057d5" formatted="false">"Start keeping the connection?"</string>
   <string name="text_89ded1329bc2c24f" formatted="false">"Automatic startup was restricted. Tap Connect watch in WatchBridge."</string>

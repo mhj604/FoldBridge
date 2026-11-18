@@ -1,6 +1,6 @@
 # Automatic renewal with a free Apple account
 
-> Current baseline (2026-11-18): Android **0.6.19 / 41**, Watch **0.5.26 / 60**. [Versions, downloads and work status](CURRENT_STATUS_EN.md). Dated/version-specific sections below retain historical observations.
+> Current baseline (2026-11-18): Android **0.6.20 / 42**, Watch **0.5.26 / 60**. [Versions, downloads and work status](CURRENT_STATUS_EN.md). Dated/version-specific sections below retain historical observations.
 
 [한국어](AUTO_RENEW_KO.md) · **English** · [Documentation](README.md)
 

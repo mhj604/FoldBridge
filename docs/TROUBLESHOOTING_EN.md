@@ -1,6 +1,10 @@
 # Connection and notification troubleshooting
 
-> Current baseline (2026-11-18): Android **0.6.19 / 41**, Watch **0.5.26 / 60**. [Versions, downloads and work status](CURRENT_STATUS_EN.md). Dated/version-specific sections below retain historical observations.
+## Connected · waiting for delivery
+
+The authenticated Bluetooth link remains, but the watch has not read within ten seconds. This is separate from actual link loss; retain registration. The state changes automatically when reads resume. [0.6.20 state definitions](CONNECTION_STATE_0.6.20_EN.md).
+
+> Current baseline (2026-11-18): Android **0.6.20 / 42**, Watch **0.5.26 / 60**. [Versions, downloads and work status](CURRENT_STATUS_EN.md). Dated/version-specific sections below retain historical observations.
 
 [한국어](TROUBLESHOOTING_KO.md) · **English** · [All guides](README.md)
 
