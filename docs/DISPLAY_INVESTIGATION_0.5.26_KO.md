@@ -41,3 +41,10 @@ REA Evidence: 이벤트 `ev_048ac71e32cf4ca1bdaa4c5a140fe6477972f0f2704d6f819f8c
 ## 설치 기록
 
 빌드 60의 덮어 설치가 완료됐습니다(`ev_5b2ab52ba8f3be95bb2f8c599718085b524c9e7c80a0a1b76ac450c5db74c718`). 설치 후 `--no-activate` 실행 요청도 성공했습니다(`ev_c58b2d9469a9a92b7f87fbb8254101f9bb489fd473114363f8bf3f460b8a8572`). 명령 성공을 실제 화면 상태나 자동 표시 해결의 증거로 확대하지 않습니다.
+
+
+## 설치 직후 앱 자체 기록
+
+빌드 60의 17:45:32 KST 상태는 네이티브 `background`·SwiftUI `background`·인증 연결 완료였습니다. 위치 세션은 `restore-requested`였으므로 이 설치 직후 기록을 `eligible` 확인으로 설명하지 않습니다. 상태 Evidence: `ev_e928d23bb4d0e90b7cb33424482ded3d16cf7dab8f8c665537ae6ac80ee095da`.
+
+분리한 화면 기록에는 17:43:35~36 백그라운드 인증 후 17:44:52 `delegate.will-enter-foreground`와 네이티브 `active` 표본이 있고, 17:45:00에는 다시 `background`가 남았습니다. 그 사이 알림·위젯 진입 표식은 없습니다. 이는 새 기록이 전환을 포착했다는 뜻이며, 사용자가 어떤 조작을 했는지 또는 운영체제가 왜 전환했는지는 이 파일만으로 결정할 수 없습니다. `view.main.appear`는 앞선 백그라운드 실행 중에도 남았으므로 화면 노출의 단독 증거로 쓰지 않습니다. 화면 기록 Evidence: `ev_6fca402612ca67dfe24e3939f713467da105d0596275c7f292fd4d6426d4f8b9`.

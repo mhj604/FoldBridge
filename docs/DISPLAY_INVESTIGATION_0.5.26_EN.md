@@ -26,3 +26,10 @@ The working location/read-delivery/range-recovery behavior was retained. No diag
 ## Deployment
 
 Build 60 was installed in place (`ev_5b2ab52ba8f3be95bb2f8c599718085b524c9e7c80a0a1b76ac450c5db74c718`). The subsequent `--no-activate` launch request succeeded (`ev_c58b2d9469a9a92b7f87fbb8254101f9bb489fd473114363f8bf3f460b8a8572`). Command success is not proof of actual screen state or resolution of automatic presentation.
+
+
+## App-owned records after installation
+
+At 17:45:32 KST, build 60 reported native `background`, SwiftUI `background`, and an authenticated connection. Location remained `restore-requested`; this sample does not establish an `eligible` session after this installation. State Evidence: `ev_e928d23bb4d0e90b7cb33424482ded3d16cf7dab8f8c665537ae6ac80ee095da`.
+
+The separate display journal captured background authentication at 17:43:35–36, then `delegate.will-enter-foreground` and a native `active` sample at 17:44:52, returning to `background` by 17:45:00. No notification/widget entry marker appears between them. This establishes a recorded transition, not its user or operating-system trigger. `view.main.appear` also occurred during the earlier background launch and cannot alone establish visible presentation. Display journal Evidence: `ev_6fca402612ca67dfe24e3939f713467da105d0596275c7f292fd4d6426d4f8b9`.
