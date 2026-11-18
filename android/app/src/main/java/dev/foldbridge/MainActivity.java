@@ -44,7 +44,7 @@ public final class MainActivity extends Activity {
         LinearLayout title=column();addText(title,"WATCHBRIDGE",11,accent,true);addText(title,L("가까이, 더 자연스럽게"),25,ink,true);
         header.addView(title,new LinearLayout.LayoutParams(0,-2,1));
         Button settings=action(L("설정"),this::showSettings,false);header.addView(settings,new LinearLayout.LayoutParams(dp(84),dp(42)));root.addView(header);
-        TextView intro=addText(root,L("휴대폰의 알림을 손목에서 만나세요."),14,muted,false);intro.setPadding(0,dp(8),0,dp(26));
+        TextView intro=addText(root,L("휴대폰과 워치를 연결해보세요."),14,muted,false);intro.setPadding(0,dp(8),0,dp(26));
 
         LinearLayout connection=card();LinearLayout headline=row();headline.setGravity(Gravity.CENTER_VERTICAL);
         statusDot=addText(headline,"●",17,accent,false);statusDot.setPadding(0,0,dp(9),0);

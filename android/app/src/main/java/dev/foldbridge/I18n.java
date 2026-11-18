@@ -288,13 +288,13 @@ final class I18n {
         Map.entry("휴대폰 전송 확인 시간 초과","text_f5a5dd327c330079"),
         Map.entry("휴대폰 찾기","text_9626430b013633da"),
         Map.entry("휴대폰과 워치가 가까이 있으면 연결을 이어갑니다.","text_f190ad7e01801f02"),
+        Map.entry("휴대폰과 워치를 연결해보세요.","text_432abe53d7f9cac4"),
         Map.entry("휴대폰과 코드를 비교하세요","text_c71702afa198ad4c"),
         Map.entry("휴대폰에 연결하지 못했습니다.","text_c06a87ce39e938fc"),
         Map.entry("휴대폰에서 ‘새 워치 등록’을 누른 뒤 선택해 주세요.","text_7656daac0f4cb3b3"),
         Map.entry("휴대폰에서 새 워치 등록을 먼저 누르세요.","text_e14bc27201f3cb9d"),
         Map.entry("휴대폰에서 새 워치 등록을 시작해 주세요.","text_e0f9eee8c10311f5"),
         Map.entry("휴대폰으로 전송하지 못했습니다.","text_9f2f14c50f3352a7"),
-        Map.entry("휴대폰의 알림을 손목에서 만나세요.","text_d0825c9ecbdf31c5"),
         Map.entry("휴대폰이 가까워지면 다시 연결합니다","text_f255b5077727094b")
     );
     static String t(Context context,String value) {
