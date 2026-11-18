@@ -64,3 +64,6 @@ The owner clarified that WatchBridge appears **when raising the wrist or waking 
 **Unresolved:** No applicable app-side method has yet been established to suppress session-related wrist-raise presentation while retaining the location runtime. The device exposes no Return to App switch for this session. Disabling Always On alone would not prevent restoration on wake. Neither the connection-keeping session nor the process was terminated as a display workaround. App versions and registration remain unchanged.
 
 Handoff: the owner confirmed tapping the phone's **connection stop** setting. Mac Device Hub mirroring and ADB were already disconnected. App state was not reacquired after that confirmation.
+
+
+Version-history follow-up: [0.5.21 location lifetime changes and remedy candidates](WRIST_RAISE_REGRESSION_EN.md).
