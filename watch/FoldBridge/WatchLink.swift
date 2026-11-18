@@ -62,6 +62,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var connectionAttemptAt = Date.distantPast
     private var lastPeerActivity = Date.distantPast
     private var foregroundSince = Date()
+    private var displayScenePhase = "unknown"
     private var lastWriteAt = Date.distantPast
     private var lastFailure = ""
     private var failureCounts: [String:Int] = [:]
@@ -1194,7 +1195,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             // Transfer a foreground backoff to Core Bluetooth before suspension.
             reconnectWork?.cancel();reconnectWork = nil;nextConnectAttempt = .distantPast
         }
-        if changed { trace(value ? "lifecycle.foreground" : "lifecycle.background") }
+        if changed { trace(value ? "lifecycle.foreground" : "lifecycle.nonactive") }
         updateMaintenanceTimer()
         if value {
             backgroundNotice = ""
@@ -1360,6 +1361,31 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         vehicleRequestID = nil;vehicleBusy = false;vehicleRevision = "";vehicleActions = [];vehicleState = "loading"
     }
     func noteVehicleQuickEvent(_ event: String) { trace("vehicle.quick."+event) }
+    func noteScenePhase(_ phase: String) {
+        guard displayScenePhase != phase else { return }
+        displayScenePhase = phase
+        noteDisplayEvent("scene."+phase)
+    }
+    // A separate, bounded journal prevents GATT retries from evicting screen
+    // transitions. These fixed event names contain no notification or vehicle data.
+    func noteDisplayEvent(_ event: String) {
+        guard let folder = FileManager.default.urls(for:.documentDirectory,in:.userDomainMask).first else { return }
+        let url = folder.appendingPathComponent("watchbridge-display-events.json")
+        var events = (try? Data(contentsOf:url)).flatMap { try? JSONSerialization.jsonObject(with:$0) as? [[String:Any]] } ?? []
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime,.withFractionalSeconds]
+        events.append(["schema":1,"at":formatter.string(from:Date()),"process":processID,
+                       "build":Bundle.main.object(forInfoDictionaryKey:"CFBundleVersion") as? String ?? "",
+                       "event":event,"scenePhase":displayScenePhase,
+                       "applicationStateName":applicationStateName,
+                       "connected":connected,"continuousRequested":continuousRuntime,
+                       "locationActivityState":locationActivityState])
+        if events.count > 256 { events.removeFirst(events.count-256) }
+        if let data = try? JSONSerialization.data(withJSONObject:events,options:[.sortedKeys]) {
+            try? FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true)
+            try? data.write(to:url,options:.atomic)
+        }
+    }
     private var applicationStateName: String {
         switch WKApplication.shared().applicationState {
         case .active: return "active"
@@ -1370,7 +1396,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     }
     private func writeDiagnostics() {
         let state: [String:Any] = ["updatedAt":ISO8601DateFormatter().string(from:Date()),
-            "profile":profile.rawValue,"connected":connected,"authenticated":authenticated,"status":status,"active":active,
+            "profile":profile.rawValue,"connected":connected,"authenticated":authenticated,"status":status,"active":active,"scenePhase":displayScenePhase,
             "build":Int(Bundle.main.object(forInfoDictionaryKey:"CFBundleVersion") as? String ?? "") ?? 0,"cancellationCount":cancellationCount,"lastCancellation":lastCancellation,"lastDisconnect":lastDisconnect,"process":processID,"softRefreshCount":softRefreshCount,"lastFailure":lastFailure,"failureCounts":failureCounts,"sessionGeneration":epoch,"stage":stage,"refreshCount":refreshCount,
             "authenticationDisconnects":authenticationDisconnects,"lastAuthenticationDisconnectStage":lastAuthenticationDisconnectStage,"compactResumeEnabled":UserDefaults.standard.bool(forKey:compactResumeKey),
             "authenticationReads":authenticationReads,
@@ -1404,11 +1430,16 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         try? data.write(to:folder.appendingPathComponent("foldbridge-status.json"),options:.atomic)
     }
     private func trace(_ event: String) {
+        if event == "launch" || event == "authenticated" || event == "authenticated.delivery.read"
+            || event.hasPrefix("location.activity.") {
+            noteDisplayEvent(event)
+        }
         guard let folder = FileManager.default.urls(for:.documentDirectory,in:.userDomainMask).first else { return }
         let url = folder.appendingPathComponent("foldbridge-events.json")
         var events = (try? Data(contentsOf:url)).flatMap { try? JSONSerialization.jsonObject(with:$0) as? [[String:Any]] } ?? []
         events.append(["at":ISO8601DateFormatter().string(from:Date()),"process":processID,
-                       "event":event,"stage":stage,"generation":epoch,"active":active])
+                       "event":event,"stage":stage,"generation":epoch,"active":active,
+                       "applicationStateName":applicationStateName,"scenePhase":displayScenePhase])
         if events.count > 128 { events.removeFirst(events.count-128) }
         if let data = try? JSONSerialization.data(withJSONObject:events,options:[.sortedKeys]) {
             try? FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true)

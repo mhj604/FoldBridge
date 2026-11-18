@@ -1,6 +1,6 @@
 # WatchBridge
 
-Latest presentation/filter update: Android **0.6.19 / code 41**, Watch **0.5.25 / build 59**. [Changes and deployment](docs/QUIET_BACKGROUND_0.5.25_EN.md) · [Download APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk).
+Installed versions: Android **0.6.19 / code 41**, Watch **0.5.26 / build 60**. [Display-entry investigation](docs/DISPLAY_INVESTIGATION_0.5.26_EN.md) · [Charging-protection filter](docs/QUIET_BACKGROUND_0.5.25_EN.md) · [Download APK](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk).
 
 
 If an app opens without a tap in the App Switcher, disable **Settings → Accessibility → Auto-Select Focused App**. This watchOS preference opens a focused app after one second and affects all apps. [Display investigation](docs/QUIET_BACKGROUND_0.5.25_EN.md#follow-up-investigation-and-display-preference--2026-11-18-kst).

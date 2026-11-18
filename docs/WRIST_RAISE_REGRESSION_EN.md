@@ -1,5 +1,8 @@
 # Wrist-raise presentation — change-history investigation
 
+> Follow-up correction: automatic return/reconnection without app presentation and new REA records do not establish location restoration as the cause. Rollback is not the preferred action without evidence. [Current investigation](DISPLAY_INVESTIGATION_0.5.26_EN.md).
+
+
 [한국어](WRIST_RAISE_REGRESSION_KO.md)
 
 2026-11-18 KST. Installed Android 0.6.19 / code 41 and Watch/widget 0.5.25 / build 59 remain unchanged. This was an investigation of existing source, app-owned records and Apple documentation. The owner's stopped service and saved registration were retained; no device reconnection or new deployment was performed.

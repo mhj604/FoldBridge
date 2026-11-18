@@ -1,6 +1,6 @@
 # WatchBridge
 
-최신 표시·알림 필터 수정: Android **0.6.19 / 코드 41**, Watch **0.5.25 / 빌드 59**. [변경과 설치 상태](docs/QUIET_BACKGROUND_0.5.25_KO.md) · [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk).
+현재 설치 버전: Android **0.6.19 / 코드 41**, Watch **0.5.26 / 빌드 60**. [화면 진입 경로 조사·기록 보완](docs/DISPLAY_INVESTIGATION_0.5.26_KO.md) · [배터리 보호 필터](docs/QUIET_BACKGROUND_0.5.25_KO.md) · [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/watchbridge-v0.5.25/WatchBridge-0.6.19.apk).
 
 
 화면에서 누르지 않은 앱이 열리면 **설정 → 손쉬운 사용 → 초점이 맞춰진 앱 자동 선택**을 끄세요. 앱 전환기에서 1초 후 자동으로 여는 watchOS 기능이며 모든 앱에 적용됩니다. [화면 관련 조사 기록](docs/QUIET_BACKGROUND_0.5.25_KO.md#후속-원인-조사-및-화면-설정--2026-11-18).

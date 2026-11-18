@@ -173,6 +173,7 @@ final class LocationKeepAlive: NSObject, ObservableObject, CLLocationManagerDele
 
 final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDelegate {
     func applicationDidFinishLaunching() {
+        WatchLink.shared.noteDisplayEvent("delegate.launch")
         let location = LocationKeepAlive.shared
         if ProcessInfo.processInfo.environment["FOLDBRIDGE_RESUME_LOCATION"] == "1" {
             location.preserveEnabledIntentForUpdate()
@@ -198,6 +199,19 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
     }
     func didFailToRegisterForRemoteNotificationsWithError(_ error: Error) { WatchLink.shared.lastError = "Push 등록 실패. 서명과 Push 설정을 확인하세요." }
     func handle(_ backgroundTasks: Set<WKRefreshBackgroundTask>) { WatchLink.shared.handle(backgroundTasks) }
+    func applicationWillEnterForeground() { WatchLink.shared.noteDisplayEvent("delegate.will-enter-foreground") }
+    func applicationDidBecomeActive() { WatchLink.shared.noteDisplayEvent("delegate.did-become-active") }
+    func applicationWillResignActive() { WatchLink.shared.noteDisplayEvent("delegate.will-resign-active") }
+    func applicationDidEnterBackground() { WatchLink.shared.noteDisplayEvent("delegate.did-enter-background") }
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping ()->Void) {
+        let event = response.actionIdentifier == UNNotificationDefaultActionIdentifier ? "notification.open" :
+            response.actionIdentifier == UNNotificationDismissActionIdentifier ? "notification.dismiss":"notification.action"
+        DispatchQueue.main.async {
+            WatchLink.shared.noteDisplayEvent(event)
+            completionHandler()
+        }
+    }
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions)->Void) {
         DispatchQueue.main.async {
             let info = notification.request.content.userInfo
@@ -220,13 +234,24 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
                 NavigationStack { VehicleQuickView().environmentObject(link).environmentObject(language) }
                     .environment(\.locale,language.locale)
             }.onAppear {
+            link.noteDisplayEvent("view.main.appear")
+            recordScenePhase(scenePhase)
             link.setActive(scenePhase == .active)
             if scenePhase == .active { LocationKeepAlive.shared.resumeIfRequested() }
         }.onChange(of:scenePhase) { phase in
+            recordScenePhase(phase)
             link.setActive(phase == .active)
             if phase == .active { LocationKeepAlive.shared.resumeIfRequested() }
         } }
         WKNotificationScene(controller:CompactNotificationController.self,category:RelayCategory.withSourceIcon)
+    }
+    private func recordScenePhase(_ phase: ScenePhase) {
+        switch phase {
+        case .active: link.noteScenePhase("active")
+        case .inactive: link.noteScenePhase("inactive")
+        case .background: link.noteScenePhase("background")
+        @unknown default: link.noteScenePhase("unknown")
+        }
     }
 }
 

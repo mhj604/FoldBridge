@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-18 — Watch 0.5.26 / build 60
+
+Separate inactive from actual background and record notification/widget entry markers in a bounded app-owned journal. Connection behavior remains unchanged; automatic presentation is not yet resolved. [REA investigation and deployment](docs/DISPLAY_INVESTIGATION_0.5.26_EN.md).
+
 ## 2026-11-17 — Android 0.6.19 / Watch 0.5.25
 
 Exclude SystemUI charging-protection/limit notices regardless of percentage. Maintenance launches request `--no-activate`; watch settings explain Return to Clock. Diagnostic build numbers use installed metadata. [Deployment and remaining scope](docs/QUIET_BACKGROUND_0.5.25_EN.md).

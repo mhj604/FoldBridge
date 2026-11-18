@@ -81,3 +81,5 @@ Older `RELEASE_*_KO.md` and initial `legacy/` documents remain archived in their
 - [0.5.25 백그라운드 표시·충전 보호 알림](QUIET_BACKGROUND_0.5.25_KO.md) / [English](QUIET_BACKGROUND_0.5.25_EN.md)
 
 - [손목 들기 화면 복귀의 버전별 원인 조사](WRIST_RAISE_REGRESSION_KO.md) / [English](WRIST_RAISE_REGRESSION_EN.md)
+
+- [0.5.26 화면 진입 경로 기록과 추정 정정](DISPLAY_INVESTIGATION_0.5.26_KO.md) / [English](DISPLAY_INVESTIGATION_0.5.26_EN.md)

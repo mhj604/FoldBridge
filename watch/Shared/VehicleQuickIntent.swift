@@ -26,6 +26,7 @@ struct RunVehicleQuickControl: AppIntent {
     init(_ control: VehicleQuickControl) { self.control = control }
     @MainActor func perform() async throws -> some IntentResult {
         #if !WIDGET_EXTENSION
+        WatchLink.shared.noteDisplayEvent("vehicle.quick.intent")
         VehicleQuickRouter.shared.run(control)
         #endif
         return .result()
@@ -39,7 +40,7 @@ struct OpenVehicleControls: AppIntent {
     static var openAppWhenRun: Bool = true
     @MainActor func perform() async throws -> some IntentResult {
         #if !WIDGET_EXTENSION
-        VehicleQuickRouter.shared.openControls()
+        VehicleQuickRouter.shared.openControls(source:"widget")
         #endif
         return .result()
     }
