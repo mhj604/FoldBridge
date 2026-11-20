@@ -4,9 +4,13 @@
 
 [한국어](AUTO_RECONNECT_KO.md) · **English** · [Current versions/downloads](CURRENT_STATUS_EN.md)
 
-As of 2026-11-18: Android **0.6.21 / 43**, Watch **0.5.28 / 62**. Earlier version outcomes are linked separately below.
+As of 2026-11-20: Android **0.6.22 / 44**, Watch **0.5.28 / 62**. Earlier version outcomes are linked separately below.
+
+Version 0.6.22 reopens the app GATT server when refreshing without an authenticated peer, instead of only re-advertising. If the phone has no authenticated session but the watch reads its old delivery characteristic, a public `wake` message requests fresh saved-key authentication. Healthy authenticated links and in-flight read-first authentication are retained. [Changes, REA and observation scope](CONNECTION_RESYNC_0.6.22_EN.md).
 
 ## Current behavior
+
+With a saved peer and observed shared LE presence but no claimed peer/app ATT requests for 90 seconds, phone maintenance repairs the GATT server automatically without a button. Authenticated links are retained and repeated attempts back off. Shared LE presence alone is never displayed as saved-peer authentication.
 
 1. Retain registration. Use **Connect watch** when the phone service is off, or **Refresh connection** while it is running. **Sync now** processes pending transfers over an already authenticated connection.
 2. Refresh on a healthy link sends an encrypted request without replacing the session. After disconnection, authenticate the saved peer again and discard the old notification queue.

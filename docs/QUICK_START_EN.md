@@ -2,7 +2,7 @@
 
 [한국어](QUICK_START_KO.md) · **English** · [All guides](README.md)
 
-For Android **0.6.21-local / code 43** and Watch **0.5.28 / build 62** (2026-11-18). See [current versions, observations and remaining work](CURRENT_STATUS_EN.md). Notifications travel directly over BLE. No relay address, internet connection, or paid push setup is needed during use.
+For Android **0.6.22-local / code 44** and Watch **0.5.28 / build 62** (2026-11-20). See [current versions, observations and remaining work](CURRENT_STATUS_EN.md). Notifications travel directly over BLE. No relay address, internet connection, or paid push setup is needed during use.
 
 ## 1. Prepare
 
@@ -24,7 +24,7 @@ The following paths are relative to this source folder. No setup is needed in `r
 
 ## 3. Install the phone app
 
-1. [Download WatchBridge-0.6.21.apk](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.21/WatchBridge-0.6.21.apk) and open it on the phone. Follow Android's installation prompt for the app that opened the APK.
+1. [Download WatchBridge-0.6.22.apk](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.22/WatchBridge-0.6.22.apk) and open it on the phone. Follow Android's installation prompt for the app that opened the APK.
 2. Open **WatchBridge** and allow **Nearby devices** and notifications.
 3. Tap **Allow notification access**. Enable **WatchBridge notifications** in the system list. This separate permission lets the app receive other apps' notifications.
 4. If Android shows a restricted-settings notice, follow its device-specific instructions in App info, then return to notification access. Labels vary by OS version.

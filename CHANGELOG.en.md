@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-20 — Android 0.6.22 / code 44 · State resynchronization
+
+Added automatic GATT-server recovery for an unclaimed stall with a saved peer/shared LE presence but prolonged app-ATT silence. Authenticated links and recent requests are excluded; repeated recovery backs off.
+
+Refreshing without an authenticated peer reopens the app GATT server without ending the app process. Delivery reads after phone-session loss receive the existing `wake` reauthentication request; refresh retains an in-flight read-first authentication reply. Installed with existing registration/key and both peers authenticated/read normally. The original stall had cleared during temporary recovery, so complete execution coverage of the new recovery branches is not claimed. [REA evidence and scope](docs/CONNECTION_RESYNC_0.6.22_EN.md).
+
 ## 2026-11-18 — Android 0.6.21 / code 43 · Version and connection prompt
 
 Removed the fixed `WatchBridge 0.6.18` diagnostic footer. Opening the dialog reads the installed package's `versionName` and build number, for example `WatchBridge 0.6.21-local (43)`. The main-screen prompt is now “Connect your phone and watch.” with the matching Korean text. Built with the existing Android signing key and app ID, and installed in place on the owner’s phone. No uninstall, unpair or settings reset was performed.

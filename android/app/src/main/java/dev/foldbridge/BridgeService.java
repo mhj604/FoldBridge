@@ -53,6 +53,9 @@ public final class BridgeService extends Service {
             "observedLinks",s==null?0:s.observedLinks,"subscriptionClaims",s==null?0:s.subscriptionClaims,
             "retainedSubscriptionClaims",s==null?0:s.retainedSubscriptionClaims,
             "bootstrapSent",s==null?0:s.bootstrapSent,"discoveryRefreshes",s==null?0:s.discoveryRefreshes,
+            "refreshGattReopens",s==null?0:s.refreshGattReopens,"reauthenticationHints",s==null?0:s.reauthenticationHints,
+            "automaticGattReopens",s==null?0:s.automaticGattReopens,"observedGattLinks",s==null?0:s.observedGattLinks.size(),
+            "gattRequestIdleMillis",s==null||s.server==null?-1:SystemClock.elapsedRealtime()-Math.max(s.gattServerOpenedAt,s.lastOwnGattRequest),
             "subscriptionReleases",s==null?0:s.subscriptionReleases,
             "rejectedCharacteristicWrites",s==null?0:s.rejectedCharacteristicWrites,
             "staleLinkRecoveries",s==null?0:s.staleLinkRecoveries,"maintenanceAt",s==null?0:s.maintenanceAt,
@@ -96,6 +99,7 @@ public final class BridgeService extends Service {
     private BluetoothGattServer server; private BluetoothGattCharacteristic tx;
     private BluetoothLeAdvertiser advertiser; private BluetoothDevice central;
     private final Map<String,Integer> linkMtus=new HashMap<>();
+    private final Set<String> observedGattLinks=new HashSet<>();
     private static final class ResumeProbe {
         final Frames.Assembler frames=new Frames.Assembler();
         final long started=SystemClock.elapsedRealtime();
@@ -105,6 +109,10 @@ public final class BridgeService extends Service {
     private int observedLinks=0, subscriptionClaims=0, staleLinkRecoveries=0;
     private int retainedSubscriptionClaims=0, rejectedCharacteristicWrites=0;
     private int bootstrapSent=0, discoveryRefreshes=0;
+    private int refreshGattReopens=0, reauthenticationHints=0;
+    private int automaticGattReopens=0, consecutiveGattRecoveries=0;
+    private long gattServerOpenedAt=0, lastOwnGattRequest=0;
+    private final byte[] reauthenticationHint=new Frames().split(encodeMessage(object("type","wake","v",1)),200).get(0);
     private int subscriptionReleases=0;
     private int fastResumeAttempts=0, fastResumeCompleted=0;
     private boolean fastAuthentication=false;
@@ -144,7 +152,7 @@ public final class BridgeService extends Service {
                 else {
                     // Adapter-wide snapshots are not this server subscription's
                     // state. Our disconnect callback owns a claimed peer's loss.
-                    if(central==null)startAdvertising();
+                    if(!recoverUnclaimedGattServer()&&central==null)startAdvertising();
                 }
             }
         } catch(SecurityException ignored) {
@@ -153,6 +161,19 @@ public final class BridgeService extends Service {
         maintenanceAt=System.currentTimeMillis();recordState(BridgeService.this);
         handler.postDelayed(this,15000);
     }};
+    private boolean recoverUnclaimedGattServer() {
+        if(server==null||authenticated||central!=null||observedGattLinks.isEmpty()||vault.get("peer").isEmpty())return false;
+        long idle=SystemClock.elapsedRealtime()-Math.max(gattServerOpenedAt,lastOwnGattRequest);
+        long delay=90000L << Math.min(consecutiveGattRecoveries,3);
+        if(idle<delay)return false;
+        // A shared LE link is presence evidence only, never peer authentication.
+        // With a saved peer but no app ATT traffic, repair our unclaimed server
+        // automatically. Never cancel an authenticated link or infer its loss
+        // from a quiet read timer. Repeated recovery backs off up to 12 minutes.
+        automaticGattReopens++;consecutiveGattRecoveries++;
+        stopBluetooth();status="연결 새로고침 중";startBluetooth();
+        return true;
+    }
     private Vault vault; private KeyPair identity; private Crypto.Session session;
     private long connectionStartedAt=0;
     private Delivery activeDelivery;
@@ -251,6 +272,7 @@ public final class BridgeService extends Service {
         BluetoothDevice previous=central;
         clearSession();
         linkMtus.clear();
+        observedGattLinks.clear();gattServerOpenedAt=0;lastOwnGattRequest=0;
         stopAdvertising();
         if(server!=null){
             if(previous!=null)try{server.cancelConnection(previous);}catch(RuntimeException ignored){}
@@ -259,25 +281,28 @@ public final class BridgeService extends Service {
         tx=null;
     }
     private void refreshBluetooth() {
-        refreshCount++;bluetoothRetries=0;blockedUntil=0;failures=0;pairUntil=0;
+        refreshCount++;bluetoothRetries=0;blockedUntil=0;failures=0;pairUntil=0;consecutiveGattRecoveries=0;
         error="";
         if(server==null){status="연결 새로고침 중";startBluetooth();return;}
         if(authenticated&&(subscribed||readDelivery)) {
             softRefreshCount++;
             sendSecure(object("type","refresh"));
             status="워치 연결됨";
-        } else if(central!=null&&subscribed) {
+        } else if(central!=null&&(subscribed||(authenticationReply!=null&&authenticationStartedAt>0&&SystemClock.elapsedRealtime()-authenticationStartedAt<15000))) {
             // This only requests a fresh pinned-key handshake; no data is trusted
             // until the existing peer-key check succeeds.
-            sendPlain(object("type","wake","v",1));
+            // A compact read-first exchange already has its own fresh nonce and
+            // readable reply. Keep a fresh exchange for the watch's 15s handshake
+            // grace period; an old abandoned mailbox must still be recoverable.
+            if(subscribed)sendPlain(object("type","wake","v",1));
             status="워치 인증 중";
         } else {
-            // A refresh with no subscriber previously did nothing when the same
-            // advertisement was already running. Re-announce without rebuilding
-            // the GATT database or touching saved registration.
-            if(central!=null&&!subscribed)clearSession();
-            status="워치 연결 대기 중";discoveryRefreshes++;
-            stopAdvertising();startAdvertising();
+            // Re-announcing alone cannot repair an app GATT server whose handles
+            // no longer route the watch's writes to this instance. Reopen only
+            // this server, with no authenticated peer; keep the app process,
+            // saved identity, registration and settings intact.
+            discoveryRefreshes++;refreshGattReopens++;
+            stopBluetooth();status="연결 새로고침 중";startBluetooth();
         }
         recordState(this);
     }
@@ -301,6 +326,7 @@ public final class BridgeService extends Service {
         int token=++bluetoothEpoch;
         server=manager.openGattServer(this,callbacks(token));
         if(server==null) {retryBluetooth("Bluetooth 서버 준비를 다시 시도합니다.");return;}
+        gattServerOpenedAt=SystemClock.elapsedRealtime();lastOwnGattRequest=0;
         BluetoothGattService service=new BluetoothGattService(SERVICE,BluetoothGattService.SERVICE_TYPE_PRIMARY);
         tx=new BluetoothGattCharacteristic(TX,BluetoothGattCharacteristic.PROPERTY_INDICATE|BluetoothGattCharacteristic.PROPERTY_READ,BluetoothGattCharacteristic.PERMISSION_READ);
         tx.addDescriptor(new BluetoothGattDescriptor(CCC,BluetoothGattDescriptor.PERMISSION_READ|BluetoothGattDescriptor.PERMISSION_WRITE));
@@ -336,8 +362,22 @@ public final class BridgeService extends Service {
     private BluetoothGattServerCallback callbacks(int token) {return new BluetoothGattServerCallback() {
         @Override public void onCharacteristicReadRequest(BluetoothDevice device,int requestId,int offset,BluetoothGattCharacteristic characteristic) {
             handler.post(()->{if(token!=bluetoothEpoch||server==null)return;
+                if(PULL.equals(characteristic.getUuid())||TX.equals(characteristic.getUuid()))lastOwnGattRequest=SystemClock.elapsedRealtime();
                 if(PULL.equals(characteristic.getUuid())) {
-                    if(!matches(device)||!authenticated||!readDelivery){server.sendResponse(device,requestId,BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,offset,null);return;}
+                    if(!matches(device)||!authenticated||!readDelivery){
+                        if(!authenticated&&(central==null||matches(device))&&!vault.get("peer").isEmpty()) {
+                            // A watch can retain an old authenticated session
+                            // across the phone's GATT/service restart. Returning
+                            // only an ATT error leaves that watch polling forever.
+                            // The existing public wake message asks for a fresh
+                            // pinned-key handshake; it grants no authenticated
+                            // state and carries no notification or vehicle data.
+                            if(offset<0||offset>reauthenticationHint.length){server.sendResponse(device,requestId,BluetoothGatt.GATT_INVALID_OFFSET,offset,null);return;}
+                            server.sendResponse(device,requestId,BluetoothGatt.GATT_SUCCESS,offset,Arrays.copyOfRange(reauthenticationHint,offset,reauthenticationHint.length));
+                            if(offset==0){reauthenticationHints++;recordState(BridgeService.this);}
+                        } else {server.sendResponse(device,requestId,BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED,offset,null);}
+                        return;
+                    }
                     if(offset==0) {
                         long readNow=SystemClock.elapsedRealtime();
                         long gap=lastDeliveryRead==0?0:readNow-lastDeliveryRead;
@@ -388,8 +428,9 @@ public final class BridgeService extends Service {
                 // Android reports shared LE connections, including clients using
                 // another app's service. A link alone does not select our watch.
                 // Claim only a client subscribing to our own TX characteristic.
-                observedLinks++;recordState(BridgeService.this);
+                observedLinks++;observedGattLinks.add(device.getAddress());recordState(BridgeService.this);
             } else if(state==BluetoothProfile.STATE_DISCONNECTED) {
+                observedGattLinks.remove(device.getAddress());
                 linkMtus.remove(device.getAddress());
                 resumeProbes.remove(device.getAddress());
                 if(matches(device)) {nativeDisconnectCount++;lastNativeDisconnectAt=System.currentTimeMillis();clearSession();status="연결 끊김, 워치 재연결 대기";startAdvertising();recordState(BridgeService.this);}
@@ -397,7 +438,7 @@ public final class BridgeService extends Service {
         }); }
         @Override public void onMtuChanged(BluetoothDevice device,int value) { handler.post(()->{if(token!=bluetoothEpoch)return;int size=Math.max(23,value);linkMtus.put(device.getAddress(),size);if(matches(device))mtu=size;}); }
         @Override public void onDescriptorReadRequest(BluetoothDevice device,int requestId,int offset,BluetoothGattDescriptor descriptor) {
-            handler.post(()->{if(token!=bluetoothEpoch)return;if(server!=null)server.sendResponse(device,requestId,offset==0?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_INVALID_OFFSET,offset,subscribed?BluetoothGattDescriptor.ENABLE_INDICATION_VALUE:BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);});
+            handler.post(()->{if(token!=bluetoothEpoch)return;if(CCC.equals(descriptor.getUuid())&&TX.equals(descriptor.getCharacteristic().getUuid()))lastOwnGattRequest=SystemClock.elapsedRealtime();if(server!=null)server.sendResponse(device,requestId,offset==0?BluetoothGatt.GATT_SUCCESS:BluetoothGatt.GATT_INVALID_OFFSET,offset,subscribed?BluetoothGattDescriptor.ENABLE_INDICATION_VALUE:BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);});
         }
         @Override public void onDescriptorWriteRequest(BluetoothDevice device,int requestId,BluetoothGattDescriptor descriptor,boolean prepared,boolean response,int offset,byte[] value) {
             handler.post(()->{if(token!=bluetoothEpoch)return;
@@ -405,6 +446,7 @@ public final class BridgeService extends Service {
                 boolean enable=Arrays.equals(value,BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
                 boolean disable=Arrays.equals(value,BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
                 boolean valid=CCC.equals(descriptor.getUuid())&&TX.equals(descriptor.getCharacteristic().getUuid())&&!prepared&&offset==0&&(enable||disable);
+                if(valid)lastOwnGattRequest=SystemClock.elapsedRealtime();
                 if(valid&&enable&&central==null&&SystemClock.elapsedRealtime()>=blockedUntil) {
                     claimSubscription(device);subscriptionClaims++;
                 }
@@ -425,6 +467,7 @@ public final class BridgeService extends Service {
             handler.post(()->{if(token!=bluetoothEpoch)return;
                 if(server==null)return;
                 boolean ownWrite=RX.equals(characteristic.getUuid())&&!prepared&&offset==0;
+                if(ownWrite)lastOwnGattRequest=SystemClock.elapsedRealtime();
                 if(ownWrite&&central==null) {
                     resumeRetainedSubscription(device,requestId,response,value);return;
                 }
@@ -620,6 +663,7 @@ public final class BridgeService extends Service {
         vault.put("peer",b64(peerPublic)); authenticated=true;pairingCode="";failures=0;blockedUntil=0;error="";status=subscribed?"워치 연결됨":"워치 인증 중";
         authenticationMillis=SystemClock.elapsedRealtime()-authenticationStartedAt;
         if(fastAuthentication)fastResumeCompleted++;
+        consecutiveGattRecoveries=0;
         sendSecure(object("type","ready","liveness",0,"fast_resume",1,"compact_resume",2,"read_delivery",readDelivery?1:0));
         recordState(this);
     }

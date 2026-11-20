@@ -1,21 +1,21 @@
 # Current versions and remaining work
 
-[Watch 0.5.28 locked-callback and range-recovery improvements](RANGE_RECOVERY_0.5.28_EN.md). Watch is unchanged; the phone was updated to UI revision 0.6.21. [Update deployment](ANDROID_UI_0.6.21_EN.md).
+[Watch 0.5.28 locked-callback and range-recovery improvements](RANGE_RECOVERY_0.5.28_EN.md). Watch is unchanged; the phone was updated to connection resynchronization revision 0.6.22. [Investigation, changes and deployment](CONNECTION_RESYNC_0.6.22_EN.md).
 
 [Android 0.6.20 retained-link/delivery-waiting change](CONNECTION_STATE_0.6.20_EN.md) · [Repeated radio recovery during passcode lock](LOCKED_RECOVERY_TEST_2026-11-18_EN.md). Installed Watch is now 0.5.28.
 
 [한국어](CURRENT_STATUS_KO.md) · **English** · [Install and connect](QUICK_START_EN.md) · [All guides](README.md)
 
-As of **2026-11-18 KST**. This page distinguishes current source, the owner's installation records, and published downloads. It does not report another user's installed version. “Current”, “failed”, and “complete” in version-specific investigations describe their historical snapshot.
+As of **2026-11-20 KST**. This page distinguishes current source, the owner's installation records, and published downloads. It does not report another user's installed version. “Current”, “failed”, and “complete” in version-specific investigations describe their historical snapshot.
 
 ## Downloads and source
 
 | Component | Version / location |
 | --- | --- |
-| Android app | **0.6.21-local / code 43** — [WatchBridge-0.6.21.apk](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.21/WatchBridge-0.6.21.apk) |
+| Android app | **0.6.22-local / code 44** — [WatchBridge-0.6.22.apk](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.22/WatchBridge-0.6.22.apk) |
 | Watch app and vehicle widget | **0.5.28 / build 62** — [local-ble source](https://github.com/mhj604/WatchBridge/tree/local-ble), `watch/FoldBridge.xcodeproj` |
 | Source branches | `main`, `local-ble`, and `fix/watch-background-reconnect`. Documentation-only commits may retain the same app version. |
-| APK release tag | `android-v0.6.21` names the release bundle. Its Android APK is 0.6.21; it is not Watch 0.5.26. |
+| APK release tag | `android-v0.6.22` names the release bundle. Its Android APK is 0.6.22; it is not Watch 0.5.26. |
 | Owner's installed Watch source | `f0983e8` — build 62 installed and launched with no activation requested. Later documentation commits do not alter app behavior. |
 
 Sign the watch source for your own Apple team/device. There is no universal signed watch download. **Update existing installations in place; retain the watch Bundle ID/team and Android signing key.** Visible branding is WatchBridge; `dev.foldbridge.*`, source paths, BLE UUIDs and stored keys remain stable to preserve registration.
@@ -31,7 +31,11 @@ Sign the watch source for your own Apple team/device. There is no universal sign
 - All three subsequent physical range-loss/return cycles automatically restored authentication and reads without opening the app or refreshing. Disconnect totals progressed 3 → 4 → 5 → 6; final watch state was authenticated in actual background. [Round results and collection scope](PHYSICAL_RETURN_2026-11-18_EN.md).
 - These three successes do not guarantee every environment/future range return or OS process-termination recovery. Additional multi-hour lock testing was excluded from this session at the owner’s request.
 
+On November 20, the phone GATT service received no authentication requests while the watch repeatedly retried authentication. Version 0.6.22 adds unauthenticated-refresh server reopening and a read-delivery reauthentication hint. Both peers authenticated/read normally after installation, but the original stall had already cleared during temporary recovery; full execution coverage of the new recovery branches is not claimed. [Evidence and limits](CONNECTION_RESYNC_0.6.22_EN.md).
+
 ## Priorities and unfinished work
+
+Version 0.6.22 also includes button-free automatic GATT recovery for the unclaimed stall: observed LE presence but no app requests for 90 seconds, excluding authenticated links. Because temporary recovery cleared the original stall first, execution of this new automatic path against the same stalled condition remains unobserved.
 
 | Item | Status / next direction |
 | --- | --- |
