@@ -65,6 +65,7 @@
   <string name="text_93c7f5eb7dd66961" formatted="false">"Notification access is off"</string>
   <string name="text_363b29c580393281" formatted="false">"Allow access to read other apps’ notifications."</string>
   <string name="text_05a9008de7da085f" formatted="false">"You will need to confirm the code on both devices to pair again."</string>
+  <string name="text_e9331f2ffcc277d6" formatted="false">"Next expiration: %@"</string>
   <string name="text_1e8c10206f5b35bd" formatted="false">"Close"</string>
   <string name="text_6a0a0fec486c76bf" formatted="false">"Waiting"</string>
   <string name="text_8df305a2c03071e0" formatted="false">"Check that both devices show the same code"</string>
@@ -124,6 +125,7 @@
   <string name="text_33fd19cf90df27b2" formatted="false">"Forwarding new notifications to your watch."</string>
   <string name="text_5bde3b7f9937aafb" formatted="false">"Pair a new watch"</string>
   <string name="text_aa2beae0e272b8cb" formatted="false">"Register a new watch"</string>
+  <string name="text_4cd8a37c3412ff2e" formatted="false">"Signing renewed"</string>
   <string name="text_79edb556943a3ab1" formatted="false">"Choose apps to forward"</string>
   <string name="text_115bced49291a6a0" formatted="false">"Settings"</string>
   <string name="text_3a6b16eab508fe67" formatted="false">"Open settings"</string>

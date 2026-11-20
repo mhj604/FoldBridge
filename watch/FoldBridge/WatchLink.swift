@@ -156,6 +156,8 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var lastIncomingFrame: Data?, lastSync = Date.distantPast
     private var pendingReceipts: [(alert: WatchAlert, revision: String)] = []
     private var presentingReceipt = false
+    private var renewalNoticeScheduling = false
+    private var lastRenewalRelay = Date.distantPast
     private struct ReceiptLedger: Codable {
         let seen: [String: String]
         let order: [String]
@@ -186,6 +188,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             CBCentralManagerOptionRestoreIdentifierKey:"dev.foldbridge.watch.central"
         ])
         refreshNotificationSettings()
+        processRenewalNotice()
         updateMaintenanceTimer()
         trace("launch")
     }
@@ -193,7 +196,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
                 self.notificationAllowed = settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional
-                if self.notificationAllowed { self.presentNextReceipt() }
+                if self.notificationAllowed { self.presentNextReceipt(); self.processRenewalNotice() }
                 self.writeDiagnostics()
             }
         }
@@ -575,7 +578,9 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
                 "pendingWrites":outgoing.count,"writing":writing,"authenticationReadPending":authenticationReadPending,
                 "readDelivery":readDelivery,"deliveryReadPending":deliveryReadPending,"deliveryReads":deliveryReads,
                 "awaitingReady":awaitingReady,"backgroundTasks":backgroundTasks.count,
-                "locationState":locationActivityState,"continuousRequested":continuousRuntime,
+                "locationState":locationActivityState,"renewalWatchNotified":UserDefaults.standard.string(forKey:"renewalWatchNotified") ?? "",
+            "renewalPhoneAcknowledged":UserDefaults.standard.string(forKey:"renewalPhoneAcknowledged") ?? "",
+            "continuousRequested":continuousRuntime,
                 "errorDomain":(error as NSError?)?.domain ?? "none","errorCode":(error as NSError?)?.code ?? 0]
         }
         lastDisconnect = error.map { "\(($0 as NSError).domain):\(($0 as NSError).code):\($0.localizedDescription)" } ?? "none"
@@ -979,6 +984,9 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         lastPeerActivity = Date()
         if event == "confirm" { remoteConfirmed = true; try finishAuthentication(); return }
         guard authenticated else { throw Wire.Failure.authentication }
+        if event == "renewal_ack", let id = message["id"] as? String, id == renewalNotice()?["id"] as? String {
+            UserDefaults.standard.set(id,forKey:"renewalPhoneAcknowledged"); writeDiagnostics(); return
+        }
         if event == "vehicle_catalogue" {
             guard let revision = message["revision"] as? String, revision.count <= 64,
                   let state = message["status"] as? String,
@@ -1032,6 +1040,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private func finishReadyActions() {
         guard readyActionsPending, authenticated, readDelivery || tx?.isNotifying == true else { return }
         readyActionsPending = false;connected = true;status = "휴대폰 연결됨"
+        lastRenewalRelay = .distantPast; processRenewalNotice()
         subscribedAt = readDelivery ? .distantPast:Date()
         trace(readDelivery ? "authenticated.delivery.read":"authenticated.subscribed")
         if readDelivery { trace("delivery.read.enabled");readDeliveryFrame() }
@@ -1278,6 +1287,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         // preceding wall-clock interval was available to finish BLE work.
         if now.timeIntervalSince(lastMaintenance) > 45 { runtimeWindowStart = now }
         lastMaintenance = now
+        processRenewalNotice()
         // Location/timer callbacks are real execution opportunities, including
         // after suspension. Recovery must not depend on a foreground-only flag
         // or on accumulating 90 uninterrupted seconds of app runtime.
@@ -1287,6 +1297,42 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             noteWriteWait()
         }
         writeDiagnostics()
+    }
+    // A success receipt is written by the Mac only after a renewed app installs.
+    // Keep it until both devices have independently accepted their notification.
+    private func renewalNotice() -> [String:Any]? {
+        guard let folder = FileManager.default.urls(for:.documentDirectory,in:.userDomainMask).first,
+              let data = try? Data(contentsOf:folder.appendingPathComponent("watchbridge-renewal.json")), data.count <= 4096,
+              let notice = try? JSONSerialization.jsonObject(with:data) as? [String:Any],
+              let id = notice["id"] as? String, id.count == 64,
+              let expires = notice["expires_ms"] as? Double, expires > Date().timeIntervalSince1970 * 1000,
+              notice["schema"] as? Int == 1 else { return nil }
+        return notice
+    }
+    private func processRenewalNotice() {
+        guard let notice = renewalNotice(), let id = notice["id"] as? String,
+              let expires = notice["expires_ms"] as? Double else { return }
+        let defaults = UserDefaults.standard
+        if notificationAllowed, defaults.string(forKey:"renewalWatchNotified") != id, !renewalNoticeScheduling {
+            renewalNoticeScheduling = true
+            let formatter = DateFormatter(); formatter.locale = AppLanguage.shared.locale
+            formatter.dateStyle = .medium; formatter.timeStyle = .short
+            let content = UNMutableNotificationContent()
+            content.title = AppLanguage.shared.text("서명 갱신 완료")
+            content.body = String(format:AppLanguage.shared.text("다음 만료: %@"),formatter.string(from:Date(timeIntervalSince1970:expires / 1000)))
+            content.sound = .default; content.threadIdentifier = "signing-renewal"
+            UNUserNotificationCenter.current().add(UNNotificationRequest(identifier:"renewal-"+id,content:content,trigger:nil)) { error in
+                DispatchQueue.main.async {
+                    self.renewalNoticeScheduling = false
+                    if error == nil { defaults.set(id,forKey:"renewalWatchNotified") }
+                    self.writeDiagnostics()
+                }
+            }
+        }
+        if connected, defaults.string(forKey:"renewalPhoneAcknowledged") != id, Date().timeIntervalSince(lastRenewalRelay) >= 60 {
+            lastRenewalRelay = Date()
+            sendSecure(["type":"renewal_completed","id":id,"expires_ms":expires])
+        }
     }
     func sendPushToken() {
         guard profile != .local, Bundle.main.object(forInfoDictionaryKey:"FoldBridgePushEnabled") as? Bool == true,

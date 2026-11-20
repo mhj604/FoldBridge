@@ -4,6 +4,7 @@ import argparse
 import datetime as dt
 import fcntl
 import io
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -54,14 +55,37 @@ class Renewal:
         result=self.command(['/usr/bin/xcrun','devicectl','device','process','launch','--device',self.device,'--no-activate',self.bundle,'--timeout','20'],timeout=30)
         self.state['pending_launch']=result.returncode!=0
         return result.returncode==0
+    def queue_completion_notice(self):
+        profiles=self.state['installed_profiles']
+        identity=json.dumps(profiles,sort_keys=True).encode()
+        notice={'schema':1,'id':hashlib.sha256(identity).hexdigest(),
+                'expires_ms':int(min(date(x) for x in profiles.values()).timestamp()*1000),
+                'completed_at':self.state['installed_at']}
+        self.state['completion_notice']=notice
+        self.state['completion_notice_copied']=False
+        save(self.state_path,self.state)
+    def deliver_completion_notice(self):
+        notice=self.state.get('completion_notice')
+        if not notice or self.state.get('completion_notice_copied'):return True
+        payload=self.folder/'watchbridge-renewal.json';save(payload,notice)
+        result=self.command(['/usr/bin/xcrun','devicectl','device','copy','to','--device',self.device,
+            '--domain-type','appDataContainer','--domain-identifier',self.bundle,
+            '--source',str(payload),'--destination','Documents/watchbridge-renewal.json','--timeout','20'],timeout=30)
+        self.state['completion_notice_copied']=result.returncode==0
+        save(self.state_path,self.state)
+        return result.returncode==0
     def run(self,force=False):
         current=now();installed=self.state['installed_profiles'];minimum=min(date(x) for x in installed.values())
         due=minimum<=current+dt.timedelta(hours=self.config.get('renew_before_hours',72))
-        if not due and not force and not self.state.get('pending_launch'):
+        notice_pending=bool(self.state.get('completion_notice')) and not self.state.get('completion_notice_copied')
+        if not due and not force and not self.state.get('pending_launch') and not notice_pending:
             return self.finish('not_due')
         lock=self.unlocked()
         if lock is None:return self.finish('waiting_watch_connection')
         if not lock:return self.finish('waiting_watch_unlock')
+        if notice_pending:
+            if not self.deliver_completion_notice():return self.finish('renewed_waiting_completion_notice')
+            if not due and not force and not self.state.get('pending_launch'):return self.finish('completion_notice_delivered')
         if self.state.get('pending_launch'):
             if not self.launch():return self.finish('waiting_background_app_launch')
             if not due and not force:return self.finish('app_resumed')
@@ -139,8 +163,12 @@ class Renewal:
         if result.returncode:return self.finish('install_pending',install_log=str(install_log))
         self.state['installed_profiles']=self.state['candidate']['profiles'];self.state['installed_at']=stamp(now())
         self.state['installed_revision']=self.state['candidate']['revision'];self.state['pending_launch']=True
+        self.state['installed_version']=source_info['CFBundleShortVersionString'];self.state['installed_build']=source_info['CFBundleVersion']
         save(self.state_path,self.state)
+        self.queue_completion_notice()
+        notice_copied=self.deliver_completion_notice()
         launched=self.launch()
+        if not notice_copied:return self.finish('renewed_waiting_completion_notice')
         return self.finish('renewed' if launched else 'renewed_waiting_background_app_launch')
 
 def main():

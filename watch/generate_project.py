@@ -13,7 +13,7 @@ def quoted(value): return json.dumps(str(value),ensure_ascii=False)
 
 def generate(push=False,bundle_id='dev.foldbridge.watch'):
     info={'CFBundleDisplayName':'WatchBridge','CFBundleName':'WatchBridge','CFBundleExecutable':'$(EXECUTABLE_NAME)',
-          'CFBundleIdentifier':'$(PRODUCT_BUNDLE_IDENTIFIER)','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.5.28','CFBundleVersion':'62',
+          'CFBundleIdentifier':'$(PRODUCT_BUNDLE_IDENTIFIER)','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.5.29','CFBundleVersion':'63',
           'WKApplication':True,'WKWatchOnly':True,
           'NSBluetoothAlwaysUsageDescription':'갤럭시 휴대폰의 알림을 받기 위해 블루투스를 사용합니다.',
           'NSLocationWhenInUseUsageDescription':'선택한 위치 기반 연결 유지 모드에서 백그라운드 실행을 시도하기 위해 위치 업데이트를 사용합니다. 위치 좌표는 저장하거나 전송하지 않습니다.',
@@ -24,7 +24,7 @@ def generate(push=False,bundle_id='dev.foldbridge.watch'):
     (ROOT/'FoldBridge/Push.entitlements').write_bytes(plistlib.dumps({'aps-environment':'development'}))
     widget_info={'CFBundleDisplayName':'WatchBridge','CFBundleName':'WatchBridge','CFBundleExecutable':'$(EXECUTABLE_NAME)',
                  'CFBundleIdentifier':'$(PRODUCT_BUNDLE_IDENTIFIER)','CFBundlePackageType':'XPC!',
-                 'CFBundleShortVersionString':'0.5.28','CFBundleVersion':'62',
+                 'CFBundleShortVersionString':'0.5.29','CFBundleVersion':'63',
                  'CFBundleDevelopmentRegion':'en','CFBundleLocalizations':['en','ko'],
                  'NSExtension':{'NSExtensionPointIdentifier':'com.apple.widgetkit-extension'}}
     (ROOT/'FoldBridgeWidgets/Info.plist').write_bytes(plistlib.dumps(widget_info))

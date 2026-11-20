@@ -42,7 +42,7 @@ public final class BridgeService extends Service {
         BridgeService s=instance;
         if(s!=null)s.updateConnectionNotification();
         NotificationChannel waitingChannel=context.getSystemService(NotificationManager.class).getNotificationChannel(WAITING_CHANNEL);
-        JSONObject state=object("build",appBuild(context),"bridgeRunning",s!=null,"status",status,"error",error,
+        JSONObject state=object("build",appBuild(context),"renewalNotified",context.getSharedPreferences("renewal_notifications",MODE_PRIVATE).getString("notified",""),"bridgeRunning",s!=null,"status",status,"error",error,
             "waitingNotificationHidden",waitingChannel!=null&&waitingChannel.getImportance()==NotificationManager.IMPORTANCE_NONE,
             "centralPresent",s!=null&&s.central!=null,"subscribed",s!=null&&s.subscribed,
             "mtu",s==null?23:s.mtu,"queuedFrames",s==null?0:s.outgoing.size(),"queuedMessages",s==null?0:s.messages.size(),
@@ -642,6 +642,7 @@ public final class BridgeService extends Service {
             drainPending();
             recordState(this);
         } else if("state".equals(eventType)) watchActive=event.optBoolean("active");
+        else if("renewal_completed".equals(eventType)) receiveRenewalNotice(event);
         else if("push_token".equals(eventType)) { String token=event.getString("token"); if(!token.matches("[0-9a-f]{64,256}"))throw new GeneralSecurityException("Push token"); vault.put("push_token",token); }
         else if("vehicle_list".equals(eventType)) {lastVehicleCatalogueRequest=SystemClock.elapsedRealtime();sendVehicleCatalogue();}
         else if("vehicle_command".equals(eventType)) sendSecure(VehicleBridge.get(this).execute(event));
@@ -652,6 +653,28 @@ public final class BridgeService extends Service {
             if(nonce.length()>64)throw new GeneralSecurityException("Ping length");
             sendSecure(object("type","pong","nonce",nonce));
         }
+    }
+    private void receiveRenewalNotice(JSONObject event) throws JSONException, GeneralSecurityException {
+        String id=event.getString("id"); long expires=event.getLong("expires_ms");
+        if(!id.matches("[0-9a-f]{64}")||expires<=System.currentTimeMillis())throw new GeneralSecurityException("Renewal receipt");
+        SharedPreferences receipts=getSharedPreferences("renewal_notifications",MODE_PRIVATE);
+        if(!id.equals(receipts.getString("notified",""))) {
+            NotificationManager manager=getSystemService(NotificationManager.class);
+            if(!manager.areNotificationsEnabled()||checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)return;
+            NotificationChannel channel=new NotificationChannel("signing_renewal",I18n.t(this,"서명 갱신 완료"),NotificationManager.IMPORTANCE_DEFAULT);
+            manager.createNotificationChannel(channel);
+            if(manager.getNotificationChannel("signing_renewal").getImportance()==NotificationManager.IMPORTANCE_NONE)return;
+            String expiration=java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.MEDIUM,java.text.DateFormat.SHORT,getResources().getConfiguration().getLocales().get(0)).format(new Date(expires));
+            PendingIntent open=PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_IMMUTABLE);
+            manager.notify(11,new Notification.Builder(this,"signing_renewal")
+                .setSmallIcon(android.R.drawable.stat_notify_sync_noanim)
+                .setContentTitle("WatchBridge · "+I18n.t(this,"서명 갱신 완료"))
+                .setContentText(String.format(I18n.t(this,"다음 만료: %@").replace("%@","%s"),expiration))
+                .setContentIntent(open).setAutoCancel(true).setOnlyAlertOnce(true).build());
+            if(!receipts.edit().putString("notified",id).putLong("expires_ms",expires).commit())return;
+        }
+        sendSecure(object("type","renewal_ack","id",id));
+        recordState(this);
     }
     static void confirmPair() { BridgeService s=instance; if(s!=null)s.handler.post(()->{if(s.session!=null&&!s.authenticated){s.localConfirmed=true;s.sendSecure(object("type","confirm"));s.finishAuthentication();}}); }
     private void finishAuthentication() {

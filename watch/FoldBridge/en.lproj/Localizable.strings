@@ -64,6 +64,7 @@
 "다른 앱 알림을 읽는 권한이 꺼져 있습니다" = "Notification access is off";
 "다른 앱의 알림을 읽을 수 있도록 허용해 주세요." = "Allow access to read other apps’ notifications.";
 "다시 연결할 때 두 기기에서 코드를 확인해야 합니다." = "You will need to confirm the code on both devices to pair again.";
+"다음 만료: %@" = "Next expiration: %@";
 "닫기" = "Close";
 "대기 중" = "Waiting";
 "두 기기의 코드가 같은지 확인하세요" = "Check that both devices show the same code";
@@ -123,6 +124,7 @@
 "새 알림을 워치로 전달하고 있어요." = "Forwarding new notifications to your watch.";
 "새 워치 등록" = "Pair a new watch";
 "새 워치를 등록해 주세요" = "Register a new watch";
+"서명 갱신 완료" = "Signing renewed";
 "선택한 앱만 전달" = "Choose apps to forward";
 "설정" = "Settings";
 "설정 열기" = "Open settings";

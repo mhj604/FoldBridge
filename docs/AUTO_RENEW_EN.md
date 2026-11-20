@@ -86,3 +86,15 @@ Use `--force` only for initial application or an intentional immediate renewal, 
 Apple sign-in, two-factor authentication and keychain approval may still require the owner. Renewal does not change watchOS background execution limits or MyHyundai authentication requirements.
 
 The initial application renewed, installed and launched Watch 0.5.2. Merely rebuilding does not necessarily extend validity; the tool reads actual expiration dates from the signed results.
+
+## Completion notifications (Watch 0.5.29 / Android 0.6.23)
+
+Only an extended provisioning expiration followed by a successful watch installation creates a completion receipt. A successful build alone, a disconnected watch, or a locked watch does not produce a success notification.
+
+- The watch posts a local **Signing renewed** notification with the next expiration.
+- The phone receives that receipt over the existing authenticated, encrypted Bluetooth session. If absent, it receives it after reconnecting; Android debugging is unnecessary.
+- Each device records the receipt ID to avoid repeating the alert. The watch retains it until the phone acknowledges notification acceptance. The notification relay already excludes its own package, preventing an echo.
+- Both apps need notification permission, and the phone signing-renewal channel must be enabled. OS scheduling and Bluetooth availability can delay delivery.
+- A failed receipt copy remains `renewed_waiting_completion_notice` for the next existing scheduled run. The weekly schedule and Mac, internet, watch development connection requirements remain unchanged. This feature does not enable watch-only internet signing.
+
+The 2026-11-20 16:00 KST scheduled attempt ended as `waiting_watch_connection`; the previously recorded installed signature expired at 17:10 KST that day. A subsequent maintenance deployment must be distinguished from that unsuccessful scheduled attempt.
