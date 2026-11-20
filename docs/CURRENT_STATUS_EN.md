@@ -3,9 +3,9 @@
 Installed **Watch 0.5.29 / build 63** and **Android 0.6.23 / code 45**. Provisioning expires **2026-11-27 19:52 KST**. Successful renewal now creates one completion notice per device. [Behavior and requirements](RENEWAL_NOTIFICATIONS_0.5.29_EN.md). Today’s 16:00 scheduled attempt failed while waiting for the watch; the subsequent maintenance deployment renewed the signature.
 
 
-[Watch 0.5.28 locked-callback and range-recovery improvements](RANGE_RECOVERY_0.5.28_EN.md). Watch is unchanged; the phone was updated to connection resynchronization revision 0.6.22. [Investigation, changes and deployment](CONNECTION_RESYNC_0.6.22_EN.md).
+[Watch 0.5.28 locked-callback and range-recovery improvements](RANGE_RECOVERY_0.5.28_EN.md). The preceding Android 0.6.22 update addressed connection resynchronization. [Investigation, changes and deployment](CONNECTION_RESYNC_0.6.22_EN.md).
 
-[Android 0.6.20 retained-link/delivery-waiting change](CONNECTION_STATE_0.6.20_EN.md) · [Repeated radio recovery during passcode lock](LOCKED_RECOVERY_TEST_2026-11-18_EN.md). Installed Watch is now 0.5.28.
+[Android 0.6.20 retained-link/delivery-waiting change](CONNECTION_STATE_0.6.20_EN.md) · [Repeated radio recovery during passcode lock](LOCKED_RECOVERY_TEST_2026-11-18_EN.md). Installed Watch is now 0.5.29.
 
 [한국어](CURRENT_STATUS_KO.md) · **English** · [Install and connect](QUICK_START_EN.md) · [All guides](README.md)
 
@@ -18,8 +18,8 @@ As of **2026-11-20 KST**. This page distinguishes current source, the owner's in
 | Android app | **0.6.23-local / code 45** — [WatchBridge-0.6.23.apk](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.23/WatchBridge-0.6.23.apk) |
 | Watch app and vehicle widget | **0.5.29 / build 63** — [local-ble source](https://github.com/mhj604/WatchBridge/tree/local-ble), `watch/FoldBridge.xcodeproj` |
 | Source branches | `main`, `local-ble`, and `fix/watch-background-reconnect`. Documentation-only commits may retain the same app version. |
-| APK release tag | `android-v0.6.23` names the release bundle. Its Android APK is 0.6.22; it is not Watch 0.5.26. |
-| Owner's installed Watch source | `f0983e8` — build 62 installed and launched with no activation requested. Later documentation commits do not alter app behavior. |
+| APK release tag | `android-v0.6.23` names the release bundle. Its Android APK is 0.6.23, distinct from the Watch version. |
+| Owner's installed Watch source | `6918306` — build 63 installed and launched without activation. Both notification-acceptance and phone-acknowledgement records were obtained. |
 
 Sign the watch source for your own Apple team/device. There is no universal signed watch download. **Update existing installations in place; retain the watch Bundle ID/team and Android signing key.** Visible branding is WatchBridge; `dev.foldbridge.*`, source paths, BLE UUIDs and stored keys remain stable to preserve registration.
 

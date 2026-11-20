@@ -2,7 +2,7 @@
 
 **[한국어 홈](../README.md)** · **[English home](../README.en.md)** · **[현재 버전·남은 작업](CURRENT_STATUS_KO.md)** · **[Current versions and remaining work](CURRENT_STATUS_EN.md)**
 
-2026-11-20 기준: **Android 0.6.22 / 코드 44 · Watch 0.5.28 / 빌드 62**. Android APK 배포 묶음 태그는 `android-v0.6.22`입니다. 워치는 현재 소스를 자신의 Team으로 서명해 설치합니다. / Android APK release bundle: `android-v0.6.22`; sign current Watch source for your own team.
+2026-11-20 기준: **Android 0.6.23 / 코드 45 · Watch 0.5.29 / 빌드 63**. Android APK 배포 묶음 태그는 `android-v0.6.23`입니다. 워치는 현재 소스를 자신의 Team으로 서명해 설치합니다. / Android APK release bundle: `android-v0.6.23`; sign current Watch source for your own team.
 
 ## 현재 사용 안내 / Current guides
 
@@ -24,7 +24,7 @@
 
 ## 버전별 조사와 변경 기록 / Historical investigations and changes
 
-- [Android 0.6.22 양쪽 상태 불일치·새로고침 복구](CONNECTION_RESYNC_0.6.22_KO.md) · [State mismatch and refresh recovery](CONNECTION_RESYNC_0.6.22_EN.md)
+- [Android 0.6.23 양쪽 상태 불일치·새로고침 복구](CONNECTION_RESYNC_0.6.23_KO.md) · [State mismatch and refresh recovery](CONNECTION_RESYNC_0.6.23_EN.md)
 
 - [Android 0.6.21 UI 업데이트 설치](ANDROID_UI_0.6.21_KO.md) · [Android UI update deployment](ANDROID_UI_0.6.21_EN.md)
 
@@ -32,7 +32,7 @@
 
 - [11월 18일 암호 잠금 중 반복 무선 복구 시험](LOCKED_RECOVERY_TEST_2026-11-18_KO.md) · [Repeated radio recovery during passcode lock](LOCKED_RECOVERY_TEST_2026-11-18_EN.md)
 
-- [워치 0.5.28 잠금 중 콜백·거리 복구 보완](RANGE_RECOVERY_0.5.28_KO.md) · [Locked callbacks and range recovery](RANGE_RECOVERY_0.5.28_EN.md)
+- [워치 0.5.29 잠금 중 콜백·거리 복구 보완](RANGE_RECOVERY_0.5.29_KO.md) · [Locked callbacks and range recovery](RANGE_RECOVERY_0.5.29_EN.md)
 
 - [Android 0.6.20 연결 상태 분리](CONNECTION_STATE_0.6.20_KO.md) · [Retained link and delivery waiting](CONNECTION_STATE_0.6.20_EN.md)
 

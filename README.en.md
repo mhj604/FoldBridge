@@ -4,17 +4,17 @@
 
 Forward Galaxy notifications **directly to Apple Watch over Bluetooth LE**. Notification delivery needs no server, internet, iPhone relay, root access, or workout/audio session. Initial watch setup and app installation are separate.
 
-## Install or update — as of 2026-11-18
+## Install or update — as of 2026-11-20
 
 | Component | Current version / location |
 | --- | --- |
-| Android | **0.6.22-local / code 44** — [Download APK](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.22/WatchBridge-0.6.22.apk) |
-| Watch app and vehicle widget | **0.5.28 / build 62** — [Xcode project](watch/FoldBridge.xcodeproj); sign for your own team/device |
+| Android | **0.6.23-local / code 45** — [Download APK](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.23/WatchBridge-0.6.23.apk) |
+| Watch app and vehicle widget | **0.5.29 / build 63** — [Xcode project](watch/FoldBridge.xcodeproj); sign for your own team/device |
 | New installation | [Step-by-step setup](docs/QUICK_START_EN.md) |
 | Existing users | Update in place with the same signing key and watch Bundle ID/team. Preserve registration. |
 | Connection problems | [Troubleshooting](docs/TROUBLESHOOTING_EN.md) · [Current status and unfinished scope](docs/CURRENT_STATUS_EN.md) |
 
-The APK belongs to release bundle `android-v0.6.22`. Bundle tags, Android versions and Watch versions are different. Older artifacts remain in [Releases](https://github.com/mhj604/WatchBridge/releases).
+The APK belongs to release bundle `android-v0.6.23`. Bundle tags, Android versions and Watch versions are different. Older artifacts remain in [Releases](https://github.com/mhj604/WatchBridge/releases).
 
 ```sh
 git clone --branch local-ble https://github.com/mhj604/WatchBridge.git
