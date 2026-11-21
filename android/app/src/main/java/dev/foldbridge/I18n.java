@@ -275,6 +275,8 @@ final class I18n {
         Map.entry("해제","text_293182ec397e6b89"),
         Map.entry("허용됨","text_9b90fe7e0ce3b383"),
         Map.entry("현재 알림을 읽지 못했습니다. WatchBridge의 알림 접근 권한을 확인해 주세요.","text_440dcd08ac63f057"),
+        Map.entry("화면 기록 저장됨","text_3e1b8a14c439f871"),
+        Map.entry("화면 문제 기록","text_f47d5e6eafdd1b8e"),
         Map.entry("화면 위에서 아래로 쓸어내려 확인하세요.\n이 앱에는 알림 내용을 보관하지 않아요.","text_dcdbdc9854482ddc"),
         Map.entry("확인 필요","text_84dd6e381dca36d8"),
         Map.entry("휴대폰","text_2a675ee941a2897e"),

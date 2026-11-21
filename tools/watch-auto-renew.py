@@ -52,7 +52,7 @@ class Renewal:
         if state is None:return None
         return state.get('passcodeRequired') is False and state.get('unlockedSinceBoot') is True
     def launch(self):
-        result=self.command(['/usr/bin/xcrun','devicectl','device','process','launch','--device',self.device,'--no-activate',self.bundle,'--timeout','20'],timeout=30)
+        result=self.command(['/usr/bin/xcrun','devicectl','device','process','launch','--device',self.device,'--no-activate','--environment-variables',json.dumps({'WATCHBRIDGE_LAUNCH_SOURCE':'weekly-renewal'}),self.bundle,'--timeout','20'],timeout=30)
         self.state['pending_launch']=result.returncode!=0
         return result.returncode==0
     def queue_completion_notice(self):

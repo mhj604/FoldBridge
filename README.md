@@ -4,12 +4,12 @@
 
 갤럭시에 도착한 알림을 **Apple Watch로 Bluetooth LE 직접 전달**하는 Android·watchOS 앱입니다. 알림 전달에는 서버·인터넷·아이폰 중계·루팅·운동/오디오 세션을 사용하지 않습니다. 워치 초기 설정과 앱 설치 준비는 별도입니다.
 
-## 설치와 업데이트 — 2026-11-20 기준
+## 설치와 업데이트 — 2026-11-21 기준
 
 | 항목 | 현재 버전 / 받는 곳 |
 | --- | --- |
 | Android | **0.6.23-local / 코드 45** — [APK 다운로드](https://github.com/mhj604/WatchBridge/releases/download/android-v0.6.23/WatchBridge-0.6.23.apk) |
-| 워치 앱·차량 위젯 | **0.5.29 / 빌드 63** — [Xcode 프로젝트](watch/FoldBridge.xcodeproj), 자신의 Team으로 서명·설치 |
+| 워치 앱·차량 위젯 | **0.5.30 / 빌드 64** — [Xcode 프로젝트](watch/FoldBridge.xcodeproj), 자신의 Team으로 서명·설치 |
 | 처음 설치 | [설치·등록 순서](docs/QUICK_START_KO.md) |
 | 기존 사용자 | 같은 서명 키·Bundle ID·Team으로 덮어 업데이트. 등록을 삭제하지 않습니다. |
 | 연결 문제 | [문제 해결](docs/TROUBLESHOOTING_KO.md) · [현재 상태와 미완료 범위](docs/CURRENT_STATUS_KO.md) |

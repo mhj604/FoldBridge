@@ -63,6 +63,14 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
     private var lastPeerActivity = Date.distantPast
     private var foregroundSince = Date()
     private var displayScenePhase = "unknown"
+    private var displayPreviousNativeState = "unobserved"
+    private var displayPreviousEventUptime: TimeInterval?
+    private var displayEntrySignal = "none"
+    private var displayEntryUptime: TimeInterval?
+    private var displayActivationID = "none"
+    private var displayActivationUptime: TimeInterval?
+    private var displayRenderedSurface = "main"
+    private var displayEventSequence = 0
     private var lastWriteAt = Date.distantPast
     private var lastFailure = ""
     private var failureCounts: [String:Int] = [:]
@@ -455,6 +463,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         DispatchQueue.main.asyncAfter(deadline:.now()+delay,execute:work)
     }
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String:Any]) {
+        noteDisplayEvent("background.bluetooth-restoration")
         guard let id = UserDefaults.standard.string(forKey:phoneIDKey) else {
             central.stopScan();return
         }
@@ -1440,21 +1449,70 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         displayScenePhase = phase
         noteDisplayEvent("scene."+phase)
     }
-    // A separate, bounded journal prevents GATT retries from evicting screen
-    // transitions. These fixed event names contain no notification or vehicle data.
+    // App-owned observations, not a claim to know private watchOS activation reasons.
+    // Keep activation summaries apart from the noisier lifecycle journal.
     func noteDisplayEvent(_ event: String) {
-        guard let folder = FileManager.default.urls(for:.documentDirectory,in:.userDomainMask).first else { return }
-        let url = folder.appendingPathComponent("watchbridge-display-events.json")
-        var events = (try? Data(contentsOf:url)).flatMap { try? JSONSerialization.jsonObject(with:$0) as? [[String:Any]] } ?? []
+        let uptime = ProcessInfo.processInfo.systemUptime
+        let native = applicationStateName
+        let entrySignal = event == "notification.open" || event == "notification.renewal.open"
+            || event == "vehicle.panel.widget" || event == "vehicle.quick.intent" || event.hasPrefix("entry.")
+        if entrySignal { displayEntrySignal = event; displayEntryUptime = uptime }
+        if event == "vehicle.panel.widget" || event == "vehicle.panel.in-app" { displayRenderedSurface = "vehicle-panel" }
+        if event == "view.main.appear" || event == "vehicle.panel.dismiss" { displayRenderedSurface = "main" }
+        let activated = native == "active" && displayPreviousNativeState != "active"
+        if activated { displayActivationID = UUID().uuidString; displayActivationUptime = uptime }
+        let entryAge = displayEntryUptime.map { max(0,uptime - $0) } ?? -1
+        let activationAge = displayActivationUptime.map { max(0,uptime - $0) } ?? -1
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime,.withFractionalSeconds]
-        events.append(["schema":1,"at":formatter.string(from:Date()),"process":processID,
-                       "build":Bundle.main.object(forInfoDictionaryKey:"CFBundleVersion") as? String ?? "",
-                       "event":event,"scenePhase":displayScenePhase,
-                       "applicationStateName":applicationStateName,
-                       "connected":connected,"continuousRequested":continuousRuntime,
-                       "locationActivityState":locationActivityState])
-        if events.count > 256 { events.removeFirst(events.count-256) }
+        let source = ProcessInfo.processInfo.environment["WATCHBRIDGE_LAUNCH_SOURCE"]
+        let launchSource = ["weekly-renewal","maintenance-background"].contains(source ?? "") ? source!:"unspecified"
+        displayEventSequence += 1
+        var record: [String:Any] = ["schema":2,"at":formatter.string(from:Date()),"process":processID,
+            "build":Bundle.main.object(forInfoDictionaryKey:"CFBundleVersion") as? String ?? "",
+            "sequence":displayEventSequence,"event":event,"scenePhase":displayScenePhase,
+            "applicationStateName":native,"previousObservedNativeState":displayPreviousNativeState,
+            "systemUptimeSeconds":uptime,"previousEventAgeSeconds":displayPreviousEventUptime.map { max(0,uptime - $0) } ?? -1,
+            "activationID":displayActivationID,"activationAgeSeconds":activationAge,
+            "lastEntrySignal":displayEntrySignal,"entrySignalAgeSeconds":entryAge,
+            "entrySignalNearActivation":entryAge >= 0 && entryAge <= 10 && activationAge >= 0 && activationAge <= 10,
+            "launchSource":launchSource,"runningInDock":WKApplication.shared().isApplicationRunningInDock,
+            "renderedSurface":displayRenderedSurface,"connected":connected,"authenticated":authenticated,"stage":stage,
+            "continuousRequested":continuousRuntime,"locationActivityState":locationActivityState]
+        if activated {
+            record["observation"] = displayPreviousNativeState == "inactive" ? "inactive-to-active":
+                displayPreviousNativeState == "background" ? "background-to-active":"first-observed-active"
+            // No public callback identifies wrist raise, a Crown launch or every OS restoration.
+            record["activationCause"] = "not-provided-by-os"
+        }
+        appendDisplayRecord(record,file:"watchbridge-display-events.json",limit:1024)
+        if activated || (entrySignal && activationAge >= 0 && activationAge <= 10) {
+            record["summaryKind"] = activated ? "activation":"nearby-entry-signal"
+            appendDisplayRecord(record,file:"watchbridge-display-activations.json",limit:256)
+        }
+        displayPreviousNativeState = native; displayPreviousEventUptime = uptime
+    }
+    func recordDisplayIncident() {
+        noteDisplayEvent("incident.user-reported")
+        guard let folder = FileManager.default.urls(for:.documentDirectory,in:.userDomainMask).first else { return }
+        func recent(_ file: String, _ count: Int) -> [[String:Any]] {
+            guard let data = try? Data(contentsOf:folder.appendingPathComponent(file)),
+                  let entries = try? JSONSerialization.jsonObject(with:data) as? [[String:Any]] else { return [] }
+            return Array(entries.suffix(count))
+        }
+        let report: [String:Any] = ["schema":1,"at":ISO8601DateFormatter().string(from:Date()),
+            "process":processID,"build":Bundle.main.object(forInfoDictionaryKey:"CFBundleVersion") as? String ?? "",
+            "activationID":displayActivationID,"events":recent("watchbridge-display-events.json",80),
+            "activations":recent("watchbridge-display-activations.json",16)]
+        // Freeze the user's incident context even if later wrist raises fill the live journal.
+        appendDisplayRecord(report,file:"watchbridge-display-reports.json",limit:8)
+    }
+    private func appendDisplayRecord(_ record: [String:Any], file: String, limit: Int) {
+        guard let folder = FileManager.default.urls(for:.documentDirectory,in:.userDomainMask).first else { return }
+        let url = folder.appendingPathComponent(file)
+        var events = (try? Data(contentsOf:url)).flatMap { try? JSONSerialization.jsonObject(with:$0) as? [[String:Any]] } ?? []
+        events.append(record)
+        if events.count > limit { events.removeFirst(events.count-limit) }
         if let data = try? JSONSerialization.data(withJSONObject:events,options:[.sortedKeys]) {
             try? FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true)
             try? data.write(to:url,options:.atomic)
@@ -1495,6 +1553,9 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
             "peripheralState":peripheral.map { String(describing:$0.state) } ?? "none",
             "livenessSupported":peerSupportsLiveness,"awaitingPong":pendingPing != nil,
             "pongCount":pongCount,"remoteRefreshCount":remoteRefreshCount,
+            "displayActivationID":displayActivationID,"displayLastEntrySignal":displayEntrySignal,"displayRenderedSurface":displayRenderedSurface,
+            "renewalWatchNotified":UserDefaults.standard.string(forKey:"renewalWatchNotified") ?? "",
+            "renewalPhoneAcknowledged":UserDefaults.standard.string(forKey:"renewalPhoneAcknowledged") ?? "",
             "continuousRequested":continuousRuntime,"notificationAllowed":notificationAllowed,
             "locationActivityState":locationActivityState,"locationActivityCallbacks":locationActivityCallbacks,
             "received":receivedCount,"scheduled":scheduledCount,"pendingReceipts":pendingReceipts.count,
@@ -1506,8 +1567,7 @@ final class WatchLink: NSObject, ObservableObject, CBCentralManagerDelegate, CBP
         try? data.write(to:folder.appendingPathComponent("foldbridge-status.json"),options:.atomic)
     }
     private func trace(_ event: String) {
-        if event == "launch" || event == "authenticated" || event == "authenticated.delivery.read"
-            || event.hasPrefix("location.activity.") {
+        if event == "launch" {
             noteDisplayEvent(event)
         }
         guard let folder = FileManager.default.urls(for:.documentDirectory,in:.userDomainMask).first else { return }

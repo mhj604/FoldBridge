@@ -292,5 +292,7 @@
   "Bluetooth 인증 연결은 유지됩니다. 워치가 읽기를 재개하면 알림 전달도 자동으로 재개됩니다.": "The authenticated Bluetooth link is retained. Notification delivery resumes automatically when the watch reads again.",
   "Bluetooth 연결은 유지되며 워치 수신 재개를 기다립니다.": "Bluetooth remains connected; waiting for watch delivery to resume.",
   "서명 갱신 완료": "Signing renewed",
-  "다음 만료: %@": "Next expiration: %@"
+  "다음 만료: %@": "Next expiration: %@",
+  "화면 문제 기록": "Report screen issue",
+  "화면 기록 저장됨": "Screen report saved"
 }

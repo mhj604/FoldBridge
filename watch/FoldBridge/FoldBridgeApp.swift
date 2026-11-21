@@ -198,14 +198,22 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
         catch { WatchLink.shared.lastError = "Push 토큰 저장 실패" }
     }
     func didFailToRegisterForRemoteNotificationsWithError(_ error: Error) { WatchLink.shared.lastError = "Push 등록 실패. 서명과 Push 설정을 확인하세요." }
-    func handle(_ backgroundTasks: Set<WKRefreshBackgroundTask>) { WatchLink.shared.handle(backgroundTasks) }
+    func handle(_ backgroundTasks: Set<WKRefreshBackgroundTask>) {
+        if backgroundTasks.contains(where: { $0 is WKBluetoothAlertRefreshBackgroundTask }) { WatchLink.shared.noteDisplayEvent("background.bluetooth-task") }
+        if backgroundTasks.contains(where: { $0 is WKApplicationRefreshBackgroundTask }) { WatchLink.shared.noteDisplayEvent("background.refresh-task") }
+        WatchLink.shared.handle(backgroundTasks)
+    }
+    func handleUserActivity(_ userInfo: [AnyHashable:Any]?) { WatchLink.shared.noteDisplayEvent("entry.user-activity-dictionary") }
+    func handle(_ userActivity: NSUserActivity) { WatchLink.shared.noteDisplayEvent("entry.user-activity") }
+    func handleRemoteNowPlayingActivity() { WatchLink.shared.noteDisplayEvent("entry.remote-now-playing") }
     func applicationWillEnterForeground() { WatchLink.shared.noteDisplayEvent("delegate.will-enter-foreground") }
     func applicationDidBecomeActive() { WatchLink.shared.noteDisplayEvent("delegate.did-become-active") }
     func applicationWillResignActive() { WatchLink.shared.noteDisplayEvent("delegate.will-resign-active") }
     func applicationDidEnterBackground() { WatchLink.shared.noteDisplayEvent("delegate.did-enter-background") }
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping ()->Void) {
-        let event = response.actionIdentifier == UNNotificationDefaultActionIdentifier ? "notification.open" :
+        let isRenewal = response.notification.request.identifier.hasPrefix("renewal-")
+        let event = response.actionIdentifier == UNNotificationDefaultActionIdentifier ? (isRenewal ? "notification.renewal.open":"notification.open") :
             response.actionIdentifier == UNNotificationDismissActionIdentifier ? "notification.dismiss":"notification.action"
         DispatchQueue.main.async {
             WatchLink.shared.noteDisplayEvent(event)
@@ -230,7 +238,7 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
     var body: some Scene {
         WindowGroup { ContentView().environmentObject(link).environmentObject(language)
             .environment(\.locale,language.locale)
-            .sheet(isPresented:$vehicleQuick.presented,onDismiss:{vehicleQuick.cancelPending()}) {
+            .sheet(isPresented:$vehicleQuick.presented,onDismiss:{link.noteDisplayEvent("vehicle.panel.dismiss");vehicleQuick.cancelPending()}) {
                 NavigationStack { VehicleQuickView().environmentObject(link).environmentObject(language) }
                     .environment(\.locale,language.locale)
             }.onAppear {
@@ -264,6 +272,7 @@ struct ContentView: View {
     @EnvironmentObject var language: AppLanguage
     @EnvironmentObject var link: WatchLink
     @StateObject private var keepAlive = LocationKeepAlive.shared
+    @State private var displayIssueRecorded = false
     private func vehicleQuickMenu() { VehicleQuickRouter.shared.openControls() }
     var body: some View {
         NavigationStack {
@@ -302,6 +311,12 @@ struct ContentView: View {
                         Button { link.synchronize() } label: { Label(language.text("지금 동기화"),systemImage:"arrow.clockwise").font(.caption) }
                             .buttonStyle(.plain).foregroundStyle(BridgeStyle.accent).frame(maxWidth:.infinity).padding(.vertical,8)
                     }
+                    Button {
+                        link.recordDisplayIncident();displayIssueRecorded = true
+                    } label: {
+                        Label(language.text(displayIssueRecorded ? "화면 기록 저장됨":"화면 문제 기록"),systemImage:"note.text")
+                            .font(.caption2)
+                    }.buttonStyle(.plain).foregroundStyle(.secondary).frame(maxWidth:.infinity).padding(.vertical,6)
                 }.padding(.horizontal,3)
             }.navigationTitle("WatchBridge")
                 .toolbar { ToolbarItem(placement:.topBarTrailing) {
@@ -428,7 +443,10 @@ enum RelayCategory {
 final class CompactNotificationController: WKUserNotificationHostingController<CompactNotificationView> {
     private var content: UNNotificationContent?
     override var body: CompactNotificationView { CompactNotificationView(content:content) }
-    override func didReceive(_ notification: UNNotification) { content = notification.request.content }
+    override func didReceive(_ notification: UNNotification) {
+        content = notification.request.content
+        WatchLink.shared.noteDisplayEvent("notification.detail.received")
+    }
 }
 
 struct CompactNotificationView: View {

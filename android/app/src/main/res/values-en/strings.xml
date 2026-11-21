@@ -271,6 +271,8 @@
   <string name="text_293182ec397e6b89" formatted="false">"Unpair"</string>
   <string name="text_9b90fe7e0ce3b383" formatted="false">"Allowed"</string>
   <string name="text_440dcd08ac63f057" formatted="false">"Unable to read notifications. Check WatchBridge notification access."</string>
+  <string name="text_3e1b8a14c439f871" formatted="false">"Screen report saved"</string>
+  <string name="text_f47d5e6eafdd1b8e" formatted="false">"Report screen issue"</string>
   <string name="text_dcdbdc9854482ddc" formatted="false">"Swipe down from the top to see your alerts.\nNotification content is not stored inside this app."</string>
   <string name="text_84dd6e381dca36d8" formatted="false">"Needs attention"</string>
   <string name="text_2a675ee941a2897e" formatted="false">"Phone"</string>
