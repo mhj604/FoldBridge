@@ -30,3 +30,9 @@ Public watchOS callbacks do not disclose wrist raise, Crown selection or every O
 ## Deployment progress
 
 Build 64 installed over the existing app (`ev_2b2de47a859011e325edd4853aa97835599d71a66b59aeef4d134c37c39cab5a`). Its initial `--no-activate` launch was refused because the watch was passcode locked (`ev_fdc48dec82255feddefb0d75c58b380120d331332459343b61c5072fb51cfdda`). Successful installation does not establish that the new process or journal has started. Initial launch awaits unlocking.
+
+## Initial runtime follow-up completed
+
+The post-unlock launch request succeeded (`ev_5d67e60cd0502d68af380ccf61fc7105a791863811867eb2dce575a7f6b7f052`). App-owned state reported **build 64 with authenticated connectivity** (`ev_d8f2fb3a2c7c4f84f3af759a07041fd948380734e02de8670f18d3b8d61c0901`), and **schema 2 display records** were obtained (`ev_b33462bab5d99d274715ef2fee5d766130c2332862e28b76d205b178a4f8741a`).
+
+The new process journal started at 18:10:00 KST with a Bluetooth restoration callback. It also recorded a foreground marker at 18:10:56 and return to background at 18:11:04. Launch source remained `unspecified`; the later Mac launch request is not retroactively attributed as process creation. These transitions do not establish the cause of the owner's reported symptom. Location state in the sampled record was `restore-requested`, not confirmed eligible. The renewal runner's pending-initial-launch flag was cleared while preserving installed-version alignment, weekly source and existing completion receipts.
